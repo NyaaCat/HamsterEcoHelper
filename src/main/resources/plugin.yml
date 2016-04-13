@@ -1,0 +1,14 @@
+name: HamsterEcoHelper
+main: cat.nyaa.HamsterEcoHelper.HamsterEcoHelper
+version: 1.0
+depend: [Vault,ProtocolLib]
+commands:
+  heh:
+    permission: heh.user
+  hehadmin:
+    permission: heh.admin
+permissions:
+  heh.user:
+    default: true
+  heh.admin:
+    default: op
