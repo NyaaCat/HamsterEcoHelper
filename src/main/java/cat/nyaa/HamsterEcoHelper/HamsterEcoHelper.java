@@ -30,6 +30,7 @@ public class HamsterEcoHelper extends JavaPlugin implements CommandExecutor {
                 if (args[1].equalsIgnoreCase("showitem")) {
                     ShowItem t = new ShowItem();
                     t.setItem(player.getInventory().getItemInMainHand());
+                    t.setMessage("item: {item} {amount}");
                     t.sendToPlayer(player);
                     return true;
                 }

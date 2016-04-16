@@ -11,95 +11,99 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.bukkit.Bukkit.getOnlinePlayers;
 
 public class ShowItem {
-    static ItemStack item = null;
-    Plugin plugin = null;
+    private ItemStack item = null;
     String reset = ((char) 167) + "r";
     String bold = ((char) 167) + "l";
-
+    private String message = "{item}";
 
     public void setItem(ItemStack item) {
         this.item = item;
     }
 
-    public String getJson() {
+    public ItemStack getItem() {
+        return this.item;
+    }
+
+    private String getJSONMessage() {
         JSONObject json = new JSONObject();
-        HashMap hoverEvent = new HashMap();
+        JSONObject hoverEvent = new JSONObject();
         hoverEvent.put("action", "show_item");
-        String value = "";
-        value += "id:\"minecraft:" + item.getType().name().toLowerCase() + "\",";
-        value += "Damage:" + item.getDurability() + "s";
-        String tag = "";
-
+        Tag value = new Tag();
+        value.put("id", "minecraft:" + item.getType().name().toLowerCase(), true);
+        value.put("Damage", item.getDurability() + "s", false);
+        Tag tag = new Tag();
         if (item.getEnchantments().size() > 0) {
-            String enchant = "";
+            ArrayList<String> enchant = new ArrayList();
             for (Enchantment e : item.getEnchantments().keySet()) {
-                enchant += enchant.length() > 0 ? "," : "";
-                enchant += "{id:" + e.getId() + ",lvl:" + item.getEnchantmentLevel(e) + "}";
+                enchant.add("{id:" + e.getId() + ",lvl:" + item.getEnchantmentLevel(e) + "}");
             }
-            tag += "ench:[" + enchant + "]";
-
+            tag.put("ench", enchant, false);
         }
+
         if (item.getItemMeta() instanceof EnchantmentStorageMeta) {
-            tag += tag.length() > 0 ? "," : "";
-            String enchant = "";
+            ArrayList<String> enchant = new ArrayList();
             EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
             for (Enchantment e : meta.getStoredEnchants().keySet()) {
-                enchant += enchant.length() > 0 ? "," : "";
-                enchant += "{id:" + e.getId() + ",lvl:" + meta.getStoredEnchantLevel(e) + "}";
+                enchant.add("{id:" + e.getId() + ",lvl:" + meta.getStoredEnchantLevel(e) + "}");
             }
-            tag += "StoredEnchantments:[" + enchant + "]";
+            tag.put("StoredEnchantments", enchant, false);
         }
 
         if (item.getType().equals(org.bukkit.Material.WRITTEN_BOOK)) {
             BookMeta book = (BookMeta) item.getItemMeta();
-            tag += tag.length() > 0 ? "," : "";
-            tag += "author:\"" + book.getAuthor() + "\",title:" + JSONValue.toJSONString(book.getTitle());
+            if (book.hasAuthor()) {
+                tag.put("author", book.getAuthor(), true);
+            }
+            if (book.hasTitle()) {
+                tag.put("title", book.getTitle(), true);
+            }
         }
 
         if (item.getItemMeta().hasDisplayName() || item.getItemMeta().hasLore()) {
-            String display = "";
-            tag += tag.length() > 0 ? "," : "";
-            if (item.getItemMeta().hasDisplayName()) {
-                display += "Name:" + JSONValue.toJSONString(item.getItemMeta().getDisplayName());
-            }
-            if (item.getItemMeta().hasLore()) {
-                display += display.length() > 0 ? "," : "";
-                String lore = "";
-                for (String line : item.getItemMeta().getLore()) {
-                    lore += lore.length() > 0 ? "," : "";
-                    lore += JSONValue.toJSONString(line);
-                }
-                display += "Lore:[" + lore + "]";
+            Tag display = new Tag();
 
+            if (item.getItemMeta().hasDisplayName()) {
+                display.put("Name", item.getItemMeta().getDisplayName(), true);
             }
-            tag += "display:{" + display + "}";
+
+            if (item.getItemMeta().hasLore()) {
+                display.put("Lore", item.getItemMeta().getLore(), true);
+            }
+            tag.put("display", display.toString(), false);
         }
-        value += tag.length() > 0 ? ",tag:{" + tag + "}" : "";
-        hoverEvent.put("value", "{" + value + "}");
-        if (item.getItemMeta().hasDisplayName()) {
-            json.put("text", item.getItemMeta().getDisplayName());
-        } else {
-            json.put("text", item.getData().getItemType().name());
-        }
+        value.put("tag", tag.toString(), false);
+        long time = System.currentTimeMillis();
+        hoverEvent.put("value", time);
         json.put("hoverEvent", hoverEvent);
-        return "[{\"text\":\"" + bold + "item: \"}," + json.toString() + ",{\"text\":\"(" + item.getType().name() + ")\"}]";
+        if (item.getItemMeta().hasDisplayName()) {
+            json.put("text", message.replace("{amount}", String.valueOf(
+                    item.getAmount())).replace("{item}", reset + item.getItemMeta().getDisplayName() +
+                    reset + "(" + item.getData().getItemType().name() + ")"));
+        } else {
+            json.put("text", message.replace("{amount}", String.valueOf(
+                    item.getAmount())).replace("{item}", reset + item.getData().getItemType().name() + reset));
+        }
+        return json.toString().replace(String.valueOf(time), JSONValue.toJSONString(value.toString()));
     }
 
-    public boolean sendToPlayer(Player player, String message) {
+    private boolean sendJSONMessage(Player player, String JSONMessage) {
         if (item == null || item.equals(Material.AIR)) {
             return false;
         }
-        //player.sendMessage(message);
         PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
-        chat.getChatComponents().write(0, WrappedChatComponent.fromJson(message));
+        chat.getChatComponents().write(0, WrappedChatComponent.fromJson(JSONMessage));
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, chat);
         } catch (InvocationTargetException e) {
@@ -109,7 +113,60 @@ public class ShowItem {
     }
 
     public boolean sendToPlayer(Player player) {
-        return sendToPlayer(player, getJson());
+        return sendJSONMessage(player, getJSONMessage());
+    }
+
+    public void broadcast() {
+        String JSONMessage = getJSONMessage();
+        for (Player p : getOnlinePlayers()) {
+            sendJSONMessage(p, JSONMessage);
+        }
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}
+
+class Tag {
+    private HashMap<String, String> map = new HashMap();
+
+    public void put(String key, String value, boolean escape) {
+        if (escape) {
+            map.put(key, JSONValue.toJSONString(value));
+        } else {
+            map.put(key, value);
+        }
+    }
+
+    public void put(String key, List<String> value, boolean escape) {
+        String str = "";
+        Iterator<String> iterator = value.iterator();
+        while (iterator.hasNext()) {
+            String v = iterator.next();
+            str += str.length() > 0 ? "," : "";
+            if (escape) {
+                str += JSONValue.toJSONString(v);
+            } else {
+                str += v;
+            }
+        }
+        map.put(key, "[" + str + "]");
+    }
+
+    public String toString() {
+        String JSON = "";
+        for (String key : map.keySet()) {
+            JSON += JSON.length() > 0 ? "," : "";
+            System.out.println(key + map.get(key));
+            JSON += key + ":" + map.get(key);
+        }
+        return "{" + JSON + "}";
     }
 
 }
+
+
+
+
+
