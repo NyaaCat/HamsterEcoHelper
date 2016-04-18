@@ -1,14 +1,41 @@
 name: HamsterEcoHelper
 main: cat.nyaa.HamsterEcoHelper.HamsterEcoHelper
+description: "Provides a offer/buy system and global market."
 version: 1.0
 depend: [Vault,ProtocolLib]
+authors: [cyilin, RecursiveG]
+website: "https://github.com/NyaaCat/HamsterEcoHelper"
+
 commands:
-  heh:
-    permission: heh.user
-  hehadmin:
-    permission: heh.admin
+  hemsterecohelper:
+    description: The command for HamsterEcoHelper
+    aliases: heh
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+
 permissions:
+  heh.*:
+    description: Base permission node for HamsterEcoHelper
+    default: false
+    children:
+      heh.user: true
+      heh.admin: true
   heh.user:
+    description: Base permission node for players
     default: true
+    children:
+      heh.offer: true
+      heh.view: true
+      heh.sell: true
+      heh.buy: true
+      heh.bid: true
+      heh.command: true
   heh.admin:
+    description: Permission node for operators
     default: op
+    children:
+      heh.user: true
+      heh.addauction: true
+      heh.addrequisition: true
+      heh.debug: true
