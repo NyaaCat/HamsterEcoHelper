@@ -1,3 +1,6 @@
-error:
-  internal:
-    bad_subcommand: Bad subcommand handler: %s
+internal:
+  warn:
+    bad_subcommand: "Bad subcommand handler: %s"
+    lang_not_found: "Language %s not found."
+  info:
+    using_language: "Using language: %s"
