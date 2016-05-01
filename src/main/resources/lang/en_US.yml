@@ -4,3 +4,33 @@ internal:
     lang_not_found: "Language %s not found."
   info:
     using_language: "Using language: %s"
+
+admin:
+  info:
+    save_done: "Force save done."
+    load_done: "Force load done."
+
+user:
+  info:
+    not_player: "Only players can do this"
+    not_item_hand: "No item in hand"
+    no_current_auction: "No ongoing auction"
+  error:
+    bad_command: "Wrong command: %s"
+    not_int: "Not a valid integer"
+    not_double: "Not a valid number"
+  warn:
+    no_enough_money: "You do not have that much money"
+    not_high_enough: "Invalid price, at least %d$"
+  auc:
+    new_auction: "NEW AUCTION: %s; Start from %d$ with step price %d$; Respond in %d seconds"
+    new_price: "Player %s gives a higher price for %s: %d$"
+    first: "%d$ first"
+    second: "%d$ second"
+    third: "%d$ third"
+    halted: "Current auction halted"
+
+manual:
+  command:
+    addauc: "Usage: /heh addauc [basePrice|int] [stepPrice|int] [randomWeight|double]"
+    bid: "Usage: /heh bid [price|int]"

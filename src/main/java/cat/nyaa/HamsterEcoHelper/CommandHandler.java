@@ -1,9 +1,13 @@
 package cat.nyaa.HamsterEcoHelper;
 
+import cat.nyaa.HamsterEcoHelper.auction.AuctionInstance;
+import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,6 +20,21 @@ import java.util.List;
 import java.util.Map;
 
 public class CommandHandler implements CommandExecutor {
+    private static class NotPlayerException extends RuntimeException {
+    }
+
+    private static class NoItemInHandException extends RuntimeException {
+    }
+
+    private static class BadCommandException extends RuntimeException {
+        public BadCommandException(String msg) {
+            super(msg);
+        }
+
+        public BadCommandException(String msg, Throwable cause) {
+            super(msg, cause);
+        }
+    }
 
     private final HamsterEcoHelper plugin;
     private Map<String, Method> subCommands = new HashMap<>();
@@ -28,7 +47,7 @@ public class CommandHandler implements CommandExecutor {
             if (anno == null) continue;
             Class<?>[] params = m.getParameterTypes();
             if (!(params.length == 2 && params[0] == CommandSender.class && params[1] == Arguments.class)) {
-                plugin.getLogger().warning("Bad subcommand handler: " + m.toString());
+                plugin.getLogger().warning(I18n.get("internal.warn.bad_subcommand", m.toString()));
             } else {
                 m.setAccessible(true);
                 subCommands.put(anno.value().toLowerCase(), m);
@@ -64,6 +83,10 @@ public class CommandHandler implements CommandExecutor {
                 else
                     throw new RuntimeException("Failed to invoke subcommand", ex);
             }
+        } catch (NotPlayerException ex) {
+            msg(sender, "user.info.not_player");
+        } catch (NoItemInHandException ex) {
+            msg(sender, "user.info.no_item_hand");
         } catch (Exception ex) {
             ex.printStackTrace();
             sender.sendMessage("Internal Server Error");
@@ -88,6 +111,83 @@ public class CommandHandler implements CommandExecutor {
         }
     }
 
+    @SubCommand(value = "addauc", permission = "heh.addauction")
+    public void addAuc(CommandSender sender, Arguments args) {
+        if (args.length() != 3) {
+            msg(sender, "manual.command.addauc");
+            return;
+        }
+        AuctionItemTemplate item = new AuctionItemTemplate();
+        item.templateItemStack = getItemInHand(sender).clone();
+        item.baseAuctionPrice = args.nextInt();
+        item.bidStepPrice = args.nextInt();
+        item.randomWeight = args.nextDouble();
+        plugin.config.itemsForAuction.add(item);
+        plugin.config.saveToPlugin();
+    }
+
+    @SubCommand(value = "save", permission = "heh.admin")
+    public void forceSave(CommandSender sender, Arguments arg) {
+        plugin.config.saveToPlugin();
+        msg(sender, "admin.info.save_done");
+    }
+
+    @SubCommand(value = "force-load", permission = "heh.admin")
+    public void forceLoad(CommandSender sender, Arguments args) {
+        plugin.config.loadFromPlugin();
+        msg(sender, "admin.info.load_done");
+    }
+
+    @SubCommand(value = "bid", permission = "heh.bid")
+    public void userBid(CommandSender sender, Arguments args) {
+        Player p = asPlayer(sender);
+        AuctionInstance auc = plugin.auctionManager.getCurrentAuction();
+        if (auc == null) {
+            msg(p, "user.info.no_current_auc");
+            return;
+        }
+        if (args.length() != 1) {
+            msg(sender, "manual.command.bid");
+        }
+        int bid = args.nextInt();
+        if (!plugin.eco.enoughMoney(p, bid)) {
+            msg(p, "user.warn.no_enough_money");
+            return;
+        }
+        if (bid < auc.currentHighPrice + auc.stepPr) {
+            msg(p, "user.warn.not_high_enough", auc.currentHighPrice + auc.stepPr);
+            return;
+        }
+        auc.onBid(p, bid);
+    }
+
+
+    private Player asPlayer(CommandSender target) {
+        if (target instanceof Player) {
+            return (Player) target;
+        } else {
+            throw new NotPlayerException();
+        }
+    }
+
+    private void msg(CommandSender target, String template, Object... args) {
+        target.sendMessage(I18n.get(template, args));
+    }
+
+    private ItemStack getItemInHand(CommandSender se) {
+        if (se instanceof Player) {
+            Player p = (Player) se;
+            if (p.getInventory() != null) {
+                ItemStack i = p.getInventory().getItemInMainHand();
+                if (i != null && i.getType() != Material.AIR) {
+                    return i;
+                }
+            }
+            throw new NoItemInHandException();
+        } else {
+            throw new NotPlayerException();
+        }
+    }
 
     private static class Arguments {
 
@@ -158,6 +258,27 @@ public class CommandHandler implements CommandExecutor {
             else
                 return null;
         }
+
+        public int nextInt() {
+            String str = next();
+            if (str == null) throw new BadCommandException("No more integers in argument");
+            try {
+                return Integer.parseInt(str);
+            } catch (NumberFormatException ex) {
+                throw new BadCommandException(I18n.get("user.error.not_int", str), ex);
+            }
+        }
+
+        public double nextDouble() {
+            String str = next();
+            if (str == null) throw new BadCommandException("No more numbers in argument");
+            try {
+                return Double.parseDouble(str);
+            } catch (NumberFormatException ex) {
+                throw new BadCommandException(I18n.get("user.error.not_double", str), ex);
+            }
+        }
+
 
         public int length() {
             return parsedArguments.size();

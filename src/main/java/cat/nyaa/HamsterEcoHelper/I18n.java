@@ -44,12 +44,12 @@ public final class I18n {
         if (stream != null) {
             lang = language;
             appendStrings(plugin, YamlConfiguration.loadConfiguration(new InputStreamReader(stream)));
-            plugin.getLogger().info(get("notify.startup.using_language", lang));
+            plugin.getLogger().info(get("internal.info.using_language", lang));
         } else if ((stream = plugin.getResource("lang/" + DEFAULT_LANGUAGE + ".yml")) != null) {
             lang = DEFAULT_LANGUAGE;
             appendStrings(plugin, YamlConfiguration.loadConfiguration(new InputStreamReader(stream)));
-            plugin.getLogger().warning(get("notify.startup.lang_not_found", language));
-            plugin.getLogger().info(get("notify.startup.using_language", lang));
+            plugin.getLogger().warning(get("internal.warn.lang_not_found", language));
+            plugin.getLogger().info(get("internal.info.using_language", lang));
         } else {
             plugin.getLogger().severe(String.format("Language %s not found. Default Language %s not found. Failed to load.", lang, DEFAULT_LANGUAGE));
             throw new RuntimeException("No language file available.");
