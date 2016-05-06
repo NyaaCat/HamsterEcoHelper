@@ -2,7 +2,10 @@ package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +16,7 @@ public class Configuration {
     public List<AuctionItemTemplate> itemsForAuction;
     public int auctionIntervalTicks;
     public int bidTimeoutTicks;
+    private YamlConfiguration items;
 
     public Configuration(HamsterEcoHelper plugin) {
         this.plugin = plugin;
@@ -20,29 +24,29 @@ public class Configuration {
 
     public void loadFromPlugin() {
         plugin.saveDefaultConfig();
-        ConfigurationSection c = plugin.getConfig();
-        language = c.getString("language", "en_US");
-        auctionIntervalTicks = c.getInt("auctionIntervalTicks", 60 * 60 * 20);
-        bidTimeoutTicks = c.getInt("bidTimeoutTicks", 30 * 20);
+        language = plugin.getConfig().getString("language", "en_US");
+        auctionIntervalTicks = plugin.getConfig().getInt("auctionIntervalTicks", 60 * 60 * 20);
+        bidTimeoutTicks = plugin.getConfig().getInt("bidTimeoutTicks", 30 * 20);
 
         itemsForAuction = new ArrayList<>();
-        ConfigurationSection tmp = c.getConfigurationSection("itemsForAuction");
-        for (String idx : tmp.getKeys(false)) {
-            itemsForAuction.add(AuctionItemTemplate.fromConfig(c.getConfigurationSection(idx)));
+        items = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(),"items.yml"));
+        ConfigurationSection tmp = items.getConfigurationSection("itemsForAuction");
+        if(tmp!=null) {
+            for (String idx : tmp.getKeys(false)) {
+                itemsForAuction.add(AuctionItemTemplate.fromConfig(items.getConfigurationSection(idx)));
+            }
         }
     }
 
     public void saveToPlugin() {
-        ConfigurationSection c = plugin.getConfig();
-        c.set("language", language);
-        c.set("auctionIntervalTicks", auctionIntervalTicks);
-        c.set("bidTimeoutTicks", bidTimeoutTicks);
-
-        ConfigurationSection tmp = c.createSection("itemsForAuction");
+        ConfigurationSection tmp = items.createSection("itemsForAuction");
         for (int i = 0; i < itemsForAuction.size(); i++) {
             itemsForAuction.get(i).dumpTo(tmp.createSection(Integer.toString(i)));
         }
-
-        plugin.saveConfig();
+        try {
+            items.save(new File(plugin.getDataFolder(),"items.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -2,7 +2,10 @@ package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.auction.AuctionInstance;
 import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
+import cat.nyaa.HamsterEcoHelper.market.Market;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +17,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,7 +117,7 @@ public class CommandHandler implements CommandExecutor {
 
     @SubCommand(value = "addauc", permission = "heh.addauction")
     public void addAuc(CommandSender sender, Arguments args) {
-        if (args.length() != 3) {
+        if (args.length() != 4) {
             msg(sender, "manual.command.addauc");
             return;
         }
@@ -161,6 +165,51 @@ public class CommandHandler implements CommandExecutor {
         auc.onBid(p, bid);
     }
 
+    @SubCommand(value = "mailbox", permission = "heh.user")
+    public void openMailbox(CommandSender sender, Arguments args) {
+        Player player = (Player) sender;
+        Market.openMailbox(player);
+    }
+
+    @SubCommand(value = "offer", permission = "heh.offer")
+    public void offer(CommandSender sender, Arguments args) {
+        if (args.length() == 2) {
+            Player player = (Player) sender;
+            double price=0.0;
+            try{
+                price = Double.parseDouble(new DecimalFormat("#.##").format(Double.parseDouble(args.next())));
+            } catch (IllegalArgumentException ex){
+                //return;
+            }
+            if(!(price>=0.01)){
+                msg(sender,"user.error.not_double");
+                return;
+            }
+            ItemStack item = player.getInventory().getItemInMainHand();
+            if(item!=null && item.getType()!=Material.AIR && item.getAmount()>0 ){
+                if(Market.offer(player, item, price)){
+                    player.getInventory().setItemInMainHand(null);
+                }
+                return;
+            }else {
+                msg(sender,"user.info.not_item_hand");
+                return;
+            }
+        }
+    }
+
+    @SubCommand(value = "view", permission = "heh.view")
+    public void view(CommandSender sender, Arguments args) {
+        Player player = (Player) sender;
+        if(args.length()==2){
+            OfflinePlayer seller = Bukkit.getOfflinePlayer(args.next());
+            if (seller!=null){
+                Market.view(player, 1,seller.getUniqueId().toString());
+            }
+        }else {
+            Market.view(player, 1,"");
+        }
+    }
 
     private Player asPlayer(CommandSender target) {
         if (target instanceof Player) {

@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
+import cat.nyaa.HamsterEcoHelper.market.Market;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -27,6 +28,8 @@ public class HamsterEcoHelper extends JavaPlugin {
         getCommand("hemsterecohelper").setExecutor(new CommandHandler(this));
         auctionManager = new AuctionManager(this);
         eco = new EconomyHelper(this);
+        Market.init(this);
+        getServer().getPluginManager().registerEvents(new Events(), this);
     }
 
     @Override

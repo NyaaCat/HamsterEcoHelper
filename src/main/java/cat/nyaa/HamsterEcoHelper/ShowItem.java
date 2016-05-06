@@ -158,7 +158,6 @@ class Tag {
         String JSON = "";
         for (String key : map.keySet()) {
             JSON += JSON.length() > 0 ? "," : "";
-            System.out.println(key + map.get(key));
             JSON += key + ":" + map.get(key);
         }
         return "{" + JSON + "}";

@@ -15,6 +15,9 @@ user:
     not_player: "Only players can do this"
     not_item_hand: "No item in hand"
     no_current_auction: "No ongoing auction"
+    balance: "Balance: %s"
+    back: "Back"
+    next_page: "Next page"
   error:
     bad_command: "Wrong command: %s"
     not_int: "Not a valid integer"
@@ -22,6 +25,7 @@ user:
   warn:
     no_enough_money: "You do not have that much money"
     not_high_enough: "Invalid price, at least %d$"
+    not_enough_space: "You mailbox is full!"
   auc:
     new_auction: "NEW AUCTION: %s; Start from %d$ with step price %d$; Respond in %d seconds"
     new_price: "Player %s gives a higher price for %s: %d$"
@@ -29,8 +33,16 @@ user:
     second: "%d$ second"
     third: "%d$ third"
     halted: "Current auction halted"
+  market:
+    title: "[Market]"
+    mailbox: "[Mailbox]"
+    open_mailbox: "Click to open mailbox."
+    price: "Price: %s"
+    offered: "offered by: %s"
+    my_items: "My items"
 
 manual:
   command:
     addauc: "Usage: /heh addauc [basePrice|int] [stepPrice|int] [randomWeight|double]"
     bid: "Usage: /heh bid [price|int]"
+    offer: "Usage: /heh offer [UnitPrice|double]"
