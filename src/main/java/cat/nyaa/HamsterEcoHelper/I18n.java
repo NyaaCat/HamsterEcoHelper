@@ -59,7 +59,7 @@ public final class I18n {
     public static String get(String key, Object... para) {
         String val = map.get(key);
         if (val == null) {
-            plugin.getLogger().warning("Missing language key: " + key);
+            I18n.plugin.getLogger().warning("Missing language key: " + key);
             key = "<" + key + ">";
             for (Object obj : para) {
                 key += "#<" + obj.toString() + ">";

@@ -30,7 +30,7 @@ public class RequisitionManager extends BukkitRunnable {
         );
         if (item == null) return false;
 
-        int unitPrice = Utils.inclusiveRandomInt(item.minPurchasePrice, item.maxAmount);
+        int unitPrice = Utils.inclusiveRandomInt(item.minPurchasePrice, item.maxPurchasePrice);
         int amount = item.maxAmount < 0? -1: Utils.inclusiveRandomInt(item.minAmount, item.maxAmount);
         currentReq = new RequisitionInstance(item, unitPrice, amount, plugin, ()->this.currentReq=null);
         return true;

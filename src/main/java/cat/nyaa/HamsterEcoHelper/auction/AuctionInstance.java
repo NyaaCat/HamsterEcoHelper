@@ -21,17 +21,20 @@ public class AuctionInstance {
                 case 0:
                     Bukkit.broadcast(I18n.get("user.auc.first", currentHighPrice), "heh.bid");
                     stage = 1;
-                    this.runTaskLater(plugin, timeout);
+                    checkPointListener = new CheckPointListener();
+                    checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 1:
                     Bukkit.broadcast(I18n.get("user.auc.second", currentHighPrice), "heh.bid");
                     stage = 2;
-                    this.runTaskLater(plugin, timeout);
+                    checkPointListener = new CheckPointListener();
+                    checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 2:
                     Bukkit.broadcast(I18n.get("user.auc.third", currentHighPrice), "heh.bid");
                     stage = 3;
-                    this.runTaskLater(plugin, timeout);
+                    checkPointListener = new CheckPointListener();
+                    checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 3:
                     finish();
@@ -40,7 +43,8 @@ public class AuctionInstance {
 
         public void resetTime() {
             this.cancel();
-            this.runTaskLater(plugin, timeout);
+            checkPointListener = new CheckPointListener();
+            checkPointListener.runTaskLater(plugin, timeout);
         }
     }
 
@@ -81,9 +85,10 @@ public class AuctionInstance {
         involvedPlayers.add(p);
         for (Player p2 : involvedPlayers) {
             if (p2.isOnline() && !p2.equals(p)) {
-                p2.sendMessage(I18n.get("user.auction.new_price", p.getName(), itemName, price));
+                p2.sendMessage(I18n.get("user.auc.new_price", p.getName(), itemName, price));
             }
         }
+        p.sendRawMessage(I18n.get("user.auc.new_price_success"));
         checkPointListener.resetTime();
         return true;
     }

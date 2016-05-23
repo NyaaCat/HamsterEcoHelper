@@ -30,6 +30,7 @@ user:
   auc:
     new_auction: "NEW AUCTION: %s; Start from %d$ with step price %d$; Respond in %d seconds"
     new_price: "Player %s gives a higher price for %s: %d$"
+    new_price_success: "You've put a new price!"
     first: "%d$ first"
     second: "%d$ second"
     third: "%d$ third"

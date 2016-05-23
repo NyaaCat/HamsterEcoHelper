@@ -140,11 +140,22 @@ public class CommandHandler implements CommandExecutor {
         }
         // TODO
         RequisitionSpecification req = new RequisitionSpecification();
+        req.itemTemplate = getItemInHand(sender).clone();
         req.minPurchasePrice = args.nextInt();
         req.maxPurchasePrice = req.minPurchasePrice;
         req.randomWeight = args.nextDouble();
         plugin.config.itemsForReq.add(req);
         plugin.config.saveToPlugin();
+    }
+
+    @SubCommand(value = "runauc", permission = "heh.runauc")
+    public void runAuction(CommandSender sender, Arguments args) {
+        plugin.auctionManager.newAuction();
+    }
+
+    @SubCommand(value = "runreq", permission = "heh.runreq")
+    public void runRequisition(CommandSender sender, Arguments args) {
+        plugin.reqManager.newRequisition();
     }
 
     @SubCommand(value = "save", permission = "heh.admin")
@@ -167,8 +178,9 @@ public class CommandHandler implements CommandExecutor {
             msg(p, "user.info.no_current_auc");
             return;
         }
-        if (args.length() != 1) {
+        if (args.length() == 1) {
             msg(sender, "manual.command.bid");
+            return;
         }
         int bid = args.nextInt();
         if (!plugin.eco.enoughMoney(p, bid)) {
