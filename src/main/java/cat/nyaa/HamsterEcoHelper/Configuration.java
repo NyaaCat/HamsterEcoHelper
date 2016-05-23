@@ -6,47 +6,96 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class Configuration {
     private final HamsterEcoHelper plugin;
 
+    @Serializable
     public String language = "en_US";
+    @Serializable
+    public int auctionIntervalTicks = 60 * 60 * 20; // 1 hour
+    @Serializable
+    public int bidTimeoutTicks = 30 * 20; // 30 seconds
     public List<AuctionItemTemplate> itemsForAuction;
-    public int auctionIntervalTicks;
-    public int bidTimeoutTicks;
-    private YamlConfiguration items;
 
     public Configuration(HamsterEcoHelper plugin) {
         this.plugin = plugin;
     }
 
     public void loadFromPlugin() {
+        boolean firstRun = !(new File(plugin.getDataFolder(),"config.yml").exists());
         plugin.saveDefaultConfig();
-        language = plugin.getConfig().getString("language", "en_US");
-        auctionIntervalTicks = plugin.getConfig().getInt("auctionIntervalTicks", 60 * 60 * 20);
-        bidTimeoutTicks = plugin.getConfig().getInt("bidTimeoutTicks", 30 * 20);
+        deserialize(plugin.getConfig(), this);
 
         itemsForAuction = new ArrayList<>();
-        items = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(),"items.yml"));
-        ConfigurationSection tmp = items.getConfigurationSection("itemsForAuction");
+        YamlConfiguration tmp = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(),"auction-items.yml"));
         if(tmp!=null) {
             for (String idx : tmp.getKeys(false)) {
-                itemsForAuction.add(AuctionItemTemplate.fromConfig(items.getConfigurationSection(idx)));
+                itemsForAuction.add(AuctionItemTemplate.fromConfig(tmp.getConfigurationSection(idx)));
             }
         }
+        if (firstRun) saveToPlugin();
     }
 
     public void saveToPlugin() {
-        ConfigurationSection tmp = items.createSection("itemsForAuction");
+        YamlConfiguration tmp = new YamlConfiguration();
         for (int i = 0; i < itemsForAuction.size(); i++) {
             itemsForAuction.get(i).dumpTo(tmp.createSection(Integer.toString(i)));
         }
         try {
-            items.save(new File(plugin.getDataFolder(),"items.yml"));
+            tmp.save(new File(plugin.getDataFolder(),"auction-items.yml"));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        serialize(plugin.getConfig(), this);
+        plugin.saveConfig();
+    }
+
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Serializable {
+        String name() default "";
+    }
+
+    public static void deserialize(ConfigurationSection config, Object obj) {
+        Class<?> clz = obj.getClass();
+        for (Field f : clz.getDeclaredFields()) {
+            Serializable anno = f.getAnnotation(Serializable.class);
+            if (anno == null) continue;
+            f.setAccessible(true);
+            String cfgName = anno.name().equals("")? f.getName(): anno.name();
+            try {
+                Object origValue = f.get(obj);
+                Object newValue = config.get(cfgName, origValue);
+                f.set(obj, newValue);
+            } catch (ReflectiveOperationException ex) {
+                HamsterEcoHelper.instance.logger.log(Level.SEVERE, "Failed to deserialize object", ex);
+            }
+        }
+    }
+
+    public static void serialize(ConfigurationSection config, Object obj) {
+        Class<?> clz = obj.getClass();
+        for (Field f : clz.getDeclaredFields()) {
+            Serializable anno = f.getAnnotation(Serializable.class);
+            if (anno == null) continue;
+            f.setAccessible(true);
+            String cfgName = anno.name().equals("")? f.getName(): anno.name();
+            try {
+                Object origValue = f.get(obj);
+                config.set(cfgName, origValue);
+            } catch (ReflectiveOperationException ex) {
+                HamsterEcoHelper.instance.logger.log(Level.SEVERE, "Failed to serialize object", ex);
+            }
         }
     }
 }
