@@ -2,7 +2,9 @@ package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.auction.AuctionInstance;
 import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
+import cat.nyaa.HamsterEcoHelper.data.RequisitionSpecification;
 import cat.nyaa.HamsterEcoHelper.market.Market;
+import cat.nyaa.HamsterEcoHelper.requisition.RequisitionInstance;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -130,6 +132,21 @@ public class CommandHandler implements CommandExecutor {
         plugin.config.saveToPlugin();
     }
 
+    @SubCommand(value = "addreq", permission = "heh.addreq")
+    public void addReq(CommandSender sender, Arguments args) {
+        if (args.length() <= 1) {
+            msg(sender, "manual.command.addreq");
+            return;
+        }
+        // TODO
+        RequisitionSpecification req = new RequisitionSpecification();
+        req.minPurchasePrice = args.nextInt();
+        req.maxPurchasePrice = req.minPurchasePrice;
+        req.randomWeight = args.nextDouble();
+        plugin.config.itemsForReq.add(req);
+        plugin.config.saveToPlugin();
+    }
+
     @SubCommand(value = "save", permission = "heh.admin")
     public void forceSave(CommandSender sender, Arguments arg) {
         plugin.config.saveToPlugin();
@@ -163,6 +180,28 @@ public class CommandHandler implements CommandExecutor {
             return;
         }
         auc.onBid(p, bid);
+    }
+
+    @SubCommand(value = "sell", permission = "heh.sell")
+    public void userSell(CommandSender sender, Arguments args) {
+        Player p = asPlayer(sender);
+        RequisitionInstance req = plugin.reqManager.getCurrentRequisition();
+        if (req == null) {
+            msg(sender, "user.info.no_current_requisition");
+            return;
+        }
+        if (args.length() != 2) {
+            msg(p, "manual.command.sell");
+            return;
+        }
+        int amount = args.nextInt();
+        int price = req.purchase(p, amount);
+        if (price <= 0) {
+            msg(p, "user.req.fail");
+        } else {
+            msg(p, "user.req.success", price);
+            plugin.eco.deposit(p, price);
+        }
     }
 
     @SubCommand(value = "mailbox", permission = "heh.user")

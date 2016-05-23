@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
+import cat.nyaa.HamsterEcoHelper.data.RequisitionSpecification;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -23,8 +24,11 @@ public class Configuration {
     @Serializable
     public int auctionIntervalTicks = 60 * 60 * 20; // 1 hour
     @Serializable
+    public int requisitionIntervalTicks = 60 * 60 * 20; // 1 hour
+    @Serializable
     public int bidTimeoutTicks = 30 * 20; // 30 seconds
     public List<AuctionItemTemplate> itemsForAuction;
+    public List<RequisitionSpecification> itemsForReq;
 
     public Configuration(HamsterEcoHelper plugin) {
         this.plugin = plugin;
@@ -42,16 +46,33 @@ public class Configuration {
                 itemsForAuction.add(AuctionItemTemplate.fromConfig(tmp.getConfigurationSection(idx)));
             }
         }
+
+        itemsForReq = new ArrayList<>();
+        tmp = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(),"requisition-items.yml"));
+        if(tmp!=null) {
+            for (String idx : tmp.getKeys(false)) {
+                itemsForReq.add(RequisitionSpecification.fromConfig(tmp.getConfigurationSection(idx)));
+            }
+        }
+
         if (firstRun) saveToPlugin();
     }
 
     public void saveToPlugin() {
-        YamlConfiguration tmp = new YamlConfiguration();
+        serialize(plugin.getConfig(), this);
+
+        YamlConfiguration aucTmp = new YamlConfiguration();
         for (int i = 0; i < itemsForAuction.size(); i++) {
-            itemsForAuction.get(i).dumpTo(tmp.createSection(Integer.toString(i)));
+            itemsForAuction.get(i).dumpTo(aucTmp.createSection(Integer.toString(i)));
         }
+        YamlConfiguration reqTmp = new YamlConfiguration();
+        for (int i = 0; i < itemsForReq.size(); i++) {
+            itemsForReq.get(i).dumpTo(reqTmp.createSection(Integer.toString(i)));
+        }
+
         try {
-            tmp.save(new File(plugin.getDataFolder(),"auction-items.yml"));
+            aucTmp.save(new File(plugin.getDataFolder(),"auction-items.yml"));
+            reqTmp.save(new File(plugin.getDataFolder(),"requisition-items.yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,7 +96,16 @@ public class Configuration {
             String cfgName = anno.name().equals("")? f.getName(): anno.name();
             try {
                 Object origValue = f.get(obj);
-                Object newValue = config.get(cfgName, origValue);
+                Object newValue;
+                if (f.getType().isEnum()) {
+                    try {
+                        newValue = Enum.valueOf((Class<? extends Enum>) f.getType(), config.getString(cfgName));
+                    } catch (Exception ex) {
+                        newValue = origValue;
+                    }
+                } else {
+                    newValue = config.get(cfgName, origValue);
+                }
                 f.set(obj, newValue);
             } catch (ReflectiveOperationException ex) {
                 HamsterEcoHelper.instance.logger.log(Level.SEVERE, "Failed to deserialize object", ex);
@@ -91,8 +121,13 @@ public class Configuration {
             f.setAccessible(true);
             String cfgName = anno.name().equals("")? f.getName(): anno.name();
             try {
-                Object origValue = f.get(obj);
-                config.set(cfgName, origValue);
+                if (f.getType().isEnum()) {
+                    Enum e = (Enum)f.get(obj);
+                    config.set(cfgName, e.name());
+                } else {
+                    Object origValue = f.get(obj);
+                    config.set(cfgName, origValue);
+                }
             } catch (ReflectiveOperationException ex) {
                 HamsterEcoHelper.instance.logger.log(Level.SEVERE, "Failed to serialize object", ex);
             }

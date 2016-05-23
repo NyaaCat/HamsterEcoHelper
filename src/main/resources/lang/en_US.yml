@@ -15,6 +15,7 @@ user:
     not_player: "Only players can do this"
     not_item_hand: "No item in hand"
     no_current_auction: "No ongoing auction"
+    no_current_requisition: "No ongoing requisition"
     balance: "Balance: %s"
     back: "Back"
     next_page: "Next page"
@@ -33,6 +34,12 @@ user:
     second: "%d$ second"
     third: "%d$ third"
     halted: "Current auction halted"
+  req:
+    new_req: "NEW REQUISITION: %s*%d with price %d; Last for %.2f seconds."
+    finish: "Requisition finished."
+    halted: "Current requisition halted."
+    success: "Item sold. $%d added to your account."
+    fail: "You cannot sell the item."
   market:
     title: "[Market]"
     mailbox: "[Mailbox]"
@@ -45,4 +52,6 @@ manual:
   command:
     addauc: "Usage: /heh addauc [basePrice|int] [stepPrice|int] [randomWeight|double]"
     bid: "Usage: /heh bid [price|int]"
+    addreq: "Usage: /heh addreq [unitPrice|int] [randomWeigth|double]"
     offer: "Usage: /heh offer [UnitPrice|double]"
+    sell: "Usage: /heh sell [Amount|int]"

@@ -31,4 +31,9 @@ public class EconomyHelper {
         EconomyResponse rsp = eco.withdrawPlayer(p, money);
         return rsp.transactionSuccess();
     }
+
+    public boolean deposit(OfflinePlayer p, long money) {
+        EconomyResponse rsp = eco.depositPlayer(p, money);
+        return rsp.transactionSuccess();
+    }
 }
