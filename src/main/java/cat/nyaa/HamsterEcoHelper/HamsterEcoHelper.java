@@ -3,6 +3,7 @@ package cat.nyaa.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
 import cat.nyaa.HamsterEcoHelper.market.Market;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
+import cat.nyaa.HamsterEcoHelper.utils.EconomyHelper;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;

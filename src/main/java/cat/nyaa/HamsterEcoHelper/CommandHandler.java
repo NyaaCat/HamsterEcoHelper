@@ -5,6 +5,7 @@ import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
 import cat.nyaa.HamsterEcoHelper.data.RequisitionSpecification;
 import cat.nyaa.HamsterEcoHelper.market.Market;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionInstance;
+import cat.nyaa.HamsterEcoHelper.utils.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -110,10 +111,7 @@ public class CommandHandler implements CommandExecutor {
         String sub = arg.next();
         if ("showitem".equals(sub) || sender instanceof Player) {
             Player player = (Player) sender;
-            ShowItem t = new ShowItem();
-            t.setItem(player.getInventory().getItemInMainHand());
-            t.setMessage("item: {item} {amount}");
-            t.sendToPlayer(player);
+            new Message("Player has item: ").append(player.getInventory().getItemInMainHand()).send(player);
         }
     }
 

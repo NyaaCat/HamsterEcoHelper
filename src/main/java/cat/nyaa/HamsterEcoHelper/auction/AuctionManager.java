@@ -1,7 +1,7 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.Utils;
+import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
 import org.bukkit.scheduler.BukkitRunnable;
 

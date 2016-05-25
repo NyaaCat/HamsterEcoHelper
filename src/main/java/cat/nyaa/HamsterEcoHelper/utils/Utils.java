@@ -1,4 +1,4 @@
-package cat.nyaa.HamsterEcoHelper;
+package cat.nyaa.HamsterEcoHelper.utils;
 
 import java.util.List;
 import java.util.Random;

@@ -1,6 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
-import cat.nyaa.HamsterEcoHelper.EconomyHelper;
+import cat.nyaa.HamsterEcoHelper.utils.EconomyHelper;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import org.bukkit.Bukkit;

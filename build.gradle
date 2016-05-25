@@ -16,14 +16,14 @@ repositories {
     }
 
     maven {
-    name 'dmulloy2-repo'
-    url 'http://repo.dmulloy2.net/content/groups/public/'
+        name 'dmulloy2-repo'
+        url 'http://repo.dmulloy2.net/content/groups/public/'
     }
 
 }
 
 dependencies {
-    compile 'org.bukkit:bukkit:1.9.2-R0.1-SNAPSHOT'
+    compile 'org.spigotmc:spigot-api:1.9.4-R0.1-SNAPSHOT'
     compile 'com.comphenix.protocol:ProtocolLib:3.6.5'
     compile 'net.milkbowl.vault:VaultAPI:1.5'
 }

@@ -1,5 +1,6 @@
-package cat.nyaa.HamsterEcoHelper;
+package cat.nyaa.HamsterEcoHelper.utils;
 
+import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
