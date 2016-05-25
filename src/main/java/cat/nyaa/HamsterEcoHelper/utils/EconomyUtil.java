@@ -6,11 +6,11 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class EconomyHelper {
+public class EconomyUtil {
     private final HamsterEcoHelper plugin;
     public final Economy eco;
 
-    public EconomyHelper(HamsterEcoHelper p) {
+    public EconomyUtil(HamsterEcoHelper p) {
         plugin = p;
         RegisteredServiceProvider<Economy> provider = p.getServer().getServicesManager().getRegistration(Economy.class);
         if (provider != null) {

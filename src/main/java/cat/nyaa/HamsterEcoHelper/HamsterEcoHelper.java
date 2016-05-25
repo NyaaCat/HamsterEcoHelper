@@ -3,7 +3,7 @@ package cat.nyaa.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
 import cat.nyaa.HamsterEcoHelper.market.Market;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
-import cat.nyaa.HamsterEcoHelper.utils.EconomyHelper;
+import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -14,7 +14,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public Configuration config;
     public AuctionManager auctionManager;
     public RequisitionManager reqManager;
-    public EconomyHelper eco;
+    public EconomyUtil eco;
 
     @Override
     public void onLoad() {
@@ -29,7 +29,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     @Override
     public void onEnable() {
         getCommand("hemsterecohelper").setExecutor(new CommandHandler(this));
-        eco = new EconomyHelper(this);
+        eco = new EconomyUtil(this);
         auctionManager = new AuctionManager(this);
         reqManager = new RequisitionManager(this);
         Market.init(this);

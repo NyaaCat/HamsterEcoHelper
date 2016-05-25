@@ -1,6 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
-import cat.nyaa.HamsterEcoHelper.utils.EconomyHelper;
+import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import org.bukkit.Bukkit;
@@ -94,7 +94,7 @@ public class AuctionInstance {
     }
 
     public void finish() {
-        EconomyHelper e = plugin.eco;
+        EconomyUtil e = plugin.eco;
         if (currentPlayer == null) {
             Bukkit.broadcast(I18n.get("user.auc.fail", itemName), "heh.bid");
         } else {
