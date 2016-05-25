@@ -4,26 +4,24 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+    jcenter()
     maven {
         name 'spigot-repo'
         url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
 
     maven {
-        name 'vault-repo'
-        url 'http://nexus.theyeticave.net/content/repositories/pub_releases'
+        name 'sonatype'
+        url 'https://oss.sonatype.org/content/groups/public'
     }
 
     maven {
-        name 'dmulloy2-repo'
-        url 'http://repo.dmulloy2.net/content/groups/public/'
+        name 'vault-repo'
+        url 'http://nexus.theyeticave.net/content/repositories/pub_releases'
     }
-
 }
 
 dependencies {
     compile 'org.spigotmc:spigot-api:1.9.4-R0.1-SNAPSHOT'
-    compile 'com.comphenix.protocol:ProtocolLib:3.6.5'
     compile 'net.milkbowl.vault:VaultAPI:1.5'
 }
