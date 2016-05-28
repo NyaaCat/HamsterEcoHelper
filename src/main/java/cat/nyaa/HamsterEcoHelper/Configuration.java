@@ -1,7 +1,7 @@
 package cat.nyaa.HamsterEcoHelper;
 
-import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
-import cat.nyaa.HamsterEcoHelper.data.RequisitionSpecification;
+import cat.nyaa.HamsterEcoHelper.auction.AuctionItemTemplate;
+import cat.nyaa.HamsterEcoHelper.requisition.RequisitionSpecification;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 

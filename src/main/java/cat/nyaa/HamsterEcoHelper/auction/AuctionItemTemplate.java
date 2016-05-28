@@ -1,10 +1,10 @@
-package cat.nyaa.HamsterEcoHelper.data;
+package cat.nyaa.HamsterEcoHelper.auction;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import static cat.nyaa.HamsterEcoHelper.Configuration.*;
 
-public class AuctionItemTemplate implements ISerializable {
+public class AuctionItemTemplate{
     @Serializable
     public ItemStack templateItemStack = null;
     @Serializable
@@ -14,14 +14,12 @@ public class AuctionItemTemplate implements ISerializable {
     @Serializable
     public double randomWeight = 100;
 
-    @Override
     public void loadFrom(ConfigurationSection s) {
         deserialize(s, this);
         if (templateItemStack == null)
             throw new IllegalArgumentException("AuctionItemTemplate gets `null` item");
     }
 
-    @Override
     public void dumpTo(ConfigurationSection s) {
         serialize(s, this);
     }

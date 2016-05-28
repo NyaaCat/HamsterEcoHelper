@@ -1,7 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.data.RequisitionSpecification;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

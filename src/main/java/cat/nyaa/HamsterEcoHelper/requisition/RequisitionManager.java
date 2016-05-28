@@ -3,7 +3,6 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.data.RequisitionSpecification;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 

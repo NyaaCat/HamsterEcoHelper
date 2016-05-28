@@ -1,7 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
