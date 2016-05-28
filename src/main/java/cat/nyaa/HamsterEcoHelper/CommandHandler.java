@@ -1,10 +1,8 @@
 package cat.nyaa.HamsterEcoHelper;
 
-import cat.nyaa.HamsterEcoHelper.auction.AuctionInstance;
-import cat.nyaa.HamsterEcoHelper.data.AuctionItemTemplate;
-import cat.nyaa.HamsterEcoHelper.data.RequisitionSpecification;
+import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.market.Market;
-import cat.nyaa.HamsterEcoHelper.requisition.RequisitionInstance;
+import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
 import cat.nyaa.HamsterEcoHelper.utils.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,6 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,11 +48,24 @@ public class CommandHandler implements CommandExecutor {
 
     public CommandHandler(HamsterEcoHelper plugin) {
         this.plugin = plugin;
-        for (Method m : getClass().getDeclaredMethods()) {
+        registerSubcommandHandler(CommandHandler.class);
+        registerSubcommandHandler(RequisitionCommands.class);
+        registerSubcommandHandler(AuctionCommands.class);
+    }
+
+    private void registerSubcommandHandler(Class<?> handlerClass) {
+        for (Method m : handlerClass.getDeclaredMethods()) {
+            if (!Modifier.isStatic(m.getModifiers())) {
+                plugin.getLogger().warning(I18n.get("internal.warn.bad_subcommand", m.toString()));
+                continue;
+            }
             SubCommand anno = m.getAnnotation(SubCommand.class);
             if (anno == null) continue;
             Class<?>[] params = m.getParameterTypes();
-            if (!(params.length == 2 && params[0] == CommandSender.class && params[1] == Arguments.class)) {
+            if (!(params.length == 3 &&
+                    params[0] == CommandSender.class &&
+                    params[1] == Arguments.class &&
+                    params[2] == HamsterEcoHelper.class)) {
                 plugin.getLogger().warning(I18n.get("internal.warn.bad_subcommand", m.toString()));
             } else {
                 m.setAccessible(true);
@@ -82,7 +94,7 @@ public class CommandHandler implements CommandExecutor {
             }
 
             try {
-                subCommands.get(subCommand.toLowerCase()).invoke(this, sender, cmd);
+                subCommands.get(subCommand.toLowerCase()).invoke(null, sender, cmd, plugin);
             } catch (ReflectiveOperationException ex) {
                 Throwable cause = ex.getCause();
                 if (cause != null && cause instanceof RuntimeException)
@@ -102,126 +114,39 @@ public class CommandHandler implements CommandExecutor {
     }
 
     @SubCommand("help")
-    public void printHelp(CommandSender sender, Arguments arg) {
+    public static void printHelp(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         sender.sendMessage("Under construction...");
     }
 
     @SubCommand(value = "debug", permission = "heh.debug")
-    public void debug(CommandSender sender, Arguments arg) {
-        String sub = arg.next();
+    public static void debug(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+        String sub = args.next();
         if ("showitem".equals(sub) || sender instanceof Player) {
             Player player = (Player) sender;
             new Message("Player has item: ").append(player.getInventory().getItemInMainHand()).send(player);
         }
     }
 
-    @SubCommand(value = "addauc", permission = "heh.addauction")
-    public void addAuc(CommandSender sender, Arguments args) {
-        if (args.length() != 4) {
-            msg(sender, "manual.command.addauc");
-            return;
-        }
-        AuctionItemTemplate item = new AuctionItemTemplate();
-        item.templateItemStack = getItemInHand(sender).clone();
-        item.baseAuctionPrice = args.nextInt();
-        item.bidStepPrice = args.nextInt();
-        item.randomWeight = args.nextDouble();
-        plugin.config.itemsForAuction.add(item);
-        plugin.config.saveToPlugin();
-    }
-
-    @SubCommand(value = "addreq", permission = "heh.addreq")
-    public void addReq(CommandSender sender, Arguments args) {
-        if (args.length() <= 1) {
-            msg(sender, "manual.command.addreq");
-            return;
-        }
-        // TODO
-        RequisitionSpecification req = new RequisitionSpecification();
-        req.itemTemplate = getItemInHand(sender).clone();
-        req.minPurchasePrice = args.nextInt();
-        req.maxPurchasePrice = req.minPurchasePrice;
-        req.randomWeight = args.nextDouble();
-        plugin.config.itemsForReq.add(req);
-        plugin.config.saveToPlugin();
-    }
-
-    @SubCommand(value = "runauc", permission = "heh.runauc")
-    public void runAuction(CommandSender sender, Arguments args) {
-        plugin.auctionManager.newAuction();
-    }
-
-    @SubCommand(value = "runreq", permission = "heh.runreq")
-    public void runRequisition(CommandSender sender, Arguments args) {
-        plugin.reqManager.newRequisition();
-    }
-
     @SubCommand(value = "save", permission = "heh.admin")
-    public void forceSave(CommandSender sender, Arguments arg) {
+    public static void forceSave(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         plugin.config.saveToPlugin();
         msg(sender, "admin.info.save_done");
     }
 
     @SubCommand(value = "force-load", permission = "heh.admin")
-    public void forceLoad(CommandSender sender, Arguments args) {
+    public static void forceLoad(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         plugin.config.loadFromPlugin();
         msg(sender, "admin.info.load_done");
     }
 
-    @SubCommand(value = "bid", permission = "heh.bid")
-    public void userBid(CommandSender sender, Arguments args) {
-        Player p = asPlayer(sender);
-        AuctionInstance auc = plugin.auctionManager.getCurrentAuction();
-        if (auc == null) {
-            msg(p, "user.info.no_current_auc");
-            return;
-        }
-        if (args.length() == 1) {
-            msg(sender, "manual.command.bid");
-            return;
-        }
-        int bid = args.nextInt();
-        if (!plugin.eco.enoughMoney(p, bid)) {
-            msg(p, "user.warn.no_enough_money");
-            return;
-        }
-        if (bid < auc.currentHighPrice + auc.stepPr) {
-            msg(p, "user.warn.not_high_enough", auc.currentHighPrice + auc.stepPr);
-            return;
-        }
-        auc.onBid(p, bid);
-    }
-
-    @SubCommand(value = "sell", permission = "heh.sell")
-    public void userSell(CommandSender sender, Arguments args) {
-        Player p = asPlayer(sender);
-        RequisitionInstance req = plugin.reqManager.getCurrentRequisition();
-        if (req == null) {
-            msg(sender, "user.info.no_current_requisition");
-            return;
-        }
-        if (args.length() != 2) {
-            msg(p, "manual.command.sell");
-            return;
-        }
-        int amount = args.nextInt();
-        int price = req.purchase(p, amount);
-        if (price <= 0) {
-            msg(p, "user.req.fail");
-        } else {
-            msg(p, "user.req.success", price);
-            plugin.eco.deposit(p, price);
-        }
-    }
-
     @SubCommand(value = "mailbox", permission = "heh.user")
-    public void openMailbox(CommandSender sender, Arguments args) {
+    public static void openMailbox(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Player player = (Player) sender;
         Market.openMailbox(player);
     }
 
     @SubCommand(value = "offer", permission = "heh.offer")
-    public void offer(CommandSender sender, Arguments args) {
+    public static void offer(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         if (args.length() == 2) {
             Player player = (Player) sender;
             double price=0.0;
@@ -248,7 +173,7 @@ public class CommandHandler implements CommandExecutor {
     }
 
     @SubCommand(value = "view", permission = "heh.view")
-    public void view(CommandSender sender, Arguments args) {
+    public static void view(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Player player = (Player) sender;
         if(args.length()==2){
             OfflinePlayer seller = Bukkit.getOfflinePlayer(args.next());
@@ -260,7 +185,7 @@ public class CommandHandler implements CommandExecutor {
         }
     }
 
-    private Player asPlayer(CommandSender target) {
+    public static Player asPlayer(CommandSender target) {
         if (target instanceof Player) {
             return (Player) target;
         } else {
@@ -268,11 +193,11 @@ public class CommandHandler implements CommandExecutor {
         }
     }
 
-    private void msg(CommandSender target, String template, Object... args) {
+    public static void msg(CommandSender target, String template, Object... args) {
         target.sendMessage(I18n.get(template, args));
     }
 
-    private ItemStack getItemInHand(CommandSender se) {
+    public static ItemStack getItemInHand(CommandSender se) {
         if (se instanceof Player) {
             Player p = (Player) se;
             if (p.getInventory() != null) {
@@ -287,7 +212,7 @@ public class CommandHandler implements CommandExecutor {
         }
     }
 
-    private static class Arguments {
+    public static class Arguments {
 
         private List<String> parsedArguments = new ArrayList<>();
         private int index = 0;
@@ -385,7 +310,7 @@ public class CommandHandler implements CommandExecutor {
 
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
-    private @interface SubCommand {
+    public @interface SubCommand {
         String value();
 
         String permission() default "";
