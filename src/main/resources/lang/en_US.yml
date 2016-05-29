@@ -9,6 +9,9 @@ admin:
   info:
     save_done: "Force save done."
     load_done: "Force load done."
+  error:
+    req_id_oor: "Requisition Id out of range %d~%d"
+    run_req_fail: "Cannot start requisition. May have ongoing requisition."
 
 user:
   info:
@@ -19,10 +22,13 @@ user:
     balance: "Balance: %s"
     back: "Back"
     next_page: "Next page"
+    command_complete: "Command Executed!"
   error:
     bad_command: "Wrong command: %s"
     not_int: "Not a valid integer"
     not_double: "Not a valid number"
+    command_exception: "Internal server error. Unable to run command."
+    bad_enum: "Not valid for enum type: %s. Values: %s"
   warn:
     no_enough_money: "You do not have that much money"
     not_high_enough: "Invalid price, at least %d$"
@@ -36,11 +42,16 @@ user:
     third: "%d$ third"
     halted: "Current auction halted"
   req:
-    new_req: "NEW REQUISITION: %s*%d with price %d; Last for %.2f seconds."
+    new_req_0: "NEW REQUISITION: "
+    new_req_1: "*%d with price %d; Last for %.2f seconds."
     finish: "Requisition finished."
     halted: "Current requisition halted."
     success: "Item sold. $%d added to your account."
     fail: "You cannot sell the item."
+    not_enough: "No enough items in hand."
+    sell_amount_limit: "You can sell at most %d items."
+    not_match: "Item in hand does not match."
+    sold_out: "Requisition limit reached. Requisition finished."
   market:
     title: "[Market]"
     mailbox: "[Mailbox]"
@@ -53,6 +64,6 @@ manual:
   command:
     addauc: "Usage: /heh addauc [basePrice|int] [stepPrice|int] [randomWeight|double]"
     bid: "Usage: /heh bid [price|int]"
-    addreq: "Usage: /heh addreq [unitPrice|int] [randomWeigth|double]"
+    addreq: "Usage: /heh addreq [minUnitPrice|int] [maxUnitPrice|int] [minAmount|int] [maxAmount|int] [randomWeigth|double] [timeoutTicks|int] [exactMatch|bool] [minDamageValue|int] [maxDamageValue|int] [enchantMatch|string:EXACT:CONTAINS:ARBITRARY] [loreMatch|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [nameMatch|string:EXACT:EXACT_TEXT:ARBITRARY]"
     offer: "Usage: /heh offer [UnitPrice|double]"
     sell: "Usage: /heh sell [Amount|int]"

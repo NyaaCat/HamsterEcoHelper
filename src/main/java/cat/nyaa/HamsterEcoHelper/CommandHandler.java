@@ -102,13 +102,16 @@ public class CommandHandler implements CommandExecutor {
                 else
                     throw new RuntimeException("Failed to invoke subcommand", ex);
             }
+            msg(sender, "user.info.command_complete");
         } catch (NotPlayerException ex) {
             msg(sender, "user.info.not_player");
         } catch (NoItemInHandException ex) {
             msg(sender, "user.info.no_item_hand");
+        } catch (BadCommandException ex) {
+            sender.sendMessage(ex.getMessage());
         } catch (Exception ex) {
             ex.printStackTrace();
-            sender.sendMessage("Internal Server Error");
+            msg(sender, "user.error.command_exception");
         }
         return true;
     }
@@ -302,6 +305,25 @@ public class CommandHandler implements CommandExecutor {
             }
         }
 
+        public <T extends Enum<T>> T nextEnum(Class<T> cls) {
+            String str = next();
+            if (str == null) throw new BadCommandException("No more EnumValues in argument");
+            try {
+                return Enum.valueOf(cls, str);
+            } catch (IllegalArgumentException ex) {
+                String vals = "";
+                for (T k : cls.getEnumConstants()) {
+                    vals += k.name() + "|";
+                }
+                throw new BadCommandException(I18n.get("user.error.bad_enum", cls.getName(), vals));
+            }
+        }
+
+        public boolean nextBoolean() {
+            String str = next();
+            if (str == null) throw new BadCommandException("No more booleans in argument");
+            return Boolean.parseBoolean(str);
+        }
 
         public int length() {
             return parsedArguments.size();

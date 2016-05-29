@@ -28,6 +28,12 @@ public class RequisitionManager extends BukkitRunnable {
                 (RequisitionSpecification i) -> i.randomWeight
         );
         if (item == null) return false;
+        return newRequisition(item);
+    }
+
+    public boolean newRequisition(RequisitionSpecification item) {
+        if (currentReq != null) return false;
+        if (item == null) return false;
 
         int unitPrice = Utils.inclusiveRandomInt(item.minPurchasePrice, item.maxPurchasePrice);
         int amount = item.maxAmount < 0? -1: Utils.inclusiveRandomInt(item.minAmount, item.maxAmount);

@@ -1,5 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.utils;
 
+import cat.nyaa.HamsterEcoHelper.I18n;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,6 +13,15 @@ public class Message {
 
     public Message(String text) {
         inner = new TextComponent(text);
+    }
+
+    public Message append(String text) {
+        inner.addExtra(text);
+        return this;
+    }
+
+    public Message appendFormat(String template, Object... obj) {
+        return append(I18n.get(template, obj));
     }
 
     public Message append(ItemStack item) {
