@@ -10,6 +10,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -129,6 +130,13 @@ public class CommandHandler implements CommandExecutor {
             new Message("Player has item: ").append(player.getInventory().getItemInMainHand()).send(player);
         } else if ("dbi".equals(sub) && sender instanceof Player) {
             plugin.database.addTemporaryStorage((Player)sender, new ItemStack(Material.DIAMOND, 64));
+        } else if ("ymllist".equals(sub)) {
+            List<ItemStack> t = new ArrayList<ItemStack>(){{add(new ItemStack(Material.DIAMOND));
+            add(new ItemStack(Material.ACACIA_DOOR));}};
+            YamlConfiguration yml = new YamlConfiguration();
+            yml.addDefault("abc", t);
+            yml.set("abc", t);
+            sender.sendMessage("\n"+yml.saveToString());
         }
     }
 

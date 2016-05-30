@@ -8,7 +8,7 @@ import static cat.nyaa.HamsterEcoHelper.CommandHandler.*;
 public class RequisitionCommands {
     @SubCommand(value = "addreq", permission = "heh.addreq")
     public static void addReq(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        if (args.length() <= 1) {
+        if (args.length() != 13) {
             msg(sender, "manual.command.addreq");
             return;
         }

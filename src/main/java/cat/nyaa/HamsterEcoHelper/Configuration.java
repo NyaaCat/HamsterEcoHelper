@@ -25,8 +25,7 @@ public class Configuration {
     public int auctionIntervalTicks = 60 * 60 * 20; // 1 hour
     @Serializable
     public int requisitionIntervalTicks = 60 * 60 * 20; // 1 hour
-    @Serializable
-    public int bidTimeoutTicks = 30 * 20; // 30 seconds
+
     public List<AuctionItemTemplate> itemsForAuction;
     public List<RequisitionSpecification> itemsForReq;
 

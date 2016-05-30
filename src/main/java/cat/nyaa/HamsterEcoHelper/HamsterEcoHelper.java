@@ -18,6 +18,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public RequisitionManager reqManager;
     public EconomyUtil eco;
     public Database database;
+    public Events eventHandler;
 
     @Override
     public void onLoad() {
@@ -38,7 +39,7 @@ public class HamsterEcoHelper extends JavaPlugin {
             auctionManager = new AuctionManager(this);
             reqManager = new RequisitionManager(this);
             Market.init(this);
-            getServer().getPluginManager().registerEvents(new Events(), this);
+            eventHandler = new Events(this);
             enableComplete = true;
         } catch (Exception ex) {
             ex.printStackTrace();

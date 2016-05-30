@@ -19,6 +19,19 @@ public class AuctionManager extends BukkitRunnable {
         newAuction();
     }
 
+    public boolean newAuction(AuctionItemTemplate item) {
+        if (currentAuction != null) return false;
+        if (item == null) return false;
+        currentAuction = new AuctionInstance(item.getItemStack(),
+                item.baseAuctionPrice,
+                item.bidStepPrice,
+                item.waitTimeTicks,
+                item.hideName,
+                plugin,
+                ()->this.currentAuction = null);
+        return true;
+    }
+
     public boolean newAuction() {
         if (currentAuction != null) return false;
         if (plugin.config.itemsForAuction.size() == 0) return false;
@@ -27,7 +40,7 @@ public class AuctionManager extends BukkitRunnable {
         if (bidItem == null) return false; // wtf?
 
         currentAuction = new AuctionInstance(bidItem.getItemStack(), bidItem.baseAuctionPrice, bidItem.bidStepPrice,
-                plugin.config.bidTimeoutTicks, plugin, ()->this.currentAuction = null);
+                bidItem.waitTimeTicks, bidItem.hideName, plugin, ()->this.currentAuction = null);
         return true;
     }
 

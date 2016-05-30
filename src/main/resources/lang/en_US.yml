@@ -15,7 +15,9 @@ admin:
     load_done: "Force load done."
   error:
     req_id_oor: "Requisition Id out of range %d~%d"
+    auc_id_oor: "Auction Id out of range %d~%d"
     run_req_fail: "Cannot start requisition. May have ongoing requisition."
+    run_auc_fail: "Cannot start auction. May have ongoing auction."
 
 user:
   info:
@@ -27,6 +29,7 @@ user:
     back: "Back"
     next_page: "Next page"
     command_complete: "Command Executed!"
+    has_temporary_storage: "You have item in temporary storage. Acquire with '/heh retrieve'"
   error:
     bad_command: "Wrong command: %s"
     not_int: "Not a valid integer"
@@ -38,16 +41,25 @@ user:
     not_high_enough: "Invalid price, at least %d$"
     not_enough_space: "You mailbox is full!"
   auc:
-    new_auction: "NEW AUCTION: %s; Start from %d$ with step price %d$; Respond in %d seconds"
+    new_auction_0: "NEW AUCTION: "
+    new_auction_1: "; Starts from %d$ with step price %d$; Please response in %d seconds with '/heh bid [price]'"
+    new_auction_unknown: "NEW AUCTION: MYSTERY ITEM; Starts from %d$ with step price %d$; Please response in %d seconds with '/heh bid [price]'"
+    mystery_item_placeholder: "MYSTERY ITEM"
     new_price: "Player %s gives a higher price for %s: %d$"
     new_price_success: "You've put a new price!"
     first: "%d$ first"
     second: "%d$ second"
     third: "%d$ third"
     halted: "Current auction halted"
+    success_0: "DONE! Item: "
+    success_1: " was given to player %s"
+    fail: "Auction finished. No one gets the item: %s"
+    item_given_1: "Item has been put into your inventory"
+    item_given_2: "Item has been put into your EnderChest"
+    item_given_3: "Item has been put into your temporary storage. Acquire with '/heh retrieve'"
   req:
     new_req_0: "NEW REQUISITION: "
-    new_req_1: "*%d with price %d; Last for %.2f seconds."
+    new_req_1: "*%d with price %d; Last for %.2f seconds. Please response with '/heh sell [amount]'"
     finish: "Requisition finished."
     halted: "Current requisition halted."
     success: "Item sold. $%d added to your account."
@@ -69,7 +81,7 @@ user:
 
 manual:
   command:
-    addauc: "Usage: /heh addauc [basePrice|int] [stepPrice|int] [randomWeight|double]"
+    addauc: "Usage: /heh addauc [basePrice|int] [stepPrice|int] [randomWeight|double] [hideName|bool] [waitTimeTicks|int]"
     bid: "Usage: /heh bid [price|int]"
     addreq: "Usage: /heh addreq [minUnitPrice|int] [maxUnitPrice|int] [minAmount|int] [maxAmount|int] [randomWeigth|double] [timeoutTicks|int] [exactMatch|bool] [minDamageValue|int] [maxDamageValue|int] [enchantMatch|string:EXACT:CONTAINS:ARBITRARY] [loreMatch|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [nameMatch|string:EXACT:EXACT_TEXT:ARBITRARY]"
     offer: "Usage: /heh offer [UnitPrice|double]"

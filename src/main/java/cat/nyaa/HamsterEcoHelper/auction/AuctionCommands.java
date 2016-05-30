@@ -13,7 +13,7 @@ public class AuctionCommands {
 
     @SubCommand(value = "addauc", permission = "heh.addauction")
     public static void addAuc(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        if (args.length() != 4) {
+        if (args.length() != 6) {
             msg(sender, "manual.command.addauc");
             return;
         }
@@ -22,15 +22,40 @@ public class AuctionCommands {
         item.baseAuctionPrice = args.nextInt();
         item.bidStepPrice = args.nextInt();
         item.randomWeight = args.nextDouble();
+        item.hideName = args.nextBoolean();
+        item.waitTimeTicks = args.nextInt();
         plugin.config.itemsForAuction.add(item);
         plugin.config.saveToPlugin();
     }
 
     @SubCommand(value = "runauc", permission = "heh.runauc")
     public static void runAuction(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        plugin.auctionManager.newAuction();
+        boolean success;
+        if (args.length() == 2) {
+            int id = args.nextInt();
+            if (id < 0 || id >= plugin.config.itemsForAuction.size()) {
+                msg(sender, "admin.error.auc_id_oor", 0, plugin.config.itemsForAuction.size() - 1);
+                return;
+            } else {
+                success = plugin.auctionManager.newAuction(plugin.config.itemsForAuction.get(id));
+            }
+        } else {
+            success = plugin.auctionManager.newAuction();
+        }
+        if (!success) {
+            msg(sender, "admin.error.run_auc_fail");
+        }
     }
 
+    @SubCommand(value = "haltauc", permission = "heh.runauc")
+    public static void haltAuction(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+        AuctionInstance auc = plugin.auctionManager.getCurrentAuction();
+        if (auc == null) {
+            msg(sender, "user.info.no_current_auction");
+            return;
+        }
+        plugin.auctionManager.halt();
+    }
 
     @SubCommand(value = "bid", permission = "heh.bid")
     public static void userBid(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
@@ -49,8 +74,9 @@ public class AuctionCommands {
             msg(p, "user.warn.no_enough_money");
             return;
         }
-        if (bid < auc.currentHighPrice + auc.stepPr) {
-            msg(p, "user.warn.not_high_enough", auc.currentHighPrice + auc.stepPr);
+        long minPrice = auc.currentHighPrice == -1? auc.startPr: auc.currentHighPrice + auc.stepPr;
+        if (bid < minPrice) {
+            msg(p, "user.warn.not_high_enough", minPrice);
             return;
         }
         auc.onBid(p, bid);

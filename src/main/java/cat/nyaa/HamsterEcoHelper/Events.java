@@ -1,6 +1,5 @@
 package cat.nyaa.HamsterEcoHelper;
 
-
 import cat.nyaa.HamsterEcoHelper.market.Market;
 import cat.nyaa.HamsterEcoHelper.market.MarketItem;
 import org.bukkit.Material;
@@ -9,11 +8,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
-
+import java.util.List;
 
 public class Events implements Listener {
+    private final HamsterEcoHelper plugin;
+    public Events(HamsterEcoHelper plugin) {
+        this.plugin = plugin;
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
+
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
         Player player = (Player) e.getPlayer();
@@ -60,6 +67,14 @@ public class Events implements Listener {
                 Market.view(player, Market.viewPage.get(player) + 1, seller);
             }
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent ev) {
+        List<ItemStack> items = plugin.database.getTemporaryStorage(ev.getPlayer());
+        if (items.size() > 0) {
+            CommandHandler.msg(ev.getPlayer(), "user.info.has_temporary_storage");
         }
     }
 }

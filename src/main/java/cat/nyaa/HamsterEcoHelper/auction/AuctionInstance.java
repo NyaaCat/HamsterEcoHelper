@@ -1,10 +1,11 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
-import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
+import cat.nyaa.HamsterEcoHelper.utils.Message;
+import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,25 +20,30 @@ public class AuctionInstance {
         public void run() {
             switch (stage) {
                 case 0:
-                    Bukkit.broadcast(I18n.get("user.auc.first", currentHighPrice), "heh.bid");
+                    if (currentHighPrice >= 0)
+                        Bukkit.broadcast(I18n.get("user.auc.first", currentHighPrice), "heh.bid");
                     stage = 1;
                     checkPointListener = new CheckPointListener();
                     checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 1:
-                    Bukkit.broadcast(I18n.get("user.auc.second", currentHighPrice), "heh.bid");
+                    if (currentHighPrice >= 0)
+                        Bukkit.broadcast(I18n.get("user.auc.second", currentHighPrice), "heh.bid");
                     stage = 2;
                     checkPointListener = new CheckPointListener();
                     checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 2:
-                    Bukkit.broadcast(I18n.get("user.auc.third", currentHighPrice), "heh.bid");
+                    if (currentHighPrice >= 0)
+                        Bukkit.broadcast(I18n.get("user.auc.third", currentHighPrice), "heh.bid");
+                    finish();
+                    /*
                     stage = 3;
                     checkPointListener = new CheckPointListener();
                     checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 3:
-                    finish();
+                    finish();*/
             }
         }
 
@@ -55,7 +61,6 @@ public class AuctionInstance {
     private int stage = 0;
     public long currentHighPrice = -1;
     private OfflinePlayer currentPlayer = null;
-    private Location dropLocation = null;
     private CheckPointListener checkPointListener;
 
     private String itemName;
@@ -64,16 +69,22 @@ public class AuctionInstance {
     public int stepPr;
     public int timeout;
 
-    public AuctionInstance(ItemStack itemToGive, int startPrice, int stepPrice, int timeout, HamsterEcoHelper plugin, Runnable finishCallback) {
+    public AuctionInstance(ItemStack itemToGive, int startPrice, int stepPrice, int timeout, boolean hideName, HamsterEcoHelper plugin, Runnable finishCallback) {
         itemStack = itemToGive;
         startPr = startPrice;
         stepPr = stepPrice;
         this.timeout = timeout;
         this.plugin = plugin;
         this.finishCallback = finishCallback;
-        String name = itemToGive.hasItemMeta() ? itemToGive.getItemMeta().getDisplayName() : itemToGive.getType().name();
-        itemName = name;
-        Bukkit.broadcast(I18n.get("user.auc.new_auction", name, startPrice, stepPrice, (int) Math.floor(timeout / 20D)), "heh.bid");
+        if (hideName) {
+            Bukkit.broadcast(I18n.get("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D)), "heh.bid");
+            itemName = I18n.get("user.auc.mystery_item_placeholder");
+        } else {
+            new Message(I18n.get("user.auc.new_auction_0")).append(itemToGive)
+                    .appendFormat("user.auc.new_auction_1", startPrice, stepPrice, (int) Math.floor(timeout / 20D))
+                    .broadcast();
+            itemName = itemToGive.hasItemMeta() ? itemToGive.getItemMeta().getDisplayName() : itemToGive.getType().name();
+        }
         checkPointListener = new CheckPointListener();
         checkPointListener.runTaskLater(plugin, timeout);
     }
@@ -81,14 +92,14 @@ public class AuctionInstance {
     public boolean onBid(Player p, int price) {
         currentHighPrice = price;
         currentPlayer = p;
-        dropLocation = p.getEyeLocation();
         involvedPlayers.add(p);
         for (Player p2 : involvedPlayers) {
             if (p2.isOnline() && !p2.equals(p)) {
                 p2.sendMessage(I18n.get("user.auc.new_price", p.getName(), itemName, price));
             }
         }
-        p.sendRawMessage(I18n.get("user.auc.new_price_success"));
+        p.sendMessage(I18n.get("user.auc.new_price_success"));
+        stage = 0;
         checkPointListener.resetTime();
         return true;
     }
@@ -100,7 +111,13 @@ public class AuctionInstance {
         } else {
             boolean success = e.withdraw(currentPlayer, currentHighPrice);
             if (success) {
-                dropLocation.getWorld().dropItem(dropLocation, itemStack.clone());
+                int stat = Utils.giveItem(currentPlayer, itemStack);
+                if (currentPlayer.isOnline() && currentPlayer instanceof Player) {
+                    ((Player) currentPlayer).sendMessage(I18n.get("user.auc.item_given_" + Integer.toString(stat)));
+                }
+                new Message(I18n.get("user.auc.success_0")).append(itemStack)
+                        .appendFormat("user.auc.success_1", currentPlayer.getName())
+                        .broadcast();
             } else {
                 Bukkit.broadcast(I18n.get("user.auc.fail", itemName), "heh.bid");
             }
