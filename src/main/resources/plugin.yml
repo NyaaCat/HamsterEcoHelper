@@ -5,6 +5,7 @@ version: 1.0
 depend: [Vault,ProtocolLib]
 authors: [cyilin, RecursiveG]
 website: "https://github.com/NyaaCat/HamsterEcoHelper"
+database: true
 
 commands:
   hemsterecohelper:
@@ -30,6 +31,7 @@ permissions:
       heh.sell: true
       heh.buy: true
       heh.bid: true
+      heh.retrieve: true
       heh.command: true
   heh.admin:
     description: Permission node for operators

@@ -55,12 +55,12 @@ public class CommandHandler implements CommandExecutor {
 
     private void registerSubcommandHandler(Class<?> handlerClass) {
         for (Method m : handlerClass.getDeclaredMethods()) {
+            SubCommand anno = m.getAnnotation(SubCommand.class);
+            if (anno == null) continue;
             if (!Modifier.isStatic(m.getModifiers())) {
                 plugin.getLogger().warning(I18n.get("internal.warn.bad_subcommand", m.toString()));
                 continue;
             }
-            SubCommand anno = m.getAnnotation(SubCommand.class);
-            if (anno == null) continue;
             Class<?>[] params = m.getParameterTypes();
             if (!(params.length == 3 &&
                     params[0] == CommandSender.class &&
@@ -124,9 +124,11 @@ public class CommandHandler implements CommandExecutor {
     @SubCommand(value = "debug", permission = "heh.debug")
     public static void debug(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         String sub = args.next();
-        if ("showitem".equals(sub) || sender instanceof Player) {
+        if ("showitem".equals(sub) && sender instanceof Player) {
             Player player = (Player) sender;
             new Message("Player has item: ").append(player.getInventory().getItemInMainHand()).send(player);
+        } else if ("dbi".equals(sub) && sender instanceof Player) {
+            plugin.database.addTemporaryStorage((Player)sender, new ItemStack(Material.DIAMOND, 64));
         }
     }
 

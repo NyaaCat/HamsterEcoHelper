@@ -4,6 +4,10 @@ internal:
     lang_not_found: "Language %s not found."
   info:
     using_language: "Using language: %s"
+    installing_db: "Installing database..."
+  error:
+    missing_sqlite_driver: "SQLite Driver not found. Plugin disabled."
+    enable_fail: "Plugin failed to enable"
 
 admin:
   info:
@@ -59,6 +63,9 @@ user:
     price: "Price: %s"
     offered: "offered by: %s"
     my_items: "My items"
+  retrieve:
+    need_confirm: "The items will drop from your current position. Please ensure the safety. Use '/heh retrieve confirm'"
+    no_item: "You have no item to retrieve."
 
 manual:
   command:
@@ -67,3 +74,4 @@ manual:
     addreq: "Usage: /heh addreq [minUnitPrice|int] [maxUnitPrice|int] [minAmount|int] [maxAmount|int] [randomWeigth|double] [timeoutTicks|int] [exactMatch|bool] [minDamageValue|int] [maxDamageValue|int] [enchantMatch|string:EXACT:CONTAINS:ARBITRARY] [loreMatch|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [nameMatch|string:EXACT:EXACT_TEXT:ARBITRARY]"
     offer: "Usage: /heh offer [UnitPrice|double]"
     sell: "Usage: /heh sell [Amount|int]"
+    retrieve: "Usage: /heh retrieve [confirm]"

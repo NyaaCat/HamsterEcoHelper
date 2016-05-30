@@ -3,6 +3,9 @@ package cat.nyaa.HamsterEcoHelper.auction;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 import static cat.nyaa.HamsterEcoHelper.CommandHandler.*;
 
@@ -51,5 +54,23 @@ public class AuctionCommands {
             return;
         }
         auc.onBid(p, bid);
+    }
+
+    @SubCommand(value = "retrieve", permission = "heh.retrieve")
+    public static void userRetrieve(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+        Player p = asPlayer(sender);
+        if (args.length() == 1) {
+            msg(sender, "user.retrieve.need_confirm");
+            return;
+        }
+        List<ItemStack> items = plugin.database.getTemporaryStorage(p);
+        if (items.size() == 0) {
+            msg(sender, "user.retrieve.no_item");
+            return;
+        }
+        for(ItemStack s : items) {
+            p.getWorld().dropItem(p.getEyeLocation(), s);
+        }
+        plugin.database.clearTemporaryStorage(p);
     }
 }
