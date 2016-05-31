@@ -1,0 +1,29 @@
+language: java
+
+before_install: "sed -i \"s/^\\(version:.*\\)/\\1.0.$TRAVIS_BUILD_NUMBER/\" src/main/resources/plugin.yml"
+
+before_deploy:
+- git config --global user.email "builds@travis-ci.com"
+- git config --global user.name "Travis CI"
+- export GIT_TAG=$TRAVIS_BRANCH-v1.0.$TRAVIS_BUILD_NUMBER
+- git tag $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
+- git push -q https://$GITHUB_KEY@github.com/NyaaCat/HamsterEcoHelper --follow-tags
+
+deploy:
+  skip_cleanup: true
+  provider: releases
+  prerelease: true
+  api_key:
+    secure: "RdoOkheJ8NEg0/we70rGtk3uyZJ4r6SVUulRv6rr4I2nWF9EfOckAEZkndIJvnXhWWruDLE6gQ4PXe7oaaG8WlNwtRlKzf6KfF3iYNI7JL1MoFJ2HbCJd/izu4LJOCzZbIsuaUnLiqV6kFsNhT281JpZxFzZNi+HQXCcRarsTLt1rDIBXArpymoTU8MA3N6R3wdlCZpYyZcL3pSuZp48s1lSdMExZ5eD7DZwRG93tFr5huhYJau85I7EIDk3Pq5AQsRa0/B/ZABLpO0RWutXCsK+hV4/Wjq+zdFBzNbF+voryAD6uLWuqMQB586905k9oUHhboEpOgMR6VVYHr+vl1cfDWLg9/o0xjlO/eq+B69pE+SYqhWqMFBDCgF52MMGN5p5pyCNxaLXJTUvjEg9WuUYcLwk76jPkTruFvIkobhr58y72UoV1RmW6SHwKIvdoKTZu2CIBEYN11gSO/yOtiBCNE/Fnpx4cCgEt/LhlEXgLIfWVUJ1kFOBHV2oYn1sKoPCij2+lMSS3UFWe9jREh2/hMLlKlcaBDCzUh/4ZBwA/8XOYGHnJyQH7KrbLamMttsSgOCIGgTyUQlj+MxGIRg3+1JriBKBn98TmLx31xhOmj+CMRdEOMg5DujasHc0eMlaRwOgJqh8T5MMZZ/ZPCXZNGQIzLq+9yZIY/1ZTP8="
+  file: build/libs/HamsterEcoHelper.jar
+  on:
+    tags: false
+    all_branches: true
+
+branches:
+  except:
+  - "/^*-v[0-9]/"
+
+env:
+  global:
+  - secure: "NNTDCSArQqLKKzSK36gP+HmEgPBFzmX++h1TCt6rE/4/ogCDz915u6Abi9y4Ak7c1SSnV0Ir7e1dnsENIXVLHVFaZhTcI9ytO10ddTrVSh9DO16H2EzZtm8OCBGhwc0PEBoHtPKaU2FUJacHTWqBCKAVgMMTpZVBPjAd15yDcihAB9IWsHFpiSMB765th2iGfgxK1iq0glif2GAnWekZCfEErzHE1NW/N8kXDKQ58xBWx8CTxNezLlmjLlqylm8UcJmpOtmTO+Jy4El0BKfwV9WHAGVsKZUHYdIZWolwhA615Ric534sZD8lDANvpY6oxfYl1Wea8OvbuY+XdEXjR5IiEexouc6oj3z/IgpSP02tIh6YvXd7PU/sUUoCAZko7ry4RqdpZSEEe4j8jgO7L8wbJHXIPDr6kN/SgGfm8ycwN42Ftkq8n/3OMRCSnaEodBPGhSFC1ERJgUgr7o4vPNi57gZkRBrj9GLVPGBeIq4kJ/QT6vXI+RBNn3SRogWaUX5rcIimH+kDRT+wTuQOrqcWyh7ZFirDz6ddAaYI+amX3XQSSKnIHYf8oKXYLhN+dKGrE/ATIcGOLp1/SaugF9uJiDkx9gL5Rl++ApkEazptim8N9YuVDFEGTEkNqWvKrXPAZdj/syYbXS+LRS8F0A8Vsx70Cxw3YMZRRszLqEs="
