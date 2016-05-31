@@ -8,7 +8,7 @@ website: "https://github.com/NyaaCat/HamsterEcoHelper"
 database: true
 
 commands:
-  hemsterecohelper:
+  hamsterecohelper:
     description: The command for HamsterEcoHelper
     aliases: heh
     permission: heh.command
