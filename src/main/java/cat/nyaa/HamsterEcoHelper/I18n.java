@@ -1,13 +1,15 @@
 package cat.nyaa.HamsterEcoHelper;
 
-import com.google.common.io.ByteStreams;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.FileUtil;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,10 +50,10 @@ public final class I18n {
                 lang = language;
                 appendStrings(plugin, YamlConfiguration.loadConfiguration(new InputStreamReader(stream)));
                 try {
-                    OutputStream fstream = new FileOutputStream(localLangFile);
-                    ByteStreams.copy(stream, fstream);
-                    fstream.close();
+                    stream = plugin.getResource("lang/" + language + ".yml");
+                    Files.copy(stream, localLangFile.toPath());
                 } catch (IOException ex) {
+                    ex.printStackTrace();
                     plugin.getLogger().warning(I18n.get("internal.warn.unable_save_lang"));
                 }
                 plugin.getLogger().info(get("internal.info.using_language", lang));
