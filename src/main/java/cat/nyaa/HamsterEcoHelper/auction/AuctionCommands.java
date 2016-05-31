@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import cat.nyaa.HamsterEcoHelper.I18n;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -69,12 +70,22 @@ public class AuctionCommands {
             msg(sender, "manual.command.bid");
             return;
         }
+
+        long minPrice = auc.currentHighPrice == -1? auc.startPr: auc.currentHighPrice + auc.stepPr;
         int bid = args.nextInt();
+        if (bid < 0) {
+            if (args.length() >= 3 && "confirm".equals(args.next())) {
+                bid = (int)minPrice;
+            } else {
+                msg(p, "user.auc.auto_min_need_confirm");
+                return;
+            }
+        }
+
         if (!plugin.eco.enoughMoney(p, bid)) {
             msg(p, "user.warn.no_enough_money");
             return;
         }
-        long minPrice = auc.currentHighPrice == -1? auc.startPr: auc.currentHighPrice + auc.stepPr;
         if (bid < minPrice) {
             msg(p, "user.warn.not_high_enough", minPrice);
             return;

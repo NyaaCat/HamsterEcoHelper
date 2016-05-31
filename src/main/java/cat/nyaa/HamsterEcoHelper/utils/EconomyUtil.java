@@ -25,7 +25,7 @@ public class EconomyUtil {
     }
 
     public boolean enoughMoney(OfflinePlayer p, long money) {
-        return money < balance(p);
+        return money <= balance(p);
     }
 
     public boolean withdraw(OfflinePlayer p, long money) {

@@ -105,7 +105,7 @@ public class AuctionInstance {
     public void finish() {
         EconomyUtil e = plugin.eco;
         if (currentPlayer == null) {
-            Bukkit.broadcast(I18n.get("user.auc.fail", itemName), "heh.bid");
+            new Message(I18n.get("user.auc.fail")).append(itemStack).broadcast();
         } else {
             boolean success = e.withdraw(currentPlayer, currentHighPrice);
             if (success) {
@@ -117,7 +117,7 @@ public class AuctionInstance {
                         .appendFormat("user.auc.success_1", currentPlayer.getName())
                         .broadcast();
             } else {
-                Bukkit.broadcast(I18n.get("user.auc.fail", itemName), "heh.bid");
+                new Message(I18n.get("user.auc.fail")).append(itemStack).broadcast();
             }
         }
         finishCallback.run();
