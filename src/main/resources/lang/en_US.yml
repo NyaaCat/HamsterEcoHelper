@@ -75,9 +75,10 @@ user:
     title: "[Market]"
     mailbox: "[Mailbox]"
     open_mailbox: "Click to open mailbox."
-    price: "Price: %s"
+    price: "Unit Price: %s"
     offered: "offered by: %s"
     my_items: "My items"
+    broadcast: "New market offer!"
   retrieve:
     need_confirm: "The items will drop from your current position. Please ensure the safety. Use '/heh retrieve confirm'"
     no_item: "You have no item to retrieve."

@@ -27,6 +27,7 @@ permissions:
     default: true
     children:
       heh.offer: true
+      heh.offer.default: true
       heh.view: true
       heh.sell: true
       heh.buy: true
