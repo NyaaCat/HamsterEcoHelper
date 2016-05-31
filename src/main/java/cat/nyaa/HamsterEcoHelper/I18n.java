@@ -1,12 +1,13 @@
 package cat.nyaa.HamsterEcoHelper;
 
+import com.google.common.io.ByteStreams;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.FileUtil;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,27 +41,42 @@ public final class I18n {
 
     public static void load(HamsterEcoHelper plugin, String language) {
         I18n.plugin = plugin;
-        InputStream stream = plugin.getResource("lang/" + language + ".yml");
-        if (stream != null) {
-            lang = language;
-            appendStrings(plugin, YamlConfiguration.loadConfiguration(new InputStreamReader(stream)));
-            plugin.getLogger().info(get("internal.info.using_language", lang));
-        } else if ((stream = plugin.getResource("lang/" + DEFAULT_LANGUAGE + ".yml")) != null) {
-            lang = DEFAULT_LANGUAGE;
-            appendStrings(plugin, YamlConfiguration.loadConfiguration(new InputStreamReader(stream)));
-            plugin.getLogger().warning(get("internal.warn.lang_not_found", language));
-            plugin.getLogger().info(get("internal.info.using_language", lang));
+        File localLangFile = new File(plugin.getDataFolder(), language + ".yml");
+        if (!localLangFile.exists()) {
+            InputStream stream = plugin.getResource("lang/" + language + ".yml");
+            if (stream != null) {
+                lang = language;
+                appendStrings(plugin, YamlConfiguration.loadConfiguration(new InputStreamReader(stream)));
+                try {
+                    OutputStream fstream = new FileOutputStream(localLangFile);
+                    ByteStreams.copy(stream, fstream);
+                    fstream.close();
+                } catch (IOException ex) {
+                    plugin.getLogger().warning(I18n.get("internal.warn.unable_save_lang"));
+                }
+                plugin.getLogger().info(get("internal.info.using_language", lang));
+            } else if ((stream = plugin.getResource("lang/" + DEFAULT_LANGUAGE + ".yml")) != null) {
+                lang = DEFAULT_LANGUAGE;
+                appendStrings(plugin, YamlConfiguration.loadConfiguration(new InputStreamReader(stream)));
+                plugin.getLogger().warning(get("internal.warn.lang_not_found", language));
+                plugin.getLogger().info(get("internal.info.using_language", lang));
+            } else {
+                plugin.getLogger().severe(String.format("Language %s not found. Default Language %s not found. Failed to load.", lang, DEFAULT_LANGUAGE));
+                throw new RuntimeException("No language file available.");
+            }
         } else {
-            plugin.getLogger().severe(String.format("Language %s not found. Default Language %s not found. Failed to load.", lang, DEFAULT_LANGUAGE));
-            throw new RuntimeException("No language file available.");
+            lang = language;
+            appendStrings(plugin, YamlConfiguration.loadConfiguration(localLangFile));
+            plugin.getLogger().info(get("internal.info.using_language", lang));
         }
+
     }
 
     public static String get(String key, Object... para) {
         String val = map.get(key);
         if (val == null) {
             I18n.plugin.getLogger().warning("Missing language key: " + key);
-            key = "<" + key + ">";
+            key = "MISSING_LANG<" + key + ">";
             for (Object obj : para) {
                 key += "#<" + obj.toString() + ">";
             }
