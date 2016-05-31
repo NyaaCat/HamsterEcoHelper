@@ -30,33 +30,22 @@ public class Message {
 
     public Message append(ItemStack item, String display) {
         boolean rawName = !(item.hasItemMeta() && item.getItemMeta().hasDisplayName());
-        String name = rawName? item.getType().name(): item.getItemMeta().getDisplayName();
+        BaseComponent nameComponent = rawName? EnumItem.getUnlocalizedName(item): new TextComponent(item.getItemMeta().getDisplayName());
         BaseComponent result;
         String itemJson = ReflectionUtil.convertItemStackToJson(item);
         HoverEvent ev = new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(itemJson)});
-        /* TODO: need to know the untranslated name for given item.
-        if (display.contains("{itemName}") && rawName) {
-            display = display.replace("{amount}", Integer.toString(item.getAmount()));
-            String[] plain = display.split("\\{itemName\\}");
+        nameComponent.setHoverEvent(ev);
 
-            TranslatableComponent trans = new TranslatableComponent(name);
-            trans.setHoverEvent(ev);
-            result = new TextComponent(plain[0]);
-            result.setHoverEvent(ev);
-            for (int i = 1; i < plain.length; i++) {
-                TextComponent tmp = new TextComponent(plain[i]);
-                tmp.setHoverEvent(ev);
-                result.addExtra(trans);
-                result.addExtra(tmp);
-            }
-        } else {
-            result = new TextComponent(display.replace("{itemName}", name)
-                    .replace("{amount}", Integer.toString(item.getAmount())));
-            result.setHoverEvent(ev);
+        String[] plain = display.split("\\{itemName\\}");
+        result = new TextComponent(plain[0]);
+        result.setHoverEvent(ev);
+        for (int i = 1; i < plain.length; i++) {
+            result.addExtra(nameComponent);
+            TextComponent tmp = new TextComponent(plain[i].replace("{amount}", Integer.toString(item.getAmount())));
+            tmp.setHoverEvent(ev);
+            result.addExtra(tmp);
         }
-        */
-        result = new TextComponent(display.replace("{itemName}", name)
-                .replace("{amount}", Integer.toString(item.getAmount())));
+
         result.setHoverEvent(ev);
         inner.addExtra(result);
         return this;
