@@ -17,7 +17,12 @@ public class RequisitionManager extends BukkitRunnable {
 
     @Override
     public void run() {
-        newRequisition();
+        (new BukkitRunnable() {
+            @Override
+            public void run() {
+                newRequisition();
+            }
+        }).runTaskLater(plugin, Utils.inclusiveRandomInt(0, plugin.config.requisitionMaxDelayTicks));
     }
 
     public boolean newRequisition() {

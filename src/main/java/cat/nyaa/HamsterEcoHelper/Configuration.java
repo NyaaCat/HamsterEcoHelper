@@ -25,6 +25,10 @@ public class Configuration {
     public int auctionIntervalTicks = 60 * 60 * 20; // 1 hour
     @Serializable
     public int requisitionIntervalTicks = 60 * 60 * 20; // 1 hour
+    @Serializable
+    public int auctionMaxDelayTicks = 2000;
+    @Serializable
+    public int requisitionMaxDelayTicks = 2000;
 
     public List<AuctionItemTemplate> itemsForAuction;
     public List<RequisitionSpecification> itemsForReq;

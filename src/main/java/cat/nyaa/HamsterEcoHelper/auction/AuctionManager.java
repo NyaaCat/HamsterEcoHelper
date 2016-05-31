@@ -16,7 +16,12 @@ public class AuctionManager extends BukkitRunnable {
 
     @Override
     public void run() {
-        newAuction();
+        (new BukkitRunnable() {
+            @Override
+            public void run() {
+                newAuction();
+            }
+        }).runTaskLater(plugin, Utils.inclusiveRandomInt(0, plugin.config.auctionMaxDelayTicks));
     }
 
     public boolean newAuction(AuctionItemTemplate item) {
