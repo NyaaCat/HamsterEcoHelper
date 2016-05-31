@@ -11,9 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class AuctionInstance {
     private class CheckPointListener extends BukkitRunnable {
         @Override
@@ -54,8 +51,6 @@ public class AuctionInstance {
         }
     }
 
-    private Set<Player> involvedPlayers = new HashSet<>();
-
     private HamsterEcoHelper plugin;
     private Runnable finishCallback;
     private int stage = 0;
@@ -68,6 +63,7 @@ public class AuctionInstance {
     public int startPr;
     public int stepPr;
     public int timeout;
+    public boolean hideName;
 
     public AuctionInstance(ItemStack itemToGive, int startPrice, int stepPrice, int timeout, boolean hideName, HamsterEcoHelper plugin, Runnable finishCallback) {
         itemStack = itemToGive;
@@ -76,6 +72,7 @@ public class AuctionInstance {
         this.timeout = timeout;
         this.plugin = plugin;
         this.finishCallback = finishCallback;
+        this.hideName = hideName;
         if (hideName) {
             Bukkit.broadcast(I18n.get("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D)), "heh.bid");
             itemName = I18n.get("user.auc.mystery_item_placeholder");
@@ -92,12 +89,13 @@ public class AuctionInstance {
     public boolean onBid(Player p, int price) {
         currentHighPrice = price;
         currentPlayer = p;
-        involvedPlayers.add(p);
-        for (Player p2 : involvedPlayers) {
-            if (p2.isOnline() && !p2.equals(p)) {
-                p2.sendMessage(I18n.get("user.auc.new_price", p.getName(), itemName, price));
-            }
+        Message msg = new Message(I18n.get("user.auc.new_price_0", p.getName()));
+        if (hideName) {
+            msg.appendFormat("user.auc.mystery_item_placeholder");
+        } else {
+            msg.append(itemStack);
         }
+        msg.appendFormat("user.auc.new_price_1", price).broadcast();
         p.sendMessage(I18n.get("user.auc.new_price_success"));
         stage = 0;
         checkPointListener.resetTime();
