@@ -17,6 +17,8 @@ public class RequisitionManager extends BukkitRunnable {
 
     @Override
     public void run() {
+        if (Bukkit.getOnlinePlayers().size() < plugin.config.requisitionMinimalPlayer)
+            return;
         (new BukkitRunnable() {
             @Override
             public void run() {

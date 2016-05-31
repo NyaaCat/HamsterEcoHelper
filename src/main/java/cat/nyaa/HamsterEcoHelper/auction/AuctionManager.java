@@ -2,6 +2,7 @@ package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class AuctionManager extends BukkitRunnable {
@@ -16,6 +17,8 @@ public class AuctionManager extends BukkitRunnable {
 
     @Override
     public void run() {
+        if (Bukkit.getOnlinePlayers().size() < plugin.config.auctionMinimalPlayer)
+            return;
         (new BukkitRunnable() {
             @Override
             public void run() {

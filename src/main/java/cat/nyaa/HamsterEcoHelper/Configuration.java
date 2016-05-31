@@ -29,6 +29,10 @@ public class Configuration {
     public int auctionMaxDelayTicks = 2000;
     @Serializable
     public int requisitionMaxDelayTicks = 2000;
+    @Serializable
+    public int auctionMinimalPlayer = 5;
+    @Serializable
+    public int requisitionMinimalPlayer = 2;
 
     public List<AuctionItemTemplate> itemsForAuction;
     public List<RequisitionSpecification> itemsForReq;
