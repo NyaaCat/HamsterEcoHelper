@@ -88,6 +88,10 @@ public final class I18n {
         }
     }
 
+    public static boolean hasKey(String key) {
+        return map.containsKey(key);
+    }
+
     public static void reset() {
         map.clear();
         lang = null;

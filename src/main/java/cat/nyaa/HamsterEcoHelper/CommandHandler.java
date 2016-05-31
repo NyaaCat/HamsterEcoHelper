@@ -54,6 +54,13 @@ public class CommandHandler implements CommandExecutor {
         registerSubcommandHandler(AuctionCommands.class);
     }
 
+    public List<String> getSubcommands() {
+        ArrayList<String> ret = new ArrayList<>();
+        ret.addAll(subCommands.keySet());
+        ret.sort(String::compareTo);
+        return ret;
+    }
+
     private void registerSubcommandHandler(Class<?> handlerClass) {
         for (Method m : handlerClass.getDeclaredMethods()) {
             SubCommand anno = m.getAnnotation(SubCommand.class);
@@ -119,7 +126,31 @@ public class CommandHandler implements CommandExecutor {
 
     @SubCommand("help")
     public static void printHelp(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        sender.sendMessage("Under construction...");
+        List<String> cmds = plugin.commandHandler.getSubcommands();
+        if (args.length() <= 1) {
+            String tmp = "";
+            for (String cmd : cmds) {
+                tmp += "\n    " + cmd + ":\t" + (I18n.hasKey("manual.description." + cmd) ? I18n.get("manual.description." + cmd) : I18n.get("manual.no_desc"));
+            }
+            msg(sender, "manual.general", tmp);
+        } else {
+            String sub = args.next();
+            if (!cmds.contains(sub)) {
+                msg(sender, "manual.no_such_cmd", sub);
+                return;
+            }
+            msg(sender, "manual.general_title", sub);
+            if (I18n.hasKey("manual.description." + sub)) {
+                msg(sender, "manual.description." + sub);
+            } else {
+                msg(sender, "manual.no_desc");
+            }
+            if (I18n.hasKey("manual.command." + sub)) {
+                msg(sender, "manual.command." + sub);
+            } else {
+                msg(sender, "manual.no_usage");
+            }
+        }
     }
 
     @SubCommand(value = "debug", permission = "heh.debug")

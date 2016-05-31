@@ -84,6 +84,14 @@ user:
     no_item: "You have no item to retrieve."
 
 manual:
+  no_desc: "No description."
+  no_usage: "No usage."
+  no_such_cmd: "'%s' is not a valid subcommand."
+  general_title: "===== %s ====="
+  general: |
+    Usage: /heh [SubCommand] [Arguments...]
+           /heh help [SubCommand]
+    Sub-commands:%s
   command:
     addauc: "Usage: /heh addauc [basePrice|int] [stepPrice|int] [randomWeight|double] [hideName|bool] [waitTimeTicks|int]"
     bid: "Usage: /heh bid [price|int]"
@@ -91,3 +99,15 @@ manual:
     offer: "Usage: /heh offer [UnitPrice|double]"
     sell: "Usage: /heh sell [Amount|int]"
     retrieve: "Usage: /heh retrieve [confirm]"
+  description:
+    addauc: "Add item in hand into system auction list."
+    addreq: "Add item in hand into system requisition list."
+    bid: "Give price for the ongoing auction."
+    sell: "Sell item in hand to the ongoing requisition."
+    retrieve: "Retrieve the items in the temporary storage."
+    save: "Force save."
+    haltreq: "Stop the ongoing requisition."
+    haltauc: "Stop the ongoing auction."
+    force-load: "Load config. Discarding unsaved changes."
+    runreq: "Start a requisition."
+    runauc: "Start an auction."

@@ -19,6 +19,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public EconomyUtil eco;
     public Database database;
     public Events eventHandler;
+    public CommandHandler commandHandler;
 
     @Override
     public void onLoad() {
@@ -33,7 +34,8 @@ public class HamsterEcoHelper extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
-            getCommand("hemsterecohelper").setExecutor(new CommandHandler(this));
+            commandHandler = new CommandHandler(this);
+            getCommand("hemsterecohelper").setExecutor(commandHandler);
             database = new Database(this);
             eco = new EconomyUtil(this);
             auctionManager = new AuctionManager(this);
