@@ -2,6 +2,7 @@ package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.market.Market;
+import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
 import cat.nyaa.HamsterEcoHelper.utils.Message;
 import org.bukkit.Bukkit;
@@ -52,6 +53,7 @@ public class CommandHandler implements CommandExecutor {
         registerSubcommandHandler(CommandHandler.class);
         registerSubcommandHandler(RequisitionCommands.class);
         registerSubcommandHandler(AuctionCommands.class);
+        registerSubcommandHandler(MarketCommands.class);
     }
 
     public List<String> getSubcommands() {
@@ -181,52 +183,6 @@ public class CommandHandler implements CommandExecutor {
     public static void forceLoad(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         plugin.reset();
         msg(sender, "admin.info.load_done");
-    }
-
-    @SubCommand(value = "mailbox", permission = "heh.user")
-    public static void openMailbox(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        Player player = (Player) sender;
-        Market.openMailbox(player);
-    }
-
-    @SubCommand(value = "offer", permission = "heh.offer")
-    public static void offer(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        if (args.length() == 2) {
-            Player player = (Player) sender;
-            double price=0.0;
-            try{
-                price = Double.parseDouble(new DecimalFormat("#.##").format(Double.parseDouble(args.next())));
-            } catch (IllegalArgumentException ex){
-                //return;
-            }
-            if(!(price>=0.01)){
-                msg(sender,"user.error.not_double");
-                return;
-            }
-            ItemStack item = player.getInventory().getItemInMainHand();
-            if(item!=null && item.getType()!=Material.AIR && item.getAmount()>0 ){
-                if(Market.offer(player, item, price)){
-                    player.getInventory().setItemInMainHand(null);
-                }
-                return;
-            }else {
-                msg(sender,"user.info.not_item_hand");
-                return;
-            }
-        }
-    }
-
-    @SubCommand(value = "view", permission = "heh.view")
-    public static void view(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        Player player = (Player) sender;
-        if(args.length()==2){
-            OfflinePlayer seller = Bukkit.getOfflinePlayer(args.next());
-            if (seller!=null){
-                Market.view(player, 1,seller.getUniqueId().toString());
-            }
-        }else {
-            Market.view(player, 1,"");
-        }
     }
 
     public static Player asPlayer(CommandSender target) {
