@@ -36,14 +36,19 @@ public class Message {
         HoverEvent ev = new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(itemJson)});
         nameComponent.setHoverEvent(ev);
 
-        String[] plain = display.split("\\{itemName\\}");
-        result = new TextComponent(plain[0]);
-        result.setHoverEvent(ev);
-        for (int i = 1; i < plain.length; i++) {
-            result.addExtra(nameComponent);
-            TextComponent tmp = new TextComponent(plain[i].replace("{amount}", Integer.toString(item.getAmount())));
-            tmp.setHoverEvent(ev);
-            result.addExtra(tmp);
+
+        if ("{itemName}".equals(display)) {
+            result = nameComponent;
+        } else {
+            String[] plain = display.split("\\{itemName\\}");
+            result = new TextComponent(plain[0]);
+            result.setHoverEvent(ev);
+            for (int i = 1; i < plain.length; i++) {
+                result.addExtra(nameComponent);
+                TextComponent tmp = new TextComponent(plain[i].replace("{amount}", Integer.toString(item.getAmount())));
+                tmp.setHoverEvent(ev);
+                result.addExtra(tmp);
+            }
         }
 
         result.setHoverEvent(ev);

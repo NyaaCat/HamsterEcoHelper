@@ -63,6 +63,10 @@ public class RequisitionInstance {
             itemHand.setAmount(new_amount);
         }
         amountRemains -= amount;
+        new Message(I18n.get("user.req.sold_amount_0", p.getName(), amount))
+                .append(templateItem.itemTemplate, "{itemName}")
+                .appendFormat("user.req.sold_amount_1", amountRemains)
+                .broadcast();
         if (amountRemains == 0) {
             Bukkit.broadcast(I18n.get("user.req.sold_out"), "heh.bid");
             halt();

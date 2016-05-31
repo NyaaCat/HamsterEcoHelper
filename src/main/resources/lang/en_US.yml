@@ -69,6 +69,8 @@ user:
     sell_amount_limit: "You can sell at most %d items."
     not_match: "Item in hand does not match."
     sold_out: "Requisition limit reached. Requisition finished."
+    sold_amount_0: "Player %s has sold %d "
+    sold_amount_1: "! %d remains."
   market:
     title: "[Market]"
     mailbox: "[Mailbox]"
