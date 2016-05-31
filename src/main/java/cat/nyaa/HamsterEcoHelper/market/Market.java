@@ -1,18 +1,17 @@
 package cat.nyaa.HamsterEcoHelper.market;
 
 
+import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.ArrayList;
@@ -24,18 +23,15 @@ import static org.bukkit.Bukkit.getServer;
 
 public class Market {
     private static Database db;
-    private static Plugin plugin;
+    private static HamsterEcoHelper plugin;
     public static HashMap<Player, HashMap<Integer, Integer>> viewItem;
     public static HashMap<Player, Integer> viewPage;
     public static HashMap<Player, String> viewSeller;
     public static List<Player> viewMailbox;
     public static Economy eco = null;
-    public static boolean enableSound;
-    public static long broadcastCoolDown;
     public static long lastBroadcast;
-    public static boolean enableBroadcast;
 
-    public static void init(Plugin pl) {
+    public static void init(HamsterEcoHelper pl) {
         plugin = pl;
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         eco = rsp.getProvider();
@@ -45,9 +41,6 @@ public class Market {
         viewPage = new HashMap<>();
         viewSeller = new HashMap<>();
         viewMailbox = new ArrayList<>();
-        enableSound = plugin.getConfig().getBoolean("market.playsound", true);
-        enableBroadcast = plugin.getConfig().getBoolean("market.broadcast.enable", true);
-        broadcastCoolDown = plugin.getConfig().getInt("market.broadcast.cooldown", 120) * 1000;
     }
 
     public static boolean offer(Player player, ItemStack item, double unit_price) {
@@ -55,7 +48,7 @@ public class Market {
             return false;
         }
         db.offer(player, item, unit_price, item.getAmount());
-        if (enableBroadcast && System.currentTimeMillis() - lastBroadcast > broadcastCoolDown) {
+        if (plugin.config.marketBroadcast && (System.currentTimeMillis() - lastBroadcast) > (plugin.config.marketBroadcastCooldown*1000)) {
             lastBroadcast = System.currentTimeMillis();
             Bukkit.broadcastMessage(I18n.get("user.market.broadcast"));
         }
@@ -90,11 +83,10 @@ public class Market {
 
     public static int getPlayerSlot(Player player) {
         int slot = 0;
-        ConfigurationSection groups = plugin.getConfig().getConfigurationSection("market.groups");
-        if (groups != null) {
-            for (String key : groups.getKeys(false)) {
+        if (plugin.config.marketSlot != null) {
+            for (String key : plugin.config.marketSlot.getKeys(false)) {
                 if (player.hasPermission("heh.offer." + key)) {
-                    int tmp = groups.getInt(key + ".slot", 0);
+                    int tmp = plugin.config.marketSlot.getInt(key, 0);
                     if (tmp > slot) {
                         slot = tmp;
                     }
@@ -153,7 +145,7 @@ public class Market {
                 } else {
                     lore = new ArrayList<>();
                 }
-                lore.add(0, ChatColor.GREEN + I18n.get("user.market.price", ChatColor.WHITE + "" + (mItem.getUnit_price() * mItem.getAmount())));
+                lore.add(0, ChatColor.GREEN + I18n.get("user.market.unit_price", ChatColor.WHITE +""+ mItem.getUnit_price()));
                 lore.add(1, ChatColor.GREEN + I18n.get("user.market.offered", ChatColor.WHITE + mItem.getPlayerName()));
                 meta.setLore(lore);
                 ItemStack itemStack = mItem.getItemStack();
@@ -216,7 +208,7 @@ public class Market {
     }
 
     public static void playSound(Player player, Sound sound) {
-        if (Market.enableSound) {
+        if (plugin.config.marketPlaySound) {
             player.playSound(player.getLocation(), sound, 1, 2);
         }
         return;

@@ -1,15 +1,12 @@
 language: "en_US"
 auctionIntervalTicks: 72000
 bidTimeoutTicks: 600
-market:
-  enable: true
-  playsound: true
-  broadcast:
-    enable: true
-    #default 120 sec
-    cooldown: 120
-  #offer slots limit
-  #permission node heh.offer.[group]
-  groups:
-    default:
-      slot: 10
+marketPlaySound: true
+marketBroadcast: true
+# default 120 sec
+marketBroadcastCooldown: 120
+#offer slots limit
+#permission node heh.offer.[group]
+marketSlot:
+    default: 10
+    builder: 15

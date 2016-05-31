@@ -3,6 +3,7 @@ package cat.nyaa.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionItemTemplate;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionSpecification;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -33,7 +34,15 @@ public class Configuration {
     public int auctionMinimalPlayer = 5;
     @Serializable
     public int requisitionMinimalPlayer = 2;
-
+    @Serializable
+    public boolean marketPlaySound = true;
+    @Serializable
+    public boolean marketBroadcast = true;
+    @Serializable
+    public int marketBroadcastCooldown = 120;
+    @Serializable
+    public MemorySection marketSlot;
+    
     public List<AuctionItemTemplate> itemsForAuction;
     public List<RequisitionSpecification> itemsForReq;
 
