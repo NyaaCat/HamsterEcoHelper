@@ -148,7 +148,7 @@ public class CommandHandler implements CommandExecutor {
 
     @SubCommand(value = "force-load", permission = "heh.admin")
     public static void forceLoad(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        plugin.config.loadFromPlugin();
+        plugin.reset();
         msg(sender, "admin.info.load_done");
     }
 

@@ -60,6 +60,19 @@ public class HamsterEcoHelper extends JavaPlugin {
         enableComplete = false;
     }
 
+    public void reset() {
+        auctionManager.halt();
+        auctionManager.cancel();
+        reqManager.halt();
+        reqManager.cancel();
+        I18n.reset();
+        reloadConfig();
+        config.loadFromPlugin();
+        I18n.load(this, config.language);
+        auctionManager = new AuctionManager(this);
+        reqManager = new RequisitionManager(this);
+    }
+
     @Override
     public void installDDL() {
         super.installDDL();

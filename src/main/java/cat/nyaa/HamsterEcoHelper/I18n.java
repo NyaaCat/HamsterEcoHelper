@@ -91,5 +91,6 @@ public final class I18n {
     public static void reset() {
         map.clear();
         lang = null;
+        plugin = null;
     }
 }
