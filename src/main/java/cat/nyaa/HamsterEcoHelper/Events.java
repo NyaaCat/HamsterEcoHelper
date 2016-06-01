@@ -1,7 +1,7 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.market.Market;
-import cat.nyaa.HamsterEcoHelper.market.MarketItem;
+import cat.nyaa.HamsterEcoHelper.utils.Database;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class Events implements Listener {
     private final HamsterEcoHelper plugin;
@@ -34,8 +35,8 @@ public class Events implements Listener {
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        String seller = Market.viewSeller.get(player);
         if (event.getInventory().getTitle().contains(I18n.get("user.market.title")) && Market.viewItem.containsKey(player)) {
+            UUID seller = Market.viewSeller.get(player);
             HashMap<Integer, Integer> slot = Market.viewItem.get(player);
             if (slot.containsKey(event.getRawSlot())) {
                 if (event.getInventory().getSize() == 54 &&
@@ -43,7 +44,7 @@ public class Events implements Listener {
                         event.getInventory().getItem(48).getType() == Material.CHEST) {
                     int itemId = Market.viewItem.get(player).get(event.getRawSlot());
                     event.setCancelled(true);
-                    MarketItem marketItem = Market.getItem(itemId);
+                    Database.MarketItem marketItem = Market.getItem(itemId);
                     if (marketItem != null && marketItem.getItemStack().getType() != Material.AIR) {
                         if (event.isShiftClick()) {
                             Market.buy(player, itemId, marketItem.getAmount());
@@ -60,7 +61,7 @@ public class Events implements Listener {
             if (event.getRawSlot() == 45 && event.getCurrentItem().getType() != Material.AIR) {
                 Market.view(player, Market.viewPage.get(player) - 1, seller);
             } else if (event.getRawSlot() == 47 && event.getCurrentItem().getType() != Material.AIR) {
-                Market.view(player, 1, player.getUniqueId().toString());
+                Market.view(player, 1, player.getUniqueId());
             } else if (event.getRawSlot() == 48 && event.getCurrentItem().getType() != Material.AIR) {
                 Market.openMailbox(player);
             } else if (event.getRawSlot() == 53 && event.getCurrentItem().getType() != Material.AIR) {

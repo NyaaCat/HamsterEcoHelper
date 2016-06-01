@@ -2,11 +2,16 @@ package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.market.Market;
 import com.avaje.ebean.EbeanServer;
+import com.avaje.ebean.Query;
 import com.avaje.ebean.validation.NotNull;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.persistence.Entity;
@@ -94,9 +99,11 @@ public class Database {
     }
 
     public static List<Class<?>> getDatabaseClasses() {
-        return new ArrayList<Class<?>>(){{
-            add(TempStorageRepo.class);
-        }};
+        List<Class<?>> list = new ArrayList<Class<?>>();
+        list.add(TempStorageRepo.class);
+        list.add(MarketItem.class);
+        list.add(Mailbox.class);
+        return list;
     }
 
     @Entity
@@ -122,6 +129,254 @@ public class Database {
 
         public void setYaml(String yaml) {
             this.yaml = new String(Base64.getDecoder().decode(yaml));
+        }
+    }
+
+    public boolean addItemToMailbox(Player player, ItemStack item) {
+        Mailbox mailbox = db.find(Mailbox.class, player.getUniqueId());
+        int amount = item.getAmount();
+        ItemStack[] items = null;
+        if (mailbox == null) {
+            mailbox = new Mailbox();
+            items = mailbox.getMailbox();
+        } else {
+            items = mailbox.getMailbox();
+        }
+        if (items != null && items.length > 0) {
+            for (int slot = 0; slot < items.length; slot++) {
+                ItemStack tmp = items[slot];
+                if (tmp != null && tmp.isSimilar(item) && tmp.getAmount() < item.getMaxStackSize()) {
+                    if ((tmp.getAmount() + amount) <= item.getMaxStackSize()) {
+                        tmp.setAmount(amount + tmp.getAmount());
+                        items[slot] = tmp;
+                        setMailbox(player, items);
+                        return true;
+                    } else {
+                        amount = amount - (item.getMaxStackSize() - tmp.getAmount());
+                        tmp.setAmount(item.getMaxStackSize());
+                        items[slot] = tmp;
+                        continue;
+                    }
+                } else if (tmp == null || tmp.getType() == Material.AIR) {
+                    item.setAmount(amount);
+                    items[slot] = item;
+                    setMailbox(player, items);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public List<MarketItem> getMarketItems(int offset, int limit, UUID seller) {
+        Query<MarketItem> list;
+        if (seller == null) {
+            list = db.find(MarketItem.class).order().desc("id").setFirstRow(offset).setMaxRows(limit);
+            return list.findList();
+        } else {
+            list = db.find(MarketItem.class).where().eq("playerId", seller).order().desc("id").setFirstRow(offset).setMaxRows(limit);
+            return list.findList();
+        }
+    }
+
+    public void marketOffer(Player player, ItemStack itemStack, double unit_price) {
+        MarketItem item = new MarketItem();
+        item.setItemStack(itemStack);
+        item.setAmount(itemStack.getAmount());
+        item.setPlayerId(player.getUniqueId());
+        item.setUnitPrice(unit_price);
+        db.save(item);
+        return;
+    }
+
+    public void marketBuy(Player player, int itemId, int amount) {
+        MarketItem mItem = db.find(MarketItem.class, itemId);
+        if (mItem != null) {
+            if (mItem.getAmount() == amount) {
+                db.delete(MarketItem.class, itemId);
+            } else {
+                mItem.setAmount(mItem.getAmount() - amount);
+                db.update(mItem);
+            }
+        }
+        return;
+    }
+
+    public int getMarketPlayerItemCount(OfflinePlayer player) {
+        int count = db.find(MarketItem.class).where().eq("playerId", player.getUniqueId()).findRowCount();
+        if (count > 0) {
+            return count;
+        }
+        return 0;
+    }
+
+    public int getMarketPageCount() {
+        int count = db.find(MarketItem.class).findRowCount();
+        if (count > 0) {
+            return db.find(MarketItem.class).findPagingList(Market.pageSize).getTotalPageCount();
+        }
+        return 0;
+    }
+
+    public MarketItem getMarketItem(int id) {
+        MarketItem mItem = db.find(MarketItem.class, id);
+        if (mItem != null) {
+            return mItem;
+        }
+        return null;
+    }
+
+    public ItemStack[] getMailbox(Player player) {
+        Mailbox mailbox = db.find(Mailbox.class, player.getUniqueId());
+        if (mailbox != null && mailbox.getMailbox() != null) {
+            return mailbox.getMailbox();
+        }
+        return new ItemStack[54];
+    }
+
+    public void setMailbox(Player player, ItemStack[] inventory) {
+        Mailbox mailbox = db.find(Mailbox.class, player.getUniqueId());
+        Mailbox tmp = new Mailbox();
+        tmp.setMailbox(player, inventory);
+        if (mailbox != null) {
+            db.delete(mailbox);
+        }
+        db.insert(tmp);
+        return;
+    }
+
+    @Entity
+    @Table(name = "mailbox")
+    public static class Mailbox {
+        @Id
+        @NotNull
+        public UUID playerId;
+        @NotNull
+        public String inv = "";
+
+        public UUID getPlayerId() {
+            return playerId;
+        }
+
+        public void setPlayerId(UUID uuid) {
+            this.playerId = uuid;
+        }
+
+        public String getInv() {
+            return inv;
+        }
+
+        public void setInv(String inv) {
+            this.inv = inv;
+        }
+
+        public ItemStack[] getMailbox() {
+            if (inv != null && inv.length() > 0) {
+                YamlConfiguration yaml = new YamlConfiguration();
+                try {
+                    yaml.loadFromString(new String(Base64.getDecoder().decode(inv)));
+                } catch (InvalidConfigurationException e) {
+                    e.printStackTrace();
+                }
+                return ((List<ItemStack>) yaml.get("inv")).toArray(new ItemStack[0]);
+            }
+            return new ItemStack[54];
+        }
+
+        public boolean setMailbox(Player player, ItemStack[] items) {
+            playerId = player.getUniqueId();
+            YamlConfiguration yaml = new YamlConfiguration();
+            yaml.set("inv", items);
+            this.inv = Base64.getEncoder().encodeToString(yaml.saveToString().getBytes());
+            return true;
+        }
+    }
+
+    @Entity
+    @Table(name = "market")
+    public static class MarketItem {
+        @Id
+        public int id;
+        @NotNull
+        public UUID playerId;
+        @NotNull
+        public String item;
+        @NotNull
+        private int amount;
+        @NotNull
+        private double unitPrice;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public UUID getPlayerId() {
+            return playerId;
+        }
+
+        public void setPlayerId(UUID uuid) {
+            this.playerId = uuid;
+        }
+
+        public String getItem() {
+            return item;
+        }
+
+        public void setItem(String item) {
+            this.item = item;
+        }
+
+        public ItemStack getItemStack() {
+            YamlConfiguration yaml = new YamlConfiguration();
+            try {
+                yaml.loadFromString(new String(Base64.getDecoder().decode(item)));
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+            ItemStack itemStack = yaml.getItemStack("item");
+            itemStack.setAmount(this.amount);
+            return itemStack;
+        }
+
+        public ItemStack getItemStack(int amount) {
+            ItemStack item = getItemStack();
+            item.setAmount(amount);
+            return item;
+        }
+
+        public void setItemStack(ItemStack item) {
+            YamlConfiguration yaml = new YamlConfiguration();
+            yaml.set("item", item);
+            this.item = Base64.getEncoder().encodeToString(yaml.saveToString().getBytes());
+            amount = item.getAmount();
+        }
+
+        public double getUnitPrice() {
+            return unitPrice;
+        }
+
+        public void setUnitPrice(double unit_price) {
+            this.unitPrice = unit_price;
+        }
+
+        public int getAmount() {
+            return amount;
+        }
+
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
+
+        public String getPlayerName() {
+            return Bukkit.getOfflinePlayer(playerId).getName();
+        }
+
+        public OfflinePlayer getPlayer() {
+            return Bukkit.getOfflinePlayer(playerId);
         }
     }
 }

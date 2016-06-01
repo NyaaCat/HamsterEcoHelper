@@ -52,10 +52,10 @@ public class MarketCommands {
         if (args.length() == 2) {
             OfflinePlayer seller = Bukkit.getOfflinePlayer(args.next());
             if (seller != null) {
-                Market.view(player, 1, seller.getUniqueId().toString());
+                Market.view(player, 1, seller.getUniqueId());
             }
         } else {
-            Market.view(player, 1, "");
+            Market.view(player, 1, null);
         }
     }
 }
