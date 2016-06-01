@@ -181,6 +181,17 @@ public class CommandHandler implements CommandExecutor {
         msg(sender, "admin.info.load_done");
     }
 
+    @SubCommand(value = "version")
+    public static void version(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+        String ver = plugin.getDescription().getVersion();
+        List<String> authors = plugin.getDescription().getAuthors();
+        String au = authors.get(0);
+        for (int i = 1; i < authors.size(); i++) {
+            au += " " + authors.get(i);
+        }
+        msg(sender, "manual.license", ver, au);
+    }
+
     public static Player asPlayer(CommandSender target) {
         if (target instanceof Player) {
             return (Player) target;
