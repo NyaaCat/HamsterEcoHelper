@@ -85,14 +85,10 @@ public class MarketManager {
 
     public static int getPlayerSlot(Player player) {
         int slot = 0;
-        if (plugin.config.marketSlot != null) {
-            for (String key : plugin.config.marketSlot.getKeys(false)) {
-                if (player.hasPermission("heh.offer." + key)) {
-                    int tmp = plugin.config.marketSlot.getInt(key, 0);
-                    if (tmp > slot) {
-                        slot = tmp;
-                    }
-                }
+        for (String group : plugin.config.marketSlot.keySet()) {
+            int tmp = plugin.config.marketSlot.get(group);
+            if (player.hasPermission("heh.offer." + group) && tmp > slot) {
+                slot = tmp;
             }
         }
         return slot;

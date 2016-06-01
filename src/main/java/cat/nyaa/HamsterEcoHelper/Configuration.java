@@ -13,8 +13,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 public class Configuration {
@@ -40,11 +39,10 @@ public class Configuration {
     public boolean marketBroadcast = true;
     @Serializable
     public int marketBroadcastCooldown = 120;
-    @Serializable
-    public MemorySection marketSlot;
-    
-    public List<AuctionItemTemplate> itemsForAuction;
-    public List<RequisitionSpecification> itemsForReq;
+
+    public Map<String, Integer> marketSlot = new HashMap<>();
+    public List<AuctionItemTemplate> itemsForAuction = new ArrayList<>();
+    public List<RequisitionSpecification> itemsForReq = new ArrayList<>();
 
     public Configuration(HamsterEcoHelper plugin) {
         this.plugin = plugin;
@@ -71,11 +69,24 @@ public class Configuration {
             }
         }
 
+        marketSlot = new HashMap<>();
+        ConfigurationSection slotNumMap = tmp.getConfigurationSection("marketSlot");
+        if (slotNumMap != null) {
+            for (String group : slotNumMap.getKeys(false)) {
+                marketSlot.put(group, slotNumMap.getInt(group));
+            }
+        }
+
         if (firstRun) saveToPlugin();
     }
 
     public void saveToPlugin() {
         serialize(plugin.getConfig(), this);
+
+        ConfigurationSection slotMap = plugin.getConfig().createSection("marketSlot");
+        for (String group : marketSlot.keySet()) {
+            slotMap.set(group, marketSlot.get(group));
+        }
 
         YamlConfiguration aucTmp = new YamlConfiguration();
         for (int i = 0; i < itemsForAuction.size(); i++) {
@@ -93,7 +104,6 @@ public class Configuration {
             e.printStackTrace();
         }
 
-        serialize(plugin.getConfig(), this);
         plugin.saveConfig();
     }
 
