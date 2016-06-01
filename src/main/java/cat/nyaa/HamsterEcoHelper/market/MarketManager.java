@@ -30,14 +30,12 @@ public class MarketManager {
     public static HashMap<Player, Integer> viewPage;
     public static HashMap<Player, UUID> viewSeller;
     public static List<Player> viewMailbox;
-    public static Economy eco = null;
     public static long lastBroadcast;
     public static int pageSize = 45;
 
     public static void init(HamsterEcoHelper pl) {
         plugin = pl;
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        eco = rsp.getProvider();
         db = plugin.database;
         viewItem = new HashMap<>();
         viewPage = new HashMap<>();
@@ -61,15 +59,15 @@ public class MarketManager {
         Database.MarketItem item = getItem(itemId);
         if (item != null && item.getItemStack().getType() != Material.AIR && item.getAmount() > 0) {
             double price = item.getUnitPrice() * amount;
-            if (eco.has(player, price) || player.getUniqueId().equals(item.getPlayerId())) {
+            if (plugin.eco.enoughMoney(player, price) || player.getUniqueId().equals(item.getPlayerId())) {
                 if (!addItemToMailbox(player, item.getItemStack(amount))) {
                     msg(player, "user.warn.not_enough_space");
                     playSound(player, Sound.BLOCK_FENCE_GATE_OPEN);
                     return false;
                 }
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
-                    eco.withdrawPlayer(player, price);
-                    eco.depositPlayer(item.getPlayer(), price);
+                    plugin.eco.withdraw(player, price);
+                    plugin.eco.deposit(item.getPlayer(), price);
                 }
                 db.marketBuy(player, itemId, amount);
                 playSound(player, Sound.ENTITY_EXPERIENCE_ORB_TOUCH);
@@ -174,7 +172,7 @@ public class MarketManager {
         meta.setDisplayName(ChatColor.AQUA + I18n.get("user.market.my_items") +
                 (String.format(" (%s/%s)", db.getMarketPlayerItemCount(player), getPlayerSlot(player))));
         lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + I18n.get("user.info.balance", ChatColor.WHITE + "" + eco.getBalance(player)));
+        lore.add(ChatColor.GREEN + I18n.get("user.info.balance", ChatColor.WHITE + "" + plugin.eco.balance(player)));
         meta.setLore(lore);
         myItem.setItemMeta(meta);
         inventory.setItem(47, myItem);
