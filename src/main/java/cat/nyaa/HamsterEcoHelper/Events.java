@@ -1,6 +1,6 @@
 package cat.nyaa.HamsterEcoHelper;
 
-import cat.nyaa.HamsterEcoHelper.market.Market;
+import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,9 +25,9 @@ public class Events implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
         Player player = (Player) e.getPlayer();
-        if (Market.viewMailbox.contains(player)) {
-            Market.viewMailbox.remove(player);
-            Market.setMailbox(player, e.getInventory().getContents());
+        if (MarketManager.viewMailbox.contains(player)) {
+            MarketManager.viewMailbox.remove(player);
+            MarketManager.setMailbox(player, e.getInventory().getContents());
             return;
         }
     }
@@ -35,37 +35,37 @@ public class Events implements Listener {
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        if (event.getInventory().getTitle().contains(I18n.get("user.market.title")) && Market.viewItem.containsKey(player)) {
-            UUID seller = Market.viewSeller.get(player);
-            HashMap<Integer, Integer> slot = Market.viewItem.get(player);
+        if (event.getInventory().getTitle().contains(I18n.get("user.market.title")) && MarketManager.viewItem.containsKey(player)) {
+            UUID seller = MarketManager.viewSeller.get(player);
+            HashMap<Integer, Integer> slot = MarketManager.viewItem.get(player);
             if (slot.containsKey(event.getRawSlot())) {
                 if (event.getInventory().getSize() == 54 &&
                         event.getInventory().getItem(48) != null &&
                         event.getInventory().getItem(48).getType() == Material.CHEST) {
-                    int itemId = Market.viewItem.get(player).get(event.getRawSlot());
+                    int itemId = MarketManager.viewItem.get(player).get(event.getRawSlot());
                     event.setCancelled(true);
-                    Database.MarketItem marketItem = Market.getItem(itemId);
+                    Database.MarketItem marketItem = MarketManager.getItem(itemId);
                     if (marketItem != null && marketItem.getItemStack().getType() != Material.AIR) {
                         if (event.isShiftClick()) {
-                            Market.buy(player, itemId, marketItem.getAmount());
+                            MarketManager.buy(player, itemId, marketItem.getAmount());
                         } else {
-                            Market.buy(player, itemId, 1);
+                            MarketManager.buy(player, itemId, 1);
                         }
                     }
-                    Market.view(player, Market.viewPage.get(player), seller);
+                    MarketManager.view(player, MarketManager.viewPage.get(player), seller);
                     return;
                 }
-                Market.viewItem.remove(player);
+                MarketManager.viewItem.remove(player);
                 return;
             }
             if (event.getRawSlot() == 45 && event.getCurrentItem().getType() != Material.AIR) {
-                Market.view(player, Market.viewPage.get(player) - 1, seller);
+                MarketManager.view(player, MarketManager.viewPage.get(player) - 1, seller);
             } else if (event.getRawSlot() == 47 && event.getCurrentItem().getType() != Material.AIR) {
-                Market.view(player, 1, player.getUniqueId());
+                MarketManager.view(player, 1, player.getUniqueId());
             } else if (event.getRawSlot() == 48 && event.getCurrentItem().getType() != Material.AIR) {
-                Market.openMailbox(player);
+                MarketManager.openMailbox(player);
             } else if (event.getRawSlot() == 53 && event.getCurrentItem().getType() != Material.AIR) {
-                Market.view(player, Market.viewPage.get(player) + 1, seller);
+                MarketManager.view(player, MarketManager.viewPage.get(player) + 1, seller);
             }
             event.setCancelled(true);
         }

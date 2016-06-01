@@ -16,7 +16,7 @@ public class MarketCommands {
     @SubCommand(value = "mailbox", permission = "heh.user")
     public static void openMailbox(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Player player = asPlayer(sender);
-        Market.openMailbox(player);
+        MarketManager.openMailbox(player);
     }
 
     @SubCommand(value = "offer", permission = "heh.offer")
@@ -35,7 +35,7 @@ public class MarketCommands {
             }
             ItemStack item = getItemInHand(sender);
             if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
-                if (Market.offer(player, item, price)) {
+                if (MarketManager.offer(player, item, price)) {
                     player.getInventory().setItemInMainHand(null);
                 }
                 return;
@@ -52,10 +52,10 @@ public class MarketCommands {
         if (args.length() == 2) {
             OfflinePlayer seller = Bukkit.getOfflinePlayer(args.next());
             if (seller != null) {
-                Market.view(player, 1, seller.getUniqueId());
+                MarketManager.view(player, 1, seller.getUniqueId());
             }
         } else {
-            Market.view(player, 1, null);
+            MarketManager.view(player, 1, null);
         }
     }
 }

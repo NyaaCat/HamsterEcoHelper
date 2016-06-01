@@ -1,7 +1,7 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
-import cat.nyaa.HamsterEcoHelper.market.Market;
+import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
@@ -40,7 +40,7 @@ public class HamsterEcoHelper extends JavaPlugin {
             eco = new EconomyUtil(this);
             auctionManager = new AuctionManager(this);
             reqManager = new RequisitionManager(this);
-            Market.init(this);
+            MarketManager.init(this);
             eventHandler = new Events(this);
             enableComplete = true;
         } catch (Exception ex) {

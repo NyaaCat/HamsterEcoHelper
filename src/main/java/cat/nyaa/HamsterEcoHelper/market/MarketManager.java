@@ -23,7 +23,7 @@ import java.util.UUID;
 import static cat.nyaa.HamsterEcoHelper.CommandHandler.msg;
 import static org.bukkit.Bukkit.getServer;
 
-public class Market {
+public class MarketManager {
     private static Database db;
     private static HamsterEcoHelper plugin;
     public static HashMap<Player, HashMap<Integer, Integer>> viewItem;
@@ -112,7 +112,7 @@ public class Market {
         int pageCount;
         if (seller != null && page >= 1) {
             viewSeller.put(player, seller);
-            pageCount = (db.getMarketPlayerItemCount(Bukkit.getOfflinePlayer(seller)) + Market.pageSize - 1) / Market.pageSize;
+            pageCount = (db.getMarketPlayerItemCount(Bukkit.getOfflinePlayer(seller)) + MarketManager.pageSize - 1) / MarketManager.pageSize;
         } else {
             viewSeller.put(player, null);
             pageCount = db.getMarketPageCount();
@@ -123,10 +123,10 @@ public class Market {
             page = 1;
         }
         if (page > 1) {
-            offset = (page - 1) * (Market.pageSize);
+            offset = (page - 1) * (MarketManager.pageSize);
         }
         viewPage.put(player, page);
-        List<Database.MarketItem> marketItem = db.getMarketItems(offset, Market.pageSize, seller);
+        List<Database.MarketItem> marketItem = db.getMarketItems(offset, MarketManager.pageSize, seller);
         if (marketItem != null) {
             for (int i = 0; i < marketItem.size(); i++) {
                 Database.MarketItem mItem = marketItem.get(i);

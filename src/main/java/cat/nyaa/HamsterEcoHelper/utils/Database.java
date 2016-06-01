@@ -2,7 +2,7 @@ package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.market.Market;
+import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.Query;
 import com.avaje.ebean.validation.NotNull;
@@ -213,7 +213,7 @@ public class Database {
     public int getMarketPageCount() {
         int count = db.find(MarketItem.class).findRowCount();
         if (count > 0) {
-            return db.find(MarketItem.class).findPagingList(Market.pageSize).getTotalPageCount();
+            return db.find(MarketItem.class).findPagingList(MarketManager.pageSize).getTotalPageCount();
         }
         return 0;
     }
