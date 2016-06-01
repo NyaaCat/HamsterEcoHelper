@@ -62,6 +62,8 @@ user:
   req:
     new_req_0: "NEW REQUISITION: "
     new_req_1: "*%d with price %d; Last for %.2f seconds. Please response with '/heh sell [amount]'"
+    hint_req_0: "ONGOING REQUISITION: "
+    hint_req_1: "; Need %d more; Unit price %d; %.2f seconds remains. Please response with '/heh sell [amount]'"
     finish: "Requisition finished."
     halted: "Current requisition halted."
     success: "Item sold. $%d added to your account."

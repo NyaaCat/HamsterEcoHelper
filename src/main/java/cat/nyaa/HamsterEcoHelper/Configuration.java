@@ -3,7 +3,6 @@ package cat.nyaa.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionItemTemplate;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionSpecification;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -13,7 +12,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class Configuration {
@@ -33,6 +35,8 @@ public class Configuration {
     public int auctionMinimalPlayer = 5;
     @Serializable
     public int requisitionMinimalPlayer = 2;
+    @Serializable
+    public int requisitionHintInterval = 600; // ticks; 30 seconds; negative value to disable
     @Serializable
     public boolean marketPlaySound = true;
     @Serializable

@@ -16,6 +16,7 @@ public class RequisitionInstance {
     private final RequisitionSpecification templateItem;
     private final int unitPrice;
     private int amountRemains;
+    private long endTime;
 
     public RequisitionInstance(
             RequisitionSpecification templateItem,
@@ -26,6 +27,7 @@ public class RequisitionInstance {
         this.unitPrice = unitPrice;
         this.templateItem = templateItem;
         this.amountRemains = reqAmount;
+        this.endTime = System.currentTimeMillis() + templateItem.timeoutTicks * 50;
         timeoutListener = new TimeoutListener();
         timeoutListener.runTaskLater(plugin, templateItem.timeoutTicks);
         ItemStack tmp = templateItem.itemTemplate;
@@ -80,6 +82,27 @@ public class RequisitionInstance {
         public void run() {
             finishCallback.run();
             Bukkit.broadcast(I18n.get("user.req.finish"), "heh.bid");
+        }
+    }
+
+    public class RequisitionHintTimer extends BukkitRunnable{
+        private final RequisitionManager manager;
+        public RequisitionHintTimer(RequisitionManager manager, int interval, JavaPlugin plugin) {
+            super();
+            this.manager = manager;
+            runTaskTimer(plugin, interval, interval);
+        }
+
+        @Override
+        public void run() {
+            if (RequisitionInstance.this != manager.getCurrentRequisition()) {
+                cancel();
+            } else {
+                new Message(I18n.get("user.req.hint_req_0")).append(templateItem.itemTemplate,"{itemName}")
+                        .appendFormat("user.req.hint_req_1", amountRemains, unitPrice, ((double)(endTime - System.currentTimeMillis())) / 1000D)
+                        .broadcast();
+            }
+
         }
     }
 }
