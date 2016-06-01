@@ -68,11 +68,17 @@ public class RequisitionCommands {
             msg(sender, "user.info.no_current_requisition");
             return;
         }
-        if (args.length() != 2) {
+
+        int amount;
+        if (args.length() == 1) {
+            amount = Math.min(getItemInHand(sender).getAmount(), req.getAmountRemains());
+        } else if (args.length() == 2){
+            amount = args.nextInt();
+        } else {
             msg(p, "manual.command.sell");
             return;
         }
-        int amount = args.nextInt();
+
         if (!req.canSellAmount(amount)) {
             msg(p, "user.req.sell_amount_limit", req.getAmountRemains());
             return;
