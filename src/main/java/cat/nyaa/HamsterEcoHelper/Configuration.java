@@ -74,7 +74,7 @@ public class Configuration {
         }
 
         marketSlot = new HashMap<>();
-        ConfigurationSection slotNumMap = tmp.getConfigurationSection("marketSlot");
+        ConfigurationSection slotNumMap = plugin.getConfig().getConfigurationSection("marketSlot");
         if (slotNumMap != null) {
             for (String group : slotNumMap.getKeys(false)) {
                 marketSlot.put(group, slotNumMap.getInt(group));
