@@ -35,7 +35,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public void onEnable() {
         try {
             commandHandler = new CommandHandler(this);
-            getCommand("hemsterecohelper").setExecutor(commandHandler);
+            getCommand("hamsterecohelper").setExecutor(commandHandler);
             database = new Database(this);
             eco = new EconomyUtil(this);
             auctionManager = new AuctionManager(this);
