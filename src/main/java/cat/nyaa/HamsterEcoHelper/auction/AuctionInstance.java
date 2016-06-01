@@ -125,7 +125,6 @@ public class AuctionInstance {
 
     public void halt() {
         checkPointListener.cancel();
-        Bukkit.broadcast(I18n.get("user.auc.halted"), "heh.bid");
     }
 
 }

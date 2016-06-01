@@ -49,10 +49,11 @@ public class RequisitionManager extends BukkitRunnable {
     }
 
     public void halt() {
-        if (currentReq != null)
+        if (currentReq != null) {
             currentReq.halt();
-        currentReq = null;
-        Bukkit.broadcast(I18n.get("user.req.halted"), "heh.bid");
+            currentReq = null;
+            Bukkit.broadcast(I18n.get("user.req.halted"), "heh.sell");
+        }
     }
 
     public RequisitionInstance getCurrentRequisition() {
