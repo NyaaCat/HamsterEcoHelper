@@ -65,4 +65,8 @@ public class Utils {
         HamsterEcoHelper.instance.database.addTemporaryStorage(player, item);
         return 3;
     }
+
+    public static String uid(Object obj) {
+        return Integer.toHexString(System.identityHashCode(obj));
+    }
 }

@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static cat.nyaa.HamsterEcoHelper.utils.Utils.uid;
+
 public class AuctionInstance {
     private class CheckPointListener extends BukkitRunnable {
         @Override
@@ -73,6 +75,14 @@ public class AuctionInstance {
         this.plugin = plugin;
         this.finishCallback = finishCallback;
         this.hideName = hideName;
+
+        String realName;
+        if (itemToGive.hasItemMeta() && itemToGive.getItemMeta().hasDisplayName()) {
+            realName = itemToGive.getItemMeta().getDisplayName();
+        } else {
+            realName = itemToGive.getType().name() + ":" + itemToGive.getDurability();
+        }
+
         if (hideName) {
             Bukkit.broadcast(I18n.get("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D)), "heh.bid");
             itemName = I18n.get("user.auc.mystery_item_placeholder");
@@ -80,8 +90,10 @@ public class AuctionInstance {
             new Message(I18n.get("user.auc.new_auction_0")).append(itemToGive)
                     .appendFormat("user.auc.new_auction_1", startPrice, stepPrice, (int) Math.floor(timeout / 20D))
                     .broadcast();
-            itemName = itemToGive.hasItemMeta() ? itemToGive.getItemMeta().getDisplayName() : itemToGive.getType().name();
+            itemName = realName;
         }
+        plugin.logger.info(I18n.get("internal.info.auc_start", realName, itemToGive.getAmount(),
+                Boolean.toString(hideName), startPrice, stepPrice, uid(this)));
         checkPointListener = new CheckPointListener();
         checkPointListener.runTaskLater(plugin, timeout);
     }
@@ -97,6 +109,7 @@ public class AuctionInstance {
         }
         msg.appendFormat("user.auc.new_price_1", price).broadcast();
         p.sendMessage(I18n.get("user.auc.new_price_success"));
+        plugin.logger.info(I18n.get("internal.info.auc_bid", uid(this), p.getName(), price));
         stage = 0;
         checkPointListener.resetTime();
         return true;
@@ -106,6 +119,7 @@ public class AuctionInstance {
         EconomyUtil e = plugin.eco;
         if (currentPlayer == null) {
             new Message(I18n.get("user.auc.fail")).append(itemStack).broadcast();
+            plugin.logger.info(I18n.get("internal.info.auc_finish", uid(this), currentHighPrice, "", "NO_PLAYER_BID"));
         } else {
             boolean success = e.withdraw(currentPlayer, currentHighPrice);
             if (success) {
@@ -116,8 +130,10 @@ public class AuctionInstance {
                 new Message(I18n.get("user.auc.success_0")).append(itemStack)
                         .appendFormat("user.auc.success_1", currentPlayer.getName())
                         .broadcast();
+                plugin.logger.info(I18n.get("internal.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "SUCCESS"));
             } else {
                 new Message(I18n.get("user.auc.fail")).append(itemStack).broadcast();
+                plugin.logger.info(I18n.get("internal.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "NOT_ENOUGH_MONEY"));
             }
         }
         finishCallback.run();
@@ -125,6 +141,7 @@ public class AuctionInstance {
 
     public void halt() {
         checkPointListener.cancel();
+        plugin.logger.info(I18n.get("internal.info.auc_finish", uid(this), -1, "", "HALTED"));
     }
 
 }

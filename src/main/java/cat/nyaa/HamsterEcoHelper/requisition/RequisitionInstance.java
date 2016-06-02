@@ -9,12 +9,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.logging.Logger;
+
+import static cat.nyaa.HamsterEcoHelper.utils.Utils.uid;
+
 public class RequisitionInstance {
     private final Runnable finishCallback;
     private BukkitRunnable timeoutListener;
 
     private final RequisitionSpecification templateItem;
     private final int unitPrice;
+    private final Logger logger;
+    private int soldAmount;
     private int amountRemains;
     private long endTime;
 
@@ -27,6 +33,7 @@ public class RequisitionInstance {
         this.unitPrice = unitPrice;
         this.templateItem = templateItem;
         this.amountRemains = reqAmount;
+        this.soldAmount = 0;
         this.endTime = System.currentTimeMillis() + templateItem.timeoutTicks * 50;
         timeoutListener = new TimeoutListener();
         timeoutListener.runTaskLater(plugin, templateItem.timeoutTicks);
@@ -34,10 +41,15 @@ public class RequisitionInstance {
         new Message(I18n.get("user.req.new_req_0")).append(tmp,"{itemName}")
                 .appendFormat("user.req.new_req_1", reqAmount, unitPrice, (double)templateItem.timeoutTicks / 20D)
                 .broadcast();
+        String name = templateItem.itemTemplate.hasItemMeta() && templateItem.itemTemplate.getItemMeta().hasDisplayName()?
+                templateItem.itemTemplate.getItemMeta().getDisplayName():
+                templateItem.itemTemplate.getType().name() + ":" + templateItem.itemTemplate.getDurability();
+        logger = plugin.getLogger();
+        plugin.getLogger().info(I18n.get("internal.info.req_start", name, reqAmount, unitPrice, templateItem.timeoutTicks, uid(this)));
     }
 
     public boolean canSellAmount(int amount) {
-        return amountRemains == -1 || amountRemains >= amount;
+        return amountRemains <= -1 || amountRemains >= amount;
     }
 
     public int getAmountRemains() {
@@ -46,6 +58,7 @@ public class RequisitionInstance {
 
     void halt() {
         timeoutListener.cancel();
+        logger.info(I18n.get("internal.info.req_finish", uid(this), soldAmount, "HALTED"));
     }
 
     /**
@@ -57,21 +70,24 @@ public class RequisitionInstance {
         ItemStack itemHand = p.getInventory().getItemInMainHand();
         if (itemHand.getAmount() < amount) return -1;
         if (!templateItem.matchRule.matches(itemHand)) return -2;
-        if (amountRemains < amount) amount = amountRemains;
+        if (amountRemains < amount && amountRemains >= 0) amount = amountRemains;
         int new_amount = itemHand.getAmount() - amount;
         if (new_amount == 0) {
             p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         } else {
             itemHand.setAmount(new_amount);
         }
-        amountRemains -= amount;
+        if (amountRemains >= 0) amountRemains -= amount;
+        soldAmount += amount;
         new Message(I18n.get("user.req.sold_amount_0", p.getName(), amount))
                 .append(templateItem.itemTemplate, "{itemName}")
                 .appendFormat("user.req.sold_amount_1", amountRemains)
                 .broadcast();
+        logger.info(I18n.get("internal.info.req_sell", uid(this), amount, amountRemains, p.getName()));
         if (amountRemains == 0) {
             Bukkit.broadcast(I18n.get("user.req.sold_out"), "heh.bid");
             halt();
+            logger.info(I18n.get("internal.info.req_finish", uid(this), soldAmount, "SOLD_OUT"));
             finishCallback.run();
         }
         return unitPrice * amount;
@@ -82,6 +98,7 @@ public class RequisitionInstance {
         public void run() {
             finishCallback.run();
             Bukkit.broadcast(I18n.get("user.req.finish"), "heh.bid");
+            logger.info(I18n.get("internal.info.req_finish", uid(RequisitionInstance.this), soldAmount, "TIMEOUT"));
         }
     }
 

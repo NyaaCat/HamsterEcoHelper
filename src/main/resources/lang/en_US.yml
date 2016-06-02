@@ -5,6 +5,16 @@ internal:
   info:
     using_language: "Using language: %s"
     installing_db: "Installing database..."
+    auc_not_enough_player: "About to start an auction but not enough players: %d (%d required)"
+    req_not_enough_player: "About to start a requisition but not enough players: %d (%d required)"
+    auc_scheduled: "An auction is scheduled after %d ticks"
+    req_scheduled: "a requisition is scheduled after %d ticks"
+    auc_start: "Auction started: {item: \"%s\", amount: %d, hideName: %s, start: %d, step: %d, id: \"%s\"}"
+    auc_bid: "Player gives price: {id: \"%s\", player: \"%s\", price: %d} "
+    auc_finish: "Auction finished: {id: \"%s\", price: %d, player: \"%s\", reason: \"%s\"}"
+    req_start: "Requisition started: {item: \"%s\", amount: %d, price: %d, timeout: %d, id: \"%s\"}"
+    req_sell: "Player sold item: {id: \"%s\", amount: %d, remain: %d, player: \"%s\"}"
+    req_finish: "Requisition finished: {id: \"%s\", total_sold: %d, reason: \"%s\"}"
   error:
     missing_sqlite_driver: "SQLite Driver not found. Plugin disabled."
     enable_fail: "Plugin failed to enable"

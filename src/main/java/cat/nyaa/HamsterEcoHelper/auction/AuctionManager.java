@@ -18,14 +18,18 @@ public class AuctionManager extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (Bukkit.getOnlinePlayers().size() < plugin.config.auctionMinimalPlayer)
+        if (Bukkit.getOnlinePlayers().size() < plugin.config.auctionMinimalPlayer) {
+            plugin.logger.info(I18n.get("internal.info.auc_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
             return;
+        }
+        int delay = Utils.inclusiveRandomInt(0, plugin.config.auctionMaxDelayTicks);
         (new BukkitRunnable() {
             @Override
             public void run() {
                 newAuction();
             }
-        }).runTaskLater(plugin, Utils.inclusiveRandomInt(0, plugin.config.auctionMaxDelayTicks));
+        }).runTaskLater(plugin, delay);
+        plugin.logger.info(I18n.get("internal.info.auc_scheduled", delay));
     }
 
     public boolean newAuction(AuctionItemTemplate item) {

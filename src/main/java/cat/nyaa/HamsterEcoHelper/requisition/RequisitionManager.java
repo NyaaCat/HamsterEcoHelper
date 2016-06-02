@@ -17,14 +17,18 @@ public class RequisitionManager extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (Bukkit.getOnlinePlayers().size() < plugin.config.requisitionMinimalPlayer)
+        if (Bukkit.getOnlinePlayers().size() < plugin.config.requisitionMinimalPlayer) {
+            plugin.logger.info(I18n.get("internal.info.req_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
             return;
+        }
+        int delay = Utils.inclusiveRandomInt(0, plugin.config.requisitionMaxDelayTicks);
         (new BukkitRunnable() {
             @Override
             public void run() {
                 newRequisition();
             }
-        }).runTaskLater(plugin, Utils.inclusiveRandomInt(0, plugin.config.requisitionMaxDelayTicks));
+        }).runTaskLater(plugin, delay);
+        plugin.logger.info(I18n.get("internal.info.req_scheduled", delay));
     }
 
     public boolean newRequisition() {
