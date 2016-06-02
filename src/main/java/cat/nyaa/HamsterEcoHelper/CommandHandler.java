@@ -289,9 +289,17 @@ public class CommandHandler implements CommandExecutor {
                 return null;
         }
 
+        public String top() {
+            if (index < parsedArguments.size())
+                return parsedArguments.get(index);
+            else
+                return null;
+        }
+
         public int nextInt() {
             String str = next();
             if (str == null) throw new BadCommandException("No more integers in argument");
+            if (str.endsWith("k")) str = str.substring(0, str.length()-1) + "000";
             try {
                 return Integer.parseInt(str);
             } catch (NumberFormatException ex) {
