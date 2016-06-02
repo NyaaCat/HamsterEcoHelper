@@ -91,6 +91,7 @@ user:
     offered: "offered by: %s"
     my_items: "My items"
     broadcast: "New market offer! use '/heh view' view the items."
+    someone_bought: "%s bought {itemName} for $%.2f from you."
   retrieve:
     need_confirm: "The items will drop from your current position. Please ensure the safety. Use '/heh retrieve confirm'"
     no_item: "You have no item to retrieve."

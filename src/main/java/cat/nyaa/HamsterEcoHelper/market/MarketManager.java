@@ -4,6 +4,7 @@ package cat.nyaa.HamsterEcoHelper.market;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
+import cat.nyaa.HamsterEcoHelper.utils.Message;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -66,6 +67,11 @@ public class MarketManager {
                     return false;
                 }
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
+                    if(item.getPlayer().isOnline()){
+                        new Message("")
+                                .append(item.getItemStack(amount),I18n.get("user.market.someone_bought",player.getName(),price))
+                                .send((Player) item.getPlayer());
+                    }
                     plugin.eco.withdraw(player, price);
                     plugin.eco.deposit(item.getPlayer(), price);
                 }
