@@ -171,39 +171,35 @@ public class Database {
     public List<MarketItem> getMarketItems(int offset, int limit, UUID seller) {
         Query<MarketItem> list;
         if (seller == null) {
-            list = db.find(MarketItem.class).order().desc("id").setFirstRow(offset).setMaxRows(limit);
+            list = db.find(MarketItem.class).where().ge("amount", 1).order().desc("id").setFirstRow(offset).setMaxRows(limit);
             return list.findList();
         } else {
-            list = db.find(MarketItem.class).where().eq("playerId", seller).order().desc("id").setFirstRow(offset).setMaxRows(limit);
+            list = db.find(MarketItem.class).where().ge("amount", 1).eq("playerId", seller).order().desc("id").setFirstRow(offset).setMaxRows(limit);
             return list.findList();
         }
     }
 
-    public void marketOffer(Player player, ItemStack itemStack, double unit_price) {
+    public int marketOffer(Player player, ItemStack itemStack, double unit_price) {
         MarketItem item = new MarketItem();
         item.setItemStack(itemStack);
         item.setAmount(itemStack.getAmount());
         item.setPlayerId(player.getUniqueId());
         item.setUnitPrice(unit_price);
         db.save(item);
-        return;
+        return item.getId();
     }
 
     public void marketBuy(Player player, int itemId, int amount) {
         MarketItem mItem = db.find(MarketItem.class, itemId);
         if (mItem != null) {
-            if (mItem.getAmount() == amount) {
-                db.delete(MarketItem.class, itemId);
-            } else {
-                mItem.setAmount(mItem.getAmount() - amount);
-                db.update(mItem);
-            }
+            mItem.setAmount(mItem.getAmount() - amount);
+            db.update(mItem);
         }
         return;
     }
 
     public int getMarketPlayerItemCount(OfflinePlayer player) {
-        int count = db.find(MarketItem.class).where().eq("playerId", player.getUniqueId()).findRowCount();
+        int count = db.find(MarketItem.class).where().ge("amount", 1).eq("playerId", player.getUniqueId()).findRowCount();
         if (count > 0) {
             return count;
         }
@@ -213,7 +209,7 @@ public class Database {
     public int getMarketPageCount() {
         int count = db.find(MarketItem.class).findRowCount();
         if (count > 0) {
-            return db.find(MarketItem.class).findPagingList(MarketManager.pageSize).getTotalPageCount();
+            return db.find(MarketItem.class).where().ge("amount", 1).findPagingList(MarketManager.pageSize).getTotalPageCount();
         }
         return 0;
     }

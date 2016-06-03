@@ -1,6 +1,8 @@
 package cat.nyaa.HamsterEcoHelper.market;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.utils.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -52,10 +54,24 @@ public class MarketCommands {
         if (args.length() == 2) {
             OfflinePlayer seller = Bukkit.getOfflinePlayer(args.next());
             if (seller != null) {
-                MarketManager.view(player, 1, seller.getUniqueId());
+                MarketManager.openGUI(player, 1, seller.getUniqueId());
             }
         } else {
-            MarketManager.view(player, 1, null);
+            MarketManager.openGUI(player, 1, null);
+        }
+    }
+
+    @SubCommand(value = "givemarketitem", permission = "heh.givemarketitem")
+    public static void give(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+        Player player = asPlayer(sender);
+        Database.MarketItem item = MarketManager.getItem(args.nextInt());
+        if (item != null) {
+            int slot = player.getInventory().firstEmpty();
+            if (slot >= 0 && player.getInventory().getItem(slot) == null) {
+                msg(player, "user.market.offered", item.getPlayerName());
+                msg(player, "user.market.unit_price", item.getUnitPrice());
+                player.getInventory().setItem(slot, item.getItemStack(1));
+            }
         }
     }
 }

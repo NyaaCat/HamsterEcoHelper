@@ -15,6 +15,8 @@ internal:
     req_start: "Requisition started: {item: \"%s\", amount: %d, price: %d, timeout: %d, id: \"%s\"}"
     req_sell: "Player sold item: {id: \"%s\", amount: %d, remain: %d, player: \"%s\"}"
     req_finish: "Requisition finished: {id: \"%s\", total_sold: %d, reason: \"%s\"}"
+    market_offer: "offer: {id: %d, item: \"%s\", amount: %d, unit_price: %.2f, player: \"%s\"}"
+    market_bought: "bought: {id: %d, item: \"%s\", amount: %d, price: %.2f, player: \"%s\", from: \"%s\"}"
   error:
     missing_sqlite_driver: "SQLite Driver not found. Plugin disabled."
     enable_fail: "Plugin failed to enable"
@@ -35,7 +37,7 @@ user:
     not_item_hand: "No item in hand"
     no_current_auction: "No ongoing auction"
     no_current_requisition: "No ongoing requisition"
-    balance: "Balance: %s"
+    balance: "Balance: %.2f"
     back: "Back"
     next_page: "Next page"
     command_complete: "Command Executed!"
@@ -90,8 +92,9 @@ user:
     unit_price: "Unit Price: %s"
     offered: "offered by: %s"
     my_items: "My items"
-    broadcast: "New market offer! use '/heh view' view the items."
+    broadcast: "New market offer: {itemName} *{amount} use '/heh view' view the items."
     someone_bought: "%s bought {itemName} for $%.2f from you."
+    buy_success: "you bought {itemName} from %s for $%.2f"
   retrieve:
     need_confirm: "The items will drop from your current position. Please ensure the safety. Use '/heh retrieve confirm'"
     no_item: "You have no item to retrieve."

@@ -16,10 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static cat.nyaa.HamsterEcoHelper.CommandHandler.msg;
 import static org.bukkit.Bukkit.getServer;
@@ -48,11 +45,13 @@ public class MarketManager {
         if (getPlayerSlot(player) <= db.getMarketPlayerItemCount(player)) {
             return false;
         }
-        db.marketOffer(player, item, unit_price);
+        int id=db.marketOffer(player, item, unit_price);
+        plugin.logger.info(I18n.get("internal.info.market_offer",id,getItemName(item),item.getAmount(),unit_price,player.getName()));
         if (plugin.config.marketBroadcast && (System.currentTimeMillis() - lastBroadcast) > (plugin.config.marketBroadcastCooldown * 1000)) {
             lastBroadcast = System.currentTimeMillis();
-            Bukkit.broadcastMessage(I18n.get("user.market.broadcast"));
+            new Message("").append(item,I18n.get("user.market.broadcast")).broadcast();
         }
+        updateAllGUI();
         return true;
     }
 
@@ -66,17 +65,22 @@ public class MarketManager {
                     playSound(player, Sound.BLOCK_FENCE_GATE_OPEN);
                     return false;
                 }
+                plugin.logger.info(I18n.get("internal.info.market_bought",itemId,getItemName(item.getItemStack()),amount,price,player.getName(),item.getPlayerName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if(item.getPlayer().isOnline()){
                         new Message("")
                                 .append(item.getItemStack(amount),I18n.get("user.market.someone_bought",player.getName(),price))
                                 .send((Player) item.getPlayer());
                     }
+                    new Message("")
+                            .append(item.getItemStack(amount),I18n.get("user.market.buy_success",item.getPlayerName(),price))
+                            .send(player);
                     plugin.eco.withdraw(player, price);
                     plugin.eco.deposit(item.getPlayer(), price);
                 }
                 db.marketBuy(player, itemId, amount);
                 playSound(player, Sound.ENTITY_EXPERIENCE_ORB_TOUCH);
+                updateAllGUI();
                 return true;
             } else {
                 msg(player, "user.warn.no_enough_money");
@@ -106,7 +110,7 @@ public class MarketManager {
         return db.getMarketItem(itemId);
     }
 
-    public static void view(Player player, int page, UUID seller) {
+    public static void openGUI(Player player, int page, UUID seller) {
         HashMap<Integer, Integer> list = new HashMap<>();
         Inventory inventory = Bukkit.createInventory(player, 54, ChatColor.DARK_GREEN + I18n.get("user.market.title"));
         int pageCount;
@@ -174,7 +178,7 @@ public class MarketManager {
         meta.setDisplayName(ChatColor.AQUA + I18n.get("user.market.my_items") +
                 (String.format(" (%s/%s)", db.getMarketPlayerItemCount(player), getPlayerSlot(player))));
         lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + I18n.get("user.info.balance", ChatColor.WHITE + "" + plugin.eco.balance(player)));
+        lore.add(ChatColor.GREEN + I18n.get("user.info.balance", plugin.eco.balance(player)));
         meta.setLore(lore);
         myItem.setItemMeta(meta);
         inventory.setItem(47, myItem);
@@ -182,6 +186,15 @@ public class MarketManager {
         player.openInventory(inventory);
     }
 
+    public static void closeGUI(Player player){
+        if(player.isOnline() && player.getOpenInventory().getTitle().contains(I18n.get("user.market.title"))) {
+            player.getOpenInventory().close();
+        }
+        viewPage.remove(player);
+        viewItem.remove(player);
+        viewSeller.remove(player);
+    }
+    
     public static void openMailbox(Player player) {
         Inventory inventory = Bukkit.createInventory(player, 54, I18n.get("user.market.mailbox"));
         ItemStack[] mailbox = getMailbox(player);
@@ -205,5 +218,26 @@ public class MarketManager {
             player.playSound(player.getLocation(), sound, 1, 2);
         }
         return;
+    }
+    
+    private static String getItemName(ItemStack item){
+        String itemName="";
+        if(item.hasItemMeta()&&item.getItemMeta().hasDisplayName()){
+            itemName=item.getItemMeta().getDisplayName();
+        }
+        if(itemName.length()==0){
+            itemName=item.getType().name()+":"+item.getDurability();
+        }else {
+            itemName+="("+item.getType().name()+":"+item.getDurability()+")";
+        }
+        return itemName;
+    }
+
+    public static void updateAllGUI() {
+        for(Player player:viewPage.keySet()){
+            if(player.isOnline() && player.getOpenInventory()!=null && player.getOpenInventory().getTitle().contains(I18n.get("user.market.title"))){
+                openGUI(player,viewPage.get(player),viewSeller.get(player));
+            }
+        }
     }
 }

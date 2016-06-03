@@ -52,20 +52,20 @@ public class Events implements Listener {
                             MarketManager.buy(player, itemId, 1);
                         }
                     }
-                    MarketManager.view(player, MarketManager.viewPage.get(player), seller);
+                    MarketManager.openGUI(player, MarketManager.viewPage.get(player), seller);
                     return;
                 }
-                MarketManager.viewItem.remove(player);
+                MarketManager.closeGUI(player);
                 return;
             }
             if (event.getRawSlot() == 45 && event.getCurrentItem().getType() != Material.AIR) {
-                MarketManager.view(player, MarketManager.viewPage.get(player) - 1, seller);
+                MarketManager.openGUI(player, MarketManager.viewPage.get(player) - 1, seller);
             } else if (event.getRawSlot() == 47 && event.getCurrentItem().getType() != Material.AIR) {
-                MarketManager.view(player, 1, player.getUniqueId());
+                MarketManager.openGUI(player, 1, player.getUniqueId());
             } else if (event.getRawSlot() == 48 && event.getCurrentItem().getType() != Material.AIR) {
                 MarketManager.openMailbox(player);
             } else if (event.getRawSlot() == 53 && event.getCurrentItem().getType() != Material.AIR) {
-                MarketManager.view(player, MarketManager.viewPage.get(player) + 1, seller);
+                MarketManager.openGUI(player, MarketManager.viewPage.get(player) + 1, seller);
             }
             event.setCancelled(true);
         }

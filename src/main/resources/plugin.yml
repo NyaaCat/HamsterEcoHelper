@@ -42,3 +42,4 @@ permissions:
       heh.addauction: true
       heh.addrequisition: true
       heh.debug: true
+      heh.givemarketitem: true
