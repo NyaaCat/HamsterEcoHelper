@@ -8,6 +8,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+import java.util.UUID;
+
 public class Message {
     public final BaseComponent inner;
 
@@ -62,7 +65,26 @@ public class Message {
     }
 
     public Message broadcast() {
-        Bukkit.getServer().spigot().broadcast(inner);
+        List<UUID> list = Ignore.getList();
+        if (list.isEmpty()) {
+            Bukkit.getServer().spigot().broadcast(inner);
+        } else {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (!list.contains(player.getUniqueId())) {
+                    this.send(player);
+                }
+            }
+        }
+        return this;
+    }
+
+    public Message broadcast(String permission) {
+        List<UUID> list = Ignore.getList();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!list.contains(player.getUniqueId()) && player.hasPermission(permission)) {
+                this.send(player);
+            }
+        }
         return this;
     }
 }

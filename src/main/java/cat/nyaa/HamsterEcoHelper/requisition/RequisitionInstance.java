@@ -85,7 +85,7 @@ public class RequisitionInstance {
                 .broadcast();
         logger.info(I18n.get("internal.info.req_sell", uid(this), amount, amountRemains, p.getName()));
         if (amountRemains == 0) {
-            Bukkit.broadcast(I18n.get("user.req.sold_out"), "heh.bid");
+            new Message(I18n.get("user.req.sold_out")).broadcast("heh.bid");
             halt();
             logger.info(I18n.get("internal.info.req_finish", uid(this), soldAmount, "SOLD_OUT"));
             finishCallback.run();
@@ -97,7 +97,7 @@ public class RequisitionInstance {
         @Override
         public void run() {
             finishCallback.run();
-            Bukkit.broadcast(I18n.get("user.req.finish"), "heh.bid");
+            new Message(I18n.get("user.req.finish")).broadcast("heh.bid");
             logger.info(I18n.get("internal.info.req_finish", uid(RequisitionInstance.this), soldAmount, "TIMEOUT"));
         }
     }

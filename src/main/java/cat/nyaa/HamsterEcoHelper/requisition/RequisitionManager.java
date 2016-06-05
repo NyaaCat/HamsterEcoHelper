@@ -2,6 +2,7 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.utils.Message;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -59,7 +60,7 @@ public class RequisitionManager extends BukkitRunnable {
         if (currentReq != null) {
             currentReq.halt();
             currentReq = null;
-            Bukkit.broadcast(I18n.get("user.req.halted"), "heh.sell");
+            new Message(I18n.get("user.req.halted")).broadcast("heh.sell");
         }
     }
 

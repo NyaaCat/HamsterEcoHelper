@@ -2,6 +2,7 @@ package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.utils.Message;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -61,7 +62,7 @@ public class AuctionManager extends BukkitRunnable {
         if (currentAuction != null) {
             currentAuction.halt();
             currentAuction = null;
-            Bukkit.broadcast(I18n.get("user.auc.halted"), "heh.bid");
+            new Message(I18n.get("user.auc.halted")).broadcast("heh.bid");
         }
     }
 

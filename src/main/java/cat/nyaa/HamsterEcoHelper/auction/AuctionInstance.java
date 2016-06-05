@@ -20,21 +20,21 @@ public class AuctionInstance {
             switch (stage) {
                 case 0:
                     if (currentHighPrice >= 0)
-                        Bukkit.broadcast(I18n.get("user.auc.first", currentHighPrice), "heh.bid");
+                        new Message(I18n.get("user.auc.first", currentHighPrice)).broadcast("heh.bid");
                     stage = 1;
                     checkPointListener = new CheckPointListener();
                     checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 1:
                     if (currentHighPrice >= 0)
-                        Bukkit.broadcast(I18n.get("user.auc.second", currentHighPrice), "heh.bid");
+                        new Message(I18n.get("user.auc.second", currentHighPrice)).broadcast("heh.bid");
                     stage = 2;
                     checkPointListener = new CheckPointListener();
                     checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 2:
                     if (currentHighPrice >= 0)
-                        Bukkit.broadcast(I18n.get("user.auc.third", currentHighPrice), "heh.bid");
+                        new Message(I18n.get("user.auc.third", currentHighPrice)).broadcast("heh.bid");
                     finish();
                     /*
                     stage = 3;
@@ -84,7 +84,7 @@ public class AuctionInstance {
         }
 
         if (hideName) {
-            Bukkit.broadcast(I18n.get("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D)), "heh.bid");
+            new Message(I18n.get("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D))).broadcast("heh.bid");
             itemName = I18n.get("user.auc.mystery_item_placeholder");
         } else {
             new Message(I18n.get("user.auc.new_auction_0")).append(itemToGive)
