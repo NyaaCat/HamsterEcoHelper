@@ -34,7 +34,7 @@ permissions:
       heh.bid: true
       heh.retrieve: true
       heh.command: true
-      heh.ignore: true
+      heh.mute: true
   heh.admin:
     description: Permission node for operators
     default: op

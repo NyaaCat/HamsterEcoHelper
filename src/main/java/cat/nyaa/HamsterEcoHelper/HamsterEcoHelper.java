@@ -5,7 +5,7 @@ import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
-import cat.nyaa.HamsterEcoHelper.utils.Ignore;
+import cat.nyaa.HamsterEcoHelper.utils.Mute;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class HamsterEcoHelper extends JavaPlugin {
             MarketManager.init(this);
             eventHandler = new Events(this);
             enableComplete = true;
-            Ignore.init();
+            Mute.init();
         } catch (Exception ex) {
             ex.printStackTrace();
             logger.severe(I18n.get("internal.error.enable_fail"));

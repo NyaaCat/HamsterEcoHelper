@@ -3,7 +3,7 @@ package cat.nyaa.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
-import cat.nyaa.HamsterEcoHelper.utils.Ignore;
+import cat.nyaa.HamsterEcoHelper.utils.Mute;
 import cat.nyaa.HamsterEcoHelper.utils.Message;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -193,14 +193,14 @@ public class CommandHandler implements CommandExecutor {
         msg(sender, "manual.license", ver, au);
     }
     
-    @SubCommand(value = "ignore", permission = "heh.ignore")
+    @SubCommand(value = "mute", permission = "heh.mute")
     public static void ignore(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        Ignore.add(asPlayer(sender));
+        Mute.add(asPlayer(sender));
     }
 
-    @SubCommand(value = "unignore", permission = "heh.ignore")
+    @SubCommand(value = "unmute", permission = "heh.mute")
     public static void unignore(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        Ignore.remove(asPlayer(sender));
+        Mute.remove(asPlayer(sender));
     }
     
     public static Player asPlayer(CommandSender target) {
