@@ -112,7 +112,9 @@ public class RequisitionInstance {
 
         @Override
         public void run() {
-            if (RequisitionInstance.this != manager.getCurrentRequisition()) {
+            if (RequisitionInstance.this != manager.getCurrentRequisition()
+                    || amountRemains <= 0
+                    || endTime - System.currentTimeMillis() < 100) {
                 cancel();
             } else {
                 new Message(I18n.get("user.req.hint_req_0")).append(templateItem.itemTemplate,"{itemName}")
