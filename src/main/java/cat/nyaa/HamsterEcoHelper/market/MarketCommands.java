@@ -18,6 +18,7 @@ public class MarketCommands {
     @SubCommand(value = "mailbox", permission = "heh.user")
     public static void openMailbox(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Player player = asPlayer(sender);
+        MarketManager.viewPage.put(player,null);
         MarketManager.openMailbox(player);
     }
 
