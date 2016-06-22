@@ -42,6 +42,8 @@ user:
     next_page: "Next page"
     command_complete: "Command Executed!"
     has_temporary_storage: "You have item in temporary storage. Acquire with '/heh retrieve'"
+    mute: "You will no longer receive this broadcast. Use '/heh unmute' to unmute"
+    unmute: "Unmute success."
   error:
     bad_command: "Wrong command: %s"
     not_int: "Not a valid integer"

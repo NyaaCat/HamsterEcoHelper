@@ -194,13 +194,15 @@ public class CommandHandler implements CommandExecutor {
     }
     
     @SubCommand(value = "mute", permission = "heh.mute")
-    public static void ignore(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public static void mute(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Mute.add(asPlayer(sender));
+        msg(sender,"user.info.mute");
     }
 
     @SubCommand(value = "unmute", permission = "heh.mute")
-    public static void unignore(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public static void unmute(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Mute.remove(asPlayer(sender));
+        msg(sender,"user.info.unmute");
     }
     
     public static Player asPlayer(CommandSender target) {
