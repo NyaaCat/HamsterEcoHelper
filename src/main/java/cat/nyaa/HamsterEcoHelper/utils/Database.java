@@ -240,7 +240,8 @@ public class Database {
         db.insert(tmp);
         return;
     }
-
+    
+    @Deprecated
     @Entity
     @Table(name = "mailbox")
     public static class Mailbox {

@@ -45,8 +45,8 @@ public class Events implements Listener {
             HashMap<Integer, Integer> slot = MarketManager.viewItem.get(player);
             if (slot.containsKey(event.getRawSlot())) {
                 if (event.getInventory().getSize() == 54 &&
-                        event.getInventory().getItem(48) != null &&
-                        event.getInventory().getItem(48).getType() == Material.CHEST) {
+                        event.getInventory().getItem(47) != null &&
+                        event.getInventory().getItem(47).getType() == Material.PAPER) {
                     int itemId = MarketManager.viewItem.get(player).get(event.getRawSlot());
                     event.setCancelled(true);
                     Database.MarketItem marketItem = MarketManager.getItem(itemId);
@@ -67,9 +67,7 @@ public class Events implements Listener {
                 MarketManager.openGUI(player, MarketManager.viewPage.get(player) - 1, seller);
             } else if (event.getRawSlot() == 47 && event.getCurrentItem().getType() != Material.AIR) {
                 MarketManager.openGUI(player, 1, player.getUniqueId());
-            } else if (event.getRawSlot() == 48 && event.getCurrentItem().getType() != Material.AIR) {
-                MarketManager.openMailbox(player);
-            } else if (event.getRawSlot() == 53 && event.getCurrentItem().getType() != Material.AIR) {
+            }else if (event.getRawSlot() == 53 && event.getCurrentItem().getType() != Material.AIR) {
                 MarketManager.openGUI(player, MarketManager.viewPage.get(player) + 1, seller);
             }
             event.setCancelled(true);

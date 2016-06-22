@@ -13,6 +13,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -45,11 +46,11 @@ public class MarketManager {
         if (getPlayerSlot(player) <= db.getMarketPlayerItemCount(player)) {
             return false;
         }
-        int id=db.marketOffer(player, item, unit_price);
-        plugin.logger.info(I18n.get("internal.info.market_offer",id,getItemName(item),item.getAmount(),unit_price,player.getName()));
+        int id = db.marketOffer(player, item, unit_price);
+        plugin.logger.info(I18n.get("internal.info.market_offer", id, getItemName(item), item.getAmount(), unit_price, player.getName()));
         if (plugin.config.marketBroadcast && (System.currentTimeMillis() - lastBroadcast) > (plugin.config.marketBroadcastCooldown * 1000)) {
             lastBroadcast = System.currentTimeMillis();
-            new Message("").append(item,I18n.get("user.market.broadcast")).broadcast();
+            new Message("").append(item, I18n.get("user.market.broadcast")).broadcast();
         }
         updateAllGUI();
         return true;
@@ -60,20 +61,20 @@ public class MarketManager {
         if (item != null && item.getItemStack().getType() != Material.AIR && item.getAmount() > 0) {
             double price = item.getUnitPrice() * amount;
             if (plugin.eco.enoughMoney(player, price) || player.getUniqueId().equals(item.getPlayerId())) {
-                if (!addItemToMailbox(player, item.getItemStack(amount))) {
+                if (!addItemToInventory(player, item.getItemStack(amount))) {
                     msg(player, "user.warn.not_enough_space");
                     playSound(player, Sound.BLOCK_FENCE_GATE_OPEN);
                     return false;
                 }
-                plugin.logger.info(I18n.get("internal.info.market_bought",itemId,getItemName(item.getItemStack()),amount,price,player.getName(),item.getPlayerName()));
+                plugin.logger.info(I18n.get("internal.info.market_bought", itemId, getItemName(item.getItemStack()), amount, price, player.getName(), item.getPlayerName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
-                    if(item.getPlayer().isOnline()){
+                    if (item.getPlayer().isOnline()) {
                         new Message("")
-                                .append(item.getItemStack(amount),I18n.get("user.market.someone_bought",player.getName(),price))
+                                .append(item.getItemStack(amount), I18n.get("user.market.someone_bought", player.getName(), price))
                                 .send((Player) item.getPlayer());
                     }
                     new Message("")
-                            .append(item.getItemStack(amount),I18n.get("user.market.buy_success",item.getPlayerName(),price))
+                            .append(item.getItemStack(amount), I18n.get("user.market.buy_success", item.getPlayerName(), price))
                             .send(player);
                     plugin.eco.withdraw(player, price);
                     plugin.eco.deposit(item.getPlayer(), price);
@@ -101,9 +102,20 @@ public class MarketManager {
         }
         return slot;
     }
-
+    
+    @Deprecated
     public static boolean addItemToMailbox(Player player, ItemStack item) {
         return db.addItemToMailbox(player, item);
+    }
+
+    public static boolean addItemToInventory(Player player, ItemStack item) {
+        PlayerInventory inv = player.getInventory();
+        int slot = inv.firstEmpty();
+        if (slot >= 0) {
+            inv.setItem(slot, item);
+            return true;
+        }
+        return false;
     }
 
     public static Database.MarketItem getItem(int itemId) {
@@ -164,6 +176,8 @@ public class MarketManager {
             nextPage.setItemMeta(nextPageMeta);
             inventory.setItem(53, nextPage);
         }
+        List<String> lore = new ArrayList<>();
+        /*
         ItemStack mailbox = new ItemStack(Material.CHEST);
         ItemMeta mailboxMeta = mailbox.getItemMeta();
         mailboxMeta.setDisplayName(ChatColor.LIGHT_PURPLE + I18n.get("user.market.mailbox"));
@@ -172,7 +186,7 @@ public class MarketManager {
         mailboxMeta.setLore(lore);
         mailbox.setItemMeta(mailboxMeta);
         inventory.setItem(48, mailbox);
-
+        */
         ItemStack myItem = new ItemStack(Material.PAPER);
         ItemMeta meta = myItem.getItemMeta();
         meta.setDisplayName(ChatColor.AQUA + I18n.get("user.market.my_items") +
@@ -186,8 +200,8 @@ public class MarketManager {
         player.openInventory(inventory);
     }
 
-    public static void closeGUI(Player player){
-        if(player.isOnline() && player.getOpenInventory().getTitle().contains(I18n.get("user.market.title"))) {
+    public static void closeGUI(Player player) {
+        if (player.isOnline() && player.getOpenInventory().getTitle().contains(I18n.get("user.market.title"))) {
             player.getOpenInventory().close();
         }
         viewPage.remove(player);
@@ -195,6 +209,7 @@ public class MarketManager {
         viewSeller.remove(player);
     }
     
+    @Deprecated
     public static void openMailbox(Player player) {
         Inventory inventory = Bukkit.createInventory(player, 54, I18n.get("user.market.mailbox"));
         ItemStack[] mailbox = getMailbox(player);
@@ -219,24 +234,24 @@ public class MarketManager {
         }
         return;
     }
-    
-    private static String getItemName(ItemStack item){
-        String itemName="";
-        if(item.hasItemMeta()&&item.getItemMeta().hasDisplayName()){
-            itemName=item.getItemMeta().getDisplayName();
+
+    private static String getItemName(ItemStack item) {
+        String itemName = "";
+        if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+            itemName = item.getItemMeta().getDisplayName();
         }
-        if(itemName.length()==0){
-            itemName=item.getType().name()+":"+item.getDurability();
-        }else {
-            itemName+="("+item.getType().name()+":"+item.getDurability()+")";
+        if (itemName.length() == 0) {
+            itemName = item.getType().name() + ":" + item.getDurability();
+        } else {
+            itemName += "(" + item.getType().name() + ":" + item.getDurability() + ")";
         }
         return itemName;
     }
 
     public static void updateAllGUI() {
-        for(Player player:viewPage.keySet()){
-            if(player.isOnline() && player.getOpenInventory()!=null && player.getOpenInventory().getTitle().contains(I18n.get("user.market.title"))){
-                openGUI(player,viewPage.get(player),viewSeller.get(player));
+        for (Player player : viewPage.keySet()) {
+            if (player.isOnline() && player.getOpenInventory() != null && player.getOpenInventory().getTitle().contains(I18n.get("user.market.title"))) {
+                openGUI(player, viewPage.get(player), viewSeller.get(player));
             }
         }
     }
