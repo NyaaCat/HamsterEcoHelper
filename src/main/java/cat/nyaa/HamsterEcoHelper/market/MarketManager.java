@@ -5,6 +5,7 @@ import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
 import cat.nyaa.HamsterEcoHelper.utils.Message;
+import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,7 +14,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -61,11 +61,7 @@ public class MarketManager {
         if (item != null && item.getItemStack().getType() != Material.AIR && item.getAmount() > 0) {
             double price = item.getUnitPrice() * amount;
             if (plugin.eco.enoughMoney(player, price) || player.getUniqueId().equals(item.getPlayerId())) {
-                if (!addItemToInventory(player, item.getItemStack(amount))) {
-                    msg(player, "user.warn.not_enough_space");
-                    playSound(player, Sound.BLOCK_FENCE_GATE_OPEN);
-                    return false;
-                }
+                Utils.giveItem(player, item.getItemStack(amount));
                 plugin.logger.info(I18n.get("internal.info.market_bought", itemId, getItemName(item.getItemStack()), amount, price, player.getName(), item.getPlayerName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {
@@ -102,20 +98,10 @@ public class MarketManager {
         }
         return slot;
     }
-    
+
     @Deprecated
     public static boolean addItemToMailbox(Player player, ItemStack item) {
         return db.addItemToMailbox(player, item);
-    }
-
-    public static boolean addItemToInventory(Player player, ItemStack item) {
-        PlayerInventory inv = player.getInventory();
-        int slot = inv.firstEmpty();
-        if (slot >= 0) {
-            inv.setItem(slot, item);
-            return true;
-        }
-        return false;
     }
 
     public static Database.MarketItem getItem(int itemId) {
@@ -208,7 +194,7 @@ public class MarketManager {
         viewItem.remove(player);
         viewSeller.remove(player);
     }
-    
+
     @Deprecated
     public static void openMailbox(Player player) {
         Inventory inventory = Bukkit.createInventory(player, 54, I18n.get("user.market.mailbox"));

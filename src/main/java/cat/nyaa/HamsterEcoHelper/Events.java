@@ -7,10 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,19 +20,6 @@ public class Events implements Listener {
     public Events(HamsterEcoHelper plugin) {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent e) {
-        Player player = (Player) e.getPlayer();
-        if (MarketManager.viewMailbox.contains(player)) {
-            MarketManager.viewMailbox.remove(player);
-            MarketManager.setMailbox(player, e.getInventory().getContents());
-            if (MarketManager.viewPage.get(player) != null) {
-                new openMarket(player, MarketManager.viewPage.get(player), MarketManager.viewSeller.get(player)).runTaskLater(this.plugin, 5);
-            }
-            return;
-        }
     }
 
     @EventHandler
@@ -81,26 +66,4 @@ public class Events implements Listener {
             CommandHandler.msg(ev.getPlayer(), "user.info.has_temporary_storage");
         }
     }
-}
-
-class openMarket extends BukkitRunnable {
-    
-    private final UUID seller;
-    private final int page;
-    private final Player player;
-
-    public openMarket(Player player, int page, UUID seller) {
-        this.player = player;
-        this.page = page;
-        this.seller = seller;
-    }
-
-    @Override
-    public void run() {
-        if (player.isOnline()) {
-            MarketManager.openGUI(player, page, seller);
-        }
-        this.cancel();
-    }
-
 }

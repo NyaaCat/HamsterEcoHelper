@@ -1,8 +1,8 @@
 package cat.nyaa.HamsterEcoHelper.market;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
+import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -15,14 +15,7 @@ import java.text.DecimalFormat;
 import static cat.nyaa.HamsterEcoHelper.CommandHandler.*;
 
 public class MarketCommands {
-    /*
-    @SubCommand(value = "mailbox", permission = "heh.user")
-    public static void openMailbox(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        Player player = asPlayer(sender);
-        MarketManager.viewPage.put(player, null);
-        MarketManager.openMailbox(player);
-    }
-    */
+    
     @SubCommand(value = "offer", permission = "heh.offer")
     public static void offer(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         if (args.length() == 2) {
@@ -58,13 +51,9 @@ public class MarketCommands {
         for (int i = 0; i < mailbox.length; i++) {
             ItemStack item = mailbox[i];
             if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
-                if (MarketManager.addItemToInventory(player, item)) {
-                    mailbox[i] = new ItemStack(Material.AIR);
-                    save = true;
-                    continue;
-                } else {
-                    break;
-                }
+                Utils.giveItem(player, item);
+                mailbox[i] = new ItemStack(Material.AIR);
+                save = true;
             }
         }
         if (save) {
