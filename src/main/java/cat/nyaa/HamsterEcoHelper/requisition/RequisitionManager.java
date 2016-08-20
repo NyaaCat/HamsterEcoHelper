@@ -44,6 +44,7 @@ public class RequisitionManager extends BukkitRunnable {
     }
 
     public boolean newRequisition(RequisitionSpecification item) {
+        if (plugin.reqManager != this) return false;
         if (currentReq != null) return false;
         if (item == null) return false;
 

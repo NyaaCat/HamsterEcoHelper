@@ -34,6 +34,7 @@ public class AuctionManager extends BukkitRunnable {
     }
 
     public boolean newAuction(AuctionItemTemplate item) {
+        if (plugin.auctionManager != this) return false;
         if (currentAuction != null) return false;
         if (item == null) return false;
         currentAuction = new AuctionInstance(item.getItemStack(),
@@ -53,9 +54,7 @@ public class AuctionManager extends BukkitRunnable {
                 (AuctionItemTemplate temp) -> temp.randomWeight);
         if (bidItem == null) return false; // wtf?
 
-        currentAuction = new AuctionInstance(bidItem.getItemStack(), bidItem.baseAuctionPrice, bidItem.bidStepPrice,
-                bidItem.waitTimeTicks, bidItem.hideName, plugin, ()->this.currentAuction = null);
-        return true;
+        return newAuction(bidItem);
     }
 
     public void halt() {
