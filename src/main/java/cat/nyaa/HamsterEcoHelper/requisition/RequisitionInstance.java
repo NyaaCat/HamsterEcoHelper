@@ -121,15 +121,18 @@ public class RequisitionInstance {
         if (!templateItem.matchRule.matches(itemHand)) return -2;
         if (amountRemains < amount && amountRemains >= 0) amount = amountRemains;
         int new_amount = itemHand.getAmount() - amount;
-        ItemStack tmp = itemHand.clone();
-        tmp.setAmount(amount);
         if (new_amount == 0) {
             p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         } else {
             itemHand.setAmount(new_amount);
         }
 
-        Utils.giveItem(owner, tmp);
+        if (owner != null) {
+            ItemStack tmp = itemHand.clone();
+            tmp.setAmount(amount);
+            Utils.giveItem(owner, tmp);
+        }
+
         if (amountRemains >= 0) amountRemains -= amount;
         soldAmount += amount;
         new Message(I18n.get("user.req.sold_amount_0", p.getName(), amount))

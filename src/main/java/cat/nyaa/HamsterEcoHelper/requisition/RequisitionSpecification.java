@@ -91,10 +91,14 @@ public class RequisitionSpecification {
             if (requireExact) return base.equals(given);
             if (!base.getType().equals(given.getType())) return false;
 
-            if (repairCostMatch == MatchingMode.EXACT &&
-                    base.getItemMeta() instanceof Repairable && given.getItemMeta() instanceof Repairable &&
-                    !(((Repairable) given.getItemMeta()).getRepairCost() == ((Repairable) base.getItemMeta()).getRepairCost())) {
-                return false;
+            if (repairCostMatch == MatchingMode.EXACT) {
+                if (base.getItemMeta() instanceof Repairable && given.getItemMeta() instanceof Repairable) {
+                    int cost1 = ((Repairable) given.getItemMeta()).getRepairCost();
+                    int cost2 = ((Repairable) base.getItemMeta()).getRepairCost();
+                    if (cost1 != cost2) return false;
+                } else if (base.getItemMeta() instanceof Repairable || given.getItemMeta() instanceof Repairable) {
+                    return false;
+                }
             }
 
             int baseDamage = base.getDurability();
