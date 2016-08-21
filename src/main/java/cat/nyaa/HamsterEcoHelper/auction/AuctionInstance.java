@@ -108,7 +108,9 @@ public class AuctionInstance {
             plugin.logger.info(I18n.get("internal.info.auc_finish", uid(this), currentHighPrice, "", "NO_PLAYER_BID"));
         } else {
             boolean success = false;
-            plugin.auctionManager.cooldown.put(owner.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerAuctionCooldownTicks * 50));
+            if(owner != null) {
+                plugin.auctionManager.cooldown.put(owner.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerAuctionCooldownTicks * 50));
+            }
             if (currentHighPrice >= reservePrice) {
                 success = e.withdraw(currentPlayer, currentHighPrice);
                 if (this.owner != null) {
