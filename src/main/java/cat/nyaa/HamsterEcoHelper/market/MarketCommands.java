@@ -69,7 +69,7 @@ public class MarketCommands {
         }
     }
 
-    @SubCommand(value = "givemarketitem", permission = "heh.givemarketitem")
+    @SubCommand(value = "givemarketitem", permission = "heh.giveitem")
     public static void give(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Player player = asPlayer(sender);
         Database.MarketItem item = MarketManager.getItem(args.nextInt());

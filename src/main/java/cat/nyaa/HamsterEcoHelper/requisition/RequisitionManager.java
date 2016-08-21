@@ -5,11 +5,18 @@ import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Message;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class RequisitionManager extends BukkitRunnable {
     private final HamsterEcoHelper plugin;
+    public HashMap<UUID, Long> cooldown = new HashMap<>();
     private RequisitionInstance currentReq = null;
+
     public RequisitionManager(HamsterEcoHelper plugin) {
         this.plugin = plugin;
         int interval = plugin.config.requisitionIntervalTicks;
@@ -49,8 +56,18 @@ public class RequisitionManager extends BukkitRunnable {
         if (item == null) return false;
 
         int unitPrice = Utils.inclusiveRandomInt(item.minPurchasePrice, item.maxPurchasePrice);
-        int amount = item.maxAmount < 0? -1: Utils.inclusiveRandomInt(item.minAmount, item.maxAmount);
-        currentReq = new RequisitionInstance(item, unitPrice, amount, plugin, ()->this.currentReq=null);
+        int amount = item.maxAmount < 0 ? -1 : Utils.inclusiveRandomInt(item.minAmount, item.maxAmount);
+        currentReq = new RequisitionInstance(item, unitPrice, amount, plugin, () -> this.currentReq = null);
+        if (plugin.config.requisitionHintInterval > 0) {
+            currentReq.new RequisitionHintTimer(this, plugin.config.requisitionHintInterval, plugin);
+        }
+        return true;
+    }
+
+    public boolean newPlayerRequisition(Player player, ItemStack item, int unitPrice, int amount) {
+        if (currentReq != null) return false;
+        if (item == null) return false;
+        currentReq = new RequisitionInstance(player, item, unitPrice, amount, plugin, () -> this.currentReq = null);
         if (plugin.config.requisitionHintInterval > 0) {
             currentReq.new RequisitionHintTimer(this, plugin.config.requisitionHintInterval, plugin);
         }

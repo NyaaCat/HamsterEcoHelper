@@ -35,6 +35,8 @@ permissions:
       heh.retrieve: true
       heh.command: true
       heh.mute: true
+      heh.userauc: true
+      heh.userreq: true
   heh.admin:
     description: Permission node for operators
     default: op
@@ -43,4 +45,4 @@ permissions:
       heh.addauction: true
       heh.addrequisition: true
       heh.debug: true
-      heh.givemarketitem: true
+      heh.giveitem: true

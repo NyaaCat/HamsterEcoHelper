@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -69,12 +70,14 @@ public class AuctionCommands {
             msg(sender, "manual.command.bid");
             return;
         }
-
-        long minPrice = auc.currentHighPrice == -1? auc.startPr: auc.currentHighPrice + auc.stepPr;
+        if (auc.owner != null && auc.owner.getUniqueId().equals(p.getUniqueId())) {
+            return;
+        }
+        long minPrice = auc.currentHighPrice == -1 ? auc.startPr : auc.currentHighPrice + auc.stepPr;
         String tmp = args.top();
         int bid;
         if ("min".equals(tmp)) {
-            bid = (int)minPrice;
+            bid = (int) minPrice;
         } else {
             bid = args.nextInt();
         }
@@ -102,9 +105,29 @@ public class AuctionCommands {
             msg(sender, "user.retrieve.no_item");
             return;
         }
-        for(ItemStack s : items) {
+        for (ItemStack s : items) {
             p.getWorld().dropItem(p.getEyeLocation(), s);
         }
         plugin.database.clearTemporaryStorage(p);
+    }
+
+    @SubCommand(value = "auc", permission = "heh.userauc")
+    public static void Auc(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+        if (args.length() < 3) {
+            msg(sender,"manual.command.auc");
+            return;
+        }
+        Player player = asPlayer(sender);
+        ItemStack item = getItemInHand(sender).clone();
+        int basePrice = args.nextInt();
+        int stepPrice = args.nextInt();
+        int reservePrice = 0;
+        if (args.length() == 4) {
+            reservePrice = args.nextInt();
+        }
+        boolean success = plugin.auctionManager.newPlayerAuction(player, item, basePrice, stepPrice, reservePrice);
+        if (success) {
+            player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+        }
     }
 }

@@ -6,6 +6,8 @@ import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.Query;
 import com.avaje.ebean.validation.NotNull;
+import com.avaje.ebeaninternal.api.SpiEbeanServer;
+import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -32,6 +34,13 @@ public class Database {
         } catch (PersistenceException ex) {
             plugin.logger.info(I18n.get("internal.info.installing_db"));
             plugin.installDDL();
+        }
+        try {
+            db.find(ItemLog.class).findRowCount();
+        } catch (PersistenceException ex) {
+            SpiEbeanServer serv = (SpiEbeanServer)plugin.getDatabase();
+            DdlGenerator gen = serv.getDdlGenerator();
+            gen.runScript(true, gen.generateCreateDdl());
         }
     }
 
@@ -103,6 +112,7 @@ public class Database {
         list.add(TempStorageRepo.class);
         list.add(MarketItem.class);
         list.add(Mailbox.class);
+        list.add(ItemLog.class);
         return list;
     }
 
@@ -240,6 +250,20 @@ public class Database {
         db.insert(tmp);
         return;
     }
+
+    public ItemLog getItemLog(int id){
+        return db.find(ItemLog.class,id);
+    }
+    
+    public int addItemLog(OfflinePlayer player,ItemStack item,int price,int amount){
+        ItemLog i = new ItemLog();
+        i.setOwner(player.getUniqueId());
+        i.setItemStack(item);
+        i.setPrice(price);
+        i.setAmount(amount);
+        db.insert(i);
+        return i.getId();
+    }
     
     @Deprecated
     @Entity
@@ -374,6 +398,94 @@ public class Database {
 
         public OfflinePlayer getPlayer() {
             return Bukkit.getOfflinePlayer(playerId);
+        }
+    }
+    
+    @Entity
+    @Table(name = "itemlog")
+    public static class ItemLog {
+        @Id
+        public int id;
+        @NotNull
+        public UUID owner;
+        @NotNull
+        public String item;
+        @NotNull
+        private int amount;
+        @NotNull
+        private double price;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public UUID getOwner() {
+            return owner;
+        }
+
+        public void setOwner(UUID uuid) {
+            this.owner = uuid;
+        }
+
+        public String getItem() {
+            return item;
+        }
+
+        public void setItem(String item) {
+            this.item = item;
+        }
+
+        public ItemStack getItemStack() {
+            YamlConfiguration yaml = new YamlConfiguration();
+            try {
+                yaml.loadFromString(new String(Base64.getDecoder().decode(item)));
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+            ItemStack itemStack = yaml.getItemStack("item");
+            itemStack.setAmount(this.amount);
+            return itemStack;
+        }
+
+        public ItemStack getItemStack(int amount) {
+            ItemStack item = getItemStack();
+            item.setAmount(amount);
+            return item;
+        }
+
+        public void setItemStack(ItemStack item) {
+            YamlConfiguration yaml = new YamlConfiguration();
+            yaml.set("item", item);
+            this.item = Base64.getEncoder().encodeToString(yaml.saveToString().getBytes());
+            amount = item.getAmount();
+        }
+
+        public double getPrice() {
+            return price;
+        }
+
+        public void setPrice(double unit_price) {
+            this.price = unit_price;
+        }
+
+        public int getAmount() {
+            return amount;
+        }
+
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
+
+        public String getPlayerName() {
+            return Bukkit.getOfflinePlayer(owner).getName();
+        }
+
+        public OfflinePlayer getPlayer() {
+            return Bukkit.getOfflinePlayer(owner);
         }
     }
 }

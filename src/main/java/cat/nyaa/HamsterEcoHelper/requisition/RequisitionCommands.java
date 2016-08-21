@@ -1,10 +1,16 @@
 package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import cat.nyaa.HamsterEcoHelper.utils.Database;
+import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import static cat.nyaa.HamsterEcoHelper.CommandHandler.*;
+
 public class RequisitionCommands {
     @SubCommand(value = "addreq", permission = "heh.addreq")
     public static void addReq(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
@@ -37,7 +43,7 @@ public class RequisitionCommands {
         if (args.length() == 2) {
             int id = args.nextInt();
             if (id < 0 || id >= plugin.config.itemsForReq.size()) {
-                msg(sender, "admin.error.req_id_oor", 0, plugin.config.itemsForReq.size()-1);
+                msg(sender, "admin.error.req_id_oor", 0, plugin.config.itemsForReq.size() - 1);
                 return;
             } else {
                 success = plugin.reqManager.newRequisition(plugin.config.itemsForReq.get(id));
@@ -64,6 +70,9 @@ public class RequisitionCommands {
     public static void userSell(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Player p = asPlayer(sender);
         RequisitionInstance req = plugin.reqManager.getCurrentRequisition();
+        if (req.owner != null && req.owner.getUniqueId().equals(p.getUniqueId())) {
+            return;
+        }
         if (req == null) {
             msg(sender, "user.info.no_current_requisition");
             return;
@@ -72,7 +81,7 @@ public class RequisitionCommands {
         int amount;
         if (args.length() == 1) {
             amount = Math.min(getItemInHand(sender).getAmount(), req.getAmountRemains());
-        } else if (args.length() == 2){
+        } else if (args.length() == 2) {
             amount = args.nextInt();
         } else {
             msg(p, "manual.command.sell");
@@ -85,7 +94,7 @@ public class RequisitionCommands {
         }
         int price = req.purchase(p, amount);
         if (price < 0) {
-            switch(price) {
+            switch (price) {
                 case -1:
                     msg(p, "user.req.not_enough");
                     break;
@@ -99,5 +108,64 @@ public class RequisitionCommands {
             msg(p, "user.req.success", price);
             plugin.eco.deposit(p, price);
         }
+    }
+
+    @SubCommand(value = "req", permission = "heh.userreq")
+    public static void Requisition(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+        RequisitionInstance req = plugin.reqManager.getCurrentRequisition();
+        if (req != null) {
+            return;
+        }
+        if (args.length() != 4) {
+            msg(sender,"manual.command.req");
+            return;
+        }
+
+        Player player = asPlayer(sender);
+        String itemName = args.next().toUpperCase();
+        ItemStack item = null;
+        int unitPrice = args.nextInt();
+        int amount = args.nextInt();
+        if (plugin.reqManager.cooldown.containsKey(player.getUniqueId())
+                && plugin.reqManager.cooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
+            msg(sender, "user.info.cooldown", (plugin.reqManager.cooldown.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000);
+            return;
+        }
+
+        if (!(unitPrice > 0 && amount > 0)) {
+            msg(sender, "user.error.not_int");
+            return;
+        }
+
+        if (itemName.equals("HAND")) {
+            item = getItemInHand(sender).clone();
+        } else {
+            try {
+                item = new ItemStack(Material.valueOf(itemName));
+            } catch (IllegalArgumentException e) {
+                msg(sender, "user.error.unknown_item", itemName);
+                return;
+            }
+        }
+        if (!plugin.eco.enoughMoney(player, unitPrice * amount)) {
+            msg(sender, "user.warn.no_enough_money");
+        }
+        boolean success = plugin.reqManager.newPlayerRequisition(player, item, unitPrice, amount);
+        if (success) {
+            plugin.eco.withdraw(player, amount * unitPrice);
+            plugin.reqManager.cooldown.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
+        }
+    }
+
+    @SubCommand(value = "giveitem", permission = "heh.giveitem")
+    public static void GiveItem(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+        Player p= asPlayer(sender);
+        Database.ItemLog item = plugin.database.getItemLog(args.nextInt());
+        if(item!=null) {
+            Utils.giveItem(p, item.getItemStack());
+            p.sendMessage("player: "+ Bukkit.getPlayer(item.getOwner()).getName());
+            p.sendMessage("price: "+ item.getPrice());
+        }
+        
     }
 }

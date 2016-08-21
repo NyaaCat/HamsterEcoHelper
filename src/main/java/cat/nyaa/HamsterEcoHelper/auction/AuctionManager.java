@@ -5,10 +5,16 @@ import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Message;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class AuctionManager extends BukkitRunnable {
     private final HamsterEcoHelper plugin;
+    public HashMap<UUID, Long> cooldown = new HashMap<>();
     private AuctionInstance currentAuction = null;
 
     public AuctionManager(HamsterEcoHelper plugin) {
@@ -37,13 +43,14 @@ public class AuctionManager extends BukkitRunnable {
         if (plugin.auctionManager != this) return false;
         if (currentAuction != null) return false;
         if (item == null) return false;
-        currentAuction = new AuctionInstance(item.getItemStack(),
+        currentAuction = new AuctionInstance(null, item.getItemStack(),
                 item.baseAuctionPrice,
-                item.bidStepPrice,
+                item.bidStepPrice, 
+                0,
                 item.waitTimeTicks,
                 item.hideName,
                 plugin,
-                ()->this.currentAuction = null);
+                () -> this.currentAuction = null);
         return true;
     }
 
@@ -55,6 +62,28 @@ public class AuctionManager extends BukkitRunnable {
         if (bidItem == null) return false; // wtf?
 
         return newAuction(bidItem);
+    }
+
+    public boolean newPlayerAuction(Player player, ItemStack item, int basePrice, int stepPrice, int reservePrice) {
+        if (currentAuction != null) return false;
+        if (!(basePrice > 0.9) || (stepPrice < 0)) {
+            return false;
+        }
+        if (this.cooldown.containsKey(player.getUniqueId()) && this.cooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
+            player.sendMessage(I18n.get("user.info.cooldown", (this.cooldown.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000));
+            return false;
+        }
+        this.cooldown.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerAuctionCooldownTicks / 20 * 1000));
+
+        currentAuction = new AuctionInstance(player, item,
+                basePrice,
+                stepPrice,
+                reservePrice,
+                plugin.config.playerAuctionTimeoutTicks,
+                false,
+                plugin,
+                () -> this.currentAuction = null);
+        return true;
     }
 
     public void halt() {

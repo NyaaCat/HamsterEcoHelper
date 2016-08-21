@@ -43,6 +43,16 @@ public class Configuration {
     public boolean marketBroadcast = true;
     @Serializable
     public int marketBroadcastCooldown = 120;
+    @Serializable
+    public int playerAuctionTimeoutTicks =1000; 
+    @Serializable
+    public int playerAuctionCooldownTicks=3000;
+    @Serializable
+    public int playerAuctionCommissionFee=0;
+    @Serializable
+    public int playerRequisitionTimeoutTicks =1000;
+    @Serializable
+    public int playerRequisitionCooldownTicks=3000;
 
     public Map<String, Integer> marketSlot = new HashMap<>();
     public List<AuctionItemTemplate> itemsForAuction = new ArrayList<>();

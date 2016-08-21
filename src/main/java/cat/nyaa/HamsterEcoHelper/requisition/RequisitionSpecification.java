@@ -4,12 +4,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Repairable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static cat.nyaa.HamsterEcoHelper.Configuration.*;
 
-public class RequisitionSpecification{
+public class RequisitionSpecification {
     @Serializable
     public ItemStack itemTemplate = null;
     @Serializable
@@ -23,9 +27,15 @@ public class RequisitionSpecification{
     @Serializable
     public double randomWeight = 100;
     @Serializable
-    public int timeoutTicks = 20*60*5; // 5 minutes
+    public int timeoutTicks = 20 * 60 * 5; // 5 minutes
 
     public MatchingSpecification matchRule = new MatchingSpecification();
+
+    public static RequisitionSpecification fromConfig(ConfigurationSection s) {
+        RequisitionSpecification tmp = new RequisitionSpecification();
+        tmp.loadFrom(s);
+        return tmp;
+    }
 
     public void loadFrom(ConfigurationSection s) {
         deserialize(s, this);
@@ -40,10 +50,12 @@ public class RequisitionSpecification{
         matchRule.dumpTo(s.createSection("matchRule"));
     }
 
-    public static RequisitionSpecification fromConfig(ConfigurationSection s) {
-        RequisitionSpecification tmp = new RequisitionSpecification();
-        tmp.loadFrom(s);
-        return tmp;
+    enum MatchingMode {
+        EXACT,
+        EXACT_TEXT, // ignore the control chars for strings.
+        CONTAINS,
+        CONTAINS_TEXT,  // ignore the control chars for strings.
+        ARBITRARY;
     }
 
     public class MatchingSpecification {
@@ -59,6 +71,8 @@ public class RequisitionSpecification{
         public MatchingMode loreMatch = MatchingMode.EXACT_TEXT;
         @Serializable
         public MatchingMode nameMatch = MatchingMode.ARBITRARY;
+        @Serializable
+        public MatchingMode repairCostMatch = MatchingMode.EXACT;
 
         public void dumpTo(ConfigurationSection s) {
             serialize(s, this);
@@ -77,19 +91,27 @@ public class RequisitionSpecification{
             if (requireExact) return base.equals(given);
             if (!base.getType().equals(given.getType())) return false;
 
+            if (repairCostMatch == MatchingMode.EXACT &&
+                    base.getItemMeta() instanceof Repairable && given.getItemMeta() instanceof Repairable &&
+                    !(((Repairable) given.getItemMeta()).getRepairCost() == ((Repairable) base.getItemMeta()).getRepairCost())) {
+                return false;
+            }
+
             int baseDamage = base.getDurability();
             int givenDamage = given.getDurability();
             if (minDamageValue == -2 && givenDamage < baseDamage) return false;
-            if (minDamageValue >= 0  && givenDamage < minDamageValue) return false;
+            if (minDamageValue >= 0 && givenDamage < minDamageValue) return false;
             if (maxDamageValue == -2 && givenDamage > baseDamage) return false;
-            if (maxDamageValue >= 0  && givenDamage > maxDamageValue) return false;
+            if (maxDamageValue >= 0 && givenDamage > maxDamageValue) return false;
 
             String baseDisplay = getDisplayName(base);
             String givenDisplay = getDisplayName(given);
             if (nameMatch == MatchingMode.EXACT && !baseDisplay.equals(givenDisplay)) return false;
-            if (nameMatch == MatchingMode.EXACT_TEXT && !ChatColor.stripColor(baseDisplay).equals(ChatColor.stripColor(givenDisplay))) return false;
+            if (nameMatch == MatchingMode.EXACT_TEXT && !ChatColor.stripColor(baseDisplay).equals(ChatColor.stripColor(givenDisplay)))
+                return false;
             if (nameMatch == MatchingMode.CONTAINS && !givenDisplay.contains(baseDisplay)) return false;
-            if (nameMatch == MatchingMode.CONTAINS_TEXT && !ChatColor.stripColor(givenDisplay).contains(ChatColor.stripColor(baseDisplay))) return false;
+            if (nameMatch == MatchingMode.CONTAINS_TEXT && !ChatColor.stripColor(givenDisplay).contains(ChatColor.stripColor(baseDisplay)))
+                return false;
 
             Map<Enchantment, Integer> baseEnch = base.getEnchantments();
             Map<Enchantment, Integer> givenEnch = given.getEnchantments();
@@ -129,7 +151,7 @@ public class RequisitionSpecification{
         private boolean containStrArr(String[] sample, String[] pattern, boolean stripColor) {
             Set<String> sampleSet = new HashSet<>();
             for (String s : sample) {
-                sampleSet.add(stripColor? ChatColor.stripColor(s): s);
+                sampleSet.add(stripColor ? ChatColor.stripColor(s) : s);
             }
             for (String s : pattern) {
                 if (!sampleSet.contains(s))
@@ -138,13 +160,5 @@ public class RequisitionSpecification{
             return true;
         }
 
-    }
-
-    enum MatchingMode {
-        EXACT,
-        EXACT_TEXT, // ignore the control chars for strings.
-        CONTAINS,
-        CONTAINS_TEXT,  // ignore the control chars for strings.
-        ARBITRARY;
     }
 }

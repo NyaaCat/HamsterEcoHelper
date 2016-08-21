@@ -10,9 +10,11 @@ internal:
     auc_scheduled: "An auction is scheduled after %d ticks"
     req_scheduled: "a requisition is scheduled after %d ticks"
     auc_start: "Auction started: {item: \"%s\", amount: %d, hideName: %s, start: %d, step: %d, id: \"%s\"}"
+    player_auc_start: "Auction started: {itemid: %d, player: \"%s\", item: \"%s\", amount: %d, hideName: %s, start: %d, step: %d, id: \"%s\"}"
     auc_bid: "Player gives price: {id: \"%s\", player: \"%s\", price: %d} "
     auc_finish: "Auction finished: {id: \"%s\", price: %d, player: \"%s\", reason: \"%s\"}"
     req_start: "Requisition started: {item: \"%s\", amount: %d, price: %d, timeout: %d, id: \"%s\"}"
+    player_req_start: "Requisition started: {itemid: %d, player: \"%s\", item: \"%s\", amount: %d, price: %d, timeout: %d, id: \"%s\"}"
     req_sell: "Player sold item: {id: \"%s\", amount: %d, remain: %d, player: \"%s\"}"
     req_finish: "Requisition finished: {id: \"%s\", total_sold: %d, reason: \"%s\"}"
     market_offer: "offer: {id: %d, item: \"%s\", amount: %d, unit_price: %.2f, player: \"%s\"}"
@@ -44,12 +46,14 @@ user:
     has_temporary_storage: "You have item in temporary storage. Acquire with '/heh retrieve'"
     mute: "You will no longer receive this broadcast. Use '/heh unmute' to unmute"
     unmute: "Unmute success."
+    cooldown: "Please wait %d seconds"
   error:
     bad_command: "Wrong command: %s"
     not_int: "Not a valid integer"
     not_double: "Not a valid number"
     command_exception: "Internal server error. Unable to run command."
     bad_enum: "Not valid for enum type: %s. Values: %s"
+    unknown_item: "unknown item: %s"
   warn:
     no_enough_money: "You do not have that much money"
     not_high_enough: "Invalid price, at least %d$"
@@ -57,6 +61,8 @@ user:
   auc:
     new_auction_0: "NEW AUCTION: "
     new_auction_1: "; Starts from %d$ with step price %d$; Please response in %d seconds with '/heh bid [price]'"
+    player_auction_0: "%s start a auction: "
+    player_auction_1: "; Starts from %d$ with step price %d$; Please response in %d seconds with '/heh bid [price]'"
     new_auction_unknown: "NEW AUCTION: MYSTERY ITEM; Starts from %d$ with step price %d$; Please response in %d seconds with '/heh bid [price]'"
     mystery_item_placeholder: "MYSTERY ITEM"
     new_price_0: "Player %s gives a higher price for "
@@ -75,6 +81,8 @@ user:
   req:
     new_req_0: "NEW REQUISITION: "
     new_req_1: "*%d with price %d; Last for %.2f seconds. Please response with '/heh sell [amount]'"
+    player_req_0: "%s start a requisition: "
+    player_req_1: "*%d with price %d; Last for %.2f seconds. Please response with '/heh sell [amount]'"
     hint_req_0: "ONGOING REQUISITION: "
     hint_req_1: "; Need %d more; Unit price %d; %.2f seconds remains. Please response with '/heh sell [amount]'"
     finish: "Requisition finished."
@@ -117,6 +125,8 @@ manual:
     offer: "Usage: /heh offer [UnitPrice|double]"
     sell: "Usage: /heh sell [Amount|int]"
     retrieve: "Usage: /heh retrieve [confirm]"
+    req: "Usage: /heh req [itemName] [unitPrice|int] [Amount|int]"
+    auc: "Usage: /heh auc [basePrice|int] [stepPrice|int] [reservePrice|int]"
   description:
     addauc: "Add item in hand into system auction list."
     addreq: "Add item in hand into system requisition list."
