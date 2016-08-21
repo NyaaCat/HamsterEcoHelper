@@ -95,6 +95,7 @@ user:
     sold_out: "Requisition limit reached. Requisition finished."
     sold_amount_0: "Player %s has sold %d "
     sold_amount_1: "! %d remains."
+    sell_to_self: "You cannot sell to yourself"
   market:
     title: "[Market]"
     mailbox: "[Mailbox]"

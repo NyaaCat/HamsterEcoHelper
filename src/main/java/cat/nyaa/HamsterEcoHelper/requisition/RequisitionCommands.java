@@ -70,11 +70,13 @@ public class RequisitionCommands {
     public static void userSell(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Player p = asPlayer(sender);
         RequisitionInstance req = plugin.reqManager.getCurrentRequisition();
-        if (req.owner != null && req.owner.getUniqueId().equals(p.getUniqueId())) {
-            return;
-        }
         if (req == null) {
             msg(sender, "user.info.no_current_requisition");
+            return;
+        }
+
+        if (req.owner != null && req.owner.getUniqueId().equals(p.getUniqueId())) {
+            msg(sender, "user.req.sell_to_self");
             return;
         }
 
