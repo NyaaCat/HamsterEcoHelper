@@ -124,6 +124,10 @@ public class AuctionCommands {
         int reservePrice = 0;
         if (args.length() == 4) {
             reservePrice = args.nextInt();
+            if (reservePrice <= basePrice) {
+                msg(sender, "user.auc.reserve_price_error");
+                return;
+            }
         }
         boolean success = plugin.auctionManager.newPlayerAuction(player, item, basePrice, stepPrice, reservePrice);
         if (success) {
