@@ -2,6 +2,7 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
+import cat.nyaa.HamsterEcoHelper.utils.ReflectionUtil;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -145,6 +146,10 @@ public class RequisitionCommands {
             try {
                 item = new ItemStack(Material.valueOf(itemName));
             } catch (IllegalArgumentException e) {
+                msg(sender, "user.error.unknown_item", itemName);
+                return;
+            }
+            if (!ReflectionUtil.isValidItem(item)) {
                 msg(sender, "user.error.unknown_item", itemName);
                 return;
             }
