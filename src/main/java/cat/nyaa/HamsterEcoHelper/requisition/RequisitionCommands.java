@@ -156,6 +156,7 @@ public class RequisitionCommands {
         }
         if (!plugin.eco.enoughMoney(player, unitPrice * amount)) {
             msg(sender, "user.warn.no_enough_money");
+            return;
         }
         boolean success = plugin.reqManager.newPlayerRequisition(player, item, unitPrice, amount);
         if (success) {
