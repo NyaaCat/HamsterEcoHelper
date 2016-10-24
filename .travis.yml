@@ -9,7 +9,7 @@ before_deploy:
 - export GIT_TAG=$TRAVIS_BRANCH-v1.0.$TRAVIS_BUILD_NUMBER
 - git tag $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
 - git push -q https://$GITHUB_KEY@github.com/NyaaCat/HamsterEcoHelper --follow-tags
-
+- gem install octokit -v 4.3.0
 deploy:
   skip_cleanup: true
   provider: releases
