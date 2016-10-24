@@ -31,6 +31,7 @@ public class MarketManager {
     public static List<Player> viewMailbox;
     public static long lastBroadcast;
     public static int pageSize = 45;
+    public static String market_lore_code = ChatColor.translateAlternateColorCodes('&',"&f&f&9&e&c&1&4&a&5&1&1&2&0&7&4&r"); 
 
     public static void init(HamsterEcoHelper pl) {
         plugin = pl;
@@ -140,7 +141,7 @@ public class MarketManager {
                 } else {
                     lore = new ArrayList<>();
                 }
-                lore.add(0, ChatColor.GREEN + I18n.get("user.market.unit_price", ChatColor.WHITE + "" + mItem.getUnitPrice()));
+                lore.add(0,market_lore_code + ChatColor.GREEN + I18n.get("user.market.unit_price", ChatColor.WHITE + "" + mItem.getUnitPrice()));
                 lore.add(1, ChatColor.GREEN + I18n.get("user.market.offered", ChatColor.WHITE + mItem.getPlayerName()));
                 meta.setLore(lore);
                 ItemStack itemStack = mItem.getItemStack();
@@ -240,5 +241,17 @@ public class MarketManager {
                 openGUI(player, viewPage.get(player), viewSeller.get(player));
             }
         }
+    }
+
+    public static boolean isMarketItem(ItemStack item) {
+        if (item != null && !item.getType().equals(Material.AIR) &&
+                item.hasItemMeta() && item.getItemMeta().hasLore()) {
+            for (String lore : item.getItemMeta().getLore()) {
+                if (lore.contains(market_lore_code)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

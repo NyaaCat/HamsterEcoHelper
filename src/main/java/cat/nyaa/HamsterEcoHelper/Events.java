@@ -5,9 +5,12 @@ import cat.nyaa.HamsterEcoHelper.utils.Database;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -25,7 +28,9 @@ public class Events implements Listener {
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        if (event.getInventory().getTitle().contains(I18n.get("user.market.title")) && MarketManager.viewItem.containsKey(player)) {
+        if (event.getInventory().getTitle().contains(I18n.get("user.market.title")) &&
+                MarketManager.viewItem.containsKey(player)) {
+            event.setCancelled(true);
             UUID seller = MarketManager.viewSeller.get(player);
             HashMap<Integer, Integer> slot = MarketManager.viewItem.get(player);
             if (slot.containsKey(event.getRawSlot())) {
@@ -33,7 +38,6 @@ public class Events implements Listener {
                         event.getInventory().getItem(47) != null &&
                         event.getInventory().getItem(47).getType() == Material.PAPER) {
                     int itemId = MarketManager.viewItem.get(player).get(event.getRawSlot());
-                    event.setCancelled(true);
                     Database.MarketItem marketItem = MarketManager.getItem(itemId);
                     if (marketItem != null && marketItem.getItemStack().getType() != Material.AIR) {
                         if (event.isShiftClick()) {
@@ -52,10 +56,17 @@ public class Events implements Listener {
                 MarketManager.openGUI(player, MarketManager.viewPage.get(player) - 1, seller);
             } else if (event.getRawSlot() == 47 && event.getCurrentItem().getType() != Material.AIR) {
                 MarketManager.openGUI(player, 1, player.getUniqueId());
-            }else if (event.getRawSlot() == 53 && event.getCurrentItem().getType() != Material.AIR) {
+            } else if (event.getRawSlot() == 53 && event.getCurrentItem().getType() != Material.AIR) {
                 MarketManager.openGUI(player, MarketManager.viewPage.get(player) + 1, seller);
+            } else {
+                MarketManager.closeGUI(player);
             }
-            event.setCancelled(true);
+        } else {
+            if (event.getCurrentItem() != null && MarketManager.isMarketItem(event.getCurrentItem())) {
+                event.setCurrentItem(new ItemStack(Material.AIR));
+            } else if (event.getCursor() != null && MarketManager.isMarketItem(event.getCursor())) {
+                event.setCursor(new ItemStack(Material.AIR));
+            }
         }
     }
 
@@ -64,6 +75,21 @@ public class Events implements Listener {
         List<ItemStack> items = plugin.database.getTemporaryStorage(ev.getPlayer());
         if (items.size() > 0) {
             CommandHandler.msg(ev.getPlayer(), "user.info.has_temporary_storage");
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerDropItem(PlayerDropItemEvent e) {
+        if (e.getItemDrop() != null && MarketManager.isMarketItem(e.getItemDrop().getItemStack())) {
+            e.getItemDrop().setItemStack(new ItemStack(Material.AIR));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerPickupItem(PlayerPickupItemEvent e) {
+        if (e.getItem() != null && MarketManager.isMarketItem(e.getItem().getItemStack())) {
+            e.getItem().setItemStack(new ItemStack(Material.AIR));
+            e.setCancelled(true);
         }
     }
 }
