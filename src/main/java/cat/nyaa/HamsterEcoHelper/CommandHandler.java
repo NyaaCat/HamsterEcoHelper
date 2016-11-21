@@ -3,7 +3,7 @@ package cat.nyaa.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
-import cat.nyaa.HamsterEcoHelper.utils.Mute;
+import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
 import cat.nyaa.HamsterEcoHelper.utils.Message;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -195,13 +195,13 @@ public class CommandHandler implements CommandExecutor {
     
     @SubCommand(value = "mute", permission = "heh.mute")
     public static void mute(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        Mute.add(asPlayer(sender));
+        GlobalMuteList.add(asPlayer(sender));
         msg(sender,"user.info.mute");
     }
 
     @SubCommand(value = "unmute", permission = "heh.mute")
     public static void unmute(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        Mute.remove(asPlayer(sender));
+        GlobalMuteList.remove(asPlayer(sender));
         msg(sender,"user.info.unmute");
     }
     

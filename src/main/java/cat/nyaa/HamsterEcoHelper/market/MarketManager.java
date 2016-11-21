@@ -77,7 +77,7 @@ public class MarketManager {
                     plugin.eco.deposit(item.getPlayer(), price);
                 }
                 db.marketBuy(player, itemId, amount);
-                playSound(player, Sound.ENTITY_EXPERIENCE_ORB_TOUCH);
+                playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
                 updateAllGUI();
                 return true;
             } else {

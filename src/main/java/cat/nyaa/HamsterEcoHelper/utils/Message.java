@@ -76,7 +76,7 @@ public class Message {
     }
 
     public Message broadcast() {
-        List<UUID> list = Mute.getList();
+        List<UUID> list = GlobalMuteList.getList();
         if (list.isEmpty()) {
             Bukkit.getServer().spigot().broadcast(inner);
         } else {
@@ -90,7 +90,7 @@ public class Message {
     }
 
     public Message broadcast(String permission) {
-        List<UUID> list = Mute.getList();
+        List<UUID> list = GlobalMuteList.getList();
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!list.contains(player.getUniqueId()) && player.hasPermission(permission)) {
                 this.send(player);

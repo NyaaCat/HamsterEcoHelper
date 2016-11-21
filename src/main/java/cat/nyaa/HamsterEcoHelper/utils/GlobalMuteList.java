@@ -7,12 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Mute {
-    private static List<UUID> list;
-
-    public static void init() {
-        list = new ArrayList<>();
-    }
+public class GlobalMuteList {
+    private final static List<UUID> list = new ArrayList<>();
 
     public static void add(Player player) {
         if (!list.contains(player.getUniqueId())) {
