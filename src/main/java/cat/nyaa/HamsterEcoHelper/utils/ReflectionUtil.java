@@ -186,7 +186,8 @@ public class ReflectionUtil {
             if (nmsItemStackObj == null) {
                 return false;
             } else {
-                return true;
+                Method isEmptyMethod = ReflectionUtil.getMethod(nmsItemStackObj.getClass(), "isEmpty");
+                return !((boolean)isEmptyMethod.invoke(nmsItemStackObj));
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
