@@ -146,7 +146,7 @@ public class Message {
             BookMeta meta = (BookMeta) itemStack.getItemMeta();
             meta.setPages(new ArrayList<String>());
             itemStack.setItemMeta(meta);
-            return item;
+            return itemStack;
         }
         return item;
     }
