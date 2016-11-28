@@ -16,13 +16,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import static cat.nyaa.HamsterEcoHelper.CommandHandler.msg;
 import static org.bukkit.Bukkit.getServer;
 
-public class MarketManager {
+public class MarketManager extends BukkitRunnable{
     private static Database db;
     private static HamsterEcoHelper plugin;
     public static HashMap<Player, HashMap<Integer, Integer>> viewItem;
@@ -33,7 +37,7 @@ public class MarketManager {
     public static int pageSize = 45;
     public static String market_lore_code = ChatColor.translateAlternateColorCodes('&',"&f&f&9&e&c&1&4&a&5&1&1&2&0&7&4&r"); 
 
-    public static void init(HamsterEcoHelper pl) {
+    public MarketManager(HamsterEcoHelper pl) {
         plugin = pl;
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         db = plugin.database;
@@ -41,11 +45,20 @@ public class MarketManager {
         viewPage = new HashMap<>();
         viewSeller = new HashMap<>();
         viewMailbox = new ArrayList<>();
+        runTaskTimer(plugin, 1, 600 * 20);
     }
 
     public static boolean offer(Player player, ItemStack item, double unit_price) {
         if (getPlayerSlot(player) <= db.getMarketPlayerItemCount(player)) {
             return false;
+        }
+        if (plugin.config.market_offer_fee > 0) {
+            if (!plugin.eco.enoughMoney(player, plugin.config.market_offer_fee)) {
+                msg(player, "user.warn.no_enough_money");
+                return false;
+            } else {
+                plugin.eco.withdraw(player, plugin.config.market_offer_fee);
+            }
         }
         int id = db.marketOffer(player, item, unit_price);
         plugin.logger.info(I18n.get("internal.info.market_offer", id, getItemName(item), item.getAmount(), unit_price, player.getName()));
@@ -61,19 +74,24 @@ public class MarketManager {
         Database.MarketItem item = getItem(itemId);
         if (item != null && item.getItemStack().getType() != Material.AIR && item.getAmount() > 0) {
             double price = item.getUnitPrice() * amount;
-            if (plugin.eco.enoughMoney(player, price) || player.getUniqueId().equals(item.getPlayerId())) {
+            double tax = 0.0D;
+            if (plugin.config.market_tax > 0) {
+                tax = (price / 100) * plugin.config.market_tax;
+            }
+            if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
                 Utils.giveItem(player, item.getItemStack(amount));
                 plugin.logger.info(I18n.get("internal.info.market_bought", itemId, getItemName(item.getItemStack()), amount, price, player.getName(), item.getPlayerName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {
                         new Message("")
-                                .append(item.getItemStack(amount), I18n.get("user.market.someone_bought", player.getName(), price))
+                                .append(item.getItemStack(amount), I18n.get("user.market.someone_bought",
+                                        player.getName(), price + tax))
                                 .send((Player) item.getPlayer());
                     }
                     new Message("")
                             .append(item.getItemStack(amount), I18n.get("user.market.buy_success", item.getPlayerName(), price))
                             .send(player);
-                    plugin.eco.withdraw(player, price);
+                    plugin.eco.withdraw(player, price + tax);
                     plugin.eco.deposit(item.getPlayer(), price);
                 }
                 db.marketBuy(player, itemId, amount);
@@ -141,7 +159,12 @@ public class MarketManager {
                 } else {
                     lore = new ArrayList<>();
                 }
-                lore.add(0,market_lore_code + ChatColor.GREEN + I18n.get("user.market.unit_price", ChatColor.WHITE + "" + mItem.getUnitPrice()));
+                double tax = 0.0D;
+                if (plugin.config.market_tax > 0) {
+                    tax = (mItem.getUnitPrice() / 100) * plugin.config.market_tax;
+                }
+                lore.add(0, market_lore_code + ChatColor.GREEN + I18n.get("user.market.unit_price",
+                        (mItem.getUnitPrice() + tax), plugin.config.market_tax));
                 lore.add(1, ChatColor.GREEN + I18n.get("user.market.offered", ChatColor.WHITE + mItem.getPlayerName()));
                 meta.setLore(lore);
                 ItemStack itemStack = mItem.getItemStack();
@@ -253,5 +276,26 @@ public class MarketManager {
             }
         }
         return false;
+    }
+
+    @Override
+    public void run() {
+        if (plugin.config.market_placement_fee > 0 &&
+                System.currentTimeMillis() - plugin.config.market_placement_fee_timestamp >= 86400000) {
+            plugin.config.market_placement_fee_timestamp = System.currentTimeMillis();
+            int itemCount = db.getMarketItemCount();
+            if (itemCount > 0) {
+                int fail = 0;
+                List<Database.MarketItem> items = db.getMarketItems(0, itemCount, null);
+                for (Database.MarketItem item : items) {
+                    if (!plugin.eco.withdraw(item.getPlayer(), plugin.config.market_placement_fee)) {
+                        fail++;
+                        plugin.logger.info(I18n.get("internal.info.placement_fee_fail",
+                                item.getId(), item.getPlayerName(), "Not enough money"));
+                    }
+                }
+                plugin.logger.info(I18n.get("internal.info.placement_fee", itemCount, fail));
+            }
+        }
     }
 }

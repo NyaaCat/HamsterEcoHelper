@@ -224,6 +224,14 @@ public class Database {
         return 0;
     }
 
+    public int getMarketItemCount() {
+        int count = db.find(MarketItem.class).findRowCount();
+        if (count > 0) {
+            return db.find(MarketItem.class).where().ge("amount", 1).findPagingList(MarketManager.pageSize).getTotalRowCount();
+        }
+        return 0;
+    }
+
     public MarketItem getMarketItem(int id) {
         MarketItem mItem = db.find(MarketItem.class, id);
         if (mItem != null) {

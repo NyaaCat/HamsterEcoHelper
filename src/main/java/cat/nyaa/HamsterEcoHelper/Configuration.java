@@ -44,6 +44,14 @@ public class Configuration {
     @Serializable
     public int marketBroadcastCooldown = 120;
     @Serializable
+    public int market_tax = 5;
+    @Serializable
+    public int market_offer_fee = 10;
+    @Serializable
+    public int market_placement_fee = 1;
+    @Serializable
+    public long market_placement_fee_timestamp = 0;
+    @Serializable
     public int playerAuctionTimeoutTicks =1000; 
     @Serializable
     public int playerAuctionCooldownTicks=3000;
