@@ -2,7 +2,8 @@ language: java
 jdk: oraclejdk8
 
 before_install: "sed -i \"s/^\\(version:.*\\)/\\1.0.$TRAVIS_BUILD_NUMBER/\" src/main/resources/plugin.yml"
-
+after_success:
+- 'cp build/libs/HamsterEcoHelper.jar ./HamsterEcoHelper-$TRAVIS_BRANCH-v$main_version.$TRAVIS_BUILD_NUMBER.jar'
 before_deploy:
 - git config --global user.email "builds@travis-ci.com"
 - git config --global user.name "Travis CI"
@@ -16,7 +17,7 @@ deploy:
   prerelease: true
   api_key:
     secure: "SeL38ow6S9AvTmxR1xugzDemmAMpxJ35XgLaEnyyZN+f6N/bmCCKKrabpAe9ntOIZAJapfIb2TTR5zyJ2GGuasnIEZ5hqGKCqy+sN4Y/M5JHcjeZRghw8iYx+hQzPWSayln9lJUkiL31zfw4CFVjqPWCv5ejr1bysq6vMSQG4NsgSdnB36vMLCpKtgrgdE+COACYJ7Zp/OFoU+aAZMaeWF8KVFjwfjnJwdYlxwnPrQ9qIfz094RA0ZwkX77BvA3QdpRei1yw6rhp/CeRsUSry/P+P0GSiwFnhuEX2Npqzs89bdQeipx9gJT/0EsNtAk6MOvxOJt9Ykk44OwPLZ/UOXhhA3ZqQGZEdx7jWjJBBRFVfOP8oI6zY+ux0vfHucS10yJ00ErzkoQaGn0YnguOO9Bs++XC/BXnEoMYb6M9re9UDZy6SbMO41oW4xKVHgPNS1ebGmFoEEm5FoGXBhVF5vn66nwWNYtheDLwX06CF3tP1T21D3b6bLATvzLEpYV6Zv3I7DDkAECltLKZaMHMxr5g/7DrvbNnawLR04WDzH4a4+OvoJwhxmUIEJ6bUStjVBfIHTcWmSHyDrg2HeMJrN2SMD4OiXGGjGGnaOhvU6r+95AgAfDrL1vy5vdjB8seQ2f/UGJwSNQH7OWcZUhxfxBP0yBif2GdlMhieDdaHBA="
-  file: build/libs/HamsterEcoHelper.jar
+  file: ./HamsterEcoHelper-$TRAVIS_BRANCH-v$main_version.$TRAVIS_BUILD_NUMBER.jar
   on:
     tags: false
     all_branches: true
