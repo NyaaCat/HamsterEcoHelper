@@ -62,7 +62,7 @@ public class Message {
                                         meta.setLore(new ArrayList<String>());
                                         itemStack.setItemMeta(meta);
                                     }
-                                    if (itemStack.getItemMeta() instanceof BlockStateMeta) {
+                                    if (itemStack.getItemMeta() instanceof BookMeta) {
                                         itemStack = removeBookContent(itemStack);
                                     }
                                 }
