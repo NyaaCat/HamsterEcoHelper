@@ -61,6 +61,10 @@ public class Configuration {
     public int playerRequisitionTimeoutTicks =1000;
     @Serializable
     public int playerRequisitionCooldownTicks=3000;
+    @Serializable
+    public boolean enable_balance = false;
+    @Serializable
+    public double current_balance = 0;
 
     public Map<String, Integer> marketSlot = new HashMap<>();
     public List<AuctionItemTemplate> itemsForAuction = new ArrayList<>();

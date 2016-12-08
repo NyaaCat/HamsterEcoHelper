@@ -21,6 +21,7 @@ internal:
     market_bought: "bought: {id: %d, item: \"%s\", amount: %d, price: %.2f, player: \"%s\", from: \"%s\"}"
     placement_fee: "placement fee: {itemCount: \"%d\", fail: \"%d\"}"
     placement_fee_fail: "placement fee: {id: \"%d\", player: \"%s\", reason:\"%s\"}"
+    current_balance: "current balance: %.2f"
   error:
     missing_sqlite_driver: "SQLite Driver not found. Plugin disabled."
     enable_fail: "Plugin failed to enable"

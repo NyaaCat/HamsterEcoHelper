@@ -29,6 +29,9 @@ public class RequisitionManager extends BukkitRunnable {
             plugin.logger.info(I18n.get("internal.info.req_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
             return;
         }
+        if (plugin.config.enable_balance && plugin.config.current_balance < 0) {
+            return;
+        }
         int delay = Utils.inclusiveRandomInt(0, plugin.config.requisitionMaxDelayTicks);
         (new BukkitRunnable() {
             @Override
