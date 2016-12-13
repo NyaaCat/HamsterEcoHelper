@@ -163,7 +163,7 @@ public class MarketManager extends BukkitRunnable{
                 if (plugin.config.market_tax > 0) {
                     double tax = (mItem.getUnitPrice() / 100) * plugin.config.market_tax;
                     lore.add(0, market_lore_code + ChatColor.RESET + I18n.get("user.market.unit_price_with_tax",
-                            mItem.getUnitPrice(), tax));
+                            mItem.getUnitPrice(), tax, plugin.config.market_tax));
                 } else {
                     lore.add(0, market_lore_code + ChatColor.RESET + I18n.get("user.market.unit_price",
                             mItem.getUnitPrice()));

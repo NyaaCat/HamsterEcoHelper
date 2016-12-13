@@ -105,7 +105,7 @@ user:
     mailbox: "[Mailbox]"
     open_mailbox: "Click to open mailbox."
     unit_price: "&aUnit Price: &f%s"
-    unit_price_with_tax: "&aUnit Price: &f%s &aplus &f%s &atax"
+    unit_price_with_tax: "&aUnit Price: &f%s &aplus &f%s &a(&f%d%% &atax)"
     offered: "&aoffered by: &f%s"
     my_items: "&aMy items (%d/%d)"
     broadcast: "New market offer: {itemName} *{amount} use '/heh view' view the items."
