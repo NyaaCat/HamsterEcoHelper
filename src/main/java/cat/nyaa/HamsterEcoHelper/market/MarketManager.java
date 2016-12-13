@@ -79,7 +79,8 @@ public class MarketManager extends BukkitRunnable{
                 tax = (price / 100) * plugin.config.market_tax;
             }
             if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
-                Utils.giveItem(player, item.getItemStack(amount));
+                int stat = Utils.giveItem(player, item.getItemStack(amount));
+                player.sendMessage(I18n.get("user.auc.item_given_" + Integer.toString(stat)));
                 plugin.logger.info(I18n.get("internal.info.market_bought", itemId, getItemName(item.getItemStack()), amount, price, player.getName(), item.getPlayerName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {
@@ -129,7 +130,7 @@ public class MarketManager extends BukkitRunnable{
 
     public static void openGUI(Player player, int page, UUID seller) {
         HashMap<Integer, Integer> list = new HashMap<>();
-        Inventory inventory = Bukkit.createInventory(player, 54, ChatColor.DARK_GREEN + I18n.get("user.market.title"));
+        Inventory inventory = Bukkit.createInventory(player, 54, I18n.get("user.market.title"));
         int pageCount;
         if (seller != null && page >= 1) {
             viewSeller.put(player, seller);
@@ -159,13 +160,15 @@ public class MarketManager extends BukkitRunnable{
                 } else {
                     lore = new ArrayList<>();
                 }
-                double tax = 0.0D;
                 if (plugin.config.market_tax > 0) {
-                    tax = (mItem.getUnitPrice() / 100) * plugin.config.market_tax;
+                    double tax = (mItem.getUnitPrice() / 100) * plugin.config.market_tax;
+                    lore.add(0, market_lore_code + ChatColor.RESET + I18n.get("user.market.unit_price_with_tax",
+                            mItem.getUnitPrice(), tax));
+                } else {
+                    lore.add(0, market_lore_code + ChatColor.RESET + I18n.get("user.market.unit_price",
+                            mItem.getUnitPrice()));
                 }
-                lore.add(0, market_lore_code + ChatColor.GREEN + I18n.get("user.market.unit_price",
-                        (mItem.getUnitPrice() + tax), plugin.config.market_tax));
-                lore.add(1, ChatColor.GREEN + I18n.get("user.market.offered", ChatColor.WHITE + mItem.getPlayerName()));
+                lore.add(1, I18n.get("user.market.offered", mItem.getPlayerName()));
                 meta.setLore(lore);
                 ItemStack itemStack = mItem.getItemStack();
                 itemStack.setItemMeta(meta);
@@ -175,14 +178,14 @@ public class MarketManager extends BukkitRunnable{
         if (page > 1 || seller != null) {
             ItemStack back = new ItemStack(Material.ARROW);
             ItemMeta backItemMeta = back.getItemMeta();
-            backItemMeta.setDisplayName(ChatColor.WHITE + I18n.get("user.info.back"));
+            backItemMeta.setDisplayName(I18n.get("user.info.back"));
             back.setItemMeta(backItemMeta);
             inventory.setItem(45, back);
         }
         if (page < pageCount) {
             ItemStack nextPage = new ItemStack(Material.ARROW);
             ItemMeta nextPageMeta = nextPage.getItemMeta();
-            nextPageMeta.setDisplayName(ChatColor.WHITE + I18n.get("user.info.next_page"));
+            nextPageMeta.setDisplayName(I18n.get("user.info.next_page"));
             nextPage.setItemMeta(nextPageMeta);
             inventory.setItem(53, nextPage);
         }
@@ -199,10 +202,9 @@ public class MarketManager extends BukkitRunnable{
         */
         ItemStack myItem = new ItemStack(Material.PAPER);
         ItemMeta meta = myItem.getItemMeta();
-        meta.setDisplayName(ChatColor.AQUA + I18n.get("user.market.my_items") +
-                (String.format(" (%s/%s)", db.getMarketPlayerItemCount(player), getPlayerSlot(player))));
+        meta.setDisplayName(I18n.get("user.market.my_items", db.getMarketPlayerItemCount(player), getPlayerSlot(player)));
         lore = new ArrayList<>();
-        lore.add(ChatColor.GREEN + I18n.get("user.info.balance", plugin.eco.balance(player)));
+        lore.add(I18n.get("user.info.balance", plugin.eco.balance(player)));
         meta.setLore(lore);
         myItem.setItemMeta(meta);
         inventory.setItem(47, myItem);
