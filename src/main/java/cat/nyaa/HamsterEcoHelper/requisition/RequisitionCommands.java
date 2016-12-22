@@ -2,8 +2,8 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
-import cat.nyaa.HamsterEcoHelper.utils.ReflectionUtil;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.utils.ReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -34,7 +34,7 @@ public class RequisitionCommands {
         req.matchRule.enchantMatch = args.nextEnum(RequisitionSpecification.MatchingMode.class);
         req.matchRule.loreMatch = args.nextEnum(RequisitionSpecification.MatchingMode.class);
         req.matchRule.nameMatch = args.nextEnum(RequisitionSpecification.MatchingMode.class);
-        plugin.config.itemsForReq.add(req);
+        plugin.config.requisitionConfig.itemsForReq.add(req);
         plugin.config.saveToPlugin();
     }
 
@@ -43,11 +43,11 @@ public class RequisitionCommands {
         boolean success = false;
         if (args.length() == 2) {
             int id = args.nextInt();
-            if (id < 0 || id >= plugin.config.itemsForReq.size()) {
-                msg(sender, "admin.error.req_id_oor", 0, plugin.config.itemsForReq.size() - 1);
+            if (id < 0 || id >= plugin.config.requisitionConfig.itemsForReq.size()) {
+                msg(sender, "admin.error.req_id_oor", 0, plugin.config.requisitionConfig.itemsForReq.size() - 1);
                 return;
             } else {
-                success = plugin.reqManager.newRequisition(plugin.config.itemsForReq.get(id));
+                success = plugin.reqManager.newRequisition(plugin.config.requisitionConfig.itemsForReq.get(id));
             }
         } else {
             success = plugin.reqManager.newRequisition();

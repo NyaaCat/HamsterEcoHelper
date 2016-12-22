@@ -32,7 +32,7 @@ public class Database {
         try {
             db.find(TempStorageRepo.class).findRowCount();
         } catch (PersistenceException ex) {
-            plugin.logger.info(I18n.get("internal.info.installing_db"));
+            plugin.logger.info(I18n._("log.info.installing_db"));
             plugin.installDDL();
         }
         try {

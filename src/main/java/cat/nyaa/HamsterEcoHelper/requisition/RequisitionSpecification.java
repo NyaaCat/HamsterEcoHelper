@@ -1,5 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.requisition;
 
+import cat.nyaa.utils.ISerializable;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -11,9 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static cat.nyaa.HamsterEcoHelper.Configuration.*;
-
-public class RequisitionSpecification {
+public class RequisitionSpecification implements ISerializable {
     @Serializable
     public ItemStack itemTemplate = null;
     @Serializable
@@ -30,24 +29,20 @@ public class RequisitionSpecification {
     public int timeoutTicks = 20 * 60 * 5; // 5 minutes
 
     public MatchingSpecification matchRule = new MatchingSpecification();
-
-    public static RequisitionSpecification fromConfig(ConfigurationSection s) {
-        RequisitionSpecification tmp = new RequisitionSpecification();
-        tmp.loadFrom(s);
-        return tmp;
-    }
-
-    public void loadFrom(ConfigurationSection s) {
-        deserialize(s, this);
+    
+    @Override
+    public void deserialize(ConfigurationSection s) {
+        ISerializable.deserialize(s, this);
         if (itemTemplate == null)
             throw new IllegalArgumentException("RequisitionSpecification gets `null` item");
         matchRule = new MatchingSpecification();
-        matchRule.loadFrom(s.getConfigurationSection("matchRule"));
+        matchRule.deserialize(s.getConfigurationSection("matchRule"));
     }
 
-    public void dumpTo(ConfigurationSection s) {
-        serialize(s, this);
-        matchRule.dumpTo(s.createSection("matchRule"));
+    @Override
+    public void serialize(ConfigurationSection s) {
+        ISerializable.serialize(s, this);
+        matchRule.serialize(s.createSection("matchRule"));
     }
 
     enum MatchingMode {
@@ -58,7 +53,7 @@ public class RequisitionSpecification {
         ARBITRARY;
     }
 
-    public class MatchingSpecification {
+    public class MatchingSpecification implements ISerializable {
         @Serializable
         public boolean requireExact = false; // Require item to be exactly the same. e.g. can stack together. Ignore all other rules.
         @Serializable
@@ -74,13 +69,15 @@ public class RequisitionSpecification {
         @Serializable
         public MatchingMode repairCostMatch = MatchingMode.EXACT;
 
-        public void dumpTo(ConfigurationSection s) {
-            serialize(s, this);
+        @Override
+        public void serialize(ConfigurationSection s) {
+            ISerializable.serialize(s, this);
         }
 
-        public void loadFrom(ConfigurationSection s) {
+        @Override
+        public void deserialize(ConfigurationSection s) {
             if (s == null) return;
-            deserialize(s, this);
+            ISerializable.deserialize(s, this);
         }
 
         public boolean matches(ItemStack anotherItem) {

@@ -25,7 +25,7 @@ public class AuctionCommands {
         item.randomWeight = args.nextDouble();
         item.hideName = args.nextBoolean();
         item.waitTimeTicks = args.nextInt();
-        plugin.config.itemsForAuction.add(item);
+        plugin.config.auctionConfig.itemsForAuction.add(item);
         plugin.config.saveToPlugin();
     }
 
@@ -34,11 +34,11 @@ public class AuctionCommands {
         boolean success;
         if (args.length() == 2) {
             int id = args.nextInt();
-            if (id < 0 || id >= plugin.config.itemsForAuction.size()) {
-                msg(sender, "admin.error.auc_id_oor", 0, plugin.config.itemsForAuction.size() - 1);
+            if (id < 0 || id >= plugin.config.auctionConfig.itemsForAuction.size()) {
+                msg(sender, "admin.error.auc_id_oor", 0, plugin.config.auctionConfig.itemsForAuction.size() - 1);
                 return;
             } else {
-                success = plugin.auctionManager.newAuction(plugin.config.itemsForAuction.get(id));
+                success = plugin.auctionManager.newAuction(plugin.config.auctionConfig.itemsForAuction.get(id));
             }
         } else {
             success = plugin.auctionManager.newAuction();

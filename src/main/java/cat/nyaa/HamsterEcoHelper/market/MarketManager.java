@@ -4,8 +4,8 @@ package cat.nyaa.HamsterEcoHelper.market;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
-import cat.nyaa.HamsterEcoHelper.utils.Message;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.utils.Message;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import static cat.nyaa.HamsterEcoHelper.CommandHandler.msg;
 import static org.bukkit.Bukkit.getServer;
 
 public class MarketManager extends BukkitRunnable{
@@ -54,17 +53,17 @@ public class MarketManager extends BukkitRunnable{
         }
         if (plugin.config.market_offer_fee > 0) {
             if (!plugin.eco.enoughMoney(player, plugin.config.market_offer_fee)) {
-                msg(player, "user.warn.no_enough_money");
+                player.sendMessage(I18n._("user.warn.no_enough_money"));
                 return false;
             } else {
                 plugin.eco.withdraw(player, plugin.config.market_offer_fee);
             }
         }
         int id = db.marketOffer(player, item, unit_price);
-        plugin.logger.info(I18n.get("internal.info.market_offer", id, getItemName(item), item.getAmount(), unit_price, player.getName()));
+        plugin.logger.info(I18n._("log.info.market_offer", id, getItemName(item), item.getAmount(), unit_price, player.getName()));
         if (plugin.config.marketBroadcast && (System.currentTimeMillis() - lastBroadcast) > (plugin.config.marketBroadcastCooldown * 1000)) {
             lastBroadcast = System.currentTimeMillis();
-            new Message("").append(item, I18n.get("user.market.broadcast")).broadcast();
+            new Message("").append(item, I18n._("user.market.broadcast")).broadcast();
         }
         updateAllGUI();
         return true;
@@ -80,17 +79,17 @@ public class MarketManager extends BukkitRunnable{
             }
             if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
                 int stat = Utils.giveItem(player, item.getItemStack(amount));
-                player.sendMessage(I18n.get("user.auc.item_given_" + Integer.toString(stat)));
-                plugin.logger.info(I18n.get("internal.info.market_bought", itemId, getItemName(item.getItemStack()), amount, price, player.getName(), item.getPlayerName()));
+                player.sendMessage(I18n._("user.auc.item_given_" + Integer.toString(stat)));
+                plugin.logger.info(I18n._("log.info.market_bought", itemId, getItemName(item.getItemStack()), amount, price, player.getName(), item.getPlayerName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {
                         new Message("")
-                                .append(item.getItemStack(amount), I18n.get("user.market.someone_bought",
+                                .append(item.getItemStack(amount), I18n._("user.market.someone_bought",
                                         player.getName(), price + tax))
                                 .send((Player) item.getPlayer());
                     }
                     new Message("")
-                            .append(item.getItemStack(amount), I18n.get("user.market.buy_success", item.getPlayerName(), price))
+                            .append(item.getItemStack(amount), I18n._("user.market.buy_success", item.getPlayerName(), price))
                             .send(player);
                     plugin.eco.withdraw(player, price + tax);
                     plugin.eco.deposit(item.getPlayer(), price);
@@ -100,7 +99,7 @@ public class MarketManager extends BukkitRunnable{
                 updateAllGUI();
                 return true;
             } else {
-                msg(player, "user.warn.no_enough_money");
+                player.sendMessage(I18n._("user.warn.no_enough_money"));
                 playSound(player, Sound.ENTITY_ITEM_BREAK);
                 return false;
             }
@@ -130,7 +129,7 @@ public class MarketManager extends BukkitRunnable{
 
     public static void openGUI(Player player, int page, UUID seller) {
         HashMap<Integer, Integer> list = new HashMap<>();
-        Inventory inventory = Bukkit.createInventory(player, 54, I18n.get("user.market.title"));
+        Inventory inventory = Bukkit.createInventory(player, 54, I18n._("user.market.title"));
         int pageCount;
         if (seller != null && page >= 1) {
             viewSeller.put(player, seller);
@@ -162,13 +161,13 @@ public class MarketManager extends BukkitRunnable{
                 }
                 if (plugin.config.market_tax > 0) {
                     double tax = (mItem.getUnitPrice() / 100) * plugin.config.market_tax;
-                    lore.add(0, market_lore_code + ChatColor.RESET + I18n.get("user.market.unit_price_with_tax",
+                    lore.add(0, market_lore_code + ChatColor.RESET + I18n._("user.market.unit_price_with_tax",
                             mItem.getUnitPrice(), tax, plugin.config.market_tax));
                 } else {
-                    lore.add(0, market_lore_code + ChatColor.RESET + I18n.get("user.market.unit_price",
+                    lore.add(0, market_lore_code + ChatColor.RESET + I18n._("user.market.unit_price",
                             mItem.getUnitPrice()));
                 }
-                lore.add(1, I18n.get("user.market.offered", mItem.getPlayerName()));
+                lore.add(1, I18n._("user.market.offered", mItem.getPlayerName()));
                 meta.setLore(lore);
                 ItemStack itemStack = mItem.getItemStack();
                 itemStack.setItemMeta(meta);
@@ -178,14 +177,14 @@ public class MarketManager extends BukkitRunnable{
         if (page > 1 || seller != null) {
             ItemStack back = new ItemStack(Material.ARROW);
             ItemMeta backItemMeta = back.getItemMeta();
-            backItemMeta.setDisplayName(I18n.get("user.info.back"));
+            backItemMeta.setDisplayName(I18n._("user.info.back"));
             back.setItemMeta(backItemMeta);
             inventory.setItem(45, back);
         }
         if (page < pageCount) {
             ItemStack nextPage = new ItemStack(Material.ARROW);
             ItemMeta nextPageMeta = nextPage.getItemMeta();
-            nextPageMeta.setDisplayName(I18n.get("user.info.next_page"));
+            nextPageMeta.setDisplayName(I18n._("user.info.next_page"));
             nextPage.setItemMeta(nextPageMeta);
             inventory.setItem(53, nextPage);
         }
@@ -202,9 +201,9 @@ public class MarketManager extends BukkitRunnable{
         */
         ItemStack myItem = new ItemStack(Material.PAPER);
         ItemMeta meta = myItem.getItemMeta();
-        meta.setDisplayName(I18n.get("user.market.my_items", db.getMarketPlayerItemCount(player), getPlayerSlot(player)));
+        meta.setDisplayName(I18n._("user.market.my_items", db.getMarketPlayerItemCount(player), getPlayerSlot(player)));
         lore = new ArrayList<>();
-        lore.add(I18n.get("user.info.balance", plugin.eco.balance(player)));
+        lore.add(I18n._("user.info.balance", plugin.eco.balance(player)));
         meta.setLore(lore);
         myItem.setItemMeta(meta);
         inventory.setItem(47, myItem);
@@ -213,7 +212,7 @@ public class MarketManager extends BukkitRunnable{
     }
 
     public static void closeGUI(Player player) {
-        if (player.isOnline() && player.getOpenInventory().getTitle().contains(I18n.get("user.market.title"))) {
+        if (player.isOnline() && player.getOpenInventory().getTitle().contains(I18n._("user.market.title"))) {
             player.getOpenInventory().close();
         }
         viewPage.remove(player);
@@ -223,7 +222,7 @@ public class MarketManager extends BukkitRunnable{
 
     @Deprecated
     public static void openMailbox(Player player) {
-        Inventory inventory = Bukkit.createInventory(player, 54, I18n.get("user.market.mailbox"));
+        Inventory inventory = Bukkit.createInventory(player, 54, I18n._("user.market.mailbox"));
         ItemStack[] mailbox = getMailbox(player);
         if (mailbox != null) {
             inventory.setContents(mailbox);
@@ -262,7 +261,7 @@ public class MarketManager extends BukkitRunnable{
 
     public static void updateAllGUI() {
         for (Player player : viewPage.keySet()) {
-            if (player.isOnline() && player.getOpenInventory() != null && player.getOpenInventory().getTitle().contains(I18n.get("user.market.title"))) {
+            if (player.isOnline() && player.getOpenInventory() != null && player.getOpenInventory().getTitle().contains(I18n._("user.market.title"))) {
                 openGUI(player, viewPage.get(player), viewSeller.get(player));
             }
         }
@@ -292,11 +291,11 @@ public class MarketManager extends BukkitRunnable{
                 for (Database.MarketItem item : items) {
                     if (!plugin.eco.withdraw(item.getPlayer(), plugin.config.market_placement_fee)) {
                         fail++;
-                        plugin.logger.info(I18n.get("internal.info.placement_fee_fail",
+                        plugin.logger.info(I18n._("log.info.placement_fee_fail",
                                 item.getId(), item.getPlayerName(), "Not enough money"));
                     }
                 }
-                plugin.logger.info(I18n.get("internal.info.placement_fee", itemCount, fail));
+                plugin.logger.info(I18n._("log.info.placement_fee", itemCount, fail));
             }
         }
     }

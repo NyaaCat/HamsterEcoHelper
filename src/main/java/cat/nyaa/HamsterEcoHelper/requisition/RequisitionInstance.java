@@ -2,8 +2,8 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Message;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.utils.Message;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -41,14 +41,14 @@ public class RequisitionInstance {
         timeoutListener = new TimeoutListener();
         timeoutListener.runTaskLater(plugin, templateItem.timeoutTicks);
         ItemStack tmp = templateItem.itemTemplate;
-        new Message(I18n.get("user.req.new_req_0")).append(tmp, "{itemName}")
-                .appendFormat("user.req.new_req_1", reqAmount, unitPrice, (double) templateItem.timeoutTicks / 20D)
+        new Message(I18n._("user.req.new_req_0")).append(tmp, "{itemName}")
+                .appendFormat(plugin.i18n, "user.req.new_req_1", reqAmount, unitPrice, (double) templateItem.timeoutTicks / 20D)
                 .broadcast();
         String name = templateItem.itemTemplate.hasItemMeta() && templateItem.itemTemplate.getItemMeta().hasDisplayName() ?
                 templateItem.itemTemplate.getItemMeta().getDisplayName() :
                 templateItem.itemTemplate.getType().name() + ":" + templateItem.itemTemplate.getDurability();
         logger = plugin.getLogger();
-        plugin.getLogger().info(I18n.get("internal.info.req_start", name, reqAmount, unitPrice, templateItem.timeoutTicks, uid(this)));
+        plugin.getLogger().info(I18n._("log.info.req_start", name, reqAmount, unitPrice, templateItem.timeoutTicks, uid(this)));
     }
 
     public RequisitionInstance(Player player,
@@ -73,8 +73,8 @@ public class RequisitionInstance {
         this.endTime = System.currentTimeMillis() + (plugin.config.playerRequisitionTimeoutTicks / 20 * 1000);
         timeoutListener = new TimeoutListener();
         timeoutListener.runTaskLater(plugin, plugin.config.playerRequisitionTimeoutTicks);
-        new Message(I18n.get("user.req.player_req_0", player.getName())).append(item, "{itemName}")
-                .appendFormat("user.req.player_req_1", reqAmount, unitPrice, (double) templateItem.timeoutTicks / 20D)
+        new Message(I18n._("user.req.player_req_0", player.getName())).append(item, "{itemName}")
+                .appendFormat(plugin.i18n, "user.req.player_req_1", reqAmount, unitPrice, (double) templateItem.timeoutTicks / 20D)
                 .broadcast();
         String itemName = "";
         if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
@@ -87,7 +87,7 @@ public class RequisitionInstance {
         }
         logger = plugin.getLogger();
         int id = plugin.database.addItemLog(player, item, unitPrice, amountRemains);
-        plugin.getLogger().info(I18n.get("internal.info.player_req_start", id, player.getName(), itemName,
+        plugin.getLogger().info(I18n._("log.info.player_req_start", id, player.getName(), itemName,
                 reqAmount, unitPrice, templateItem.timeoutTicks, uid(this)));
 
     }
@@ -107,9 +107,9 @@ public class RequisitionInstance {
             amountRemains = 0;
             plugin.reqManager.cooldown.put(owner.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
         }
-        logger.info(I18n.get("internal.info.req_finish", uid(this), soldAmount, "HALTED"));
+        logger.info(I18n._("log.info.req_finish", uid(this), soldAmount, "HALTED"));
         if (owner == null && plugin.config.enable_balance) {
-            plugin.logger.info(I18n.get("internal.info.current_balance", plugin.config.current_balance));
+            plugin.logger.info(I18n._("log.info.current_balance", plugin.config.current_balance));
             plugin.config.saveToPlugin();
         }
     }
@@ -139,15 +139,15 @@ public class RequisitionInstance {
 
         if (amountRemains >= 0) amountRemains -= amount;
         soldAmount += amount;
-        new Message(I18n.get("user.req.sold_amount_0", p.getName(), amount))
+        new Message(I18n._("user.req.sold_amount_0", p.getName(), amount))
                 .append(templateItem.itemTemplate, "{itemName}")
-                .appendFormat("user.req.sold_amount_1", amountRemains)
+                .appendFormat(plugin.i18n, "user.req.sold_amount_1", amountRemains)
                 .broadcast();
-        logger.info(I18n.get("internal.info.req_sell", uid(this), amount, amountRemains, p.getName()));
+        logger.info(I18n._("log.info.req_sell", uid(this), amount, amountRemains, p.getName()));
         if (amountRemains == 0) {
-            new Message(I18n.get("user.req.sold_out")).broadcast("heh.bid");
+            new Message(I18n._("user.req.sold_out")).broadcast("heh.bid");
             halt();
-            logger.info(I18n.get("internal.info.req_finish", uid(this), soldAmount, "SOLD_OUT"));
+            logger.info(I18n._("log.info.req_finish", uid(this), soldAmount, "SOLD_OUT"));
             finishCallback.run();
         }
         return unitPrice * amount;
@@ -162,10 +162,10 @@ public class RequisitionInstance {
                 amountRemains = 0;
                 plugin.reqManager.cooldown.put(owner.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
             }
-            new Message(I18n.get("user.req.finish")).broadcast("heh.bid");
-            logger.info(I18n.get("internal.info.req_finish", uid(RequisitionInstance.this), soldAmount, "TIMEOUT"));
+            new Message(I18n._("user.req.finish")).broadcast("heh.bid");
+            logger.info(I18n._("log.info.req_finish", uid(RequisitionInstance.this), soldAmount, "TIMEOUT"));
             if (owner == null && plugin.config.enable_balance) {
-                plugin.logger.info(I18n.get("internal.info.current_balance", plugin.config.current_balance));
+                plugin.logger.info(I18n._("log.info.current_balance", plugin.config.current_balance));
                 plugin.config.saveToPlugin();
             }
         }
@@ -192,8 +192,8 @@ public class RequisitionInstance {
                     plugin.reqManager.cooldown.put(owner.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
                 }
             } else {
-                new Message(I18n.get("user.req.hint_req_0")).append(templateItem.itemTemplate, "{itemName}")
-                        .appendFormat("user.req.hint_req_1", amountRemains, unitPrice, ((double) (endTime - System.currentTimeMillis())) / 1000D)
+                new Message(I18n._("user.req.hint_req_0")).append(templateItem.itemTemplate, "{itemName}")
+                        .appendFormat(plugin.i18n, "user.req.hint_req_1", amountRemains, unitPrice, ((double) (endTime - System.currentTimeMillis())) / 1000D)
                         .broadcast();
             }
 

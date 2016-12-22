@@ -4,7 +4,7 @@ import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
 import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
-import cat.nyaa.HamsterEcoHelper.utils.Message;
+import cat.nyaa.utils.Message;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -65,7 +65,7 @@ public class CommandHandler implements CommandExecutor {
             SubCommand anno = m.getAnnotation(SubCommand.class);
             if (anno == null) continue;
             if (!Modifier.isStatic(m.getModifiers())) {
-                plugin.getLogger().warning(I18n.get("internal.warn.bad_subcommand", m.toString()));
+                plugin.getLogger().warning(I18n._("log.warn.bad_subcommand", m.toString()));
                 continue;
             }
             Class<?>[] params = m.getParameterTypes();
@@ -73,7 +73,7 @@ public class CommandHandler implements CommandExecutor {
                     params[0] == CommandSender.class &&
                     params[1] == Arguments.class &&
                     params[2] == HamsterEcoHelper.class)) {
-                plugin.getLogger().warning(I18n.get("internal.warn.bad_subcommand", m.toString()));
+                plugin.getLogger().warning(I18n._("log.warn.bad_subcommand", m.toString()));
             } else {
                 m.setAccessible(true);
                 subCommands.put(anno.value().toLowerCase(), m);
@@ -129,7 +129,7 @@ public class CommandHandler implements CommandExecutor {
         if (args.length() <= 1) {
             String tmp = "";
             for (String cmd : cmds) {
-                tmp += "\n    " + cmd + ":\t" + (I18n.hasKey("manual.description." + cmd) ? I18n.get("manual.description." + cmd) : I18n.get("manual.no_desc"));
+                tmp += "\n    " + cmd + ":\t" + (I18n.instance.hasKey("manual.description." + cmd) ? I18n._("manual.description." + cmd) : I18n._("manual.no_desc"));
             }
             msg(sender, "manual.general", tmp);
         } else {
@@ -139,12 +139,12 @@ public class CommandHandler implements CommandExecutor {
                 return;
             }
             msg(sender, "manual.general_title", sub);
-            if (I18n.hasKey("manual.description." + sub)) {
+            if (I18n.instance.hasKey("manual.description." + sub)) {
                 msg(sender, "manual.description." + sub);
             } else {
                 msg(sender, "manual.no_desc");
             }
-            if (I18n.hasKey("manual.command." + sub)) {
+            if (I18n.instance.hasKey("manual.command." + sub)) {
                 msg(sender, "manual.command." + sub);
             } else {
                 msg(sender, "manual.no_usage");
@@ -214,7 +214,7 @@ public class CommandHandler implements CommandExecutor {
     }
 
     public static void msg(CommandSender target, String template, Object... args) {
-        target.sendMessage(I18n.get(template, args));
+        target.sendMessage(I18n._(template, args));
     }
 
     public static ItemStack getItemInHand(CommandSender se) {
@@ -316,7 +316,7 @@ public class CommandHandler implements CommandExecutor {
             try {
                 return Integer.parseInt(str);
             } catch (NumberFormatException ex) {
-                throw new BadCommandException(I18n.get("user.error.not_int", str), ex);
+                throw new BadCommandException(I18n._("user.error.not_int", str), ex);
             }
         }
 
@@ -326,7 +326,7 @@ public class CommandHandler implements CommandExecutor {
             try {
                 return Double.parseDouble(str);
             } catch (NumberFormatException ex) {
-                throw new BadCommandException(I18n.get("user.error.not_double", str), ex);
+                throw new BadCommandException(I18n._("user.error.not_double", str), ex);
             }
         }
 
@@ -340,7 +340,7 @@ public class CommandHandler implements CommandExecutor {
                 for (T k : cls.getEnumConstants()) {
                     vals += k.name() + "|";
                 }
-                throw new BadCommandException(I18n.get("user.error.bad_enum", cls.getName(), vals));
+                throw new BadCommandException(I18n._("user.error.bad_enum", cls.getName(), vals));
             }
         }
 

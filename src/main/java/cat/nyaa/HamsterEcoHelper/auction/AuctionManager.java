@@ -2,8 +2,8 @@ package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Message;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.utils.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +26,7 @@ public class AuctionManager extends BukkitRunnable {
     @Override
     public void run() {
         if (Bukkit.getOnlinePlayers().size() < plugin.config.auctionMinimalPlayer) {
-            plugin.logger.info(I18n.get("internal.info.auc_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
+            plugin.logger.info(I18n._("log.info.auc_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
             return;
         }
         if (plugin.config.enable_balance && plugin.config.current_balance > 0) {
@@ -39,7 +39,7 @@ public class AuctionManager extends BukkitRunnable {
                 newAuction();
             }
         }).runTaskLater(plugin, delay);
-        plugin.logger.info(I18n.get("internal.info.auc_scheduled", delay));
+        plugin.logger.info(I18n._("log.info.auc_scheduled", delay));
     }
 
     public boolean newAuction(AuctionItemTemplate item) {
@@ -59,8 +59,8 @@ public class AuctionManager extends BukkitRunnable {
 
     public boolean newAuction() {
         if (currentAuction != null) return false;
-        if (plugin.config.itemsForAuction.size() == 0) return false;
-        AuctionItemTemplate bidItem = Utils.randomWithWeight(plugin.config.itemsForAuction,
+        if (plugin.config.auctionConfig.itemsForAuction.size() == 0) return false;
+        AuctionItemTemplate bidItem = Utils.randomWithWeight(plugin.config.auctionConfig.itemsForAuction,
                 (AuctionItemTemplate temp) -> temp.randomWeight);
         if (bidItem == null) return false; // wtf?
 
@@ -73,7 +73,7 @@ public class AuctionManager extends BukkitRunnable {
             return false;
         }
         if (this.cooldown.containsKey(player.getUniqueId()) && this.cooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
-            player.sendMessage(I18n.get("user.info.cooldown", (this.cooldown.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000));
+            player.sendMessage(I18n._("user.info.cooldown", (this.cooldown.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000));
             return false;
         }
         this.cooldown.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerAuctionCooldownTicks / 20 * 1000));
@@ -93,7 +93,7 @@ public class AuctionManager extends BukkitRunnable {
         if (currentAuction != null) {
             currentAuction.halt();
             currentAuction = null;
-            new Message(I18n.get("user.auc.halted")).broadcast("heh.bid");
+            new Message(I18n._("user.auc.halted")).broadcast("heh.bid");
         }
     }
 

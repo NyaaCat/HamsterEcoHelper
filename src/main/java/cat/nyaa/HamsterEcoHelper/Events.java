@@ -28,7 +28,7 @@ public class Events implements Listener {
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        if (event.getInventory().getTitle().contains(I18n.get("user.market.title")) &&
+        if (event.getInventory().getTitle().contains(I18n._("user.market.title")) &&
                 MarketManager.viewItem.containsKey(player)) {
             event.setCancelled(true);
             UUID seller = MarketManager.viewSeller.get(player);
@@ -74,7 +74,7 @@ public class Events implements Listener {
     public void onPlayerJoin(PlayerJoinEvent ev) {
         List<ItemStack> items = plugin.database.getTemporaryStorage(ev.getPlayer());
         if (items.size() > 0) {
-            CommandHandler.msg(ev.getPlayer(), "user.info.has_temporary_storage");
+            ev.getPlayer().sendMessage(I18n._("user.info.has_temporary_storage"));
         }
     }
 

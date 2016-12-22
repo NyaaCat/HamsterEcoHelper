@@ -1,4 +1,4 @@
-internal:
+log:
   warn:
     bad_subcommand: "Bad subcommand handler: %s"
     lang_not_found: "Language %s not found."

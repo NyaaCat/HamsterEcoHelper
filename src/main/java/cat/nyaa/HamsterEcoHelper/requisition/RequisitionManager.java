@@ -2,8 +2,8 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Message;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.utils.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +26,7 @@ public class RequisitionManager extends BukkitRunnable {
     @Override
     public void run() {
         if (Bukkit.getOnlinePlayers().size() < plugin.config.requisitionMinimalPlayer) {
-            plugin.logger.info(I18n.get("internal.info.req_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
+            plugin.logger.info(I18n._("log.info.req_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
             return;
         }
         if (plugin.config.enable_balance && plugin.config.current_balance < 0) {
@@ -39,14 +39,14 @@ public class RequisitionManager extends BukkitRunnable {
                 newRequisition();
             }
         }).runTaskLater(plugin, delay);
-        plugin.logger.info(I18n.get("internal.info.req_scheduled", delay));
+        plugin.logger.info(I18n._("log.info.req_scheduled", delay));
     }
 
     public boolean newRequisition() {
         if (currentReq != null) return false;
-        if (plugin.config.itemsForReq.isEmpty()) return false;
+        if (plugin.config.requisitionConfig.itemsForReq.isEmpty()) return false;
         RequisitionSpecification item = Utils.randomWithWeight(
-                plugin.config.itemsForReq,
+                plugin.config.requisitionConfig.itemsForReq,
                 (RequisitionSpecification i) -> i.randomWeight
         );
         if (item == null) return false;
@@ -81,7 +81,7 @@ public class RequisitionManager extends BukkitRunnable {
         if (currentReq != null) {
             currentReq.halt();
             currentReq = null;
-            new Message(I18n.get("user.req.halted")).broadcast("heh.sell");
+            new Message(I18n._("user.req.halted")).broadcast("heh.sell");
         }
     }
 

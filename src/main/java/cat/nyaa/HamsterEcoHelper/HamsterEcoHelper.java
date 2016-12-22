@@ -5,7 +5,6 @@ import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
 import cat.nyaa.HamsterEcoHelper.utils.Database;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
-import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -22,6 +21,8 @@ public class HamsterEcoHelper extends JavaPlugin {
     public Events eventHandler;
     public CommandHandler commandHandler;
     public MarketManager marketManager;
+    public I18n i18n;
+    private boolean enableComplete = false;
 
     @Override
     public void onLoad() {
@@ -30,12 +31,13 @@ public class HamsterEcoHelper extends JavaPlugin {
         saveDefaultConfig();
         config = new Configuration(this);
         config.loadFromPlugin();
-        I18n.load(this, config.language);
+        this.i18n = new I18n(this, this.config.language);
     }
 
     @Override
     public void onEnable() {
         try {
+            this.i18n.load();
             commandHandler = new CommandHandler(this);
             getCommand("hamsterecohelper").setExecutor(commandHandler);
             database = new Database(this);
@@ -47,12 +49,11 @@ public class HamsterEcoHelper extends JavaPlugin {
             enableComplete = true;
         } catch (Exception ex) {
             ex.printStackTrace();
-            logger.severe(I18n.get("internal.error.enable_fail"));
+            logger.severe(I18n._("log.error.enable_fail"));
             getPluginLoader().disablePlugin(this);
         }
     }
 
-    private boolean enableComplete = false;
     @Override
     public void onDisable() {
         if (!enableComplete) return;
@@ -69,10 +70,10 @@ public class HamsterEcoHelper extends JavaPlugin {
         auctionManager.cancel();
         reqManager.halt();
         reqManager.cancel();
-        I18n.reset();
+        i18n.reset();
         reloadConfig();
         config.loadFromPlugin();
-        I18n.load(this, config.language);
+        i18n.load();
         auctionManager = new AuctionManager(this);
         reqManager = new RequisitionManager(this);
     }
