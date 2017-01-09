@@ -1,7 +1,8 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
-import cat.nyaa.HamsterEcoHelper.utils.Database;
+import cat.nyaa.HamsterEcoHelper.utils.database.Database;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,13 +33,13 @@ public class Events implements Listener {
                 MarketManager.viewItem.containsKey(player)) {
             event.setCancelled(true);
             UUID seller = MarketManager.viewSeller.get(player);
-            HashMap<Integer, Integer> slot = MarketManager.viewItem.get(player);
+            HashMap<Integer, Long> slot = MarketManager.viewItem.get(player);
             if (slot.containsKey(event.getRawSlot())) {
                 if (event.getInventory().getSize() == 54 &&
                         event.getInventory().getItem(47) != null &&
                         event.getInventory().getItem(47).getType() == Material.PAPER) {
-                    int itemId = MarketManager.viewItem.get(player).get(event.getRawSlot());
-                    Database.MarketItem marketItem = MarketManager.getItem(itemId);
+                    long itemId = MarketManager.viewItem.get(player).get(event.getRawSlot());
+                    MarketItem marketItem = MarketManager.getItem(itemId);
                     if (marketItem != null && marketItem.getItemStack().getType() != Material.AIR) {
                         if (event.isShiftClick()) {
                             MarketManager.buy(player, itemId, marketItem.getAmount());

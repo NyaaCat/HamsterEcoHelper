@@ -1,8 +1,8 @@
 package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.utils.Database;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemLog;
 import cat.nyaa.utils.ReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -171,7 +171,7 @@ public class RequisitionCommands {
     @SubCommand(value = "giveitem", permission = "heh.giveitem")
     public static void GiveItem(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
         Player p= asPlayer(sender);
-        Database.ItemLog item = plugin.database.getItemLog(args.nextInt());
+        ItemLog item = plugin.database.getItemLog(args.nextInt());
         if(item!=null) {
             Utils.giveItem(p, item.getItemStack());
             p.sendMessage("player: "+ Bukkit.getPlayer(item.getOwner()).getName());

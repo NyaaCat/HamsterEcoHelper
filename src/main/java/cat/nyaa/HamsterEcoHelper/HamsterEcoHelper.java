@@ -3,7 +3,7 @@ package cat.nyaa.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
-import cat.nyaa.HamsterEcoHelper.utils.Database;
+import cat.nyaa.HamsterEcoHelper.utils.database.Database;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -76,16 +76,6 @@ public class HamsterEcoHelper extends JavaPlugin {
         i18n.load();
         auctionManager = new AuctionManager(this);
         reqManager = new RequisitionManager(this);
-    }
-
-    @Override
-    public void installDDL() {
-        super.installDDL();
-    }
-
-    @Override
-    public List<Class<?>> getDatabaseClasses() {
-        return Database.getDatabaseClasses();
     }
 }
 

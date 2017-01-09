@@ -60,7 +60,6 @@ user:
   warn:
     no_enough_money: "You do not have that much money"
     not_high_enough: "Invalid price, at least %d$"
-    not_enough_space: "You mailbox is full!"
   auc:
     new_auction_0: "NEW AUCTION: "
     new_auction_1: "; Starts from %d$ with step price %d$; Please response in %d seconds with '/heh bid [price]'"
@@ -102,8 +101,6 @@ user:
     sell_to_self: "You cannot sell to yourself"
   market:
     title: "&2[Market]"
-    mailbox: "[Mailbox]"
-    open_mailbox: "Click to open mailbox."
     unit_price: "&aUnit Price: &f%s"
     unit_price_with_tax: "&aUnit Price: &f%s &aplus &f%s &a(&f%d%% &atax)"
     offered: "&aoffered by: &f%s"
