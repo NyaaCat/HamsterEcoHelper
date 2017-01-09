@@ -1,3 +1,6 @@
+internal:
+  info:
+    using_language: "Now using language: %s"
 log:
   warn:
     bad_subcommand: "Bad subcommand handler: %s"
