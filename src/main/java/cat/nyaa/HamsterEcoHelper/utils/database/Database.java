@@ -137,7 +137,13 @@ public class Database extends SQLiteDatabase {
         item.amount = itemStack.getAmount();
         item.setPlayerId(player.getUniqueId());
         item.setUnitPrice(unit_price);
-        item.setId((long) query(MarketItem.class).count() + 1);
+        long id = 1;
+        for (MarketItem marketItem : query(MarketItem.class).select()) {
+            if (marketItem.id >= id) {
+                id = marketItem.id + 1;
+            }
+        }
+        item.setId(id);
         query(MarketItem.class).insert(item);
         return item.getId();
     }
@@ -200,7 +206,13 @@ public class Database extends SQLiteDatabase {
         i.setItemStack(item);
         i.setPrice(price);
         i.amount = amount;
-        i.setId((long) query(ItemLog.class).count() + 1);
+        long id = 1;
+        for (ItemLog log : query(ItemLog.class).select()) {
+            if (log.id >= id) {
+                id = log.id + 1;
+            }
+        }
+        i.setId(id);
         this.query(ItemLog.class).insert(i);
         return i.getId();
     }
