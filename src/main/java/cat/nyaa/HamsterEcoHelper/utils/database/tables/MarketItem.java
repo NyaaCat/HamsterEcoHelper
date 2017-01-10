@@ -16,21 +16,19 @@ import java.util.UUID;
 public class MarketItem {
     @DataColumn("id")
     @PrimaryKey
-    public long id;
+    public Long id;
     @DataColumn("player_id")
     public String playerId;
     @DataColumn("item")
     public String item;
-    @DataColumn("amount")
-    public long amount;
-    @DataColumn("unit_price")
-    private double unitPrice;
+    public int amount;
+    private Double unitPrice;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -71,20 +69,21 @@ public class MarketItem {
         return item;
     }
     
-    public int getAmount() {
-        return (int) amount;
+    @DataColumn("amount")
+    public Long getAmount() {
+        return (long) amount;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setAmount(Long amount) {
+        this.amount = amount.intValue();
     }
 
-
-    public double getUnitPrice() {
+    @DataColumn("unit_price")
+    public Double getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(double unit_price) {
+    public void setUnitPrice(Double unit_price) {
         this.unitPrice = unit_price;
     }
 

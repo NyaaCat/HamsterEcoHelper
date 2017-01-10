@@ -14,21 +14,20 @@ import java.util.UUID;
 public class ItemLog {
     @DataColumn("id")
     @PrimaryKey
-    public long id;
+    public Long id;
     @DataColumn("owner")
     public String owner;
     @DataColumn("item")
     public String item;
-    @DataColumn("amount")
-    public long amount;
+    public int amount;
     @DataColumn("price")
-    public double price;
+    public Double price;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -48,7 +47,7 @@ public class ItemLog {
             e.printStackTrace();
         }
         ItemStack itemStack = yaml.getItemStack("item");
-        itemStack.setAmount((int) this.amount);
+        itemStack.setAmount(this.amount);
         return itemStack;
     }
 
@@ -65,19 +64,20 @@ public class ItemLog {
         return item;
     }
 
-    public int getAmount() {
-        return (int) amount;
+    @DataColumn("amount")
+    public Long getAmount() {
+        return (long) amount;
     }
 
-    public void setAmount(long amount) {
-        this.amount = amount;
+    public void setAmount(Long amount) {
+        this.amount = amount.intValue();
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

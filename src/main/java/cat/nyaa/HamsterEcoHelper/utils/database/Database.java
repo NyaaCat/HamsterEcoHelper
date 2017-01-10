@@ -134,10 +134,10 @@ public class Database extends SQLiteDatabase {
     public long marketOffer(Player player, ItemStack itemStack, double unit_price) {
         MarketItem item = new MarketItem();
         item.setItemStack(itemStack);
-        item.setAmount(itemStack.getAmount());
+        item.amount = itemStack.getAmount();
         item.setPlayerId(player.getUniqueId());
         item.setUnitPrice(unit_price);
-        item.setId(query(MarketItem.class).count() + 1);
+        item.setId((long) query(MarketItem.class).count() + 1);
         query(MarketItem.class).insert(item);
         return item.getId();
     }
@@ -194,13 +194,13 @@ public class Database extends SQLiteDatabase {
         return null;
     }
 
-    public long addItemLog(OfflinePlayer player, ItemStack item, int price, int amount) {
+    public long addItemLog(OfflinePlayer player, ItemStack item, double price, int amount) {
         ItemLog i = new ItemLog();
         i.setOwner(player.getUniqueId());
         i.setItemStack(item);
         i.setPrice(price);
-        i.setAmount(amount);
-        i.setId(query(ItemLog.class).count() + 1);
+        i.amount = amount;
+        i.setId((long) query(ItemLog.class).count() + 1);
         this.query(ItemLog.class).insert(i);
         return i.getId();
     }

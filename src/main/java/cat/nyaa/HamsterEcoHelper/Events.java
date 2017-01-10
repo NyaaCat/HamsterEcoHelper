@@ -42,7 +42,7 @@ public class Events implements Listener {
                     MarketItem marketItem = MarketManager.getItem(itemId);
                     if (marketItem != null && marketItem.getItemStack().getType() != Material.AIR) {
                         if (event.isShiftClick()) {
-                            MarketManager.buy(player, itemId, marketItem.getAmount());
+                            MarketManager.buy(player, itemId, marketItem.amount);
                         } else {
                             MarketManager.buy(player, itemId, 1);
                         }
