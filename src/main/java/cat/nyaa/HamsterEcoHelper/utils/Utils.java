@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -47,8 +48,9 @@ public class Utils {
      *         3: put into temporary storage
      */
     public static int giveItem(OfflinePlayer player, ItemStack item) {
-        if (player.isOnline() && player instanceof Player) {
-            Player p = (Player) player;
+        if (player.isOnline()) {
+            Player p = Bukkit.getPlayer(player.getUniqueId());  // Refresh the Player object to ensure
+                                                                // we hold latest Player object associated to
             int emptyId = p.getInventory().firstEmpty();
             if (emptyId >= 0) {
                 p.getInventory().setItem(emptyId, item);
