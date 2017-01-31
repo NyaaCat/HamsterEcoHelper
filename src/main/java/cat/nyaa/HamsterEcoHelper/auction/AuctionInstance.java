@@ -117,6 +117,7 @@ public class AuctionInstance {
                     if (plugin.config.playerAuctionCommissionFee > 0) {
                         double commissionFee = (currentHighPrice / 100) * plugin.config.playerAuctionCommissionFee;
                         e.deposit(this.owner, currentHighPrice - commissionFee);
+                        plugin.balanceAPI.deposit(commissionFee);
                     } else {
                         e.deposit(this.owner, currentHighPrice);
                     }
@@ -131,10 +132,10 @@ public class AuctionInstance {
                         .appendFormat(plugin.i18n, "user.auc.success_1", currentPlayer.getName())
                         .broadcast();
                 plugin.logger.info(I18n._("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "SUCCESS"));
-                if (this.owner == null && plugin.config.enable_balance) {
-                    plugin.config.current_balance += currentHighPrice;
+                if (this.owner == null && plugin.balanceAPI.isEnabled()) {
+                    plugin.balanceAPI.deposit(currentHighPrice);
                     plugin.config.saveToPlugin();
-                    plugin.logger.info(I18n._("log.info.current_balance", plugin.config.current_balance));
+                    plugin.logger.info(I18n._("log.info.current_balance", plugin.balanceAPI.getBalance()));
                 }
             } else {
                 if (this.owner != null && this.itemStack != null) {
@@ -155,11 +156,6 @@ public class AuctionInstance {
         }
         checkPointListener.cancel();
         plugin.logger.info(I18n._("log.info.auc_finish", uid(this), -1, "", "HALTED"));
-        if (this.owner == null && plugin.config.enable_balance) {
-            plugin.config.current_balance += currentHighPrice;
-            plugin.config.saveToPlugin();
-            plugin.logger.info(I18n._("log.info.current_balance", plugin.config.current_balance));
-        }
     }
 
     private class CheckPointListener extends BukkitRunnable {

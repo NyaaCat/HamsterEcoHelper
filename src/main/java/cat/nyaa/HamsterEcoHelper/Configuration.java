@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.auction.AuctionConfig;
+import cat.nyaa.HamsterEcoHelper.balance.VariablesConfig;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionConfig;
 import cat.nyaa.utils.ISerializable;
 import cat.nyaa.utils.PluginConfigure;
@@ -42,8 +43,6 @@ public class Configuration extends PluginConfigure {
     @Serializable
     public int market_placement_fee = 1;
     @Serializable
-    public long market_placement_fee_timestamp = 0;
-    @Serializable
     public int playerAuctionTimeoutTicks = 1000;
     @Serializable
     public int playerAuctionCooldownTicks = 3000;
@@ -55,19 +54,20 @@ public class Configuration extends PluginConfigure {
     public int playerRequisitionCooldownTicks = 3000;
     @Serializable
     public boolean enable_balance = false;
-    @Serializable
-    public double current_balance = 0;
 
     public Map<String, Integer> marketSlot = new HashMap<>();
     @StandaloneConfig
     public AuctionConfig auctionConfig;
     @StandaloneConfig
     public RequisitionConfig requisitionConfig;
+    @StandaloneConfig
+    public VariablesConfig variablesConfig;
 
     public Configuration(HamsterEcoHelper plugin) {
         this.plugin = plugin;
         this.auctionConfig = new AuctionConfig(plugin);
         this.requisitionConfig = new RequisitionConfig(plugin);
+        this.variablesConfig = new VariablesConfig(plugin);
     }
 
     public void loadFromPlugin() {

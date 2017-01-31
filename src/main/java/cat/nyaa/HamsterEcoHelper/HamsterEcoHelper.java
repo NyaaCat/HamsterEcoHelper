@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
+import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
 import cat.nyaa.HamsterEcoHelper.utils.database.Database;
@@ -23,6 +24,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public MarketManager marketManager;
     public I18n i18n;
     private boolean enableComplete = false;
+    public BalanceAPI balanceAPI;
 
     @Override
     public void onLoad() {
@@ -46,6 +48,7 @@ public class HamsterEcoHelper extends JavaPlugin {
             reqManager = new RequisitionManager(this);
             marketManager = new MarketManager(this);
             eventHandler = new Events(this);
+            balanceAPI = new BalanceAPI(this);
             enableComplete = true;
         } catch (Exception ex) {
             ex.printStackTrace();

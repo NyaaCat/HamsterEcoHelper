@@ -108,8 +108,8 @@ public class RequisitionInstance {
             plugin.reqManager.cooldown.put(owner.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
         }
         logger.info(I18n._("log.info.req_finish", uid(this), soldAmount, "HALTED"));
-        if (owner == null && plugin.config.enable_balance) {
-            plugin.logger.info(I18n._("log.info.current_balance", plugin.config.current_balance));
+        if (owner == null && plugin.balanceAPI.isEnabled()) {
+            plugin.logger.info(I18n._("log.info.current_balance", plugin.balanceAPI.getBalance()));
             plugin.config.saveToPlugin();
         }
     }
@@ -164,8 +164,8 @@ public class RequisitionInstance {
             }
             new Message(I18n._("user.req.finish")).broadcast("heh.bid");
             logger.info(I18n._("log.info.req_finish", uid(RequisitionInstance.this), soldAmount, "TIMEOUT"));
-            if (owner == null && plugin.config.enable_balance) {
-                plugin.logger.info(I18n._("log.info.current_balance", plugin.config.current_balance));
+            if (owner == null && plugin.balanceAPI.isEnabled()) {
+                plugin.logger.info(I18n._("log.info.current_balance", plugin.balanceAPI.getBalance()));
                 plugin.config.saveToPlugin();
             }
         }

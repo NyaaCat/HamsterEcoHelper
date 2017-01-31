@@ -110,8 +110,8 @@ public class RequisitionCommands {
         } else {
             msg(p, "user.req.success", price);
             plugin.eco.deposit(p, price);
-            if (req.owner == null && plugin.config.enable_balance) {
-                plugin.config.current_balance -= price;
+            if (req.owner == null && plugin.balanceAPI.isEnabled()) {
+                plugin.balanceAPI.withdraw(price);
             }
         }
     }

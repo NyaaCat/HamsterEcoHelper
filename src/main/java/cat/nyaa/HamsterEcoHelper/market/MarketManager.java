@@ -3,8 +3,8 @@ package cat.nyaa.HamsterEcoHelper.market;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.database.Database;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.HamsterEcoHelper.utils.database.Database;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import cat.nyaa.utils.Message;
 import net.milkbowl.vault.economy.Economy;
@@ -79,7 +79,7 @@ public class MarketManager extends BukkitRunnable{
             if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
                 int stat = Utils.giveItem(player, item.getItemStack(amount));
                 player.sendMessage(I18n._("user.auc.item_given_" + Integer.toString(stat)));
-                plugin.logger.info(I18n._("log.info.market_bought", itemId, getItemName(item.getItemStack()), 
+                plugin.logger.info(I18n._("log.info.market_bought", itemId, getItemName(item.getItemStack()),
                         amount, price, player.getName(), item.getPlayer().getName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {
@@ -93,6 +93,9 @@ public class MarketManager extends BukkitRunnable{
                             .send(player);
                     plugin.eco.withdraw(player, price + tax);
                     plugin.eco.deposit(item.getPlayer(), price);
+                    if (plugin.config.market_tax > 0 && tax > 0.0D) {
+                        plugin.balanceAPI.deposit(tax);
+                    }
                 }
                 db.marketBuy(player, itemId, amount);
                 playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
@@ -248,8 +251,8 @@ public class MarketManager extends BukkitRunnable{
     @Override
     public void run() {
         if (plugin.config.market_placement_fee > 0 &&
-                System.currentTimeMillis() - plugin.config.market_placement_fee_timestamp >= 86400000) {
-            plugin.config.market_placement_fee_timestamp = System.currentTimeMillis();
+                System.currentTimeMillis() - plugin.config.variablesConfig.market_placement_fee_timestamp >= 86400000) {
+            plugin.config.variablesConfig.market_placement_fee_timestamp = System.currentTimeMillis();
             int itemCount = db.getMarketItemCount();
             if (itemCount > 0) {
                 int fail = 0;
@@ -260,6 +263,9 @@ public class MarketManager extends BukkitRunnable{
                         plugin.logger.info(I18n._("log.info.placement_fee_fail",
                                 item.getId(), item.getPlayer().getName(), "Not enough money"));
                     }
+                }
+                if (fail < itemCount) {
+                    plugin.balanceAPI.deposit((itemCount - fail) * plugin.config.market_placement_fee);
                 }
                 plugin.logger.info(I18n._("log.info.placement_fee", itemCount, fail));
             }
