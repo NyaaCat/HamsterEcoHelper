@@ -8,7 +8,9 @@ import cat.nyaa.utils.PluginConfigure;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Configuration extends PluginConfigure {
@@ -54,6 +56,14 @@ public class Configuration extends PluginConfigure {
     public int playerRequisitionCooldownTicks = 3000;
     @Serializable
     public boolean enable_balance = false;
+    @Serializable(name = "death_penalty.worlds")
+    public List<String> death_penalty_worlds = new ArrayList<>();
+    @Serializable(name = "death_penalty.penalty.min")
+    public int death_penalty_min = 100;
+    @Serializable(name = "death_penalty.penalty.max")
+    public int death_penalty_max = 1000;
+    @Serializable(name = "death_penalty.penalty.percent")
+    public int death_penalty_percent = 10;
 
     public Map<String, Integer> marketSlot = new HashMap<>();
     @StandaloneConfig

@@ -114,6 +114,8 @@ user:
   retrieve:
     need_confirm: "The items will drop from your current position. Please ensure the safety. Use '/heh retrieve confirm'"
     no_item: "You have no item to retrieve."
+  death_penalty:
+    message: "You lost %.2f"
 
 manual:
   no_desc: "No description."

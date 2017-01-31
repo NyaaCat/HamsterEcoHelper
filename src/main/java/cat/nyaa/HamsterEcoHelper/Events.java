@@ -1,13 +1,13 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
-import cat.nyaa.HamsterEcoHelper.utils.database.Database;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -91,6 +91,28 @@ public class Events implements Listener {
         if (e.getItem() != null && MarketManager.isMarketItem(e.getItem().getItemStack())) {
             e.getItem().setItemStack(new ItemStack(Material.AIR));
             e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (plugin.config.death_penalty_worlds.contains(event.getEntity().getWorld().getName())) {
+            double penalty = 0.0D;
+            double playerBalance = plugin.eco.balance(event.getEntity());
+            if (playerBalance < plugin.config.death_penalty_min) {
+                penalty = plugin.config.death_penalty_min;
+            } else {
+                penalty = (playerBalance / 100) * plugin.config.death_penalty_percent;
+            }
+            if (penalty > plugin.config.death_penalty_max) {
+                penalty = plugin.config.death_penalty_max;
+            } else if (penalty < plugin.config.death_penalty_min) {
+                penalty = plugin.config.death_penalty_min;
+            }
+            if (penalty > 0.0D && plugin.eco.withdraw(event.getEntity(), penalty)) {
+                event.getEntity().sendMessage(I18n._("user.death_penalty.message", penalty));
+                plugin.balanceAPI.deposit(penalty);
+            }
         }
     }
 }
