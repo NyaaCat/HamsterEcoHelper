@@ -45,3 +45,6 @@ permissions:
       heh.addrequisition: true
       heh.debug: true
       heh.giveitem: true
+      heh.balance.pay: true
+      heh.balance.take: true
+      heh.balance.view: true

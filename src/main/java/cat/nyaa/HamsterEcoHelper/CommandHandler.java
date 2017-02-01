@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
+import cat.nyaa.HamsterEcoHelper.balance.BalanceCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
 import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
@@ -51,6 +52,7 @@ public class CommandHandler implements CommandExecutor {
         registerSubcommandHandler(RequisitionCommands.class);
         registerSubcommandHandler(AuctionCommands.class);
         registerSubcommandHandler(MarketCommands.class);
+        registerSubcommandHandler(BalanceCommands.class);
     }
 
     public List<String> getSubcommands() {

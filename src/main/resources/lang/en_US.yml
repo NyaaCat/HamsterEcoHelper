@@ -53,6 +53,7 @@ user:
     mute: "You will no longer receive this broadcast. Use '/heh unmute' to unmute"
     unmute: "Unmute success."
     cooldown: "Please wait %d seconds"
+    player_not_found: "Player %s not found"
   error:
     bad_command: "Wrong command: %s"
     not_int: "Not a valid integer"
@@ -116,6 +117,13 @@ user:
     no_item: "You have no item to retrieve."
   death_penalty:
     message: "You lost %.2f"
+  balance:
+    current_balance: "Current balance: %.2f"
+    pay: "Sent %.2f to player %s"
+    pay_notice: "%.2f has been added to your account"
+    take: "Take %.2f from player %s"
+    take_notice: "%.2f has been removed from your account"
+    take_fail: "Player %s no enough money"
 
 manual:
   no_desc: "No description."
@@ -135,6 +143,9 @@ manual:
     retrieve: "Usage: /heh retrieve [confirm]"
     req: "Usage: /heh req [itemName] [unitPrice|int] [Amount|int]"
     auc: "Usage: /heh auc [basePrice|int] [stepPrice|int] [reservePrice|int]"
+    pay: "Usage: /heh pay amount [amount] [player] or /heh pay percent [percent] [player] [min|optional] [max|optional]"
+    take: "Usage: take [player] [amount]"
+    viewbalance: "Usage: /heh viewbalance"
   description:
     addauc: "Add item in hand into system auction list."
     addreq: "Add item in hand into system requisition list."
@@ -148,6 +159,9 @@ manual:
     runreq: "Start a requisition."
     runauc: "Start an auction."
     version: "Display version and license"
+    pay: "Send money to a player"
+    take: "Take money from a player"
+    viewbalance: "View current balance"
   license: |
     Hamster Economy Helper version %s for Spigot 1.9.4
     Brings auction, requisition and world shop to Minecraft.
