@@ -56,6 +56,8 @@ public class Configuration extends PluginConfigure {
     public int playerRequisitionCooldownTicks = 3000;
     @Serializable
     public boolean enable_balance = false;
+    @Serializable
+    public int balance_SaveIntervalTicks = 12000;
     @Serializable(name = "death_penalty.worlds")
     public List<String> death_penalty_worlds = new ArrayList<>();
     @Serializable(name = "death_penalty.penalty.min")
