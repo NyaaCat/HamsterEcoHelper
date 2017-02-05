@@ -2,6 +2,10 @@ package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
+import cat.nyaa.nyaautils.api.events.MailboxSendChestEvent;
+import cat.nyaa.nyaautils.api.events.MailboxSendItemEvent;
+import cat.nyaa.nyaautils.api.events.PrefixChangeEvent;
+import cat.nyaa.nyaautils.api.events.SuffixChangeEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -113,6 +117,34 @@ public class Events implements Listener {
                 event.getEntity().sendMessage(I18n._("user.death_penalty.message", penalty));
                 plugin.balanceAPI.deposit(penalty);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPrefixChange(PrefixChangeEvent event) {
+        if (plugin.balanceAPI.isEnabled() && event.getMoneyCost() > 0.0D) {
+            plugin.balanceAPI.deposit(event.getMoneyCost());
+        }
+    }
+
+    @EventHandler
+    public void onSuffixChange(SuffixChangeEvent event) {
+        if (plugin.balanceAPI.isEnabled() && event.getMoneyCost() > 0.0D) {
+            plugin.balanceAPI.deposit(event.getMoneyCost());
+        }
+    }
+
+    @EventHandler
+    public void onMailboxSendItem(MailboxSendItemEvent event) {
+        if (plugin.balanceAPI.isEnabled() && event.getCost() > 0.0D) {
+            plugin.balanceAPI.deposit(event.getCost());
+        }
+    }
+
+    @EventHandler
+    public void onMailboxSendChest(MailboxSendChestEvent event) {
+        if (plugin.balanceAPI.isEnabled() && event.getCost() > 0.0D) {
+            plugin.balanceAPI.deposit(event.getCost());
         }
     }
 }
