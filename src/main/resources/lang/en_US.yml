@@ -84,6 +84,7 @@ user:
     item_given_2: "Item has been put into your EnderChest"
     item_given_3: "Item has been put into your temporary storage. Acquire with '/heh retrieve'"
     reserve_price_error: "Reserve price must be higher than base price"
+    step_price_error: "Step price must be higher than zero"
   req:
     new_req_0: "NEW REQUISITION: "
     new_req_1: "*%d with price %d; Last for %.2f seconds. Please response with '/heh sell [amount]'"
