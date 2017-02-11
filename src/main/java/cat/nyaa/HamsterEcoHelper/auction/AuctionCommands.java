@@ -121,6 +121,10 @@ public class AuctionCommands {
         ItemStack item = getItemInHand(sender).clone();
         int basePrice = args.nextInt();
         int stepPrice = args.nextInt();
+        if (stepPrice <= 0) {
+            msg(sender, "user.auc.step_price_error");
+            return;
+        }
         int reservePrice = 0;
         if (args.length() == 4) {
             reservePrice = args.nextInt();

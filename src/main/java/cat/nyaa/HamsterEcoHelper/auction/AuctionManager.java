@@ -69,7 +69,7 @@ public class AuctionManager extends BukkitRunnable {
 
     public boolean newPlayerAuction(Player player, ItemStack item, int basePrice, int stepPrice, int reservePrice) {
         if (currentAuction != null) return false;
-        if (!(basePrice > 0.9) || (stepPrice < 0)) {
+        if (!(basePrice > 0.9)) {
             return false;
         }
         if (this.cooldown.containsKey(player.getUniqueId()) && this.cooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
