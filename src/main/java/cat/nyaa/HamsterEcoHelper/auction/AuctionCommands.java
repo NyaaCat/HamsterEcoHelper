@@ -1,20 +1,29 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import cat.nyaa.utils.CommandReceiver;
+import cat.nyaa.utils.Internationalization;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
+    private HamsterEcoHelper plugin;
 
-import static cat.nyaa.HamsterEcoHelper.CommandHandler.*;
+    public AuctionCommands(Object plugin, Internationalization i18n) {
+        super((HamsterEcoHelper) plugin, i18n);
+        this.plugin = (HamsterEcoHelper) plugin;
+    }
 
-public class AuctionCommands {
+    @Override
+    public String getHelpPrefix() {
+        return "auction";
+    }
 
     @SubCommand(value = "addauc", permission = "heh.addauction")
-    public static void addAuc(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        if (args.length() != 6) {
+    public void addAuc(CommandSender sender, Arguments args) {
+        if (args.length() != 7) {
             msg(sender, "manual.command.addauc");
             return;
         }
@@ -30,9 +39,9 @@ public class AuctionCommands {
     }
 
     @SubCommand(value = "runauc", permission = "heh.runauc")
-    public static void runAuction(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void runAuction(CommandSender sender, Arguments args) {
         boolean success;
-        if (args.length() == 2) {
+        if (args.length() == 3) {
             int id = args.nextInt();
             if (id < 0 || id >= plugin.config.auctionConfig.itemsForAuction.size()) {
                 msg(sender, "admin.error.auc_id_oor", 0, plugin.config.auctionConfig.itemsForAuction.size() - 1);
@@ -49,7 +58,7 @@ public class AuctionCommands {
     }
 
     @SubCommand(value = "haltauc", permission = "heh.runauc")
-    public static void haltAuction(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void haltAuction(CommandSender sender, Arguments args) {
         AuctionInstance auc = plugin.auctionManager.getCurrentAuction();
         if (auc == null) {
             msg(sender, "user.info.no_current_auction");
@@ -59,14 +68,14 @@ public class AuctionCommands {
     }
 
     @SubCommand(value = "bid", permission = "heh.bid")
-    public static void userBid(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void userBid(CommandSender sender, Arguments args) {
         Player p = asPlayer(sender);
         AuctionInstance auc = plugin.auctionManager.getCurrentAuction();
         if (auc == null) {
             msg(p, "user.info.no_current_auc");
             return;
         }
-        if (args.length() == 1) {
+        if (args.length() == 2) {
             msg(sender, "manual.command.bid");
             return;
         }
@@ -93,28 +102,10 @@ public class AuctionCommands {
         auc.onBid(p, bid);
     }
 
-    @SubCommand(value = "retrieve", permission = "heh.retrieve")
-    public static void userRetrieve(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        Player p = asPlayer(sender);
-        if (args.length() == 1) {
-            msg(sender, "user.retrieve.need_confirm");
-            return;
-        }
-        List<ItemStack> items = plugin.database.getTemporaryStorage(p);
-        if (items.size() == 0) {
-            msg(sender, "user.retrieve.no_item");
-            return;
-        }
-        for (ItemStack s : items) {
-            p.getWorld().dropItem(p.getEyeLocation(), s);
-        }
-        plugin.database.clearTemporaryStorage(p);
-    }
-
     @SubCommand(value = "auc", permission = "heh.userauc")
-    public static void Auc(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        if (args.length() < 3) {
-            msg(sender,"manual.command.auc");
+    public void Auc(CommandSender sender, Arguments args) {
+        if (args.length() < 4) {
+            msg(sender, "manual.command.auc");
             return;
         }
         Player player = asPlayer(sender);
@@ -126,7 +117,7 @@ public class AuctionCommands {
             return;
         }
         int reservePrice = 0;
-        if (args.length() == 4) {
+        if (args.length() == 5) {
             reservePrice = args.nextInt();
             if (reservePrice <= basePrice) {
                 msg(sender, "user.auc.reserve_price_error");

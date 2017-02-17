@@ -5,187 +5,73 @@ import cat.nyaa.HamsterEcoHelper.balance.BalanceCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
 import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
+import cat.nyaa.utils.CommandReceiver;
+import cat.nyaa.utils.Internationalization;
 import cat.nyaa.utils.Message;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class CommandHandler implements CommandExecutor {
-    private static class NotPlayerException extends RuntimeException {
-    }
-
-    private static class NoItemInHandException extends RuntimeException {
-    }
-
-    private static class BadCommandException extends RuntimeException {
-        public BadCommandException(String msg) {
-            super(msg);
-        }
-
-        public BadCommandException(String msg, Throwable cause) {
-            super(msg, cause);
-        }
-    }
+public class CommandHandler extends CommandReceiver<HamsterEcoHelper> {
 
     private final HamsterEcoHelper plugin;
-    private Map<String, Method> subCommands = new HashMap<>();
-    private Map<String, String> subCommandPermission = new HashMap<>();
+    @SubCommand("auction")
+    public AuctionCommands auctionCommands;
+    @SubCommand("requisition")
+    public RequisitionCommands requisitionCommands;
+    @SubCommand("market")
+    public MarketCommands marketCommands;
+    @SubCommand("balance")
+    public BalanceCommands balanceCommands;
 
-    public CommandHandler(HamsterEcoHelper plugin) {
+    public CommandHandler(HamsterEcoHelper plugin, Internationalization i18n) {
+        super(plugin, i18n);
         this.plugin = plugin;
-        registerSubcommandHandler(CommandHandler.class);
-        registerSubcommandHandler(RequisitionCommands.class);
-        registerSubcommandHandler(AuctionCommands.class);
-        registerSubcommandHandler(MarketCommands.class);
-        registerSubcommandHandler(BalanceCommands.class);
     }
 
-    public List<String> getSubcommands() {
-        ArrayList<String> ret = new ArrayList<>();
-        ret.addAll(subCommands.keySet());
-        ret.sort(String::compareTo);
-        return ret;
+    @SubCommand(value = "save", permission = "heh.admin")
+    public void forceSave(CommandSender sender, Arguments args) {
+        plugin.config.saveToPlugin();
+        msg(sender, "admin.info.save_done");
     }
 
-    private void registerSubcommandHandler(Class<?> handlerClass) {
-        for (Method m : handlerClass.getDeclaredMethods()) {
-            SubCommand anno = m.getAnnotation(SubCommand.class);
-            if (anno == null) continue;
-            if (!Modifier.isStatic(m.getModifiers())) {
-                plugin.getLogger().warning(I18n._("log.warn.bad_subcommand", m.toString()));
-                continue;
-            }
-            Class<?>[] params = m.getParameterTypes();
-            if (!(params.length == 3 &&
-                    params[0] == CommandSender.class &&
-                    params[1] == Arguments.class &&
-                    params[2] == HamsterEcoHelper.class)) {
-                plugin.getLogger().warning(I18n._("log.warn.bad_subcommand", m.toString()));
-            } else {
-                m.setAccessible(true);
-                subCommands.put(anno.value().toLowerCase(), m);
-                if (!anno.permission().equals(""))
-                    subCommandPermission.put(anno.value(), anno.permission());
-            }
-        }
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        try {
-            Arguments cmd = Arguments.parse(args);
-            if (cmd == null) return false;
-            String subCommand = cmd.next();
-            if (subCommand == null || cmd.length() == 0 || !subCommands.containsKey(subCommand.toLowerCase())) {
-                subCommand = "help";
-            }
-
-            if (subCommandPermission.containsKey(subCommand)) {
-                if (!sender.hasPermission(subCommandPermission.get(subCommand))) {
-                    sender.sendMessage("No Permission");
-                    return true;
-                }
-            }
-
-            try {
-                subCommands.get(subCommand.toLowerCase()).invoke(null, sender, cmd, plugin);
-            } catch (ReflectiveOperationException ex) {
-                Throwable cause = ex.getCause();
-                if (cause != null && cause instanceof RuntimeException)
-                    throw (RuntimeException) cause;
-                else
-                    throw new RuntimeException("Failed to invoke subcommand", ex);
-            }
-            msg(sender, "user.info.command_complete");
-        } catch (NotPlayerException ex) {
-            msg(sender, "user.info.not_player");
-        } catch (NoItemInHandException ex) {
-            msg(sender, "user.info.no_item_hand");
-        } catch (BadCommandException ex) {
-            sender.sendMessage(ex.getMessage());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            msg(sender, "user.error.command_exception");
-        }
-        return true;
-    }
-
-    @SubCommand("help")
-    public static void printHelp(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        List<String> cmds = plugin.commandHandler.getSubcommands();
-        if (args.length() <= 1) {
-            String tmp = "";
-            for (String cmd : cmds) {
-                tmp += "\n    " + cmd + ":\t" + (I18n.instance.hasKey("manual.description." + cmd) ? I18n._("manual.description." + cmd) : I18n._("manual.no_desc"));
-            }
-            msg(sender, "manual.general", tmp);
-        } else {
-            String sub = args.next();
-            if (!cmds.contains(sub)) {
-                msg(sender, "manual.no_such_cmd", sub);
-                return;
-            }
-            msg(sender, "manual.general_title", sub);
-            if (I18n.instance.hasKey("manual.description." + sub)) {
-                msg(sender, "manual.description." + sub);
-            } else {
-                msg(sender, "manual.no_desc");
-            }
-            if (I18n.instance.hasKey("manual.command." + sub)) {
-                msg(sender, "manual.command." + sub);
-            } else {
-                msg(sender, "manual.no_usage");
-            }
-        }
+    public String getHelpPrefix() {
+        return "";
     }
 
     @SubCommand(value = "debug", permission = "heh.debug")
-    public static void debug(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void debug(CommandSender sender, Arguments args) {
         String sub = args.next();
         if ("showitem".equals(sub) && sender instanceof Player) {
             Player player = (Player) sender;
             new Message("Player has item: ").append(player.getInventory().getItemInMainHand()).send(player);
         } else if ("dbi".equals(sub) && sender instanceof Player) {
-            plugin.database.addTemporaryStorage((Player)sender, new ItemStack(Material.DIAMOND, 64));
+            plugin.database.addTemporaryStorage((Player) sender, new ItemStack(Material.DIAMOND, 64));
         } else if ("ymllist".equals(sub)) {
-            List<ItemStack> t = new ArrayList<ItemStack>(){{add(new ItemStack(Material.DIAMOND));
-            add(new ItemStack(Material.ACACIA_DOOR));}};
+            List<ItemStack> t = new ArrayList<ItemStack>() {{
+                add(new ItemStack(Material.DIAMOND));
+                add(new ItemStack(Material.ACACIA_DOOR));
+            }};
             YamlConfiguration yml = new YamlConfiguration();
             yml.addDefault("abc", t);
             yml.set("abc", t);
-            sender.sendMessage("\n"+yml.saveToString());
+            sender.sendMessage("\n" + yml.saveToString());
         }
     }
 
-    @SubCommand(value = "save", permission = "heh.admin")
-    public static void forceSave(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        plugin.config.saveToPlugin();
-        msg(sender, "admin.info.save_done");
-    }
-
     @SubCommand(value = "force-load", permission = "heh.admin")
-    public static void forceLoad(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void forceLoad(CommandSender sender, Arguments args) {
         plugin.reset();
         msg(sender, "admin.info.load_done");
     }
 
     @SubCommand(value = "version")
-    public static void version(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void version(CommandSender sender, Arguments args) {
         String ver = plugin.getDescription().getVersion();
         List<String> authors = plugin.getDescription().getAuthors();
         String au = authors.get(0);
@@ -194,174 +80,34 @@ public class CommandHandler implements CommandExecutor {
         }
         msg(sender, "manual.license", ver, au);
     }
-    
+
     @SubCommand(value = "mute", permission = "heh.mute")
-    public static void mute(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void mute(CommandSender sender, Arguments args) {
         GlobalMuteList.add(asPlayer(sender));
-        msg(sender,"user.info.mute");
+        msg(sender, "user.info.mute");
     }
 
     @SubCommand(value = "unmute", permission = "heh.mute")
-    public static void unmute(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void unmute(CommandSender sender, Arguments args) {
         GlobalMuteList.remove(asPlayer(sender));
-        msg(sender,"user.info.unmute");
-    }
-    
-    public static Player asPlayer(CommandSender target) {
-        if (target instanceof Player) {
-            return (Player) target;
-        } else {
-            throw new NotPlayerException();
-        }
+        msg(sender, "user.info.unmute");
     }
 
-    public static void msg(CommandSender target, String template, Object... args) {
-        target.sendMessage(I18n._(template, args));
-    }
-
-    public static ItemStack getItemInHand(CommandSender se) {
-        if (se instanceof Player) {
-            Player p = (Player) se;
-            if (p.getInventory() != null) {
-                ItemStack i = p.getInventory().getItemInMainHand();
-                if (i != null && i.getType() != Material.AIR) {
-                    return i;
-                }
-            }
-            throw new NoItemInHandException();
-        } else {
-            throw new NotPlayerException();
+    @SubCommand(value = "retrieve", permission = "heh.retrieve")
+    public void userRetrieve(CommandSender sender, Arguments args) {
+        Player p = asPlayer(sender);
+        if (args.length() == 1) {
+            msg(sender, "user.retrieve.need_confirm");
+            return;
         }
-    }
-
-    public static class Arguments {
-
-        private List<String> parsedArguments = new ArrayList<>();
-        private int index = 0;
-
-        private Arguments() {
+        List<ItemStack> items = plugin.database.getTemporaryStorage(p);
+        if (items.size() == 0) {
+            msg(sender, "user.retrieve.no_item");
+            return;
         }
-
-        public static Arguments parse(String[] rawArg) {
-            if (rawArg.length == 0) return new Arguments();
-            String cmd = rawArg[0];
-            for (int i = 1; i < rawArg.length; i++)
-                cmd += " " + rawArg[i];
-
-            List<String> cmdList = new ArrayList<>();
-            boolean escape = false, quote = false;
-            String tmp = "";
-            for (int i = 0; i < cmd.length(); i++) {
-                char chr = cmd.charAt(i);
-                if (escape) {
-                    if (chr == '\\' || chr == '`') tmp += chr;
-                    else return null; // bad escape char
-                    escape = false;
-                } else if (chr == '\\') {
-                    escape = true;
-                } else if (chr == '`') {
-                    if (quote) {
-                        if (i + 1 == cmd.length() || cmd.charAt(i + 1) == ' ') {
-                            cmdList.add(tmp);
-                            tmp = "";
-                            i++;
-                            quote = false;
-                        } else {
-                            return null; //bad quote end
-                        }
-                    } else {
-                        if (tmp.length() > 0)
-                            return null; // bad quote start
-                        quote = true;
-                    }
-                } else if (chr == ' ') {
-                    if (quote) {
-                        tmp += ' ';
-                    } else if (tmp.length() > 0) {
-                        cmdList.add(tmp);
-                        tmp = "";
-                    }
-                } else {
-                    tmp += chr;
-                }
-            }
-            if (tmp.length() > 0) cmdList.add(tmp);
-            if (escape || quote) return null;
-
-            Arguments ret = new Arguments();
-            ret.parsedArguments = cmdList;
-            return ret;
+        for (ItemStack s : items) {
+            p.getWorld().dropItem(p.getEyeLocation(), s);
         }
-
-        public String at(int index) {
-            return parsedArguments.get(index);
-        }
-
-        public String next() {
-            if (index < parsedArguments.size())
-                return parsedArguments.get(index++);
-            else
-                return null;
-        }
-
-        public String top() {
-            if (index < parsedArguments.size())
-                return parsedArguments.get(index);
-            else
-                return null;
-        }
-
-        public int nextInt() {
-            String str = next();
-            if (str == null) throw new BadCommandException("No more integers in argument");
-            if (str.endsWith("k")) str = str.substring(0, str.length()-1) + "000";
-            try {
-                return Integer.parseInt(str);
-            } catch (NumberFormatException ex) {
-                throw new BadCommandException(I18n._("user.error.not_int", str), ex);
-            }
-        }
-
-        public double nextDouble() {
-            String str = next();
-            if (str == null) throw new BadCommandException("No more numbers in argument");
-            try {
-                return Double.parseDouble(str);
-            } catch (NumberFormatException ex) {
-                throw new BadCommandException(I18n._("user.error.not_double", str), ex);
-            }
-        }
-
-        public <T extends Enum<T>> T nextEnum(Class<T> cls) {
-            String str = next();
-            if (str == null) throw new BadCommandException("No more EnumValues in argument");
-            try {
-                return Enum.valueOf(cls, str);
-            } catch (IllegalArgumentException ex) {
-                String vals = "";
-                for (T k : cls.getEnumConstants()) {
-                    vals += k.name() + "|";
-                }
-                throw new BadCommandException(I18n._("user.error.bad_enum", cls.getName(), vals));
-            }
-        }
-
-        public boolean nextBoolean() {
-            String str = next();
-            if (str == null) throw new BadCommandException("No more booleans in argument");
-            return Boolean.parseBoolean(str);
-        }
-
-        public int length() {
-            return parsedArguments.size();
-        }
-    }
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface SubCommand {
-        String value();
-
-        String permission() default "";
+        plugin.database.clearTemporaryStorage(p);
     }
 }

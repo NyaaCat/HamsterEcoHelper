@@ -127,42 +127,69 @@ user:
     take_fail: "Player %s no enough money"
 
 manual:
-  no_desc: "No description."
-  no_usage: "No usage."
-  no_such_cmd: "'%s' is not a valid subcommand."
-  general_title: "===== %s ====="
-  general: |
-    Usage: /heh [SubCommand] [Arguments...]
-           /heh help [SubCommand]
-    Sub-commands:%s
-  command:
-    addauc: "Usage: /heh addauc [basePrice|int] [stepPrice|int] [randomWeight|double] [hideName|bool] [waitTimeTicks|int]"
-    bid: "Usage: /heh bid [price|int]"
-    addreq: "Usage: /heh addreq [minUnitPrice|int] [maxUnitPrice|int] [minAmount|int] [maxAmount|int] [randomWeigth|double] [timeoutTicks|int] [exactMatch|bool] [minDamageValue|int] [maxDamageValue|int] [enchantMatch|string:EXACT:CONTAINS:ARBITRARY] [loreMatch|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [nameMatch|string:EXACT:EXACT_TEXT:ARBITRARY]"
-    offer: "Usage: /heh offer [UnitPrice|double]"
-    sell: "Usage: /heh sell [Amount|int]"
-    retrieve: "Usage: /heh retrieve [confirm]"
-    req: "Usage: /heh req [itemName] [unitPrice|int] [Amount|int]"
-    auc: "Usage: /heh auc [basePrice|int] [stepPrice|int] [reservePrice|int]"
-    pay: "Usage: /heh pay amount [amount] [player] or /heh pay percent [percent] [player] [min|optional] [max|optional]"
-    take: "Usage: take [player] [amount]"
-    viewbalance: "Usage: /heh viewbalance"
-  description:
-    addauc: "Add item in hand into system auction list."
-    addreq: "Add item in hand into system requisition list."
-    bid: "Give price for the ongoing auction."
-    sell: "Sell item in hand to the ongoing requisition."
-    retrieve: "Retrieve the items in the temporary storage."
-    save: "Force save."
-    haltreq: "Stop the ongoing requisition."
-    haltauc: "Stop the ongoing auction."
-    force-load: "Load config. Discarding unsaved changes."
-    runreq: "Start a requisition."
-    runauc: "Start an auction."
-    version: "Display version and license"
-    pay: "Send money to a player"
-    take: "Take money from a player"
-    viewbalance: "View current balance"
+  no_description: "No description"
+  no_usage: "No usage"
+  auction:
+    auc: 
+      description: "Start a auction."
+      usage: "Usage: /heh auction auc [basePrice|int] [stepPrice|int] [reservePrice|int]"
+    addauc: 
+      description: "Add item in hand into system auction list."
+      usage: "Usage: /heh auction addauc [basePrice|int] [stepPrice|int] [randomWeight|double] [hideName|bool] [waitTimeTicks|int]"
+    bid:
+      description: "Give price for the ongoing auction."
+      usage: "Usage: /heh auction bid [price|int]"
+    haltauc: 
+      description: "Stop the ongoing auction."
+      usage: "Usage: /heh auction haltauc"
+    runauc: 
+      description: "Start an system auction."
+      usage: "Usage: /heh auction runauc"
+  requisition:
+    addreq:
+      description: "Add item in hand into system requisition list."
+      usage: "Usage: /heh requisition addreq [minUnitPrice|int] [maxUnitPrice|int] [minAmount|int] [maxAmount|int] [randomWeigth|double] [timeoutTicks|int] [exactMatch|bool] [minDamageValue|int] [maxDamageValue|int] [enchantMatch|string:EXACT:CONTAINS:ARBITRARY] [loreMatch|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [nameMatch|string:EXACT:EXACT_TEXT:ARBITRARY]"
+    req: 
+      description: "Start a requisition."
+      usage: "Usage: /heh requisition req [itemName] [unitPrice|int] [Amount|int]"
+    runreq:
+      description: "Start a system requisition."
+      usage: "Usage: /heh requisition runreq"
+    sell:
+      description: "Sell item in hand to the ongoing requisition."
+      usage: "Usage: /heh requisition sell [Amount|int]"
+    haltreq: 
+      description: "Stop the ongoing requisition."
+      usage: "Usage: /heh requisition haltreq"
+  market:
+    offer: 
+      description: "add item to market" 
+      usage: "Usage: /heh market offer [UnitPrice|double]"
+    view:
+      description: "view market" 
+      usage: "Usage: /heh market view"
+  balance:     
+    pay: 
+      description: "Send money to a player"
+      usage: "Usage: /heh balance pay amount [amount] [player] or /heh pay percent [percent] [player] [min|optional] [max|optional]"
+    take: 
+      description: "Take money from a player"
+      usage: "Usage: /heh balance take [player] [amount]"
+    view: 
+      description: "View current balance"
+      usage: "Usage: /heh balance view"
+  retrieve: 
+    description: "Retrieve the items in the temporary storage."
+    usage: "Usage: /heh retrieve [confirm]"
+  save: 
+    description: "Force save."
+    usage: "Usage: /heh save"
+  force-load: 
+    description: "Load config. Discarding unsaved changes."
+    usage: "Usage: /heh force-load"
+  version: 
+    description: "Display version and license"
+    usage: "Usage: /heh version"
   license: |
     Hamster Economy Helper version %s for Spigot 1.9.4
     Brings auction, requisition and world shop to Minecraft.

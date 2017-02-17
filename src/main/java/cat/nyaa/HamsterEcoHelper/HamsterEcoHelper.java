@@ -4,11 +4,10 @@ import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
-import cat.nyaa.HamsterEcoHelper.utils.database.Database;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
+import cat.nyaa.HamsterEcoHelper.utils.database.Database;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 public class HamsterEcoHelper extends JavaPlugin {
@@ -40,7 +39,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public void onEnable() {
         try {
             this.i18n.load();
-            commandHandler = new CommandHandler(this);
+            commandHandler = new CommandHandler(this, this.i18n);
             getCommand("hamsterecohelper").setExecutor(commandHandler);
             database = new Database(this);
             eco = new EconomyUtil(this);

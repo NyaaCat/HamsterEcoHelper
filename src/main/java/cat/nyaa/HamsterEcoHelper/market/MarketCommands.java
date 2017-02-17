@@ -2,6 +2,8 @@ package cat.nyaa.HamsterEcoHelper.market;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
+import cat.nyaa.utils.CommandReceiver;
+import cat.nyaa.utils.Internationalization;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -11,13 +13,22 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 
-import static cat.nyaa.HamsterEcoHelper.CommandHandler.*;
+public class MarketCommands extends CommandReceiver<HamsterEcoHelper> {
+    private HamsterEcoHelper plugin;
 
-public class MarketCommands {
-    
+    public MarketCommands(Object plugin, Internationalization i18n) {
+        super((HamsterEcoHelper) plugin, i18n);
+        this.plugin = (HamsterEcoHelper) plugin;
+    }
+
+    @Override
+    public String getHelpPrefix() {
+        return "market";
+    }
+
     @SubCommand(value = "offer", permission = "heh.offer")
-    public static void offer(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        if (args.length() == 2) {
+    public void offer(CommandSender sender, Arguments args) {
+        if (args.length() == 3) {
             Player player = asPlayer(sender);
             double price = 0.0;
             try {
@@ -43,9 +54,9 @@ public class MarketCommands {
     }
 
     @SubCommand(value = "view", permission = "heh.view")
-    public static void view(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void view(CommandSender sender, Arguments args) {
         Player player = asPlayer(sender);
-        if (args.length() == 2) {
+        if (args.length() == 3) {
             OfflinePlayer seller = Bukkit.getOfflinePlayer(args.next());
             if (seller != null) {
                 MarketManager.openGUI(player, 1, seller.getUniqueId());
@@ -56,7 +67,7 @@ public class MarketCommands {
     }
 
     @SubCommand(value = "givemarketitem", permission = "heh.giveitem")
-    public static void give(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void give(CommandSender sender, Arguments args) {
         Player player = asPlayer(sender);
         MarketItem item = MarketManager.getItem(args.nextInt());
         if (item != null) {

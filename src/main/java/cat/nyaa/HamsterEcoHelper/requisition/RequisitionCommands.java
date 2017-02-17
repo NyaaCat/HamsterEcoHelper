@@ -3,6 +3,8 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemLog;
+import cat.nyaa.utils.CommandReceiver;
+import cat.nyaa.utils.Internationalization;
 import cat.nyaa.utils.ReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,12 +12,22 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import static cat.nyaa.HamsterEcoHelper.CommandHandler.*;
+public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
+    private HamsterEcoHelper plugin;
 
-public class RequisitionCommands {
+    public RequisitionCommands(Object plugin, Internationalization i18n) {
+        super((HamsterEcoHelper) plugin, i18n);
+        this.plugin = (HamsterEcoHelper) plugin;
+    }
+
+    @Override
+    public String getHelpPrefix() {
+        return "requisition";
+    }
+
     @SubCommand(value = "addreq", permission = "heh.addreq")
-    public static void addReq(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        if (args.length() != 13) {
+    public void addReq(CommandSender sender, Arguments args) {
+        if (args.length() != 14) {
             msg(sender, "manual.command.addreq");
             return;
         }
@@ -39,9 +51,9 @@ public class RequisitionCommands {
     }
 
     @SubCommand(value = "runreq", permission = "heh.runreq")
-    public static void runRequisition(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void runRequisition(CommandSender sender, Arguments args) {
         boolean success = false;
-        if (args.length() == 2) {
+        if (args.length() == 3) {
             int id = args.nextInt();
             if (id < 0 || id >= plugin.config.requisitionConfig.itemsForReq.size()) {
                 msg(sender, "admin.error.req_id_oor", 0, plugin.config.requisitionConfig.itemsForReq.size() - 1);
@@ -58,7 +70,7 @@ public class RequisitionCommands {
     }
 
     @SubCommand(value = "haltreq", permission = "heh.runreq")
-    public static void haltRequisition(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void haltRequisition(CommandSender sender, Arguments args) {
         RequisitionInstance req = plugin.reqManager.getCurrentRequisition();
         if (req == null) {
             msg(sender, "user.info.no_current_requisition");
@@ -68,7 +80,7 @@ public class RequisitionCommands {
     }
 
     @SubCommand(value = "sell", permission = "heh.sell")
-    public static void userSell(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void userSell(CommandSender sender, Arguments args) {
         Player p = asPlayer(sender);
         RequisitionInstance req = plugin.reqManager.getCurrentRequisition();
         if (req == null) {
@@ -82,9 +94,9 @@ public class RequisitionCommands {
         }
 
         int amount;
-        if (args.length() == 1) {
+        if (args.length() == 2) {
             amount = Math.min(getItemInHand(sender).getAmount(), req.getAmountRemains());
-        } else if (args.length() == 2) {
+        } else if (args.length() == 3) {
             amount = args.nextInt();
         } else {
             msg(p, "manual.command.sell");
@@ -117,13 +129,13 @@ public class RequisitionCommands {
     }
 
     @SubCommand(value = "req", permission = "heh.userreq")
-    public static void Requisition(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
+    public void Requisition(CommandSender sender, Arguments args) {
         RequisitionInstance req = plugin.reqManager.getCurrentRequisition();
         if (req != null) {
             return;
         }
-        if (args.length() != 4) {
-            msg(sender,"manual.command.req");
+        if (args.length() != 5) {
+            msg(sender, "manual.command.req");
             return;
         }
 
@@ -169,14 +181,14 @@ public class RequisitionCommands {
     }
 
     @SubCommand(value = "giveitem", permission = "heh.giveitem")
-    public static void GiveItem(CommandSender sender, Arguments args, HamsterEcoHelper plugin) {
-        Player p= asPlayer(sender);
+    public void GiveItem(CommandSender sender, Arguments args) {
+        Player p = asPlayer(sender);
         ItemLog item = plugin.database.getItemLog(args.nextInt());
-        if(item!=null) {
+        if (item != null) {
             Utils.giveItem(p, item.getItemStack());
-            p.sendMessage("player: "+ Bukkit.getPlayer(item.getOwner()).getName());
-            p.sendMessage("price: "+ item.getPrice());
+            p.sendMessage("player: " + Bukkit.getPlayer(item.getOwner()).getName());
+            p.sendMessage("price: " + item.getPrice());
         }
-        
+
     }
 }
