@@ -24,7 +24,7 @@ public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
     @SubCommand(value = "addauc", permission = "heh.addauction")
     public void addAuc(CommandSender sender, Arguments args) {
         if (args.length() != 7) {
-            msg(sender, "manual.command.addauc");
+            msg(sender, "manual.auction.addauc.usage");
             return;
         }
         AuctionItemTemplate item = new AuctionItemTemplate();
@@ -76,7 +76,7 @@ public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
             return;
         }
         if (args.length() == 2) {
-            msg(sender, "manual.command.bid");
+            msg(sender, "manual.auction.bid.usage");
             return;
         }
         if (auc.owner != null && auc.owner.getUniqueId().equals(p.getUniqueId())) {
@@ -105,7 +105,7 @@ public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
     @SubCommand(value = "auc", permission = "heh.userauc")
     public void Auc(CommandSender sender, Arguments args) {
         if (args.length() < 4) {
-            msg(sender, "manual.command.auc");
+            msg(sender, "manual.auction.auc.usage");
             return;
         }
         Player player = asPlayer(sender);

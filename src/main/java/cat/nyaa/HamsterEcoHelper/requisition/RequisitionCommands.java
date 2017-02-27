@@ -28,7 +28,7 @@ public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
     @SubCommand(value = "addreq", permission = "heh.addreq")
     public void addReq(CommandSender sender, Arguments args) {
         if (args.length() != 14) {
-            msg(sender, "manual.command.addreq");
+            msg(sender, "manual.requisition.addreq.usage");
             return;
         }
         RequisitionSpecification req = new RequisitionSpecification();
@@ -99,7 +99,7 @@ public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
         } else if (args.length() == 3) {
             amount = args.nextInt();
         } else {
-            msg(p, "manual.command.sell");
+            msg(p, "manual.requisition.sell.usage");
             return;
         }
 
@@ -135,7 +135,7 @@ public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
             return;
         }
         if (args.length() != 5) {
-            msg(sender, "manual.command.req");
+            msg(sender, "manual.requisition.req.usage");
             return;
         }
 

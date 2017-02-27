@@ -181,6 +181,8 @@ manual:
   no_description: "No description"
   no_usage: "No usage"
   auction:
+    description: "Auction commands"
+    usage: "Usage: /heh auction help"
     auc: 
       description: "Start a auction."
       usage: "Usage: /heh auction auc [basePrice|int] [stepPrice|int] [reservePrice|int]"
@@ -197,6 +199,8 @@ manual:
       description: "Start an system auction."
       usage: "Usage: /heh auction runauc"
   requisition:
+    description: "Requisition commands"
+    usage: "Usage: /heh requisition help"
     addreq:
       description: "Add item in hand into system requisition list."
       usage: "Usage: /heh requisition addreq [minUnitPrice|int] [maxUnitPrice|int] [minAmount|int] [maxAmount|int] [randomWeigth|double] [timeoutTicks|int] [exactMatch|bool] [minDamageValue|int] [maxDamageValue|int] [enchantMatch|string:EXACT:CONTAINS:ARBITRARY] [loreMatch|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [nameMatch|string:EXACT:EXACT_TEXT:ARBITRARY]"
@@ -213,6 +217,8 @@ manual:
       description: "Stop the ongoing requisition."
       usage: "Usage: /heh requisition haltreq"
   market:
+    description: "sell/buy item"
+    usage: "Usage: /heh market help"
     offer: 
       description: "add item to market" 
       usage: "Usage: /heh market offer [UnitPrice|double]"

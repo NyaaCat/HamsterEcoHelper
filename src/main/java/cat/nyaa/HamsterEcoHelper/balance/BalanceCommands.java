@@ -38,7 +38,7 @@ public class BalanceCommands extends CommandReceiver<HamsterEcoHelper> {
                     amount = min;
                 }
             } else {
-                msg(sender, "manual.command.pay");
+                msg(sender, "manual.balance.pay.usage");
                 return;
             }
             if (!(amount > 0.0D)) {
@@ -56,7 +56,7 @@ public class BalanceCommands extends CommandReceiver<HamsterEcoHelper> {
             }
             return;
         }
-        msg(sender, "manual.command.pay");
+        msg(sender, "manual.balance.pay.usage");
     }
 
     @Override
@@ -67,7 +67,7 @@ public class BalanceCommands extends CommandReceiver<HamsterEcoHelper> {
     @CommandHandler.SubCommand(value = "take", permission = "heh.balance.take")
     public void take(CommandSender sender, CommandHandler.Arguments args) {
         if (args.length() != 4) {
-            msg(sender, "manual.command.take");
+            msg(sender, "manual.balance.take.usage");
             return;
         }
         String playerName = args.next();

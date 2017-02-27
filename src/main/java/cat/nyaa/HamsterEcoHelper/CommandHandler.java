@@ -38,15 +38,40 @@ public class CommandHandler extends CommandReceiver<HamsterEcoHelper> {
         this.plugin = plugin;
     }
 
+    public String getHelpPrefix() {
+        return "";
+    }
+    
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length > 0) {
+            String cmd = args[0].toLowerCase();
+            String subCommand = "";
+            if (cmd.equals("view") || cmd.equals("offer")) {
+                subCommand = "market";
+            } else if (cmd.equals("sell") || cmd.equals("req")) {
+                subCommand = "requisition";
+            } else if (cmd.equals("auc") || cmd.equals("bid")) {
+                subCommand = "auction";
+            }
+            if (subCommand.length() > 0) {
+                String[] tmp = new String[args.length + 1];
+                tmp[0] = subCommand;
+                for (int i = 0; i < args.length; i++) {
+                    tmp[i + 1] = args[i];
+                }
+                return super.onCommand(sender, command, label, tmp);
+            }
+        }
+        return super.onCommand(sender, command, label, args);
+    }
+
     @SubCommand(value = "save", permission = "heh.admin")
     public void forceSave(CommandSender sender, Arguments args) {
         plugin.config.saveToPlugin();
         msg(sender, "admin.info.save_done");
     }
 
-    public String getHelpPrefix() {
-        return "";
-    }
 
     @SubCommand(value = "debug", permission = "heh.debug")
     public void debug(CommandSender sender, Arguments args) {
