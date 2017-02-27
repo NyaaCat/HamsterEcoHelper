@@ -66,7 +66,10 @@ public class Configuration extends PluginConfigure {
     public int death_penalty_max = 1000;
     @Serializable(name = "death_penalty.penalty.percent")
     public int death_penalty_percent = 10;
-
+    @Serializable(name = "signshop.tax")
+    public int signshop_tax = 0;
+    public Map<String, Integer> signshop_sign_limit = new HashMap<>();
+    public Map<String, Integer> signshop_slot_limit = new HashMap<>();
     public Map<String, Integer> marketSlot = new HashMap<>();
     @StandaloneConfig
     public AuctionConfig auctionConfig;
@@ -106,6 +109,20 @@ public class Configuration extends PluginConfigure {
                 marketSlot.put(group, slotNumMap.getInt(group));
             }
         }
+        signshop_sign_limit = new HashMap<>();
+        ConfigurationSection signNumMap = plugin.getConfig().getConfigurationSection("signshop.sign_limit");
+        if (signNumMap != null) {
+            for (String group : signNumMap.getKeys(false)) {
+                signshop_sign_limit.put(group, signNumMap.getInt(group));
+            }
+        }
+        signshop_slot_limit = new HashMap<>();
+        ConfigurationSection signShopSlotNumMap = plugin.getConfig().getConfigurationSection("signshop.slot_limit");
+        if (signShopSlotNumMap != null) {
+            for (String group : signShopSlotNumMap.getKeys(false)) {
+                signshop_slot_limit.put(group, signShopSlotNumMap.getInt(group));
+            }
+        }
     }
 
     @Override
@@ -115,6 +132,16 @@ public class Configuration extends PluginConfigure {
         ConfigurationSection slotMap = config.createSection("marketSlot");
         for (String group : marketSlot.keySet()) {
             slotMap.set(group, marketSlot.get(group));
+        }
+        config.set("signshop.sign_limit", null);
+        ConfigurationSection signNumMap = config.createSection("signshop.sign_limit");
+        for (String group : signshop_sign_limit.keySet()) {
+            signNumMap.set(group, signshop_sign_limit.get(group));
+        }
+        config.set("signshop.slot_limit", null);
+        ConfigurationSection signShopSlotNumMap = config.createSection("signshop.slot_limit");
+        for (String group : signshop_slot_limit.keySet()) {
+            signShopSlotNumMap.set(group, signshop_slot_limit.get(group));
         }
     }
 }

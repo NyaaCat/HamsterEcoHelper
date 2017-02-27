@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
+import cat.nyaa.HamsterEcoHelper.signshop.ShopGUI;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
 import org.bukkit.Material;
@@ -30,6 +31,9 @@ public class Events implements Listener {
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
+        if(event.getInventory().getHolder() instanceof ShopGUI){
+            return;
+        }
         if (event.getInventory().getTitle().contains(I18n._("user.market.title")) &&
                 MarketManager.viewItem.containsKey(player)) {
             event.setCancelled(true);

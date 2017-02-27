@@ -4,8 +4,10 @@ import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
+import cat.nyaa.HamsterEcoHelper.signshop.SignShopManager;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
 import cat.nyaa.HamsterEcoHelper.utils.database.Database;
+import cat.nyaa.HamsterEcoHelper.signshop.SignShopListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -24,6 +26,8 @@ public class HamsterEcoHelper extends JavaPlugin {
     public I18n i18n;
     private boolean enableComplete = false;
     public BalanceAPI balanceAPI;
+    public SignShopManager signShopManager;
+    public SignShopListener signShopListener;
 
     @Override
     public void onLoad() {
@@ -48,6 +52,8 @@ public class HamsterEcoHelper extends JavaPlugin {
             marketManager = new MarketManager(this);
             eventHandler = new Events(this);
             balanceAPI = new BalanceAPI(this);
+            signShopManager = new SignShopManager(this);
+            signShopListener = new SignShopListener(this);
             enableComplete = true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -72,12 +78,14 @@ public class HamsterEcoHelper extends JavaPlugin {
         auctionManager.cancel();
         reqManager.halt();
         reqManager.cancel();
+        signShopManager.closeAllGUI();
         i18n.reset();
         reloadConfig();
         config.loadFromPlugin();
         i18n.load();
         auctionManager = new AuctionManager(this);
         reqManager = new RequisitionManager(this);
+        signShopManager = new SignShopManager(this);
     }
 }
 

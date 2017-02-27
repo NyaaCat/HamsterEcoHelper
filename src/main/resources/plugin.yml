@@ -36,6 +36,9 @@ permissions:
       heh.mute: true
       heh.userauc: true
       heh.userreq: true
+      heh.signshop.sell: true
+      heh.signshop.buy: true
+      heh.signshop.lotto: true
   heh.admin:
     description: Permission node for operators
     default: op

@@ -4,11 +4,13 @@ import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
+import cat.nyaa.HamsterEcoHelper.signshop.SignShopCommands;
 import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
 import cat.nyaa.utils.CommandReceiver;
 import cat.nyaa.utils.Internationalization;
 import cat.nyaa.utils.Message;
 import org.bukkit.Material;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -28,6 +30,8 @@ public class CommandHandler extends CommandReceiver<HamsterEcoHelper> {
     public MarketCommands marketCommands;
     @SubCommand("balance")
     public BalanceCommands balanceCommands;
+    @SubCommand("shop")
+    public SignShopCommands signShopCommands;
 
     public CommandHandler(HamsterEcoHelper plugin, Internationalization i18n) {
         super(plugin, i18n);

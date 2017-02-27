@@ -59,7 +59,7 @@ public class MarketManager extends BukkitRunnable{
             }
         }
         long id = db.marketOffer(player, item, unit_price);
-        plugin.logger.info(I18n._("log.info.market_offer", id, getItemName(item), item.getAmount(), unit_price, player.getName()));
+        plugin.logger.info(I18n._("log.info.market_offer", id, Utils.getItemName(item), item.getAmount(), unit_price, player.getName()));
         if (plugin.config.marketBroadcast && (System.currentTimeMillis() - lastBroadcast) > (plugin.config.marketBroadcastCooldown * 1000)) {
             lastBroadcast = System.currentTimeMillis();
             new Message("").append(item, I18n._("user.market.broadcast")).broadcast();
@@ -79,7 +79,7 @@ public class MarketManager extends BukkitRunnable{
             if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
                 int stat = Utils.giveItem(player, item.getItemStack(amount));
                 player.sendMessage(I18n._("user.auc.item_given_" + Integer.toString(stat)));
-                plugin.logger.info(I18n._("log.info.market_bought", itemId, getItemName(item.getItemStack()),
+                plugin.logger.info(I18n._("log.info.market_bought", itemId, Utils.getItemName(item.getItemStack()),
                         amount, price, player.getName(), item.getPlayer().getName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {
@@ -213,19 +213,6 @@ public class MarketManager extends BukkitRunnable{
             player.playSound(player.getLocation(), sound, 1, 2);
         }
         return;
-    }
-
-    private static String getItemName(ItemStack item) {
-        String itemName = "";
-        if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-            itemName = item.getItemMeta().getDisplayName();
-        }
-        if (itemName.length() == 0) {
-            itemName = item.getType().name() + ":" + item.getDurability();
-        } else {
-            itemName += "(" + item.getType().name() + ":" + item.getDurability() + ")";
-        }
-        return itemName;
     }
 
     public static void updateAllGUI() {

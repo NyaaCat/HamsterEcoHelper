@@ -2,11 +2,17 @@ package cat.nyaa.HamsterEcoHelper.utils.database;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
+import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemLog;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.TempStorageRepo;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLocation;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
 import cat.nyaa.utils.database.SQLiteDatabase;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -42,7 +48,11 @@ public class Database extends SQLiteDatabase {
         return new Class<?>[]{
                 TempStorageRepo.class,
                 ItemLog.class,
-                MarketItem.class
+                MarketItem.class,
+                Sign.class,
+                ShopStorageLocation.class,
+                SignShop.class,
+                LottoStorageLocation.class
         };
     }
 
@@ -215,5 +225,108 @@ public class Database extends SQLiteDatabase {
         i.setId(id);
         this.query(ItemLog.class).insert(i);
         return i.getId();
+    }
+
+    public List<Sign> getShopSigns() {
+        return query(Sign.class).select();
+    }
+
+    public Sign createShopSign(OfflinePlayer player, Block block, ShopMode mode) {
+        Sign shopLocation = new Sign();
+        shopLocation.setOwner(player.getUniqueId());
+        shopLocation.setLocation(block.getLocation());
+        shopLocation.shopMode = mode;
+        Query sign = query(Sign.class).whereEq("id", shopLocation.getId());
+        if (sign != null) {
+            sign.delete();
+        }
+        this.query(Sign.class).insert(shopLocation);
+        return shopLocation;
+    }
+
+    public Sign createLottoSign(OfflinePlayer player, Block block, ShopMode mode, double price) {
+        Sign shopLocation = new Sign();
+        shopLocation.setOwner(player.getUniqueId());
+        shopLocation.setLocation(block.getLocation());
+        shopLocation.shopMode = mode;
+        shopLocation.setLotto_price(price);
+        Query sign = query(Sign.class).whereEq("id", shopLocation.getId());
+        if (sign != null) {
+            sign.delete();
+        }
+        this.query(Sign.class).insert(shopLocation);
+        return shopLocation;
+    }
+
+    public boolean removeShopSign(Block block) {
+        Sign shopLocation = new Sign();
+        shopLocation.setLocation(block.getLocation());
+        Query sign = query(Sign.class).whereEq("id", shopLocation.getId());
+        if (sign != null) {
+            sign.delete();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeShopSign(String world, int x, int y, int z) {
+        Sign shopLocation = new Sign();
+        shopLocation.setLocation(world, x, y, z);
+        Query sign = query(Sign.class).whereEq("id", shopLocation.getId());
+        if (sign != null) {
+            sign.delete();
+            return true;
+        }
+        return false;
+    }
+
+    public SignShop getSignShop(UUID owner) {
+        Query<SignShop> shop = query(SignShop.class).whereEq("id", owner.toString());
+        if (shop != null && shop.count() == 1) {
+            return shop.selectUnique();
+        }
+        SignShop s = new SignShop();
+        s.setOwner(owner);
+        return s;
+    }
+
+    public void setSignShop(UUID owner, SignShop shop) {
+        Query s = query(SignShop.class).whereEq("id", owner.toString());
+        if (s != null) {
+            s.delete();
+        }
+        query(SignShop.class).insert(shop);
+    }
+
+    public ShopStorageLocation getChestLocation(UUID owner) {
+        Query<ShopStorageLocation> loc = query(ShopStorageLocation.class).whereEq("owner", owner.toString());
+        if (loc != null && loc.count() != 0) {
+            return loc.selectUnique();
+        }
+        return null;
+    }
+
+    public void setChestLocation(UUID owner, ShopStorageLocation location) {
+        Query s = query(ShopStorageLocation.class).whereEq("owner", owner.toString());
+        if (s != null) {
+            s.delete();
+        }
+        query(ShopStorageLocation.class).insert(location);
+    }
+
+    public LottoStorageLocation getLottoStorageLocation(UUID owner) {
+        Query<LottoStorageLocation> loc = query(LottoStorageLocation.class).whereEq("owner", owner.toString());
+        if (loc != null && loc.count() != 0) {
+            return loc.selectUnique();
+        }
+        return null;
+    }
+
+    public void setLottoStorageLocation(UUID owner, LottoStorageLocation location) {
+        Query s = query(LottoStorageLocation.class).whereEq("owner", owner.toString());
+        if (s != null) {
+            s.delete();
+        }
+        query(LottoStorageLocation.class).insert(location);
     }
 }

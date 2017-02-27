@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import cat.nyaa.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -51,15 +52,10 @@ public class Utils {
         if (player.isOnline()) {
             Player p = Bukkit.getPlayer(player.getUniqueId());  // Refresh the Player object to ensure
                                                                 // we hold latest Player object associated to
-            int emptyId = p.getInventory().firstEmpty();
-            if (emptyId >= 0) {
-                p.getInventory().setItem(emptyId, item);
+            if (InventoryUtils.addItem(p, item)) {
                 return 1;
             }
-
-            emptyId = p.getEnderChest().firstEmpty();
-            if (emptyId >= 0) {
-                p.getEnderChest().setItem(emptyId, item);
+            if (InventoryUtils.addItem(p.getEnderChest(), item)) {
                 return 2;
             }
         }
@@ -70,5 +66,18 @@ public class Utils {
 
     public static String uid(Object obj) {
         return Integer.toHexString(System.identityHashCode(obj));
+    }
+
+    public static String getItemName(ItemStack item) {
+        String itemName = "";
+        if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+            itemName = item.getItemMeta().getDisplayName();
+        }
+        if (itemName.length() == 0) {
+            itemName = item.getType().name() + ":" + item.getDurability();
+        } else {
+            itemName += "(" + item.getType().name() + ":" + item.getDurability() + ")";
+        }
+        return itemName;
     }
 }

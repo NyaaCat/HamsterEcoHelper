@@ -25,6 +25,12 @@ log:
     placement_fee: "placement fee: {itemCount: \"%d\", fail: \"%d\"}"
     placement_fee_fail: "placement fee: {id: \"%d\", player: \"%s\", reason:\"%s\"}"
     current_balance: "current balance: %.2f"
+    signshop_create: "Create sign: {player: \"%s\", mode: \"%s\", world: \"%s\", x: \"%d\", y: \"%d\", z:\"%d\"}"
+    signshop_create_lotto: "Create lotto sign: {player: \"%s\", price: %s, world: \"%s\", x: \"%d\", y: \"%d\", z:\"%d\"}"
+    signshop_remove: "Remove sign: {player: \"%s\", mode: \"%s\", world: \"%s\", x: \"%d\", y: \"%d\", z:\"%d\"}"
+    signshop_bought: "[signshop] bought: {item: \"%s\", amount: %d, price: %.2f, player: \"%s\", from: \"%s\"}"
+    signshop_sell: "[signshop] sell: {item: \"%s\", amount: %d, price: %.2f, player: \"%s\", to: \"%s\"}"
+    signshop_lotto: "lotto: {item: \"%s\", amount: %d, price: %.2f, player: \"%s\", from: \"%s\"}"
   error:
     missing_sqlite_driver: "SQLite Driver not found. Plugin disabled."
     enable_fail: "Plugin failed to enable"
@@ -125,7 +131,52 @@ user:
     take: "Take %.2f from player %s"
     take_notice: "%.2f has been removed from your account"
     take_fail: "Player %s no enough money"
-
+  signshop:
+    not_sign: "You must target a sign"
+    break:
+      no_permission: "You can not break this sign"
+      success: "sign removed"
+    sign:
+      line_1: "&3&l[shop]"
+      line_2_sell: "&9&lSELL"
+      line_2_buy: "&a&lBUY"
+      line_2_lotto: "&a&lLOTTO"
+    not_enough_slot: "Not enough slot"
+    sign_invalid: "Sign format invalid"
+    create_success: "Sign created"
+    create_fail: "You can not create more sign"
+    edit: "Click to remove"
+    empty: "This shop is empty"
+    invalid_location: "invalid location"
+    storage:
+      set_success: "Success set chest"
+      set: "Please use &b/heh shop storage set&r to set a chest"
+      select_chest: "Please right click a chest"
+      info: "Chest location: world: %s, x: %d, y: %d, z: %d"
+    lotto:
+      success: "You pay %s to %s and get {itemName} *{amount}"
+      notice: "%s get {itemName} *{amount} for %s from you"
+      notice_with_tax: "%s sell {itemName} *{amount} to you for %s (%s tax)"
+      set_success: "Success set chest"
+      set_storage: "Please use &b/heh shop lotto set&r to set a chest"
+      select_chest: "Please right click a chest"
+      info: "Chest location: world: %s, x: %d, y: %d, z: %d"
+    buy: 
+      title: "Buy from %s"
+      success: "You bought {itemName} *{amount} from %s for $%.2f"
+      notice: "%s bought {itemName} *{amount} for %.2f from you"
+      add: "Success add item to shop"
+    sell:
+      title: "Sell to %s"
+      unit_price: "{itemName} *{amount} Unit Price: &f%s"
+      unit_price_with_tax: "{itemName} *{amount} Unit Price: %s (tax: %s)"
+      success: "You sell {itemName} *{amount} to %s for %.2f"
+      notice: "%s sell {itemName} *{amount} to you for %.2f"
+      invalid: "You can not sell this item to this shop"
+      not_enough_money: "This shop owner does not have enough money"
+      not_enough_space: "This shop is not enough space"
+      add: "Success add item to shop"
+    print_shop_info: "Shop owner: %s, shop mode: %s"
 manual:
   no_description: "No description"
   no_usage: "No usage"
@@ -178,6 +229,30 @@ manual:
     view: 
       description: "View current balance"
       usage: "Usage: /heh balance view"
+  shop:
+    description: "Buy/sell items"
+    storage:
+      description: "Show/set shop storage info"
+      info:
+        description: "Show storage info"
+        usage: "Usage: /heh shop storage info"
+      set:
+        description: "Set storage location"
+        usage: "Usage: /heh shop storage set"
+    buy: 
+      description: "Buy item"
+      usage: "Usage: /heh shop buy [UnitPrice|double]"
+    sell: 
+      description: "Sell item"
+      usage: "Usage: /heh shop sell [UnitPrice|double]"
+    lotto:
+      description: "Show/set lotto storage info"
+      info:
+        description: "Show storage info"
+        usage: "Usage: /heh shop lotto info"
+      set:
+        description: "Set storage location"
+        usage: "Usage: /heh shop lotto set"
   retrieve: 
     description: "Retrieve the items in the temporary storage."
     usage: "Usage: /heh retrieve [confirm]"
