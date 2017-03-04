@@ -31,7 +31,7 @@ import java.util.UUID;
 public class SignShopListener implements Listener {
     public final HashMap<UUID, ShopMode> selectChest = new HashMap<>();
     private final HamsterEcoHelper plugin;
-    public HashMap<UUID, Long> antiSpamClick = new HashMap<>();
+    public HashMap<UUID, Long> lottoConfirm = new HashMap<>();
 
     public SignShopListener(HamsterEcoHelper plugin) {
         this.plugin = plugin;
@@ -164,7 +164,7 @@ public class SignShopListener implements Listener {
             return;
         }
         if ((event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)) &&
-                (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN_POST))) {
+                SignShopManager.isSign(block)) {
             Player player = event.getPlayer();
             Sign sign = plugin.signShopManager.getSign(block);
             if (sign != null) {
@@ -173,7 +173,7 @@ public class SignShopListener implements Listener {
                     event.setCancelled(false);
                     return;
                 }
-                if (ShopMode.SELL.equals(sign.shopMode)) {
+                if (ShopMode.SELL.equals(sign.shopMode) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     plugin.signShopManager.openShopGUI(player, sign, 1);
                 } else if (ShopMode.BUY.equals(sign.shopMode)) {
                     if (sign.getOwner().equals(player.getUniqueId())) {
@@ -181,7 +181,8 @@ public class SignShopListener implements Listener {
                         return;
                     } else {
                         ItemStack item = player.getInventory().getItemInMainHand();
-                        if (item == null || item.getType().equals(Material.AIR) || !(item.getAmount() > 0)) {
+                        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) ||
+                                item == null || item.getType().equals(Material.AIR) || !(item.getAmount() > 0)) {
                             plugin.signShopManager.printItemsList(player, sign);
                         } else {
                             ItemStack itemStack = item.clone();
@@ -200,17 +201,19 @@ public class SignShopListener implements Listener {
                             }
                         }
                     }
-                } else if (ShopMode.LOTTO.equals(sign.shopMode)) {
+                } else if (ShopMode.LOTTO.equals(sign.shopMode) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (sign.getOwner().equals(player.getUniqueId())) {
                         event.setCancelled(false);
                         return;
                     } else {
-                        if (antiSpamClick.containsKey(player.getUniqueId()) &&
-                                System.currentTimeMillis() - antiSpamClick.get(player.getUniqueId()) <= 1000) {
+                        if (!lottoConfirm.containsKey(player.getUniqueId()) ||
+                                System.currentTimeMillis() - lottoConfirm.get(player.getUniqueId()) >= 5000) {
+                            lottoConfirm.put(player.getUniqueId(), System.currentTimeMillis());
+                            player.sendMessage(I18n._("user.signshop.lotto.confirm"));
                             return;
                         }
                     }
-                    antiSpamClick.put(player.getUniqueId(), System.currentTimeMillis());
+                    lottoConfirm.remove(player.getUniqueId());
                     double price = sign.getLotto_price();
                     if (price > 0.0D) {
                         if (plugin.eco.enoughMoney(player, price)) {
@@ -232,8 +235,8 @@ public class SignShopListener implements Listener {
                                 OfflinePlayer owner = sign.getPlayer();
                                 new Message("").append(item, I18n._("user.signshop.lotto.success",
                                         price, owner.getName())).send(player);
-                                plugin.logger.info(I18n._("log.signshop_lotto",Utils.getItemName(item),
-                                        item.getAmount(),price,player.getName(),owner.getName()));
+                                plugin.logger.info(I18n._("log.signshop_lotto", Utils.getItemName(item),
+                                        item.getAmount(), price, player.getName(), owner.getName()));
                                 if (owner.isOnline()) {
                                     if (tax > 0.0D) {
                                         new Message("").append(item, I18n._("user.signshop.lotto.notice_with_tax",

@@ -119,6 +119,7 @@ user:
     broadcast: "New market offer: {itemName} *{amount} use '/heh view' view the items."
     someone_bought: "%s bought {itemName} for $%.2f from you."
     buy_success: "you bought {itemName} from %s for $%.2f"
+    not_enough_slot: "Not enough slot"
   retrieve:
     need_confirm: "The items will drop from your current position. Please ensure the safety. Use '/heh retrieve confirm'"
     no_item: "You have no item to retrieve."
@@ -154,9 +155,10 @@ user:
       select_chest: "Please right click a chest"
       info: "Chest location: world: %s, x: %d, y: %d, z: %d"
     lotto:
+      confirm: "Please right click sign to confirm."
       success: "You pay %s to %s and get {itemName} *{amount}"
       notice: "%s get {itemName} *{amount} for %s from you"
-      notice_with_tax: "%s sell {itemName} *{amount} to you for %s (%s tax)"
+      notice_with_tax: "%s get {itemName} *{amount} for %s from you (%s tax)"
       set_success: "Success set chest"
       set_storage: "Please use &b/heh shop lotto set&r to set a chest"
       select_chest: "Please right click a chest"

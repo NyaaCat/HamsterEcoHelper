@@ -42,8 +42,8 @@ public class MarketCommands extends CommandReceiver<HamsterEcoHelper> {
             }
             ItemStack item = getItemInHand(sender);
             if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
-                if (MarketManager.offer(player, item, price)) {
-                    player.getInventory().setItemInMainHand(null);
+                if (plugin.marketManager.offer(player, item, price)) {
+                    player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
                 }
                 return;
             } else {
@@ -59,17 +59,17 @@ public class MarketCommands extends CommandReceiver<HamsterEcoHelper> {
         if (args.length() == 3) {
             OfflinePlayer seller = Bukkit.getOfflinePlayer(args.next());
             if (seller != null) {
-                MarketManager.openGUI(player, 1, seller.getUniqueId());
+                plugin.marketManager.openGUI(player, 1, seller.getUniqueId());
             }
         } else {
-            MarketManager.openGUI(player, 1, null);
+            plugin.marketManager.openGUI(player, 1, null);
         }
     }
 
     @SubCommand(value = "givemarketitem", permission = "heh.giveitem")
     public void give(CommandSender sender, Arguments args) {
         Player player = asPlayer(sender);
-        MarketItem item = MarketManager.getItem(args.nextInt());
+        MarketItem item = plugin.marketManager.getItem(args.nextInt());
         if (item != null) {
             int slot = player.getInventory().firstEmpty();
             if (slot >= 0 && player.getInventory().getItem(slot) == null) {

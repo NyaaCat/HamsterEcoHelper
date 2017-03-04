@@ -177,14 +177,6 @@ public class Database extends SQLiteDatabase {
         return 0;
     }
 
-    public int getMarketPageCount() {
-        Query<MarketItem> query = query(MarketItem.class).where("amount", ">", 0);
-        if (query == null || query.count() == 0) {
-            return 0;
-        }
-        return (query.count() + MarketManager.pageSize - 1) / MarketManager.pageSize;
-    }
-
     public int getMarketItemCount() {
         Query<MarketItem> query = query(MarketItem.class).where("amount", ">", 0);
         if (query != null && query.count() != 0) {

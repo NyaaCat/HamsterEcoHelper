@@ -2,6 +2,7 @@ package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
+import cat.nyaa.HamsterEcoHelper.market.MarketListener;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopManager;
@@ -28,6 +29,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public BalanceAPI balanceAPI;
     public SignShopManager signShopManager;
     public SignShopListener signShopListener;
+    public MarketListener marketListener;
 
     @Override
     public void onLoad() {
@@ -50,6 +52,7 @@ public class HamsterEcoHelper extends JavaPlugin {
             auctionManager = new AuctionManager(this);
             reqManager = new RequisitionManager(this);
             marketManager = new MarketManager(this);
+            marketListener = new MarketListener(this);
             eventHandler = new Events(this);
             balanceAPI = new BalanceAPI(this);
             signShopManager = new SignShopManager(this);
@@ -79,6 +82,8 @@ public class HamsterEcoHelper extends JavaPlugin {
         reqManager.halt();
         reqManager.cancel();
         signShopManager.closeAllGUI();
+        marketManager.closeAllGUI();
+        marketManager.cancel();
         i18n.reset();
         reloadConfig();
         config.loadFromPlugin();
@@ -86,6 +91,7 @@ public class HamsterEcoHelper extends JavaPlugin {
         auctionManager = new AuctionManager(this);
         reqManager = new RequisitionManager(this);
         signShopManager = new SignShopManager(this);
+        marketManager = new MarketManager(this);
     }
 }
 
