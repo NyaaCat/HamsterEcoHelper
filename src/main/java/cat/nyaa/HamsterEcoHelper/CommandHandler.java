@@ -1,5 +1,6 @@
 package cat.nyaa.HamsterEcoHelper;
 
+import cat.nyaa.HamsterEcoHelper.ads.AdsCommands;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
@@ -32,6 +33,8 @@ public class CommandHandler extends CommandReceiver<HamsterEcoHelper> {
     public BalanceCommands balanceCommands;
     @SubCommand("shop")
     public SignShopCommands signShopCommands;
+    @SubCommand("ads")
+    public AdsCommands adsCommands;
 
     public CommandHandler(HamsterEcoHelper plugin, Internationalization i18n) {
         super(plugin, i18n);

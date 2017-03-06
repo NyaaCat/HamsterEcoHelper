@@ -1,5 +1,6 @@
 package cat.nyaa.HamsterEcoHelper;
 
+import cat.nyaa.HamsterEcoHelper.ads.AdsConfig;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionConfig;
 import cat.nyaa.HamsterEcoHelper.balance.VariablesConfig;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionConfig;
@@ -68,21 +69,45 @@ public class Configuration extends PluginConfigure {
     public int death_penalty_percent = 10;
     @Serializable(name = "signshop.tax")
     public int signshop_tax = 0;
+    @Serializable(name = "ads.interval")
+    public int ads_interval = 600;
+    @Serializable(name = "ads.count_afk")
+    public boolean ads_count_afk = false;
+    @Serializable(name = "ads.count_self")
+    public boolean ads_count_self = false;
+    @Serializable(name = "ads.price")
+    public int ads_price = 5;
+    @Serializable(name = "ads.max_display")
+    public int ads_max_display = 100;
+    @Serializable(name = "ads.min_display")
+    public int ads_min_display = 20;
+    @Serializable(name = "ads.color")
+    public boolean ads_color = true;
+    @Serializable(name = "ads.formatting")
+    public List<String> ads_formatting = new ArrayList<>();
+    @Serializable(name = "ads.limit_total")
+    public int ads_limit_total = 100;
+    @Serializable(name = "ads.limit_text")
+    public int ads_limit_text = 50;
     public Map<String, Integer> signshop_sign_limit = new HashMap<>();
     public Map<String, Integer> signshop_slot_limit = new HashMap<>();
     public Map<String, Integer> marketSlot = new HashMap<>();
+    public Map<String, Integer> ads_limit_group = new HashMap<>();
     @StandaloneConfig
     public AuctionConfig auctionConfig;
     @StandaloneConfig
     public RequisitionConfig requisitionConfig;
     @StandaloneConfig
     public VariablesConfig variablesConfig;
+    @StandaloneConfig
+    public AdsConfig adsConfig;
 
     public Configuration(HamsterEcoHelper plugin) {
         this.plugin = plugin;
         this.auctionConfig = new AuctionConfig(plugin);
         this.requisitionConfig = new RequisitionConfig(plugin);
         this.variablesConfig = new VariablesConfig(plugin);
+        this.adsConfig = new AdsConfig(plugin);
     }
 
     public void loadFromPlugin() {
@@ -103,24 +128,31 @@ public class Configuration extends PluginConfigure {
     public void deserialize(ConfigurationSection config) {
         ISerializable.deserialize(config, this);
         marketSlot = new HashMap<>();
-        ConfigurationSection slotNumMap = plugin.getConfig().getConfigurationSection("marketSlot");
+        ConfigurationSection slotNumMap = config.getConfigurationSection("marketSlot");
         if (slotNumMap != null) {
             for (String group : slotNumMap.getKeys(false)) {
                 marketSlot.put(group, slotNumMap.getInt(group));
             }
         }
         signshop_sign_limit = new HashMap<>();
-        ConfigurationSection signNumMap = plugin.getConfig().getConfigurationSection("signshop.sign_limit");
+        ConfigurationSection signNumMap = config.getConfigurationSection("signshop.sign_limit");
         if (signNumMap != null) {
             for (String group : signNumMap.getKeys(false)) {
                 signshop_sign_limit.put(group, signNumMap.getInt(group));
             }
         }
         signshop_slot_limit = new HashMap<>();
-        ConfigurationSection signShopSlotNumMap = plugin.getConfig().getConfigurationSection("signshop.slot_limit");
+        ConfigurationSection signShopSlotNumMap = config.getConfigurationSection("signshop.slot_limit");
         if (signShopSlotNumMap != null) {
             for (String group : signShopSlotNumMap.getKeys(false)) {
                 signshop_slot_limit.put(group, signShopSlotNumMap.getInt(group));
+            }
+        }
+        ads_limit_group = new HashMap<>();
+        ConfigurationSection adsLimitNumMap = config.getConfigurationSection("ads.limit_group");
+        if (adsLimitNumMap != null) {
+            for (String group : adsLimitNumMap.getKeys(false)) {
+                ads_limit_group.put(group, adsLimitNumMap.getInt(group));
             }
         }
     }
@@ -142,6 +174,11 @@ public class Configuration extends PluginConfigure {
         ConfigurationSection signShopSlotNumMap = config.createSection("signshop.slot_limit");
         for (String group : signshop_slot_limit.keySet()) {
             signShopSlotNumMap.set(group, signshop_slot_limit.get(group));
+        }
+        config.set("ads.limit_group", null);
+        ConfigurationSection adsLimitNumMap = config.createSection("ads.limit_group");
+        for (String group : ads_limit_group.keySet()) {
+            adsLimitNumMap.set(group, ads_limit_group.get(group));
         }
     }
 }

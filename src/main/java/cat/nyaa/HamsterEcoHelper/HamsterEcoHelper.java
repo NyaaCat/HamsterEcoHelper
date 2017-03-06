@@ -1,5 +1,6 @@
 package cat.nyaa.HamsterEcoHelper;
 
+import cat.nyaa.HamsterEcoHelper.ads.AdsManager;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
 import cat.nyaa.HamsterEcoHelper.market.MarketListener;
@@ -9,6 +10,7 @@ import cat.nyaa.HamsterEcoHelper.signshop.SignShopManager;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
 import cat.nyaa.HamsterEcoHelper.utils.database.Database;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopListener;
+import com.earth2me.essentials.Essentials;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -30,6 +32,8 @@ public class HamsterEcoHelper extends JavaPlugin {
     public SignShopManager signShopManager;
     public SignShopListener signShopListener;
     public MarketListener marketListener;
+    public AdsManager adsManager;
+    public Essentials ess = null;
 
     @Override
     public void onLoad() {
@@ -57,6 +61,10 @@ public class HamsterEcoHelper extends JavaPlugin {
             balanceAPI = new BalanceAPI(this);
             signShopManager = new SignShopManager(this);
             signShopListener = new SignShopListener(this);
+            if (getServer().getPluginManager().getPlugin("Essentials") != null) {
+                this.ess = (Essentials) getServer().getPluginManager().getPlugin("Essentials");
+            }
+            adsManager = new AdsManager(this);
             enableComplete = true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -73,6 +81,7 @@ public class HamsterEcoHelper extends JavaPlugin {
         reqManager.halt();
         reqManager.cancel();
         config.saveToPlugin();
+        ess = null;
         enableComplete = false;
     }
 
@@ -84,6 +93,7 @@ public class HamsterEcoHelper extends JavaPlugin {
         signShopManager.closeAllGUI();
         marketManager.closeAllGUI();
         marketManager.cancel();
+        adsManager.cancel();
         i18n.reset();
         reloadConfig();
         config.loadFromPlugin();
@@ -92,6 +102,10 @@ public class HamsterEcoHelper extends JavaPlugin {
         reqManager = new RequisitionManager(this);
         signShopManager = new SignShopManager(this);
         marketManager = new MarketManager(this);
+        if (getServer().getPluginManager().getPlugin("Essentials") != null) {
+            this.ess = (Essentials) getServer().getPluginManager().getPlugin("Essentials");
+        }
+        adsManager = new AdsManager(this);
     }
 }
 

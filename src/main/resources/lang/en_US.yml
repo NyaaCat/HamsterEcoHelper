@@ -31,6 +31,8 @@ log:
     signshop_bought: "[signshop] bought: {item: \"%s\", amount: %d, price: %.2f, player: \"%s\", from: \"%s\"}"
     signshop_sell: "[signshop] sell: {item: \"%s\", amount: %d, price: %.2f, player: \"%s\", to: \"%s\"}"
     signshop_lotto: "lotto: {item: \"%s\", amount: %d, price: %.2f, player: \"%s\", from: \"%s\"}"
+    ads_add: "add ads: {id: %d, amount: %d, text: \"%s\", player: \"%s\"}"
+    ads_remove: "remove ads: {id: %d, text: \"%s\", player: \"%s\"}"
   error:
     missing_sqlite_driver: "SQLite Driver not found. Plugin disabled."
     enable_fail: "Plugin failed to enable"
@@ -179,6 +181,26 @@ user:
       not_enough_space: "This shop is not enough space"
       add: "Success add item to shop"
     print_shop_info: "Shop owner: %s, shop mode: %s"
+  ads:
+    add:
+      price: "Unit price: %d, total price: %d"
+      preview: "Preview:"
+      confirm: "Use &b/heh ads add `%s` %d confirm&r to confirm"
+      success: "Success add"
+      invalid_amount: "display amount must be between %d and %d"
+      full: "ads list is full"
+      fail: "You can not add more ad"
+    list:
+      line_0: "Your active ads:"
+      line_1: "- [AD ID] [ad text] (displayed/total)"
+      line_2: "[%d] [&r%s&r] (%d/%d)"
+    revoke:
+      no_permission: "You can not remove this ad"
+      success: "remove success"
+    mute: "You will no longer receive ads. Use '/heh ads unmute' to unmute"
+    unmute: "Unmute success."
+    message: "[Ads by %s] &r%s&r"
+    message_too_long: "ad text max length is %d"
 manual:
   no_description: "No description"
   no_usage: "No usage"
@@ -261,6 +283,23 @@ manual:
       set:
         description: "Set storage location"
         usage: "Usage: /heh shop lotto set"
+  ads:
+    description: "add/remove ads"
+    add:
+      description: "add ad"
+      usage: "Usage: /heh ads add [text] [display amount]"
+    revoke:
+      description: "remove ad"
+      usage: "Usage: /heh ads revoke [ad id]"
+    list:
+      description: "list ads"
+      usage: "Usage: /heh ads list"
+    mute:
+      description: "mute ads"
+      usage: "Usage: /heh ads mute"
+    unmute:
+      description: "unmute ads"
+      usage: "Usage: /heh ads unmute"
   retrieve: 
     description: "Retrieve the items in the temporary storage."
     usage: "Usage: /heh retrieve [confirm]"
