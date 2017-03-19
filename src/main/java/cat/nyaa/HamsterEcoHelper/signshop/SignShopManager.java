@@ -202,14 +202,13 @@ public class SignShopManager {
         player.sendMessage(I18n._("user.signshop.sell.title", sign.getPlayer().getName()));
         if (getTax() > 0) {
             for (ShopItem item : list) {
-                new Message("").append(item.getItemStack(1),
-                        I18n._("user.signshop.sell.unit_price_with_tax", item.getUnitPrice(),
-                                ((item.getUnitPrice() / 100) * getTax()))).send(player);
+                new Message("").append(I18n._("user.signshop.sell.unit_price_with_tax", item.getUnitPrice(),
+                        ((item.getUnitPrice() / 100) * getTax())), item.getItemStack(1)).send(player);
             }
         } else {
             for (ShopItem item : list) {
-                new Message("").append(item.getItemStack(1),
-                        I18n._("user.signshop.sell.unit_price", item.getUnitPrice())).send(player);
+                new Message("").append(I18n._("user.signshop.sell.unit_price", item.getUnitPrice()),
+                        item.getItemStack(1)).send(player);
             }
         }
     }
@@ -260,11 +259,11 @@ public class SignShopManager {
                                 HamsterEcoHelperTransactionApiEvent event = new HamsterEcoHelperTransactionApiEvent(tax);
                                 plugin.getServer().getPluginManager().callEvent(event);
                             }
-                            new Message("").append(itemStack, I18n._("user.signshop.sell.success",
-                                    shopOwner.getName(), price - tax)).send(player);
+                            new Message("").append(I18n._("user.signshop.sell.success",
+                                    shopOwner.getName(), price - tax), itemStack).send(player);
                             if (shopOwner.isOnline()) {
-                                new Message("").append(itemStack, I18n._("user.signshop.sell.notice",
-                                        player.getName(), price)).send(Bukkit.getPlayer(shop.getOwner()));
+                                new Message("").append(I18n._("user.signshop.sell.notice",
+                                        player.getName(), price), itemStack).send(Bukkit.getPlayer(shop.getOwner()));
                             }
                             plugin.logger.info(I18n._("log.info.signshop_sell", Utils.getItemName(itemStack),
                                     itemStack.getAmount(), price, player.getName(), shopOwner.getName()));

@@ -145,12 +145,12 @@ public class MarketGUI extends ShopInventoryHolder {
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {
                         new Message("")
-                                .append(item.getItemStack(amount), I18n._("user.market.someone_bought",
-                                        player.getName(), price + tax))
+                                .append(I18n._("user.market.someone_bought", 
+                                        player.getName(), price + tax), item.getItemStack(amount))
                                 .send((Player) item.getPlayer());
                     }
                     new Message("")
-                            .append(item.getItemStack(amount), I18n._("user.market.buy_success", item.getPlayer().getName(), price))
+                            .append(I18n._("user.market.buy_success", item.getPlayer().getName(), price), item.getItemStack(amount))
                             .send(player);
                     plugin.eco.withdraw(player, price + tax);
                     plugin.eco.deposit(item.getPlayer(), price);

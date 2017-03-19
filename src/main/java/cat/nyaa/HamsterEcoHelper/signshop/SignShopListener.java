@@ -233,17 +233,17 @@ public class SignShopListener implements Listener {
                                 plugin.eco.deposit(sign.getPlayer(), price - tax);
                                 Utils.giveItem(player, item);
                                 OfflinePlayer owner = sign.getPlayer();
-                                new Message("").append(item, I18n._("user.signshop.lotto.success",
-                                        price, owner.getName())).send(player);
+                                new Message("").append(I18n._("user.signshop.lotto.success",
+                                        price, owner.getName()), item).send(player);
                                 plugin.logger.info(I18n._("log.signshop_lotto", Utils.getItemName(item),
                                         item.getAmount(), price, player.getName(), owner.getName()));
                                 if (owner.isOnline()) {
                                     if (tax > 0.0D) {
-                                        new Message("").append(item, I18n._("user.signshop.lotto.notice_with_tax",
-                                                player.getName(), price - tax, tax)).send(Bukkit.getPlayer(sign.getOwner()));
+                                        new Message("").append(I18n._("user.signshop.lotto.notice_with_tax",
+                                                player.getName(), price - tax, tax), item).send(Bukkit.getPlayer(sign.getOwner()));
                                     } else {
-                                        new Message("").append(item, I18n._("user.signshop.lotto.notice",
-                                                player.getName(), price)).send(Bukkit.getPlayer(sign.getOwner()));
+                                        new Message("").append(I18n._("user.signshop.lotto.notice",
+                                                player.getName(), price), item).send(Bukkit.getPlayer(sign.getOwner()));
                                     }
                                 }
                             }

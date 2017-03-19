@@ -175,13 +175,13 @@ public class ShopGUI extends ShopInventoryHolder {
                         OfflinePlayer owner = shop.getPlayer();
                         if (owner.isOnline()) {
                             new Message("")
-                                    .append(shopItem.getItemStack(amount), I18n._("user.signshop.buy.notice",
-                                            player.getName(), price))
+                                    .append(I18n._("user.signshop.buy.notice", player.getName(), price),
+                                            shopItem.getItemStack(amount))
                                     .send(Bukkit.getPlayer(shopOwner));
                         }
                         new Message("")
-                                .append(shopItem.getItemStack(amount),
-                                        I18n._("user.signshop.buy.success", owner.getName(), price + tax)).send(player);
+                                .append(I18n._("user.signshop.buy.success", owner.getName(), price + tax),
+                                        shopItem.getItemStack(amount)).send(player);
                         plugin.eco.withdraw(player, price + tax);
                         plugin.eco.deposit(owner, price);
                         if (tax > 0.0D) {

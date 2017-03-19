@@ -71,7 +71,7 @@ public class MarketManager extends BukkitRunnable {
         plugin.logger.info(I18n._("log.info.market_offer", id, Utils.getItemName(item), item.getAmount(), unit_price, player.getName()));
         if (plugin.config.marketBroadcast && (System.currentTimeMillis() - lastBroadcast) > (plugin.config.marketBroadcastCooldown * 1000)) {
             lastBroadcast = System.currentTimeMillis();
-            new Message("").append(item, I18n._("user.market.broadcast")).broadcast();
+            new Message("").append(I18n._("user.market.broadcast"), item).broadcast();
         }
         updateAllGUI();
         return true;
