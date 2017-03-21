@@ -23,14 +23,14 @@ public class BalanceCommands extends CommandReceiver<HamsterEcoHelper> {
             String playerName = "";
             String type = args.next().toLowerCase();
             if (type.equals("amount")) {
-                amount = args.nextInt();
+                amount = args.nextDouble("#.##");
                 playerName = args.next();
             } else if (type.equals("percent")) {
-                int percent = args.nextInt();
+                double percent = args.nextDouble();
                 amount = (plugin.balanceAPI.getBalance() / 100) * percent;
                 playerName = args.next();
-                int min = args.length() >= 6 ? args.nextInt() : -1;
-                int max = args.length() == 7 ? args.nextInt() : -1;
+                double min = args.length() >= 6 ? args.nextDouble("#.##") : -1;
+                double max = args.length() == 7 ? args.nextDouble("#.##") : -1;
                 if (max != -1 && amount > max) {
                     amount = max;
                 }
@@ -72,7 +72,7 @@ public class BalanceCommands extends CommandReceiver<HamsterEcoHelper> {
         }
         String playerName = args.next();
         double amount = 0.0D;
-        amount = args.nextInt();
+        amount = args.nextDouble("#.##");
         if (!(amount > 0.0D)) {
             msg(sender, "user.error.not_int");
             return;
