@@ -107,17 +107,14 @@ public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
             msg(p, "user.req.sell_amount_limit", req.getAmountRemains());
             return;
         }
-        int price = req.purchase(p, amount);
+        double price = req.purchase(p, amount);
         if (price < 0) {
-            switch (price) {
-                case -1:
-                    msg(p, "user.req.not_enough");
-                    break;
-                case -2:
-                    msg(p, "user.req.not_match");
-                    break;
-                default:
-                    msg(p, "user.req.fail");
+            if(price > -1.5) {
+                msg(p, "user.req.not_enough");
+            } else if(price > -2.5) {
+                msg(p, "user.req.not_match");
+            }else{
+                msg(p, "user.req.fail");
             }
         } else {
             msg(p, "user.req.success", price);
@@ -142,7 +139,7 @@ public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
         Player player = asPlayer(sender);
         String itemName = args.next().toUpperCase();
         ItemStack item = null;
-        int unitPrice = args.nextInt();
+        double unitPrice = args.nextDouble("#.##");
         int amount = args.nextInt();
         if (plugin.reqManager.cooldown.containsKey(player.getUniqueId())
                 && plugin.reqManager.cooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
@@ -151,7 +148,7 @@ public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
         }
 
         if (!(unitPrice > 0 && amount > 0)) {
-            msg(sender, "user.error.not_int");
+            msg(sender, "user.error.not_double");
             return;
         }
 

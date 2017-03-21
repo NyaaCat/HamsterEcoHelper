@@ -67,7 +67,7 @@ public class RequisitionManager extends BukkitRunnable {
         return true;
     }
 
-    public boolean newPlayerRequisition(Player player, ItemStack item, int unitPrice, int amount) {
+    public boolean newPlayerRequisition(Player player, ItemStack item, double unitPrice, int amount) {
         if (currentReq != null) return false;
         if (item == null) return false;
         currentReq = new RequisitionInstance(player, item, unitPrice, amount, plugin, () -> this.currentReq = null);

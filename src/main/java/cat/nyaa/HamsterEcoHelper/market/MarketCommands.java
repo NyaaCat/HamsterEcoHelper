@@ -31,11 +31,7 @@ public class MarketCommands extends CommandReceiver<HamsterEcoHelper> {
         if (args.length() == 3) {
             Player player = asPlayer(sender);
             double price = 0.0;
-            try {
-                price = Double.parseDouble(new DecimalFormat("#.##").format(Double.parseDouble(args.next())));
-            } catch (IllegalArgumentException ex) {
-                //return;
-            }
+            price = args.nextDouble("#.##");
             if (!(price >= 0.01)) {
                 msg(sender, "user.error.not_double");
                 return;

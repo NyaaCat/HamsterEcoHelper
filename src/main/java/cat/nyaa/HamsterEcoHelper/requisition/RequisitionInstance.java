@@ -18,7 +18,7 @@ import static cat.nyaa.HamsterEcoHelper.utils.Utils.uid;
 public class RequisitionInstance {
     private final Runnable finishCallback;
     private final RequisitionSpecification templateItem;
-    private final int unitPrice;
+    private final double unitPrice;
     private final Logger logger;
     public OfflinePlayer owner = null;
     private BukkitRunnable timeoutListener;
@@ -53,7 +53,7 @@ public class RequisitionInstance {
 
     public RequisitionInstance(Player player,
                                ItemStack item,
-                               int unitPrice, int reqAmount,
+                               double unitPrice, int reqAmount,
                                HamsterEcoHelper plugin, Runnable finishCallback) {
         this.owner = player;
         this.plugin = plugin;
@@ -119,7 +119,7 @@ public class RequisitionInstance {
      * -1: not enough item in hand
      * -2: item not match
      */
-    public int purchase(Player p, int amount) {
+    public double purchase(Player p, int amount) {
         ItemStack itemHand = p.getInventory().getItemInMainHand();
         if (itemHand.getAmount() < amount) return -1;
         if (!templateItem.matchRule.matches(itemHand)) return -2;

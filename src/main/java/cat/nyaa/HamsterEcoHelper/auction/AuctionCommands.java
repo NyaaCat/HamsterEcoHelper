@@ -82,11 +82,11 @@ public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
         if (auc.owner != null && auc.owner.getUniqueId().equals(p.getUniqueId())) {
             return;
         }
-        long minPrice = auc.currentHighPrice == -1 ? auc.startPr : auc.currentHighPrice + auc.stepPr;
+        double minPrice = auc.currentHighPrice == -1 ? auc.startPr : auc.currentHighPrice + auc.stepPr;
         String tmp = args.top();
-        int bid;
+        double bid;
         if ("min".equals(tmp)) {
-            bid = (int) minPrice;
+            bid = minPrice;
         } else {
             bid = args.nextInt();
         }
@@ -110,8 +110,8 @@ public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
         }
         Player player = asPlayer(sender);
         ItemStack item = getItemInHand(sender).clone();
-        int basePrice = args.nextInt();
-        int stepPrice = args.nextInt();
+        double basePrice = args.nextDouble("#.##");
+        double stepPrice = args.nextDouble("#.##");
         if (stepPrice <= 0) {
             msg(sender, "user.auc.step_price_error");
             return;

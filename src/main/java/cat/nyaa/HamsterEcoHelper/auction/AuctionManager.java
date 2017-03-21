@@ -67,7 +67,7 @@ public class AuctionManager extends BukkitRunnable {
         return newAuction(bidItem);
     }
 
-    public boolean newPlayerAuction(Player player, ItemStack item, int basePrice, int stepPrice, int reservePrice) {
+    public boolean newPlayerAuction(Player player, ItemStack item, double basePrice, double stepPrice, double reservePrice) {
         if (currentAuction != null) return false;
         if (!(basePrice > 0.9)) {
             return false;

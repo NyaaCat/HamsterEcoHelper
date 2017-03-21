@@ -13,21 +13,21 @@ import org.bukkit.scheduler.BukkitRunnable;
 import static cat.nyaa.HamsterEcoHelper.utils.Utils.uid;
 
 public class AuctionInstance {
-    public long currentHighPrice = -1;
+    public double currentHighPrice = -1;
     public ItemStack itemStack;
-    public int startPr;
-    public int stepPr;
+    public double startPr;
+    public double stepPr;
     public int timeout;
     public boolean hideName;
     public OfflinePlayer owner = null;
-    public int reservePrice = 0;
+    public double reservePrice = 0;
     private HamsterEcoHelper plugin;
     private Runnable finishCallback;
     private int stage = 0;
     private OfflinePlayer currentPlayer = null;
     private CheckPointListener checkPointListener;
     private String itemName;
-    public AuctionInstance(OfflinePlayer player, ItemStack itemToGive, int startPrice, int stepPrice, int reservePrice, int timeout, boolean hideName, HamsterEcoHelper plugin, Runnable finishCallback) {
+    public AuctionInstance(OfflinePlayer player, ItemStack itemToGive, double startPrice, double stepPrice, double reservePrice, int timeout, boolean hideName, HamsterEcoHelper plugin, Runnable finishCallback) {
         itemStack = itemToGive;
         startPr = startPrice;
         stepPr = stepPrice;
@@ -81,7 +81,7 @@ public class AuctionInstance {
         checkPointListener.runTaskLater(plugin, timeout);
     }
 
-    public boolean onBid(Player p, int price) {
+    public boolean onBid(Player p, double price) {
         currentHighPrice = price;
         currentPlayer = p;
         Message msg = new Message(I18n._("user.auc.new_price_0", p.getName()));
