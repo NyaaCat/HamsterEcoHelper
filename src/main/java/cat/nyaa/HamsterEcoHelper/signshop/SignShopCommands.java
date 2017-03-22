@@ -47,13 +47,13 @@ public class SignShopCommands extends CommandReceiver<HamsterEcoHelper> {
                 Sign sign = plugin.signShopManager.getSign(block);
                 if (player.getUniqueId().equals(sign.getOwner())) {
                     if (plugin.signShopManager.getItemCount(player) >= plugin.signShopManager.getSlotLimit(player)) {
-                        player.sendMessage(I18n._("user.signshop.not_enough_slot"));
+                        player.sendMessage(I18n.format("user.signshop.not_enough_slot"));
                         return;
                     }
                     ShopStorageLocation chest = plugin.signShopManager.getChestLocation(player.getUniqueId());
                     if (chest == null || chest.getLocation() == null ||
                             !SignShopManager.isChest(chest.getLocation().getBlock())) {
-                        player.sendMessage(I18n._("user.signshop.storage.set"));
+                        player.sendMessage(I18n.format("user.signshop.storage.set"));
                         return;
                     }
                     ItemStack itemStack = getItemInHand(sender).clone();
@@ -70,13 +70,13 @@ public class SignShopCommands extends CommandReceiver<HamsterEcoHelper> {
                     if (itemStack.getAmount() > 0) {
                         plugin.signShopManager.addItemToShop(player.getUniqueId(), itemStack.clone(), 1,
                                 unitPrice, ShopMode.BUY);
-                        player.sendMessage(I18n._("user.signshop.sell.add"));
+                        player.sendMessage(I18n.format("user.signshop.sell.add"));
                     }
                     return;
                 }
             }
         }
-        player.sendMessage(I18n._("user.signshop.not_sign"));
+        player.sendMessage(I18n.format("user.signshop.not_sign"));
     }
 
     @SubCommand(value = "sell", permission = "heh.signshop.sell")
@@ -93,7 +93,7 @@ public class SignShopCommands extends CommandReceiver<HamsterEcoHelper> {
                 Sign sign = plugin.signShopManager.getSign(block);
                 if (sign != null && player.getUniqueId().equals(sign.getOwner())) {
                     if (plugin.signShopManager.getItemCount(player) >= plugin.signShopManager.getSlotLimit(player)) {
-                        player.sendMessage(I18n._("user.signshop.not_enough_slot"));
+                        player.sendMessage(I18n.format("user.signshop.not_enough_slot"));
                         return;
                     }
                     ItemStack itemStack = getItemInHand(sender).clone();
@@ -110,13 +110,13 @@ public class SignShopCommands extends CommandReceiver<HamsterEcoHelper> {
                         plugin.signShopManager.addItemToShop(player.getUniqueId(), itemStack.clone(),
                                 itemStack.getAmount(), unitPrice, ShopMode.SELL);
                         player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                        player.sendMessage(I18n._("user.signshop.buy.add"));
+                        player.sendMessage(I18n.format("user.signshop.buy.add"));
                         plugin.signShopManager.updateGUI(player.getUniqueId(), ShopMode.SELL);
                     }
                     return;
                 }
             }
         }
-        player.sendMessage(I18n._("user.signshop.not_sign"));
+        player.sendMessage(I18n.format("user.signshop.not_sign"));
     }
 }

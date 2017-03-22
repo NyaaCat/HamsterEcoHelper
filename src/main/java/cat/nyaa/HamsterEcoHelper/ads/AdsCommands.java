@@ -68,7 +68,7 @@ public class AdsCommands extends CommandReceiver<HamsterEcoHelper> {
                     HamsterEcoHelperTransactionApiEvent event = new HamsterEcoHelperTransactionApiEvent(totalPrice);
                     plugin.getServer().getPluginManager().callEvent(event);
                     plugin.eco.withdraw(player, totalPrice);
-                    plugin.logger.info(I18n._("log.info.ads_add",
+                    plugin.logger.info(I18n.format("log.info.ads_add",
                             plugin.config.adsConfig.pos, displayAmount, adText, player.getName()));
                     plugin.config.adsConfig.save();
                     msg(sender, "user.ads.add.success");
@@ -100,7 +100,7 @@ public class AdsCommands extends CommandReceiver<HamsterEcoHelper> {
                 AdsData ad = plugin.config.adsConfig.adsDataList.get(adID);
                 if (player.getUniqueId().equals(ad.getUUID()) || player.hasPermission("heh.admin")) {
                     msg(sender, "user.ads.revoke.success");
-                    plugin.logger.info(I18n._("log.info.ads_remove", ad.id, ad.text,
+                    plugin.logger.info(I18n.format("log.info.ads_remove", ad.id, ad.text,
                             plugin.getServer().getOfflinePlayer(ad.getUUID()).getName()));
                     plugin.config.adsConfig.adsDataList.remove(adID);
                     plugin.config.adsConfig.save();

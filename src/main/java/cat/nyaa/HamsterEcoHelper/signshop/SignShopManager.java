@@ -124,7 +124,7 @@ public class SignShopManager {
                 if (sign.getLocation() != null && isSign(sign.getLocation().getBlock())) {
                     signCount++;
                 } else {
-                    plugin.logger.info(I18n._("log.info.signshop_remove", sign.getPlayer().getName(),
+                    plugin.logger.info(I18n.format("log.info.signshop_remove", sign.getPlayer().getName(),
                             sign.getShopMode(), sign.getWorld(), sign.getX(), sign.getY(), sign.getZ()));
                     plugin.database.removeShopSign(sign.getWorld(),
                             sign.getX().intValue(), sign.getY().intValue(), sign.getZ().intValue());
@@ -148,7 +148,7 @@ public class SignShopManager {
         if (getSign(block) != null) {
             removeSign(block);
         }
-        plugin.logger.info(I18n._("log.info.signshop_create", player.getName(), mode.name(),
+        plugin.logger.info(I18n.format("log.info.signshop_create", player.getName(), mode.name(),
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
         signLocations.add(plugin.database.createShopSign(player, block, mode));
         return true;
@@ -158,7 +158,7 @@ public class SignShopManager {
         if (getSign(block) != null) {
             removeSign(block);
         }
-        plugin.logger.info(I18n._("log.info.signshop_create_lotto", player.getName(), lottoPrice,
+        plugin.logger.info(I18n.format("log.info.signshop_create_lotto", player.getName(), lottoPrice,
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
         signLocations.add(plugin.database.createLottoSign(player, block, ShopMode.LOTTO, lottoPrice));
         Block attached = getAttachedBlock(block);
@@ -177,7 +177,7 @@ public class SignShopManager {
                     if (attachedBlocks.containsKey(block.getLocation())) {
                         attachedBlocks.remove(block.getLocation());
                     }
-                    plugin.logger.info(I18n._("log.info.signshop_remove", sign.getPlayer().getName(), sign.getShopMode(),
+                    plugin.logger.info(I18n.format("log.info.signshop_remove", sign.getPlayer().getName(), sign.getShopMode(),
                             block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
                     it.remove();
                     return true;
@@ -196,18 +196,18 @@ public class SignShopManager {
         List<ShopItem> list = plugin.database.getSignShop(sign.getOwner()).getItems(ShopMode.BUY);
         if (list.isEmpty()) {
             printShopInfo(player, sign);
-            player.sendMessage(I18n._("user.signshop.empty"));
+            player.sendMessage(I18n.format("user.signshop.empty"));
             return;
         }
-        player.sendMessage(I18n._("user.signshop.sell.title", sign.getPlayer().getName()));
+        player.sendMessage(I18n.format("user.signshop.sell.title", sign.getPlayer().getName()));
         if (getTax() > 0) {
             for (ShopItem item : list) {
-                new Message("").append(I18n._("user.signshop.sell.unit_price_with_tax", item.getUnitPrice(),
+                new Message("").append(I18n.format("user.signshop.sell.unit_price_with_tax", item.getUnitPrice(),
                         ((item.getUnitPrice() / 100) * getTax())), item.getItemStack(1)).send(player);
             }
         } else {
             for (ShopItem item : list) {
-                new Message("").append(I18n._("user.signshop.sell.unit_price", item.getUnitPrice()),
+                new Message("").append(I18n.format("user.signshop.sell.unit_price", item.getUnitPrice()),
                         item.getItemStack(1)).send(player);
             }
         }
@@ -259,26 +259,26 @@ public class SignShopManager {
                                 HamsterEcoHelperTransactionApiEvent event = new HamsterEcoHelperTransactionApiEvent(tax);
                                 plugin.getServer().getPluginManager().callEvent(event);
                             }
-                            new Message("").append(I18n._("user.signshop.sell.success",
+                            new Message("").append(I18n.format("user.signshop.sell.success",
                                     shopOwner.getName(), price - tax), itemStack).send(player);
                             if (shopOwner.isOnline()) {
-                                new Message("").append(I18n._("user.signshop.sell.notice",
+                                new Message("").append(I18n.format("user.signshop.sell.notice",
                                         player.getName(), price), itemStack).send(Bukkit.getPlayer(shop.getOwner()));
                             }
-                            plugin.logger.info(I18n._("log.info.signshop_sell", Utils.getItemName(itemStack),
+                            plugin.logger.info(I18n.format("log.info.signshop_sell", Utils.getItemName(itemStack),
                                     itemStack.getAmount(), price, player.getName(), shopOwner.getName()));
                             return true;
                         }
                     }
-                    player.sendMessage(I18n._("user.signshop.sell.not_enough_space"));
+                    player.sendMessage(I18n.format("user.signshop.sell.not_enough_space"));
                     return false;
                 } else {
-                    player.sendMessage(I18n._("user.signshop.sell.not_enough_money"));
+                    player.sendMessage(I18n.format("user.signshop.sell.not_enough_money"));
                     return false;
                 }
             }
         }
-        player.sendMessage(I18n._("user.signshop.sell.invalid"));
+        player.sendMessage(I18n.format("user.signshop.sell.invalid"));
         return false;
     }
 
@@ -295,7 +295,7 @@ public class SignShopManager {
     }
 
     public void printShopInfo(Player player, Sign sign) {
-        player.sendMessage(I18n._("user.signshop.print_shop_info", sign.getPlayer().getName(), sign.getShopMode()));
+        player.sendMessage(I18n.format("user.signshop.print_shop_info", sign.getPlayer().getName(), sign.getShopMode()));
     }
 
     public ItemStack getLottoItem(Player player, Sign sign) {

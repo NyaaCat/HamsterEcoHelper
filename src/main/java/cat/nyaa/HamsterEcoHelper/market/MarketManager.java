@@ -56,22 +56,22 @@ public class MarketManager extends BukkitRunnable {
 
     public boolean offer(Player player, ItemStack item, double unit_price) {
         if (getPlayerSlot(player) <= plugin.database.getMarketPlayerItemCount(player)) {
-            player.sendMessage(I18n._("user.market.not_enough_slot"));
+            player.sendMessage(I18n.format("user.market.not_enough_slot"));
             return false;
         }
         if (plugin.config.market_offer_fee > 0) {
             if (!plugin.eco.enoughMoney(player, plugin.config.market_offer_fee)) {
-                player.sendMessage(I18n._("user.warn.no_enough_money"));
+                player.sendMessage(I18n.format("user.warn.no_enough_money"));
                 return false;
             } else {
                 plugin.eco.withdraw(player, plugin.config.market_offer_fee);
             }
         }
         long id = plugin.database.marketOffer(player, item, unit_price);
-        plugin.logger.info(I18n._("log.info.market_offer", id, Utils.getItemName(item), item.getAmount(), unit_price, player.getName()));
+        plugin.logger.info(I18n.format("log.info.market_offer", id, Utils.getItemName(item), item.getAmount(), unit_price, player.getName()));
         if (plugin.config.marketBroadcast && (System.currentTimeMillis() - lastBroadcast) > (plugin.config.marketBroadcastCooldown * 1000)) {
             lastBroadcast = System.currentTimeMillis();
-            new Message("").append(I18n._("user.market.broadcast"), item).broadcast();
+            new Message("").append(I18n.format("user.market.broadcast"), item).broadcast();
         }
         updateAllGUI();
         return true;
@@ -125,14 +125,14 @@ public class MarketManager extends BukkitRunnable {
                 for (MarketItem item : items) {
                     if (!plugin.eco.withdraw(item.getPlayer(), plugin.config.market_placement_fee)) {
                         fail++;
-                        plugin.logger.info(I18n._("log.info.placement_fee_fail",
+                        plugin.logger.info(I18n.format("log.info.placement_fee_fail",
                                 item.getId(), item.getPlayer().getName(), "Not enough money"));
                     }
                 }
                 if (fail < itemCount) {
                     plugin.balanceAPI.deposit((itemCount - fail) * plugin.config.market_placement_fee);
                 }
-                plugin.logger.info(I18n._("log.info.placement_fee", itemCount, fail));
+                plugin.logger.info(I18n.format("log.info.placement_fee", itemCount, fail));
             }
         }
     }

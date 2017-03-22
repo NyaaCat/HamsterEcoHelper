@@ -46,22 +46,22 @@ public class AuctionInstance {
         }
 
         if (hideName) {
-            new Message(I18n._("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D))).broadcast("heh.bid");
-            itemName = I18n._("user.auc.mystery_item_placeholder");
+            new Message(I18n.format("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D))).broadcast("heh.bid");
+            itemName = I18n.format("user.auc.mystery_item_placeholder");
         } else {
             if (owner == null) {
-                new Message(I18n._("user.auc.new_auction_0")).append(itemToGive)
+                new Message(I18n.format("user.auc.new_auction_0")).append(itemToGive)
                         .appendFormat(plugin.i18n, "user.auc.new_auction_1", startPrice, stepPrice, (int) Math.floor(timeout / 20D))
                         .broadcast();
             } else {
-                new Message(I18n._("user.auc.player_auction_0", owner.getName())).append(itemToGive)
+                new Message(I18n.format("user.auc.player_auction_0", owner.getName())).append(itemToGive)
                         .appendFormat(plugin.i18n, "user.auc.player_auction_1", startPrice, stepPrice, (int) Math.floor(timeout / 20D))
                         .broadcast();
             }
             itemName = realName;
         }
         if (owner == null) {
-            plugin.logger.info(I18n._("log.info.auc_start", realName, itemToGive.getAmount(),
+            plugin.logger.info(I18n.format("log.info.auc_start", realName, itemToGive.getAmount(),
                     Boolean.toString(hideName), startPrice, stepPrice, uid(this)));
         } else {
             realName = "";
@@ -74,7 +74,7 @@ public class AuctionInstance {
                 realName += "(" + itemToGive.getType().name() + ":" + itemToGive.getDurability() + ")";
             }
             long id = plugin.database.addItemLog(player, itemStack, startPrice, itemStack.getAmount());
-            plugin.logger.info(I18n._("log.info.player_auc_start", id, player.getName(), realName, itemToGive.getAmount(),
+            plugin.logger.info(I18n.format("log.info.player_auc_start", id, player.getName(), realName, itemToGive.getAmount(),
                     Boolean.toString(hideName), startPrice, stepPrice, uid(this)));
         }
         checkPointListener = new CheckPointListener();
@@ -84,15 +84,15 @@ public class AuctionInstance {
     public boolean onBid(Player p, double price) {
         currentHighPrice = price;
         currentPlayer = p;
-        Message msg = new Message(I18n._("user.auc.new_price_0", p.getName()));
+        Message msg = new Message(I18n.format("user.auc.new_price_0", p.getName()));
         if (hideName) {
             msg.appendFormat(plugin.i18n, "user.auc.mystery_item_placeholder");
         } else {
             msg.append(itemStack);
         }
         msg.appendFormat(plugin.i18n, "user.auc.new_price_1", price).broadcast();
-        p.sendMessage(I18n._("user.auc.new_price_success"));
-        plugin.logger.info(I18n._("log.info.auc_bid", uid(this), p.getName(), price));
+        p.sendMessage(I18n.format("user.auc.new_price_success"));
+        plugin.logger.info(I18n.format("log.info.auc_bid", uid(this), p.getName(), price));
         stage = 0;
         checkPointListener.resetTime();
         return true;
@@ -104,8 +104,8 @@ public class AuctionInstance {
             if (this.owner != null && this.itemStack != null) {
                 Utils.giveItem(this.owner, this.itemStack);
             }
-            new Message(I18n._("user.auc.fail")).append(itemStack).broadcast();
-            plugin.logger.info(I18n._("log.info.auc_finish", uid(this), currentHighPrice, "", "NO_PLAYER_BID"));
+            new Message(I18n.format("user.auc.fail")).append(itemStack).broadcast();
+            plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, "", "NO_PLAYER_BID"));
         } else {
             boolean success = false;
             if(owner != null) {
@@ -126,23 +126,23 @@ public class AuctionInstance {
             if (success) {
                 int stat = Utils.giveItem(currentPlayer, itemStack);
                 if (currentPlayer.isOnline() && currentPlayer instanceof Player) {
-                    ((Player) currentPlayer).sendMessage(I18n._("user.auc.item_given_" + Integer.toString(stat)));
+                    ((Player) currentPlayer).sendMessage(I18n.format("user.auc.item_given_" + Integer.toString(stat)));
                 }
-                new Message(I18n._("user.auc.success_0")).append(itemStack)
+                new Message(I18n.format("user.auc.success_0")).append(itemStack)
                         .appendFormat(plugin.i18n, "user.auc.success_1", currentPlayer.getName())
                         .broadcast();
-                plugin.logger.info(I18n._("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "SUCCESS"));
+                plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "SUCCESS"));
                 if (this.owner == null && plugin.balanceAPI.isEnabled()) {
                     plugin.balanceAPI.deposit(currentHighPrice);
                     plugin.config.save();
-                    plugin.logger.info(I18n._("log.info.current_balance", plugin.balanceAPI.getBalance()));
+                    plugin.logger.info(I18n.format("log.info.current_balance", plugin.balanceAPI.getBalance()));
                 }
             } else {
                 if (this.owner != null && this.itemStack != null) {
                     Utils.giveItem(this.owner, this.itemStack);
                 }
-                new Message(I18n._("user.auc.fail")).append(itemStack).broadcast();
-                plugin.logger.info(I18n._("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "NOT_ENOUGH_MONEY"));
+                new Message(I18n.format("user.auc.fail")).append(itemStack).broadcast();
+                plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "NOT_ENOUGH_MONEY"));
             }
         }
         finishCallback.run();
@@ -155,7 +155,7 @@ public class AuctionInstance {
             this.owner = null;
         }
         checkPointListener.cancel();
-        plugin.logger.info(I18n._("log.info.auc_finish", uid(this), -1, "", "HALTED"));
+        plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), -1, "", "HALTED"));
     }
 
     private class CheckPointListener extends BukkitRunnable {
@@ -164,21 +164,21 @@ public class AuctionInstance {
             switch (stage) {
                 case 0:
                     if (currentHighPrice >= 0)
-                        new Message(I18n._("user.auc.first", currentHighPrice)).broadcast("heh.bid");
+                        new Message(I18n.format("user.auc.first", currentHighPrice)).broadcast("heh.bid");
                     stage = 1;
                     checkPointListener = new CheckPointListener();
                     checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 1:
                     if (currentHighPrice >= 0)
-                        new Message(I18n._("user.auc.second", currentHighPrice)).broadcast("heh.bid");
+                        new Message(I18n.format("user.auc.second", currentHighPrice)).broadcast("heh.bid");
                     stage = 2;
                     checkPointListener = new CheckPointListener();
                     checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 2:
                     if (currentHighPrice >= 0)
-                        new Message(I18n._("user.auc.third", currentHighPrice)).broadcast("heh.bid");
+                        new Message(I18n.format("user.auc.third", currentHighPrice)).broadcast("heh.bid");
                     finish();
                     /*
                     stage = 3;

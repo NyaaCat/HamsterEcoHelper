@@ -42,7 +42,7 @@ public class Events implements Listener {
     public void onPlayerJoin(PlayerJoinEvent ev) {
         List<ItemStack> items = plugin.database.getTemporaryStorage(ev.getPlayer());
         if (items.size() > 0) {
-            ev.getPlayer().sendMessage(I18n._("user.info.has_temporary_storage"));
+            ev.getPlayer().sendMessage(I18n.format("user.info.has_temporary_storage"));
         }
     }
 
@@ -77,7 +77,7 @@ public class Events implements Listener {
                 penalty = plugin.config.death_penalty_min;
             }
             if (penalty > 0.0D && plugin.eco.withdraw(event.getEntity(), penalty)) {
-                event.getEntity().sendMessage(I18n._("user.death_penalty.message", penalty));
+                event.getEntity().sendMessage(I18n.format("user.death_penalty.message", penalty));
                 plugin.balanceAPI.deposit(penalty);
             }
         }

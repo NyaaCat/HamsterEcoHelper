@@ -28,17 +28,17 @@ public class LottoCommands extends CommandReceiver<HamsterEcoHelper> {
         LottoStorageLocation loc = plugin.database.getLottoStorageLocation(player.getUniqueId());
         if (loc == null || loc.getLocation() == null ||
                 !SignShopManager.isChest(loc.getLocation().getBlock())) {
-            player.sendMessage(I18n._("user.signshop.lotto.set_storage"));
+            player.sendMessage(I18n.format("user.signshop.lotto.set_storage"));
             return;
         }
-        player.sendMessage(I18n._("user.signshop.lotto.info", loc.getWorld(),
+        player.sendMessage(I18n.format("user.signshop.lotto.info", loc.getWorld(),
                 loc.getLocation().getBlockX(), loc.getLocation().getBlockY(), loc.getLocation().getBlockZ()));
     }
 
     @SubCommand(value = "set", permission = "heh.signshop.lotto")
     public void setStorage(CommandSender sender, Arguments args) {
         Player player = asPlayer(sender);
-        player.sendMessage(I18n._("user.signshop.lotto.select_chest"));
+        player.sendMessage(I18n.format("user.signshop.lotto.select_chest"));
         plugin.signShopListener.selectChest.put(player.getUniqueId(), ShopMode.LOTTO);
     }
 }

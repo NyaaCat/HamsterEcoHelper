@@ -26,7 +26,7 @@ public class RequisitionManager extends BukkitRunnable {
     @Override
     public void run() {
         if (Bukkit.getOnlinePlayers().size() < plugin.config.requisitionMinimalPlayer) {
-            plugin.logger.info(I18n._("log.info.req_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
+            plugin.logger.info(I18n.format("log.info.req_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
             return;
         }
         if (plugin.balanceAPI.isEnabled() && plugin.balanceAPI.getBalance() < 0) {
@@ -39,7 +39,7 @@ public class RequisitionManager extends BukkitRunnable {
                 newRequisition();
             }
         }).runTaskLater(plugin, delay);
-        plugin.logger.info(I18n._("log.info.req_scheduled", delay));
+        plugin.logger.info(I18n.format("log.info.req_scheduled", delay));
     }
 
     public boolean newRequisition() {
@@ -81,7 +81,7 @@ public class RequisitionManager extends BukkitRunnable {
         if (currentReq != null) {
             currentReq.halt();
             currentReq = null;
-            new Message(I18n._("user.req.halted")).broadcast("heh.sell");
+            new Message(I18n.format("user.req.halted")).broadcast("heh.sell");
         }
     }
 

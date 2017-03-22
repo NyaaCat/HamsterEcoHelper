@@ -60,27 +60,27 @@ public class SignShopListener implements Listener {
             Player player = event.getPlayer();
             Block attached = SignShopManager.getAttachedBlock(event.getBlock());
             if (attached == null || attached.getType().equals(Material.AIR) || SignShopManager.isSign(attached)) {
-                player.sendMessage(I18n._("user.signshop.invalid_location"));
+                player.sendMessage(I18n.format("user.signshop.invalid_location"));
                 event.setCancelled(true);
                 return;
             }
             if (plugin.signShopManager.getSignCount(player) >= plugin.signShopManager.getSignLimit(player)) {
-                player.sendMessage(I18n._("user.signshop.create_fail"));
+                player.sendMessage(I18n.format("user.signshop.create_fail"));
                 event.setCancelled(true);
                 return;
             }
             if ("BUY".equalsIgnoreCase(event.getLine(1)) && player.hasPermission("heh.signshop.buy")) {
-                event.setLine(0, I18n._("user.signshop.sign.line_1"));
-                event.setLine(1, I18n._("user.signshop.sign.line_2_buy"));
+                event.setLine(0, I18n.format("user.signshop.sign.line_1"));
+                event.setLine(1, I18n.format("user.signshop.sign.line_2_buy"));
                 plugin.signShopManager.attachedBlocks.put(event.getBlock().getLocation().clone(), attached);
                 plugin.signShopManager.createShopSign(player, event.getBlock(), ShopMode.BUY);
-                player.sendMessage(I18n._("user.signshop.create_success"));
+                player.sendMessage(I18n.format("user.signshop.create_success"));
             } else if ("SELL".equalsIgnoreCase(event.getLine(1)) && player.hasPermission("heh.signshop.sell")) {
-                event.setLine(0, I18n._("user.signshop.sign.line_1"));
-                event.setLine(1, I18n._("user.signshop.sign.line_2_sell"));
+                event.setLine(0, I18n.format("user.signshop.sign.line_1"));
+                event.setLine(1, I18n.format("user.signshop.sign.line_2_sell"));
                 plugin.signShopManager.attachedBlocks.put(event.getBlock().getLocation().clone(), attached);
                 plugin.signShopManager.createShopSign(player, event.getBlock(), ShopMode.SELL);
-                player.sendMessage(I18n._("user.signshop.create_success"));
+                player.sendMessage(I18n.format("user.signshop.create_success"));
             } else if ("LOTTO".equalsIgnoreCase(event.getLine(1)) && player.hasPermission("heh.signshop.lotto")) {
                 String s = event.getLine(3);
                 double price = 0.0;
@@ -91,20 +91,20 @@ public class SignShopListener implements Listener {
                 }
                 if (!(price >= 0.01)) {
                     event.setCancelled(true);
-                    player.sendMessage(I18n._("user.error.not_double"));
+                    player.sendMessage(I18n.format("user.error.not_double"));
                     return;
                 }
-                event.setLine(0, I18n._("user.signshop.sign.line_1"));
-                event.setLine(1, I18n._("user.signshop.sign.line_2_lotto"));
+                event.setLine(0, I18n.format("user.signshop.sign.line_1"));
+                event.setLine(1, I18n.format("user.signshop.sign.line_2_lotto"));
                 plugin.signShopManager.attachedBlocks.put(event.getBlock().getLocation().clone(), attached);
                 plugin.signShopManager.createLottoSign(player, event.getBlock(), ShopMode.LOTTO, price);
-                player.sendMessage(I18n._("user.signshop.create_success"));
+                player.sendMessage(I18n.format("user.signshop.create_success"));
                 LottoStorageLocation loc = plugin.database.getLottoStorageLocation(player.getUniqueId());
                 if (loc == null || loc.getLocation() == null) {
-                    player.sendMessage(I18n._("user.signshop.lotto.set_storage"));
+                    player.sendMessage(I18n.format("user.signshop.lotto.set_storage"));
                 }
             } else {
-                player.sendMessage(I18n._("user.signshop.sign_invalid"));
+                player.sendMessage(I18n.format("user.signshop.sign_invalid"));
                 event.setCancelled(true);
                 return;
             }
@@ -132,9 +132,9 @@ public class SignShopListener implements Listener {
                 if (sign.getOwner().equals(player.getUniqueId()) || player.hasPermission("heh.admin")) {
                     event.setCancelled(false);
                     plugin.signShopManager.removeSign(block);
-                    player.sendMessage(I18n._("user.signshop.break.success"));
+                    player.sendMessage(I18n.format("user.signshop.break.success"));
                 } else {
-                    player.sendMessage(I18n._("user.signshop.break.no_permission"));
+                    player.sendMessage(I18n.format("user.signshop.break.no_permission"));
                     event.setCancelled(true);
                 }
             }
@@ -154,10 +154,10 @@ public class SignShopListener implements Listener {
                 ShopMode mode = selectChest.get(p.getUniqueId());
                 if (mode.equals(ShopMode.LOTTO)) {
                     plugin.database.setLottoStorageLocation(p.getUniqueId(), new LottoStorageLocation(p.getUniqueId(), block.getLocation()));
-                    event.getPlayer().sendMessage(I18n._("user.signshop.lotto.set_success"));
+                    event.getPlayer().sendMessage(I18n.format("user.signshop.lotto.set_success"));
                 } else {
                     plugin.signShopManager.setChestLocation(p.getUniqueId(), block.getLocation());
-                    event.getPlayer().sendMessage(I18n._("user.signshop.storage.set_success"));
+                    event.getPlayer().sendMessage(I18n.format("user.signshop.storage.set_success"));
                 }
             }
             selectChest.remove(event.getPlayer().getUniqueId());
@@ -209,7 +209,7 @@ public class SignShopListener implements Listener {
                         if (!lottoConfirm.containsKey(player.getUniqueId()) ||
                                 System.currentTimeMillis() - lottoConfirm.get(player.getUniqueId()) >= 5000) {
                             lottoConfirm.put(player.getUniqueId(), System.currentTimeMillis());
-                            player.sendMessage(I18n._("user.signshop.lotto.confirm"));
+                            player.sendMessage(I18n.format("user.signshop.lotto.confirm"));
                             return;
                         }
                     }
@@ -219,7 +219,7 @@ public class SignShopListener implements Listener {
                         if (plugin.eco.enoughMoney(player, price)) {
                             ItemStack item = plugin.signShopManager.getLottoItem(player, sign);
                             if (item == null) {
-                                player.sendMessage(I18n._("user.signshop.empty"));
+                                player.sendMessage(I18n.format("user.signshop.empty"));
                                 return;
                             } else {
                                 double tax = 0.0D;
@@ -233,22 +233,22 @@ public class SignShopListener implements Listener {
                                 plugin.eco.deposit(sign.getPlayer(), price - tax);
                                 Utils.giveItem(player, item);
                                 OfflinePlayer owner = sign.getPlayer();
-                                new Message("").append(I18n._("user.signshop.lotto.success",
+                                new Message("").append(I18n.format("user.signshop.lotto.success",
                                         price, owner.getName()), item).send(player);
-                                plugin.logger.info(I18n._("log.signshop_lotto", Utils.getItemName(item),
+                                plugin.logger.info(I18n.format("log.signshop_lotto", Utils.getItemName(item),
                                         item.getAmount(), price, player.getName(), owner.getName()));
                                 if (owner.isOnline()) {
                                     if (tax > 0.0D) {
-                                        new Message("").append(I18n._("user.signshop.lotto.notice_with_tax",
+                                        new Message("").append(I18n.format("user.signshop.lotto.notice_with_tax",
                                                 player.getName(), price - tax, tax), item).send(Bukkit.getPlayer(sign.getOwner()));
                                     } else {
-                                        new Message("").append(I18n._("user.signshop.lotto.notice",
+                                        new Message("").append(I18n.format("user.signshop.lotto.notice",
                                                 player.getName(), price), item).send(Bukkit.getPlayer(sign.getOwner()));
                                     }
                                 }
                             }
                         } else {
-                            player.sendMessage(I18n._("user.warn.no_enough_money"));
+                            player.sendMessage(I18n.format("user.warn.no_enough_money"));
                         }
                     }
                 }

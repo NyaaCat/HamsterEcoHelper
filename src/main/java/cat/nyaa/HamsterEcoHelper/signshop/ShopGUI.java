@@ -75,14 +75,14 @@ public class ShopGUI extends ShopInventoryHolder {
         }
         if (plugin.signShopManager.getTax() > 0 && mode.equals(ShopMode.SELL)) {
             double tax = (unitPrice / 100) * plugin.signShopManager.getTax();
-            lore.add(0, lore_code + ChatColor.RESET + I18n._("user.market.unit_price_with_tax",
+            lore.add(0, lore_code + ChatColor.RESET + I18n.format("user.market.unit_price_with_tax",
                     unitPrice, tax, plugin.signShopManager.getTax()));
         } else {
             lore.add(0, lore_code + ChatColor.RESET +
-                    I18n._("user.market.unit_price", unitPrice));
+                    I18n.format("user.market.unit_price", unitPrice));
         }
         if (isEditMode()) {
-            lore.add(1, I18n._("user.signshop.edit"));
+            lore.add(1, I18n.format("user.signshop.edit"));
         }
         meta.setLore(lore);
         itemStack.setItemMeta(meta);
@@ -93,9 +93,9 @@ public class ShopGUI extends ShopInventoryHolder {
         HashMap<Integer, Long> list = new HashMap<>();
         String title = "";
         if (mode.equals(ShopMode.SELL)) {
-            title = I18n._("user.signshop.buy.title", sign.getPlayer().getName());
+            title = I18n.format("user.signshop.buy.title", sign.getPlayer().getName());
         } else if (mode.equals(ShopMode.BUY)) {
-            title = I18n._("user.signshop.sell.title", sign.getPlayer().getName());
+            title = I18n.format("user.signshop.sell.title", sign.getPlayer().getName());
         }
         Inventory inventory = plugin.getServer().createInventory(this, 54, title);
         int pageCount;
@@ -118,14 +118,14 @@ public class ShopGUI extends ShopInventoryHolder {
         if (page > 1) {
             ItemStack back = new ItemStack(Material.ARROW);
             ItemMeta backItemMeta = back.getItemMeta();
-            backItemMeta.setDisplayName(I18n._("user.info.back"));
+            backItemMeta.setDisplayName(I18n.format("user.info.back"));
             back.setItemMeta(backItemMeta);
             inventory.setItem(45, back);
         }
         if (page < pageCount) {
             ItemStack nextPage = new ItemStack(Material.ARROW);
             ItemMeta nextPageMeta = nextPage.getItemMeta();
-            nextPageMeta.setDisplayName(I18n._("user.info.next_page"));
+            nextPageMeta.setDisplayName(I18n.format("user.info.next_page"));
             nextPage.setItemMeta(nextPageMeta);
             inventory.setItem(53, nextPage);
         }
@@ -170,17 +170,17 @@ public class ShopGUI extends ShopInventoryHolder {
                 }
                 if (plugin.eco.enoughMoney(player, price + tax) || isEditMode()) {
                     int stat = Utils.giveItem(player, shopItem.getItemStack(amount));
-                    player.sendMessage(I18n._("user.auc.item_given_" + Integer.toString(stat)));
+                    player.sendMessage(I18n.format("user.auc.item_given_" + Integer.toString(stat)));
                     if (!isEditMode()) {
                         OfflinePlayer owner = shop.getPlayer();
                         if (owner.isOnline()) {
                             new Message("")
-                                    .append(I18n._("user.signshop.buy.notice", player.getName(), price),
+                                    .append(I18n.format("user.signshop.buy.notice", player.getName(), price),
                                             shopItem.getItemStack(amount))
                                     .send(Bukkit.getPlayer(shopOwner));
                         }
                         new Message("")
-                                .append(I18n._("user.signshop.buy.success", owner.getName(), price + tax),
+                                .append(I18n.format("user.signshop.buy.success", owner.getName(), price + tax),
                                         shopItem.getItemStack(amount)).send(player);
                         plugin.eco.withdraw(player, price + tax);
                         plugin.eco.deposit(owner, price);
@@ -188,7 +188,7 @@ public class ShopGUI extends ShopInventoryHolder {
                             HamsterEcoHelperTransactionApiEvent event = new HamsterEcoHelperTransactionApiEvent(tax);
                             plugin.getServer().getPluginManager().callEvent(event);
                         }
-                        plugin.logger.info(I18n._("log.info.signshop_bought",
+                        plugin.logger.info(I18n.format("log.info.signshop_bought",
                                 Utils.getItemName(shopItem.getItemStack(amount)), amount,
                                 price, player.getName(), shop.getPlayer().getName()));
                     }
@@ -199,7 +199,7 @@ public class ShopGUI extends ShopInventoryHolder {
                     plugin.signShopManager.updateGUI(shopOwner, mode);
                     return true;
                 } else {
-                    player.sendMessage(I18n._("user.warn.no_enough_money"));
+                    player.sendMessage(I18n.format("user.warn.no_enough_money"));
                     return true;
                 }
             }

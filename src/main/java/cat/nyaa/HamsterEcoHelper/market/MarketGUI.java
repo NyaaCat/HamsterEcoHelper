@@ -59,7 +59,7 @@ public class MarketGUI extends ShopInventoryHolder {
     }
 
     public void openGUI(Player player, int page) {
-        Inventory inventory = Bukkit.createInventory(this, 54, I18n._("user.market.title"));
+        Inventory inventory = Bukkit.createInventory(this, 54, I18n.format("user.market.title"));
         int pageCount;
         if (page < 1 && seller != null) {
             page = 1;
@@ -91,14 +91,14 @@ public class MarketGUI extends ShopInventoryHolder {
         if (page > 1 || seller != null) {
             ItemStack back = new ItemStack(Material.ARROW);
             ItemMeta backItemMeta = back.getItemMeta();
-            backItemMeta.setDisplayName(I18n._("user.info.back"));
+            backItemMeta.setDisplayName(I18n.format("user.info.back"));
             back.setItemMeta(backItemMeta);
             inventory.setItem(45, back);
         }
         if (page < pageCount) {
             ItemStack nextPage = new ItemStack(Material.ARROW);
             ItemMeta nextPageMeta = nextPage.getItemMeta();
-            nextPageMeta.setDisplayName(I18n._("user.info.next_page"));
+            nextPageMeta.setDisplayName(I18n.format("user.info.next_page"));
             nextPage.setItemMeta(nextPageMeta);
             inventory.setItem(53, nextPage);
         }
@@ -106,10 +106,10 @@ public class MarketGUI extends ShopInventoryHolder {
         if (seller == null || !player.getUniqueId().equals(seller)) {
             ItemStack myItem = new ItemStack(Material.PAPER);
             ItemMeta meta = myItem.getItemMeta();
-            meta.setDisplayName(I18n._("user.market.my_items", plugin.database.getMarketPlayerItemCount(player),
+            meta.setDisplayName(I18n.format("user.market.my_items", plugin.database.getMarketPlayerItemCount(player),
                     plugin.marketManager.getPlayerSlot(player)));
             lore = new ArrayList<>();
-            lore.add(I18n._("user.info.balance", plugin.eco.balance(player)));
+            lore.add(I18n.format("user.info.balance", plugin.eco.balance(player)));
             meta.setLore(lore);
             myItem.setItemMeta(meta);
             inventory.setItem(47, myItem);
@@ -139,18 +139,18 @@ public class MarketGUI extends ShopInventoryHolder {
             }
             if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
                 int stat = Utils.giveItem(player, item.getItemStack(amount));
-                player.sendMessage(I18n._("user.auc.item_given_" + Integer.toString(stat)));
-                plugin.logger.info(I18n._("log.info.market_bought", itemId, Utils.getItemName(item.getItemStack()),
+                player.sendMessage(I18n.format("user.auc.item_given_" + Integer.toString(stat)));
+                plugin.logger.info(I18n.format("log.info.market_bought", itemId, Utils.getItemName(item.getItemStack()),
                         amount, price, player.getName(), item.getPlayer().getName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {
                         new Message("")
-                                .append(I18n._("user.market.someone_bought",
+                                .append(I18n.format("user.market.someone_bought",
                                         player.getName(), price + tax), item.getItemStack(amount))
                                 .send((Player) item.getPlayer());
                     }
                     new Message("")
-                            .append(I18n._("user.market.buy_success", item.getPlayer().getName(), price), item.getItemStack(amount))
+                            .append(I18n.format("user.market.buy_success", item.getPlayer().getName(), price), item.getItemStack(amount))
                             .send(player);
                     plugin.eco.withdraw(player, price + tax);
                     plugin.eco.deposit(item.getPlayer(), price);
@@ -164,7 +164,7 @@ public class MarketGUI extends ShopInventoryHolder {
                 plugin.marketManager.updateAllGUI();
                 return true;
             } else {
-                player.sendMessage(I18n._("user.warn.no_enough_money"));
+                player.sendMessage(I18n.format("user.warn.no_enough_money"));
                 plugin.marketManager.playSound(player, Sound.ENTITY_ITEM_BREAK);
                 return false;
             }
@@ -191,16 +191,16 @@ public class MarketGUI extends ShopInventoryHolder {
         if (plugin.config.market_tax > 0) {
             double tax = (unitPrice / 100) * plugin.config.market_tax;
             lore.add(0, MarketManager.market_lore_code + ChatColor.RESET +
-                    I18n._("user.market.unit_price_with_tax",
+                    I18n.format("user.market.unit_price_with_tax",
                             unitPrice, tax, plugin.config.market_tax));
         } else {
             lore.add(0, MarketManager.market_lore_code + ChatColor.RESET +
-                    I18n._("user.market.unit_price",
+                    I18n.format("user.market.unit_price",
                             unitPrice));
         }
-        lore.add(1, I18n._("user.market.offered", player.getName()));
+        lore.add(1, I18n.format("user.market.offered", player.getName()));
         if (this.player.getUniqueId().equals(player.getUniqueId())) {
-            lore.add(2, I18n._("user.signshop.edit"));
+            lore.add(2, I18n.format("user.signshop.edit"));
         }
         meta.setLore(lore);
         itemStack.setItemMeta(meta);

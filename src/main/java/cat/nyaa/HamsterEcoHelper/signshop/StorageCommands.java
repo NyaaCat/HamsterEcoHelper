@@ -26,17 +26,17 @@ public class StorageCommands extends CommandReceiver<HamsterEcoHelper> {
         Player player = asPlayer(sender);
         ShopStorageLocation chest = plugin.signShopManager.getChestLocation(player.getUniqueId());
         if (chest == null || chest.getLocation() == null || !SignShopManager.isChest(chest.getLocation().getBlock())) {
-            player.sendMessage(I18n._("user.signshop.storage.set"));
+            player.sendMessage(I18n.format("user.signshop.storage.set"));
             return;
         }
-        player.sendMessage(I18n._("user.signshop.storage.info", chest.getWorld(),
+        player.sendMessage(I18n.format("user.signshop.storage.info", chest.getWorld(),
                 chest.getLocation().getBlockX(), chest.getLocation().getBlockY(), chest.getLocation().getBlockZ()));
     }
 
     @SubCommand(value = "set", permission = "heh.signshop.buy")
     public void setStorage(CommandSender sender, Arguments args) {
         Player player = asPlayer(sender);
-        player.sendMessage(I18n._("user.signshop.storage.select_chest"));
+        player.sendMessage(I18n.format("user.signshop.storage.select_chest"));
         plugin.signShopListener.selectChest.put(player.getUniqueId(), ShopMode.BUY);
     }
 }

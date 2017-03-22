@@ -26,7 +26,7 @@ public class AuctionManager extends BukkitRunnable {
     @Override
     public void run() {
         if (Bukkit.getOnlinePlayers().size() < plugin.config.auctionMinimalPlayer) {
-            plugin.logger.info(I18n._("log.info.auc_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
+            plugin.logger.info(I18n.format("log.info.auc_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
             return;
         }
         if (plugin.balanceAPI.isEnabled() && plugin.balanceAPI.getBalance() > 0) {
@@ -39,7 +39,7 @@ public class AuctionManager extends BukkitRunnable {
                 newAuction();
             }
         }).runTaskLater(plugin, delay);
-        plugin.logger.info(I18n._("log.info.auc_scheduled", delay));
+        plugin.logger.info(I18n.format("log.info.auc_scheduled", delay));
     }
 
     public boolean newAuction(AuctionItemTemplate item) {
@@ -73,7 +73,7 @@ public class AuctionManager extends BukkitRunnable {
             return false;
         }
         if (this.cooldown.containsKey(player.getUniqueId()) && this.cooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
-            player.sendMessage(I18n._("user.info.cooldown", (this.cooldown.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000));
+            player.sendMessage(I18n.format("user.info.cooldown", (this.cooldown.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000));
             return false;
         }
         this.cooldown.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerAuctionCooldownTicks / 20 * 1000));
@@ -93,7 +93,7 @@ public class AuctionManager extends BukkitRunnable {
         if (currentAuction != null) {
             currentAuction.halt();
             currentAuction = null;
-            new Message(I18n._("user.auc.halted")).broadcast("heh.bid");
+            new Message(I18n.format("user.auc.halted")).broadcast("heh.bid");
         }
     }
 
