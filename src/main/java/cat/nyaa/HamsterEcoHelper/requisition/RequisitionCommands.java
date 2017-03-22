@@ -109,9 +109,9 @@ public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
         }
         double price = req.purchase(p, amount);
         if (price < 0) {
-            if(price > -1.5) {
+            if(price == -1) {
                 msg(p, "user.req.not_enough");
-            } else if(price > -2.5) {
+            } else if(price == -2) {
                 msg(p, "user.req.not_match");
             }else{
                 msg(p, "user.req.fail");
