@@ -110,7 +110,7 @@ public class RequisitionInstance {
         logger.info(I18n._("log.info.req_finish", uid(this), soldAmount, "HALTED"));
         if (owner == null && plugin.balanceAPI.isEnabled()) {
             plugin.logger.info(I18n._("log.info.current_balance", plugin.balanceAPI.getBalance()));
-            plugin.config.saveToPlugin();
+            plugin.config.save();
         }
     }
 
@@ -166,7 +166,7 @@ public class RequisitionInstance {
             logger.info(I18n._("log.info.req_finish", uid(RequisitionInstance.this), soldAmount, "TIMEOUT"));
             if (owner == null && plugin.balanceAPI.isEnabled()) {
                 plugin.logger.info(I18n._("log.info.current_balance", plugin.balanceAPI.getBalance()));
-                plugin.config.saveToPlugin();
+                plugin.config.save();
             }
         }
     }

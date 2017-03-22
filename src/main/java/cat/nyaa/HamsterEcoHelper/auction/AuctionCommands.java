@@ -35,7 +35,7 @@ public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
         item.hideName = args.nextBoolean();
         item.waitTimeTicks = args.nextInt();
         plugin.config.auctionConfig.itemsForAuction.add(item);
-        plugin.config.saveToPlugin();
+        plugin.config.save();
     }
 
     @SubCommand(value = "runauc", permission = "heh.runauc")

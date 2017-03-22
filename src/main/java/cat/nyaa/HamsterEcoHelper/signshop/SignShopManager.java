@@ -25,7 +25,7 @@ import java.util.*;
 
 public class SignShopManager {
     public List<Sign> signLocations = new ArrayList<>();
-    public HashMap<Location, Block> attachedBlocks = new HashMap();
+    public HashMap<Location, Block> attachedBlocks = new HashMap<>();
     private HamsterEcoHelper plugin;
 
     public SignShopManager(HamsterEcoHelper pl) {

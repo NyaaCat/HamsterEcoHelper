@@ -134,7 +134,7 @@ public class AuctionInstance {
                 plugin.logger.info(I18n._("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "SUCCESS"));
                 if (this.owner == null && plugin.balanceAPI.isEnabled()) {
                     plugin.balanceAPI.deposit(currentHighPrice);
-                    plugin.config.saveToPlugin();
+                    plugin.config.save();
                     plugin.logger.info(I18n._("log.info.current_balance", plugin.balanceAPI.getBalance()));
                 }
             } else {

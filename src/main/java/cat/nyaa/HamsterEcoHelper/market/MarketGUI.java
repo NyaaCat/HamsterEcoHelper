@@ -145,7 +145,7 @@ public class MarketGUI extends ShopInventoryHolder {
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {
                         new Message("")
-                                .append(I18n._("user.market.someone_bought", 
+                                .append(I18n._("user.market.someone_bought",
                                         player.getName(), price + tax), item.getItemStack(amount))
                                 .send((Player) item.getPlayer());
                     }

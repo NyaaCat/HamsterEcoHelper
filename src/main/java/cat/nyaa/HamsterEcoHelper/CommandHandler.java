@@ -71,7 +71,7 @@ public class CommandHandler extends CommandReceiver<HamsterEcoHelper> {
 
     @SubCommand(value = "save", permission = "heh.admin")
     public void forceSave(CommandSender sender, Arguments args) {
-        plugin.config.saveToPlugin();
+        plugin.config.save();
         msg(sender, "admin.info.save_done");
     }
 
@@ -98,7 +98,7 @@ public class CommandHandler extends CommandReceiver<HamsterEcoHelper> {
 
     @SubCommand(value = "force-load", permission = "heh.admin")
     public void forceLoad(CommandSender sender, Arguments args) {
-        plugin.reset();
+        plugin.reload();
         msg(sender, "admin.info.load_done");
     }
 

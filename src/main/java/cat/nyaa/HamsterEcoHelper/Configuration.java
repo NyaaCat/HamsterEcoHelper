@@ -110,15 +110,6 @@ public class Configuration extends PluginConfigure {
         this.adsConfig = new AdsConfig(plugin);
     }
 
-    public void loadFromPlugin() {
-        deserialize(plugin.getConfig());
-    }
-
-    public void saveToPlugin() {
-        serialize(plugin.getConfig());
-        plugin.saveConfig();
-    }
-
     @Override
     protected JavaPlugin getPlugin() {
         return plugin;

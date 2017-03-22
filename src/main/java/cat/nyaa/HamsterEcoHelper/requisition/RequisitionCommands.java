@@ -47,7 +47,7 @@ public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
         req.matchRule.loreMatch = args.nextEnum(RequisitionSpecification.MatchingMode.class);
         req.matchRule.nameMatch = args.nextEnum(RequisitionSpecification.MatchingMode.class);
         plugin.config.requisitionConfig.itemsForReq.add(req);
-        plugin.config.saveToPlugin();
+        plugin.config.save();
     }
 
     @SubCommand(value = "runreq", permission = "heh.runreq")
