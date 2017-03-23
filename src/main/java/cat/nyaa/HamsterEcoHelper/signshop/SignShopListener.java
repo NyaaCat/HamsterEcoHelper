@@ -235,7 +235,7 @@ public class SignShopListener implements Listener {
                                 OfflinePlayer owner = sign.getPlayer();
                                 new Message("").append(I18n.format("user.signshop.lotto.success",
                                         price, owner.getName()), item).send(player);
-                                plugin.logger.info(I18n.format("log.signshop_lotto", Utils.getItemName(item),
+                                plugin.logger.info(I18n.format("log.info.signshop_lotto", Utils.getItemName(item),
                                         item.getAmount(), price, player.getName(), owner.getName()));
                                 if (owner.isOnline()) {
                                     if (tax > 0.0D) {
