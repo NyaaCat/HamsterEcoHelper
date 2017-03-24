@@ -88,7 +88,7 @@ public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
         if ("min".equals(tmp)) {
             bid = minPrice;
         } else {
-            bid = args.nextInt();
+            bid = args.nextDouble("#.##");
         }
 
         if (!plugin.eco.enoughMoney(p, bid)) {

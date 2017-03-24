@@ -155,7 +155,7 @@ public class AuctionInstance {
             this.owner = null;
         }
         checkPointListener.cancel();
-        plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), -1, "", "HALTED"));
+        plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), -1.0d, "", "HALTED"));
     }
 
     private class CheckPointListener extends BukkitRunnable {

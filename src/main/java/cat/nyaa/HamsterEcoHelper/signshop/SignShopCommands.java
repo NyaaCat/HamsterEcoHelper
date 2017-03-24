@@ -58,11 +58,7 @@ public class SignShopCommands extends CommandReceiver<HamsterEcoHelper> {
                     }
                     ItemStack itemStack = getItemInHand(sender).clone();
                     double unitPrice = 0.0;
-                    try {
-                        unitPrice = Double.parseDouble(new DecimalFormat("#.##").format(Double.parseDouble(args.next())));
-                    } catch (IllegalArgumentException ex) {
-
-                    }
+                    unitPrice = args.nextDouble("#.##");
                     if (!(unitPrice >= 0.01)) {
                         msg(sender, "user.error.not_double");
                         return;
@@ -97,11 +93,7 @@ public class SignShopCommands extends CommandReceiver<HamsterEcoHelper> {
                         return;
                     }
                     ItemStack itemStack = getItemInHand(sender).clone();
-                    double unitPrice = 0.0;
-                    try {
-                        unitPrice = Double.parseDouble(new DecimalFormat("#.##").format(Double.parseDouble(args.next())));
-                    } catch (IllegalArgumentException ex) {
-                    }
+                    double unitPrice = args.nextDouble("#.##");
                     if (!(unitPrice >= 0.01)) {
                         msg(sender, "user.error.not_double");
                         return;
