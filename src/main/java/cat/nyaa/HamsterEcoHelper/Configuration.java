@@ -89,6 +89,8 @@ public class Configuration extends PluginConfigure {
     public int ads_limit_total = 100;
     @Serializable(name = "ads.limit_text")
     public int ads_limit_text = 50;
+    @Serializable(name = "lotto.force_locked")
+    public boolean lotto_force_locked = false;
     public Map<String, Integer> signshop_sign_limit = new HashMap<>();
     public Map<String, Integer> signshop_slot_limit = new HashMap<>();
     public Map<String, Integer> marketSlot = new HashMap<>();

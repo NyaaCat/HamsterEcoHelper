@@ -40,4 +40,5 @@ dependencies {
     compile('net.ess3:Essentials:2.13-SNAPSHOT') {
         transitive = false
     }
+    compile files('lib/LocketteProAPI.jar')
 }

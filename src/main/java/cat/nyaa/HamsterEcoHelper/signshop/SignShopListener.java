@@ -8,6 +8,7 @@ import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLoca
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
 import cat.nyaa.utils.Message;
+import me.crafter.mc.lockettepro.LocketteProAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -153,6 +154,12 @@ public class SignShopListener implements Listener {
                 event.setCancelled(true);
                 ShopMode mode = selectChest.get(p.getUniqueId());
                 if (mode.equals(ShopMode.LOTTO)) {
+                    if(plugin.config.lotto_force_locked && plugin.getServer().getPluginManager().getPlugin("LockettePro") != null){
+                        if (LocketteProAPI.isLocked(block) && !LocketteProAPI.isUser(block, p)) {
+                            event.getPlayer().sendMessage(I18n.format("user.signshop.chest_must_locked"));
+                            return;
+                        }
+                    }
                     plugin.database.setLottoStorageLocation(p.getUniqueId(), new LottoStorageLocation(p.getUniqueId(), block.getLocation()));
                     event.getPlayer().sendMessage(I18n.format("user.signshop.lotto.set_success"));
                 } else {
@@ -178,7 +185,6 @@ public class SignShopListener implements Listener {
                 } else if (ShopMode.BUY.equals(sign.shopMode)) {
                     if (sign.getOwner().equals(player.getUniqueId())) {
                         plugin.signShopManager.openShopGUI(player, sign, 1);
-                        return;
                     } else {
                         ItemStack item = player.getInventory().getItemInMainHand();
                         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) ||
