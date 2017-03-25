@@ -136,6 +136,7 @@ user:
     take_fail: "Player %s no enough money"
   signshop:
     not_sign: "You must target a sign"
+    chest_must_locked: "You must be the owner of this chest"
     break:
       no_permission: "You can not break this sign"
       success: "sign removed"

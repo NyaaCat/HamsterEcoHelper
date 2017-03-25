@@ -155,8 +155,8 @@ public class SignShopListener implements Listener {
                 ShopMode mode = selectChest.get(p.getUniqueId());
                 if (mode.equals(ShopMode.LOTTO)) {
                     if(plugin.config.lotto_force_locked && plugin.getServer().getPluginManager().getPlugin("LockettePro") != null){
-                        if (LocketteProAPI.isLocked(block) && !LocketteProAPI.isUser(block, p)) {
-                            event.getPlayer().sendMessage(I18n.format("user.signshop.chest_must_locked"));
+                        if (!LocketteProAPI.isLocked(block) || !LocketteProAPI.isOwner(block, p)) {
+                            p.sendMessage(I18n.format("user.signshop.chest_must_locked"));
                             return;
                         }
                     }
