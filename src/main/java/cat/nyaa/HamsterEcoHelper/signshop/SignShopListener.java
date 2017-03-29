@@ -10,6 +10,7 @@ import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
 import cat.nyaa.utils.Message;
 import me.crafter.mc.lockettepro.LocketteProAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -130,9 +131,9 @@ public class SignShopListener implements Listener {
         if (SignShopManager.isSign(block)) {
             Sign sign = plugin.signShopManager.getSign(block);
             if (sign != null) {
-                if (sign.getOwner().equals(player.getUniqueId()) || player.hasPermission("heh.admin")) {
+                if (sign.getOwner().equals(player.getUniqueId()) || player.hasPermission("heh.removesignshop") && player.isSneaking() && player.getGameMode() == GameMode.CREATIVE) {
                     event.setCancelled(false);
-                    plugin.signShopManager.removeSign(block);
+                    plugin.signShopManager.removeSign(block, player);
                     player.sendMessage(I18n.format("user.signshop.break.success"));
                 } else {
                     player.sendMessage(I18n.format("user.signshop.break.no_permission"));
@@ -176,7 +177,7 @@ public class SignShopListener implements Listener {
             Sign sign = plugin.signShopManager.getSign(block);
             if (sign != null) {
                 event.setCancelled(true);
-                if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && player.getUniqueId().equals(sign.getOwner())) {
+                if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && (player.getUniqueId().equals(sign.getOwner()) || player.hasPermission("heh.removesignshop") && player.isSneaking() && player.getGameMode() == GameMode.CREATIVE)) {
                     event.setCancelled(false);
                     return;
                 }

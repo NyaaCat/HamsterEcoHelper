@@ -40,12 +40,14 @@ permissions:
       heh.signshop.sell: true
       heh.signshop.buy: true
       heh.signshop.lotto: true
+      heh.signshop.search: true
       heh.ads: true
   heh.admin:
     description: Permission node for operators
     default: op
     children:
       heh.user: true
+      heh.removesignshop: false
       heh.addauction: true
       heh.addrequisition: true
       heh.debug: true

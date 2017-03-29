@@ -91,6 +91,14 @@ public class Configuration extends PluginConfigure {
     public int ads_limit_text = 50;
     @Serializable(name = "lotto.force_locked")
     public boolean lotto_force_locked = false;
+    @Serializable(name = "search.cooldown_tick")
+    public long search_cooldown_tick = 200;
+    @Serializable(name = "search.lore_additional_tick")
+    public long search_lore_cooldown_tick = 200;
+    @Serializable(name = "search.ench_additional_tick")
+    public long search_ench_cooldown_tick = 200;
+
+
     public Map<String, Integer> signshop_sign_limit = new HashMap<>();
     public Map<String, Integer> signshop_slot_limit = new HashMap<>();
     public Map<String, Integer> marketSlot = new HashMap<>();

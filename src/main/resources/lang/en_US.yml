@@ -181,6 +181,11 @@ user:
       not_enough_money: "This shop owner does not have enough money"
       not_enough_space: "This shop is not enough space"
       add: "Success add item to shop"
+    search:
+      result: "{itemName} *{amount} in %s's shop for %.2f each"
+      no_result: "Not found"
+      sign_of: "Sign of %s's shop at x:%d y:%d z:%d"
+      page: "Page %d of %d"
     print_shop_info: "Shop owner: %s, shop mode: %s"
   ads:
     add:
@@ -284,6 +289,9 @@ manual:
       set:
         description: "Set storage location"
         usage: "Usage: /heh shop lotto set"
+  search:
+    description: "Search item in shops"
+    usage: "Usage: /heh search keyword(s).. [i|item:item id or name] [p|player:player name] [r|range:range in int] [a|advanced:ench|lore|enchonly|loreonly] \nUse /heh searchpage page to view page"
   ads:
     description: "add/remove ads"
     add:

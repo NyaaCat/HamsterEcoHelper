@@ -5,6 +5,7 @@ import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
+import cat.nyaa.HamsterEcoHelper.signshop.SearchCommands;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopCommands;
 import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
 import cat.nyaa.utils.CommandReceiver;
@@ -35,6 +36,8 @@ public class CommandHandler extends CommandReceiver<HamsterEcoHelper> {
     public SignShopCommands signShopCommands;
     @SubCommand("ads")
     public AdsCommands adsCommands;
+    @SubCommand("search")
+    public SearchCommands searchCommands;
 
     public CommandHandler(HamsterEcoHelper plugin, Internationalization i18n) {
         super(plugin, i18n);
@@ -56,6 +59,8 @@ public class CommandHandler extends CommandReceiver<HamsterEcoHelper> {
                 subCommand = "requisition";
             } else if (cmd.equals("auc") || cmd.equals("bid")) {
                 subCommand = "auction";
+            } else if (cmd.equals("search") || cmd.equals("searchpage")) {
+                subCommand = "search";
             }
             if (subCommand.length() > 0) {
                 String[] tmp = new String[args.length + 1];

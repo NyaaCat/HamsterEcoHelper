@@ -11,6 +11,7 @@ import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
 import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
 import cat.nyaa.utils.InventoryUtils;
 import cat.nyaa.utils.Message;
+import com.google.common.collect.HashMultimap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,13 +25,15 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class SignShopManager {
-    public List<Sign> signLocations = new ArrayList<>();
+    public List<Sign> signLocations = new ArrayList<>();//TODO: still use this or use signByPlayer.values?
+    public HashMultimap<UUID, Sign> signByPlayer = HashMultimap.create();
     public HashMap<Location, Block> attachedBlocks = new HashMap<>();
     private HamsterEcoHelper plugin;
 
     public SignShopManager(HamsterEcoHelper pl) {
         plugin = pl;
         signLocations = plugin.database.getShopSigns();
+        signLocations.forEach(sign -> signByPlayer.put(sign.getOwner(), sign));
         updateAttachedBlocks();
     }
 
@@ -146,21 +149,26 @@ public class SignShopManager {
 
     public boolean createShopSign(Player player, Block block, ShopMode mode) {
         if (getSign(block) != null) {
-            removeSign(block);
+            removeSign(block, player);
         }
         plugin.logger.info(I18n.format("log.info.signshop_create", player.getName(), mode.name(),
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
-        signLocations.add(plugin.database.createShopSign(player, block, mode));
+        Sign sign = plugin.database.createShopSign(player, block, mode);
+        signLocations.add(sign);
+        signByPlayer.put(player.getUniqueId(), sign);
+
         return true;
     }
 
     public boolean createLottoSign(Player player, Block block, ShopMode mode, double lottoPrice) {
         if (getSign(block) != null) {
-            removeSign(block);
+            removeSign(block, player);
         }
         plugin.logger.info(I18n.format("log.info.signshop_create_lotto", player.getName(), lottoPrice,
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
-        signLocations.add(plugin.database.createLottoSign(player, block, ShopMode.LOTTO, lottoPrice));
+        Sign sign = plugin.database.createLottoSign(player, block, ShopMode.LOTTO, lottoPrice);
+        signLocations.add(sign);
+        signByPlayer.put(player.getUniqueId(), sign);
         Block attached = getAttachedBlock(block);
         if (attached != null) {
             attachedBlocks.put(block.getLocation().clone(), attached);
@@ -168,7 +176,7 @@ public class SignShopManager {
         return true;
     }
 
-    public boolean removeSign(Block block) {
+    public boolean removeSign(Block block, Player player) {
         Iterator<Sign> it = signLocations.iterator();
         while (it.hasNext()) {
             Sign sign = it.next();
@@ -177,8 +185,13 @@ public class SignShopManager {
                     if (attachedBlocks.containsKey(block.getLocation())) {
                         attachedBlocks.remove(block.getLocation());
                     }
-                    plugin.logger.info(I18n.format("log.info.signshop_remove", sign.getPlayer().getName(), sign.getShopMode(),
+                    OfflinePlayer p = sign.getPlayer();
+                    plugin.logger.info(I18n.format("log.info.signshop_remove", p.getName(), sign.getShopMode(),
                             block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
+                    if (p.getUniqueId() != player.getUniqueId()) {
+                        plugin.logger.info(" by " + player.getName());
+                    }
+                    signByPlayer.remove(p.getUniqueId(), sign);
                     it.remove();
                     return true;
                 }
@@ -228,13 +241,15 @@ public class SignShopManager {
         shop.setItems(list, ShopMode.BUY);
         plugin.database.setSignShop(uuid, shop);
     }
-    public void addItemToShop(UUID uuid, ItemStack itemStack,int amount, double unitPrice,ShopMode mode) {
+
+    public void addItemToShop(UUID uuid, ItemStack itemStack, int amount, double unitPrice, ShopMode mode) {
         SignShop shop = plugin.database.getSignShop(uuid);
         List<ShopItem> list = shop.getItems(mode);
         list.add(0, new ShopItem(itemStack.clone(), amount, unitPrice));
         shop.setItems(list, mode);
         plugin.database.setSignShop(uuid, shop);
     }
+
     public boolean sellItemToShop(Player player, ItemStack itemStack, Sign sign) {
         SignShop shop = plugin.database.getSignShop(sign.getOwner());
         List<ShopItem> list = shop.getItems(ShopMode.BUY);

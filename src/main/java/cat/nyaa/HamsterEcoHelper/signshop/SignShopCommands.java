@@ -14,8 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
-import java.text.DecimalFormat;
-
 public class SignShopCommands extends CommandReceiver<HamsterEcoHelper> {
     @SubCommand("storage")
     public StorageCommands storageCommands;

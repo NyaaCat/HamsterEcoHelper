@@ -1,7 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.utils.database;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemLog;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
@@ -270,6 +269,10 @@ public class Database extends SQLiteDatabase {
             return true;
         }
         return false;
+    }
+
+    public List<SignShop> getSignShops() {
+        return query(SignShop.class).select();
     }
 
     public SignShop getSignShop(UUID owner) {
