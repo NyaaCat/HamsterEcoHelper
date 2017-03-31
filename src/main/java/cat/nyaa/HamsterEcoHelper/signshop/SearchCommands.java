@@ -148,7 +148,10 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
 
         for (SignShop shop : signShops) {
             UUID owner = shop.getOwner();
-            Set<Sign> signOwned = signByPlayer.get(owner);
+            Set<Sign> signOwned = signByPlayer.get(owner)
+                                              .stream()
+                                              .filter(sign -> sign.shopMode == ShopMode.SELL)
+                                              .collect(Collectors.toSet());
             if (signOwned.isEmpty()) continue;
             if (ownerLimit != null && !ownerLimit.equalsIgnoreCase(Bukkit.getOfflinePlayer(owner).getName())) continue;
             if (rangeLimit != -1 &&
@@ -204,7 +207,7 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
             return;
         }
         match.keySet().forEach(ss -> {
-            Stream<Sign> sis = signByPlayer.get(ss.getOwner()).stream();
+            Stream<Sign> sis = signByPlayer.get(ss.getOwner()).stream().filter(sign -> sign.shopMode == ShopMode.SELL);
             if (curLoc != null) {
                 sis = sis.filter(sign -> curLoc.getWorld().equals(sign.getLocation().getWorld()))
                          .sorted(Comparator.comparingDouble(a -> a.getLocation().distance(curLoc)));

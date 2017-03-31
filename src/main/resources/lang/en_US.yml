@@ -183,6 +183,7 @@ user:
       add: "Success add item to shop"
     search:
       result: "{itemName} *{amount} in %s's shop for %.2f each"
+      no_recent_result: "You have no recent search result"
       no_result: "Not found"
       sign_of: "Sign of %s's shop at x:%d y:%d z:%d"
       page: "Page %d of %d"
