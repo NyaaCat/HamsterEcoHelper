@@ -145,6 +145,9 @@ public class AuctionInstance {
                 plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "NOT_ENOUGH_MONEY"));
             }
         }
+        this.itemStack = null;
+        this.owner = null;
+        checkPointListener.cancel();
         finishCallback.run();
     }
 

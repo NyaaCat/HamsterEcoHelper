@@ -58,6 +58,7 @@ public class AuctionManager extends BukkitRunnable {
     }
 
     public boolean newAuction() {
+        if (plugin.auctionManager != this) return false;
         if (currentAuction != null) return false;
         if (plugin.config.auctionConfig.itemsForAuction.size() == 0) return false;
         AuctionItemTemplate bidItem = Utils.randomWithWeight(plugin.config.auctionConfig.itemsForAuction,
@@ -68,6 +69,7 @@ public class AuctionManager extends BukkitRunnable {
     }
 
     public boolean newPlayerAuction(Player player, ItemStack item, double basePrice, double stepPrice, double reservePrice) {
+        if (plugin.auctionManager != this) return false;
         if (currentAuction != null) return false;
         if (!(basePrice > 0.009)) {
             return false;
