@@ -3,7 +3,7 @@ jdk: oraclejdk8
 
 before_install:
 - "sed -i \"s/^\\(version:.*\\)/\\1.0.$TRAVIS_BUILD_NUMBER/\" src/main/resources/plugin.yml"
-- pushd ~
+- pushd ~/build/
 - git clone --depth=1 https://github.com/NyaaCat/NyaaCore NyaaCat/NyaaCore
 - export NYAACORE_LANG_DIR=`readlink -f ./NyaaCat/NyaaCore/src/main/resources/lang/`
 - popd
