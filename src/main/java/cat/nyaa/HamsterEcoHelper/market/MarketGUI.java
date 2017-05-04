@@ -7,7 +7,7 @@ import cat.nyaa.HamsterEcoHelper.signshop.ShopInventoryHolder;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
-import cat.nyaa.utils.Message;
+import cat.nyaa.nyaacore.Message;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -138,8 +138,8 @@ public class MarketGUI extends ShopInventoryHolder {
                 tax = (price / 100) * plugin.config.market_tax;
             }
             if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
-                int stat = Utils.giveItem(player, item.getItemStack(amount));
-                player.sendMessage(I18n.format("user.auc.item_given_" + Integer.toString(stat)));
+                Utils.GiveStat stat = Utils.giveItem(player, item.getItemStack(amount));
+                player.sendMessage(I18n.format("user.auc.item_given_" + stat.name()));
                 plugin.logger.info(I18n.format("log.info.market_bought", itemId, Utils.getItemName(item.getItemStack()),
                         amount, price, player.getName(), item.getPlayer().getName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {

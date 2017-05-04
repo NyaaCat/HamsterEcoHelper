@@ -1,8 +1,8 @@
 package cat.nyaa.HamsterEcoHelper.utils.database.tables;
 
-import cat.nyaa.utils.database.DataColumn;
-import cat.nyaa.utils.database.DataTable;
-import cat.nyaa.utils.database.PrimaryKey;
+import cat.nyaa.nyaacore.database.DataColumn;
+import cat.nyaa.nyaacore.database.DataTable;
+import cat.nyaa.nyaacore.database.PrimaryKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;

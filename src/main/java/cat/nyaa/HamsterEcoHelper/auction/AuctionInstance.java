@@ -4,10 +4,11 @@ import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.utils.Message;
+import cat.nyaa.nyaacore.Message;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static cat.nyaa.HamsterEcoHelper.utils.Utils.uid;
@@ -46,7 +47,7 @@ public class AuctionInstance {
         }
 
         if (hideName) {
-            new Message(I18n.format("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D))).broadcast("heh.bid");
+            new Message(I18n.format("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D))).broadcast(new Permission("heh.bid"));
             itemName = I18n.format("user.auc.mystery_item_placeholder");
         } else {
             if (owner == null) {
@@ -124,9 +125,9 @@ public class AuctionInstance {
                 }
             }
             if (success) {
-                int stat = Utils.giveItem(currentPlayer, itemStack);
+                Utils.GiveStat stat = Utils.giveItem(currentPlayer, itemStack);
                 if (currentPlayer.isOnline() && currentPlayer instanceof Player) {
-                    ((Player) currentPlayer).sendMessage(I18n.format("user.auc.item_given_" + Integer.toString(stat)));
+                    ((Player) currentPlayer).sendMessage(I18n.format("user.auc.item_given_" + stat.name()));
                 }
                 new Message(I18n.format("user.auc.success_0")).append(itemStack)
                         .appendFormat(plugin.i18n, "user.auc.success_1", currentPlayer.getName())
@@ -167,21 +168,21 @@ public class AuctionInstance {
             switch (stage) {
                 case 0:
                     if (currentHighPrice >= 0)
-                        new Message(I18n.format("user.auc.first", currentHighPrice)).broadcast("heh.bid");
+                        new Message(I18n.format("user.auc.first", currentHighPrice)).broadcast(new Permission("heh.bid"));
                     stage = 1;
                     checkPointListener = new CheckPointListener();
                     checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 1:
                     if (currentHighPrice >= 0)
-                        new Message(I18n.format("user.auc.second", currentHighPrice)).broadcast("heh.bid");
+                        new Message(I18n.format("user.auc.second", currentHighPrice)).broadcast(new Permission("heh.bid"));
                     stage = 2;
                     checkPointListener = new CheckPointListener();
                     checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 2:
                     if (currentHighPrice >= 0)
-                        new Message(I18n.format("user.auc.third", currentHighPrice)).broadcast("heh.bid");
+                        new Message(I18n.format("user.auc.third", currentHighPrice)).broadcast(new Permission("heh.bid"));
                     finish();
                     /*
                     stage = 3;

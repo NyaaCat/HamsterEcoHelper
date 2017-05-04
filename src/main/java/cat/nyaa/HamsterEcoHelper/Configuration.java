@@ -4,8 +4,8 @@ import cat.nyaa.HamsterEcoHelper.ads.AdsConfig;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionConfig;
 import cat.nyaa.HamsterEcoHelper.balance.VariablesConfig;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionConfig;
-import cat.nyaa.utils.ISerializable;
-import cat.nyaa.utils.PluginConfigure;
+import cat.nyaa.nyaacore.configuration.ISerializable;
+import cat.nyaa.nyaacore.configuration.PluginConfigure;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 

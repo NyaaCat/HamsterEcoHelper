@@ -1,6 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.ads;
 
-import cat.nyaa.utils.ISerializable;
+import cat.nyaa.nyaacore.configuration.ISerializable;
 
 import java.util.UUID;
 

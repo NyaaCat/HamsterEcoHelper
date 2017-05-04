@@ -1,8 +1,8 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.utils.CommandReceiver;
-import cat.nyaa.utils.Internationalization;
+import cat.nyaa.nyaacore.CommandReceiver;
+import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
     private HamsterEcoHelper plugin;
 
-    public AuctionCommands(Object plugin, Internationalization i18n) {
+    public AuctionCommands(Object plugin, LanguageRepository i18n) {
         super((HamsterEcoHelper) plugin, i18n);
         this.plugin = (HamsterEcoHelper) plugin;
     }
@@ -72,7 +72,7 @@ public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
         Player p = asPlayer(sender);
         AuctionInstance auc = plugin.auctionManager.getCurrentAuction();
         if (auc == null) {
-            msg(p, "user.info.no_current_auc");
+            msg(p, "user.info.no_current_auction");
             return;
         }
         if (args.length() == 2) {

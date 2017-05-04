@@ -3,8 +3,8 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
-import cat.nyaa.utils.CommandReceiver;
-import cat.nyaa.utils.Internationalization;
+import cat.nyaa.nyaacore.CommandReceiver;
+import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -12,7 +12,7 @@ public class StorageCommands extends CommandReceiver<HamsterEcoHelper> {
 
     private final HamsterEcoHelper plugin;
 
-    public StorageCommands(Object plugin, Internationalization i18n) {
+    public StorageCommands(Object plugin, LanguageRepository i18n) {
         super((HamsterEcoHelper) plugin, i18n);
         this.plugin = (HamsterEcoHelper) plugin;
     }

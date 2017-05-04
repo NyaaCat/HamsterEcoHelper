@@ -7,7 +7,7 @@ import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
 import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
-import cat.nyaa.utils.Message;
+import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -169,8 +169,8 @@ public class ShopGUI extends ShopInventoryHolder {
                     tax = (price / 100) * plugin.signShopManager.getTax();
                 }
                 if (plugin.eco.enoughMoney(player, price + tax) || isEditMode()) {
-                    int stat = Utils.giveItem(player, shopItem.getItemStack(amount));
-                    player.sendMessage(I18n.format("user.auc.item_given_" + Integer.toString(stat)));
+                    Utils.GiveStat stat = Utils.giveItem(player, shopItem.getItemStack(amount));
+                    player.sendMessage(I18n.format("user.auc.item_given_" + stat.name()));
                     if (!isEditMode()) {
                         OfflinePlayer owner = shop.getPlayer();
                         if (owner.isOnline()) {

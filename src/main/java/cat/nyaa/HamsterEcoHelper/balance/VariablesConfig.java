@@ -1,7 +1,7 @@
 package cat.nyaa.HamsterEcoHelper.balance;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.utils.FileConfigure;
+import cat.nyaa.nyaacore.configuration.FileConfigure;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class VariablesConfig extends FileConfigure {

@@ -1,11 +1,13 @@
 package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.utils.InventoryUtils;
+import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.librazy.nyaautils_lang_checker.LangKey;
+import org.librazy.nyaautils_lang_checker.LangKeyType;
 
 import java.util.List;
 import java.util.Random;
@@ -42,26 +44,32 @@ public class Utils {
         return min + random.nextInt(max - min + 1);
     }
 
+    @LangKey(type = LangKeyType.SUFFIX) public enum GiveStat {
+        INVENTORY,
+        ENDER_CHEST,
+        TEMPORARY_STORAGE
+    }
+
     /**
      * Put Item into player's inventory/ender chest/temporary-storage-zone
      * @return 1: put into player's inventory
      *         2: put into ender chest
      *         3: put into temporary storage
      */
-    public static int giveItem(OfflinePlayer player, ItemStack item) {
+    public static GiveStat giveItem(OfflinePlayer player, ItemStack item) {
         if (player.isOnline()) {
             Player p = Bukkit.getPlayer(player.getUniqueId());  // Refresh the Player object to ensure
                                                                 // we hold latest Player object associated to
             if (InventoryUtils.addItem(p, item)) {
-                return 1;
+                return GiveStat.INVENTORY;
             }
             if (InventoryUtils.addItem(p.getEnderChest(), item)) {
-                return 2;
+                return GiveStat.ENDER_CHEST;
             }
         }
 
         HamsterEcoHelper.instance.database.addTemporaryStorage(player, item);
-        return 3;
+        return GiveStat.TEMPORARY_STORAGE;
     }
 
     public static String uid(Object obj) {

@@ -5,8 +5,8 @@ import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
-import cat.nyaa.utils.CommandReceiver;
-import cat.nyaa.utils.Internationalization;
+import cat.nyaa.nyaacore.CommandReceiver;
+import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -21,7 +21,7 @@ public class SignShopCommands extends CommandReceiver<HamsterEcoHelper> {
     public LottoCommands lottoCommands;
     private HamsterEcoHelper plugin;
 
-    public SignShopCommands(Object plugin, Internationalization i18n) {
+    public SignShopCommands(Object plugin, LanguageRepository i18n) {
         super((HamsterEcoHelper) plugin, i18n);
         this.plugin = (HamsterEcoHelper) plugin;
     }

@@ -4,10 +4,10 @@ import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
-import cat.nyaa.utils.CommandReceiver;
-import cat.nyaa.utils.Internationalization;
-import cat.nyaa.utils.Message;
-import cat.nyaa.utils.internationalizer.LanguageHelper;
+import cat.nyaa.nyaacore.CommandReceiver;
+import cat.nyaa.nyaacore.LanguageRepository;
+import cat.nyaa.nyaacore.Message;
+import cat.nyaa.nyaacore.utils.I18nUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.HashMultimap;
@@ -40,7 +40,7 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
     private HashMap<UUID, Long> cooldown = new HashMap<>();
     private HamsterEcoHelper plugin;
 
-    public SearchCommands(Object plugin, Internationalization i18n) {
+    public SearchCommands(Object plugin, LanguageRepository i18n) {
         super((HamsterEcoHelper) plugin, i18n);
         this.plugin = (HamsterEcoHelper) plugin;
     }
@@ -186,8 +186,8 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                             enchMatch = enchants.entrySet()
                                                 .stream().flatMap(enchEntry ->
                                             Stream.of(
-                                                    LanguageHelper.getEnchantmentDisplayName(enchEntry, "zh_cn"),
-                                                    LanguageHelper.getEnchantmentDisplayName(enchEntry, "en_us")
+                                                    I18nUtils.getEnchantmentDisplayName(enchEntry, "zh_cn"),
+                                                    I18nUtils.getEnchantmentDisplayName(enchEntry, "en_us")
                                             )
                                     )
                                                 .map(ChatColor::stripColor)
@@ -196,8 +196,8 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                             if (enchMatch) return true;
                         }
                         if (matchEnchOnly) return false;
-                        String zhName = ChatColor.stripColor(LanguageHelper.getItemDisplayName(stack, "zh_cn")).toLowerCase();
-                        String enName = ChatColor.stripColor(LanguageHelper.getItemDisplayName(stack, "en_us")).toLowerCase();
+                        String zhName = ChatColor.stripColor(I18nUtils.getItemDisplayName(stack, "zh_cn")).toLowerCase();
+                        String enName = ChatColor.stripColor(I18nUtils.getItemDisplayName(stack, "en_us")).toLowerCase();
                         return "*".equals(keywords.get(0)) || keywords.stream().anyMatch(zhName::contains) || keywords.stream().anyMatch(enName::contains);
                     }
             ).forEach(shopItem -> match.put(shop, shopItem));

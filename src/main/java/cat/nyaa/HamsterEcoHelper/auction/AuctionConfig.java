@@ -1,8 +1,8 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.utils.FileConfigure;
-import cat.nyaa.utils.ISerializable;
+import cat.nyaa.nyaacore.configuration.FileConfigure;
+import cat.nyaa.nyaacore.configuration.ISerializable;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 

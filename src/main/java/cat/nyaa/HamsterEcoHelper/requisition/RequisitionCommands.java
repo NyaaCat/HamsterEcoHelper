@@ -3,9 +3,9 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemLog;
-import cat.nyaa.utils.CommandReceiver;
-import cat.nyaa.utils.Internationalization;
-import cat.nyaa.utils.ReflectionUtil;
+import cat.nyaa.nyaacore.CommandReceiver;
+import cat.nyaa.nyaacore.LanguageRepository;
+import cat.nyaa.nyaacore.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
     private HamsterEcoHelper plugin;
 
-    public RequisitionCommands(Object plugin, Internationalization i18n) {
+    public RequisitionCommands(Object plugin, LanguageRepository i18n) {
         super((HamsterEcoHelper) plugin, i18n);
         this.plugin = (HamsterEcoHelper) plugin;
     }
@@ -161,7 +161,7 @@ public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
                 msg(sender, "user.error.unknown_item", itemName);
                 return;
             }
-            if (!ReflectionUtil.isValidItem(item)) {
+            if (!ReflectionUtils.isValidItem(item)) {
                 msg(sender, "user.error.unknown_item", itemName);
                 return;
             }

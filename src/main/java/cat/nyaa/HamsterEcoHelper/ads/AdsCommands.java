@@ -4,8 +4,8 @@ package cat.nyaa.HamsterEcoHelper.ads;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
-import cat.nyaa.utils.CommandReceiver;
-import cat.nyaa.utils.Internationalization;
+import cat.nyaa.nyaacore.CommandReceiver;
+import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 public class AdsCommands extends CommandReceiver<HamsterEcoHelper> {
     private HamsterEcoHelper plugin;
 
-    public AdsCommands(Object plugin, Internationalization i18n) {
+    public AdsCommands(Object plugin, LanguageRepository i18n) {
         super((HamsterEcoHelper) plugin, i18n);
         this.plugin = (HamsterEcoHelper) plugin;
     }

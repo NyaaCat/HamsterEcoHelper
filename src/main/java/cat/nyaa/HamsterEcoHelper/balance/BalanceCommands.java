@@ -2,8 +2,8 @@ package cat.nyaa.HamsterEcoHelper.balance;
 
 import cat.nyaa.HamsterEcoHelper.CommandHandler;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.utils.CommandReceiver;
-import cat.nyaa.utils.Internationalization;
+import cat.nyaa.nyaacore.CommandReceiver;
+import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class BalanceCommands extends CommandReceiver<HamsterEcoHelper> {
     private HamsterEcoHelper plugin;
 
-    public BalanceCommands(Object plugin, Internationalization i18n) {
+    public BalanceCommands(Object plugin, LanguageRepository i18n) {
         super((HamsterEcoHelper) plugin, i18n);
         this.plugin = (HamsterEcoHelper) plugin;
     }

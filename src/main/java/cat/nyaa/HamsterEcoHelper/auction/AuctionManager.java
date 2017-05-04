@@ -3,10 +3,11 @@ package cat.nyaa.HamsterEcoHelper.auction;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.utils.Message;
+import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -95,7 +96,7 @@ public class AuctionManager extends BukkitRunnable {
         if (currentAuction != null) {
             currentAuction.halt();
             currentAuction = null;
-            new Message(I18n.format("user.auc.halted")).broadcast("heh.bid");
+            new Message(I18n.format("user.auc.halted")).broadcast(new Permission("heh.bid"));
         }
     }
 

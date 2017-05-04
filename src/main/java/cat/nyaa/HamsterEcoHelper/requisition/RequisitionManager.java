@@ -3,10 +3,11 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.utils.Message;
+import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -81,7 +82,7 @@ public class RequisitionManager extends BukkitRunnable {
         if (currentReq != null) {
             currentReq.halt();
             currentReq = null;
-            new Message(I18n.format("user.req.halted")).broadcast("heh.sell");
+            new Message(I18n.format("user.req.halted")).broadcast(new Permission("heh.sell"));
         }
     }
 

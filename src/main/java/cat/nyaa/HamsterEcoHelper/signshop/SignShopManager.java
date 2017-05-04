@@ -9,8 +9,8 @@ import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocat
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
 import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
-import cat.nyaa.utils.InventoryUtils;
-import cat.nyaa.utils.Message;
+import cat.nyaa.nyaacore.utils.InventoryUtils;
+import cat.nyaa.nyaacore.Message;
 import com.google.common.collect.HashMultimap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

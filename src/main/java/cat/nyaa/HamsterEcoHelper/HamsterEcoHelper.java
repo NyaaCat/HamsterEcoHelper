@@ -80,7 +80,6 @@ public class HamsterEcoHelper extends JavaPlugin {
         marketManager.closeAllGUI();
         marketManager.cancel();
         adsManager.cancel();
-        i18n.reset();
         config.load();
         i18n.load();
         auctionManager = new AuctionManager(this);

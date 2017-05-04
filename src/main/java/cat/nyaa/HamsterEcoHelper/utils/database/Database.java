@@ -9,7 +9,7 @@ import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLoca
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
-import cat.nyaa.utils.database.SQLiteDatabase;
+import cat.nyaa.nyaacore.database.SQLiteDatabase;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;

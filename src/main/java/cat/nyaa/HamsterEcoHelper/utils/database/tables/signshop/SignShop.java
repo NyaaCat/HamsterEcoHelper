@@ -2,9 +2,9 @@ package cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop;
 
 import cat.nyaa.HamsterEcoHelper.signshop.ShopItem;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
-import cat.nyaa.utils.database.DataColumn;
-import cat.nyaa.utils.database.DataTable;
-import cat.nyaa.utils.database.PrimaryKey;
+import cat.nyaa.nyaacore.database.DataColumn;
+import cat.nyaa.nyaacore.database.DataTable;
+import cat.nyaa.nyaacore.database.PrimaryKey;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;

@@ -7,7 +7,7 @@ import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
-import cat.nyaa.utils.Message;
+import cat.nyaa.nyaacore.Message;
 import me.crafter.mc.lockettepro.LocketteProAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;

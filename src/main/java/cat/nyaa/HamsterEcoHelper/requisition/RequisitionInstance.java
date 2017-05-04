@@ -3,11 +3,12 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.utils.Message;
+import cat.nyaa.nyaacore.Message;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -42,13 +43,13 @@ public class RequisitionInstance {
         timeoutListener.runTaskLater(plugin, templateItem.timeoutTicks);
         ItemStack tmp = templateItem.itemTemplate;
         new Message(I18n.format("user.req.new_req_0")).append("{itemName}", tmp)
-                .appendFormat(plugin.i18n, "user.req.new_req_1", reqAmount, unitPrice, (double) templateItem.timeoutTicks / 20D)
+                .appendFormat(plugin.i18n, "user.req.new_req_1", reqAmount, (double)unitPrice, (double) templateItem.timeoutTicks / 20D)
                 .broadcast();
         String name = templateItem.itemTemplate.hasItemMeta() && templateItem.itemTemplate.getItemMeta().hasDisplayName() ?
                 templateItem.itemTemplate.getItemMeta().getDisplayName() :
                 templateItem.itemTemplate.getType().name() + ":" + templateItem.itemTemplate.getDurability();
         logger = plugin.getLogger();
-        plugin.getLogger().info(I18n.format("log.info.req_start", name, reqAmount, unitPrice, templateItem.timeoutTicks, uid(this)));
+        plugin.getLogger().info(I18n.format("log.info.req_start", name, reqAmount, (double)unitPrice, templateItem.timeoutTicks, uid(this)));
     }
 
     public RequisitionInstance(Player player,
@@ -145,7 +146,7 @@ public class RequisitionInstance {
                 .broadcast();
         logger.info(I18n.format("log.info.req_sell", uid(this), amount, amountRemains, p.getName()));
         if (amountRemains == 0) {
-            new Message(I18n.format("user.req.sold_out")).broadcast("heh.bid");
+            new Message(I18n.format("user.req.sold_out")).broadcast(new Permission("heh.bid"));
             halt();
             logger.info(I18n.format("log.info.req_finish", uid(this), soldAmount, "SOLD_OUT"));
             finishCallback.run();
@@ -162,7 +163,7 @@ public class RequisitionInstance {
                 amountRemains = 0;
                 plugin.reqManager.cooldown.put(owner.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
             }
-            new Message(I18n.format("user.req.finish")).broadcast("heh.bid");
+            new Message(I18n.format("user.req.finish")).broadcast(new Permission("heh.bid"));
             logger.info(I18n.format("log.info.req_finish", uid(RequisitionInstance.this), soldAmount, "TIMEOUT"));
             if (owner == null && plugin.balanceAPI.isEnabled()) {
                 plugin.logger.info(I18n.format("log.info.current_balance", plugin.balanceAPI.getBalance()));
