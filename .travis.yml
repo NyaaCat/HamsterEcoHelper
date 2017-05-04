@@ -5,7 +5,7 @@ before_install:
 - "sed -i \"s/^\\(version:.*\\)/\\1.0.$TRAVIS_BUILD_NUMBER/\" src/main/resources/plugin.yml"
 - pushd ~
 - git clone --depth=1 https://github.com/NyaaCat/NyaaCore NyaaCat/NyaaCore
-- export NYAACORE_LANG_DIR=`realpath ./NyaaCat/NyaaCore/src/main/resources/lang/`
+- export NYAACORE_LANG_DIR=`readlink -f ./NyaaCat/NyaaCore/src/main/resources/lang/`
 - popd
 after_success:
 - 'cp build/libs/HamsterEcoHelper.jar ./HamsterEcoHelper-$TRAVIS_BRANCH-v$main_version.$TRAVIS_BUILD_NUMBER.jar'
