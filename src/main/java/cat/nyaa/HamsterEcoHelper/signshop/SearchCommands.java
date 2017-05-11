@@ -10,7 +10,6 @@ import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.I18nUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedListMultimap;
 import org.bukkit.Bukkit;
@@ -66,25 +65,14 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
             return;
         }
         msg(sender, "user.signshop.search.page", page + 1, (int) Math.ceil(result.size() / 9.0d));
-        if (player != null) {
-            result.stream().skip(start).limit(9).forEach(pair ->
-                    new Message("")
-                            .append(I18n.format("user.signshop.search.result",
-                                    Bukkit.getOfflinePlayer(pair.getKey().getOwner())
-                                          .getName(),
-                                    pair.getValue().getUnitPrice()
-                            ), pair.getValue().itemStack)
-                            .send(player));
-        } else {
-            result.stream().skip(start).limit(9).forEach(pair ->
-                    sender.sendMessage(new Message("")
-                            .append(I18n.format("user.signshop.search.result",
-                                    Bukkit.getOfflinePlayer(pair.getKey().getOwner())
-                                          .getName(),
-                                    pair.getValue().getUnitPrice()
-                            ), pair.getValue().itemStack)
-                            .inner.toLegacyText()));
-        }
+        result.stream().skip(start).limit(9).forEach(pair ->
+                new Message("")
+                        .append(I18n.format("user.signshop.search.result",
+                                Bukkit.getOfflinePlayer(pair.getKey().getOwner())
+                                      .getName(),
+                                pair.getValue().getUnitPrice()
+                        ), pair.getValue().itemStack)
+                        .send(sender));
     }
 
     @SubCommand(value = "search", permission = "heh.signshop.search")
@@ -143,13 +131,13 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
         cooldown.put(searcher, cd);
 
         List<SignShop> signShops = plugin.database.getSignShops();
-        HashMultimap<UUID, Sign> signByPlayer = plugin.signShopManager.signByPlayer;
         LinkedListMultimap<SignShop, ShopItem> match = LinkedListMultimap.create();
 
         for (SignShop shop : signShops) {
             UUID owner = shop.getOwner();
-            Set<Sign> signOwned = signByPlayer.get(owner)
+            Set<Sign> signOwned = plugin.signShopManager.signLocations
                                               .stream()
+                                              .filter(sign -> sign.getOwner().equals(owner))
                                               .filter(sign -> sign.shopMode == ShopMode.SELL)
                                               .collect(Collectors.toSet());
             if (signOwned.isEmpty()) continue;
@@ -161,11 +149,12 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                 continue;
             }
             List<ShopItem> items = shop.getItems(ShopMode.SELL);
+            System.out.println(shop.getYaml());
             items.stream().filter(
                     shopItem -> {
                         boolean loreMatch;
                         boolean enchMatch;
-                        ItemStack stack = shopItem.itemStack.clone();
+                        ItemStack stack = shopItem.getItemStack(shopItem.getAmount());
                         ItemMeta meta = stack.getItemMeta();
                         if (materialLimit != null && !materialLimit.equals(stack.getType())) return false;
                         if (matchLore) {
@@ -207,7 +196,7 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
             return;
         }
         match.keySet().forEach(ss -> {
-            Stream<Sign> sis = signByPlayer.get(ss.getOwner()).stream().filter(sign -> sign.shopMode == ShopMode.SELL);
+            Stream<Sign> sis = plugin.signShopManager.signLocations.stream().filter(sign -> sign.getOwner().equals(ss.getOwner())).filter(sign -> sign.shopMode == ShopMode.SELL);
             if (curLoc != null) {
                 sis = sis.filter(sign -> curLoc.getWorld().equals(sign.getLocation().getWorld()))
                          .sorted(Comparator.comparingDouble(a -> a.getLocation().distance(curLoc)));

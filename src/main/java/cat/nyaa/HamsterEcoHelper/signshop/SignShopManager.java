@@ -25,15 +25,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class SignShopManager {
-    public List<Sign> signLocations = new ArrayList<>();//TODO: still use this or use signByPlayer.values?
-    public HashMultimap<UUID, Sign> signByPlayer = HashMultimap.create();
+    public List<Sign> signLocations = new ArrayList<>();
     public HashMap<Location, Block> attachedBlocks = new HashMap<>();
     private HamsterEcoHelper plugin;
 
     public SignShopManager(HamsterEcoHelper pl) {
         plugin = pl;
         signLocations = plugin.database.getShopSigns();
-        signLocations.forEach(sign -> signByPlayer.put(sign.getOwner(), sign));
         updateAttachedBlocks();
     }
 
@@ -155,7 +153,6 @@ public class SignShopManager {
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
         Sign sign = plugin.database.createShopSign(player, block, mode);
         signLocations.add(sign);
-        signByPlayer.put(player.getUniqueId(), sign);
 
         return true;
     }
@@ -168,7 +165,6 @@ public class SignShopManager {
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
         Sign sign = plugin.database.createLottoSign(player, block, ShopMode.LOTTO, lottoPrice);
         signLocations.add(sign);
-        signByPlayer.put(player.getUniqueId(), sign);
         Block attached = getAttachedBlock(block);
         if (attached != null) {
             attachedBlocks.put(block.getLocation().clone(), attached);
@@ -191,7 +187,6 @@ public class SignShopManager {
                     if (p.getUniqueId() != player.getUniqueId()) {
                         plugin.logger.info(" by " + player.getName());
                     }
-                    signByPlayer.remove(p.getUniqueId(), sign);
                     it.remove();
                     return true;
                 }

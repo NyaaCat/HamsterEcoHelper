@@ -321,9 +321,9 @@ manual:
     description: "Display version and license"
     usage: "Usage: /heh version"
   license: |
-    Hamster Economy Helper version %s for Spigot 1.9.4
+    Hamster Economy Helper version %s for Spigot 1.11.2
     Brings auction, requisition and world shop to Minecraft.
-    Copyright (C) 2016  %s
+    Copyright (C) 2017  %s
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
