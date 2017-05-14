@@ -149,7 +149,6 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                 continue;
             }
             List<ShopItem> items = shop.getItems(ShopMode.SELL);
-            System.out.println(shop.getYaml());
             items.stream().filter(
                     shopItem -> {
                         boolean loreMatch;
