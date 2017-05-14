@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 public class SignShopListener implements Listener {
@@ -229,17 +230,18 @@ public class SignShopListener implements Listener {
                                 player.sendMessage(I18n.format("user.signshop.empty"));
                                 return;
                             } else {
+                                OfflinePlayer owner = sign.getPlayer();
                                 double tax = 0.0D;
                                 if (plugin.signShopManager.getTax() > 0) {
                                     tax = (price / 100) * plugin.signShopManager.getTax();
-                                    HamsterEcoHelperTransactionApiEvent event1 = new HamsterEcoHelperTransactionApiEvent(tax);
-                                    plugin.getServer().getPluginManager().callEvent(event1);
                                 }
-
-                                plugin.eco.withdraw(player, price);
-                                plugin.eco.deposit(sign.getPlayer(), price - tax);
-                                Utils.giveItem(player, item);
-                                OfflinePlayer owner = sign.getPlayer();
+                                Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, owner, item, price - tax ,tax);
+                                if(!stat.isPresent()){
+                                    new Message(I18n.format("user.signshop.lotto.fail",
+                                            price, owner.getName())).send(player);
+                                    return;
+                                }
+                                player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
                                 new Message("").append(I18n.format("user.signshop.lotto.success",
                                         price, owner.getName()), item).send(player);
                                 plugin.logger.info(I18n.format("log.info.signshop_lotto", Utils.getItemName(item),

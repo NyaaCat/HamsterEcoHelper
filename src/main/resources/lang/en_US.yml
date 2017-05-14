@@ -33,7 +33,10 @@ log:
   error:
     missing_sqlite_driver: "SQLite Driver not found. Plugin disabled."
     enable_fail: "Plugin failed to enable"
-
+    transaction_fail: " Transaction failed: {seller: \"%s\", buyer: \"%s\", item: \"%s\", price: %.2f, tax: %.2f}"
+    transaction_fail_dump: "item json: \"%s\""
+    transaction_fail_rollback_tax: "Rollback TransactionApiEvent: {tax: %.2f}"
+    transaction_fail_rollback_money: "Rollback money transaction: {player: \"%s\", price: %.2f, status: \"%s\"}"
 admin:
   info:
     save_done: "Force save done."
@@ -117,7 +120,8 @@ user:
     my_items: "&aMy items (%d/%d)"
     broadcast: "New market offer: {itemName} *{amount} use '/heh view' view the items."
     someone_bought: "%s bought {itemName} for $%.2f from you."
-    buy_success: "you bought {itemName} from %s for $%.2f"
+    buy_success: "You bought {itemName} from %s for $%.2f."
+    buy_fail: "You failed to buy {itemName} from %s for $%.2f. Internal server error."
     not_enough_slot: "Not enough slot"
   retrieve:
     need_confirm: "The items will drop from your current position. Please ensure the safety. Use '/heh retrieve confirm'"
@@ -157,6 +161,7 @@ user:
     lotto:
       confirm: "Please right click sign to confirm."
       success: "You pay %s to %s and get {itemName} *{amount}"
+      fail: "You failed to pay %s to %s. Internal server error."
       notice: "%s get {itemName} *{amount} for %s from you"
       notice_with_tax: "%s get {itemName} *{amount} for %s from you (%s tax)"
       set_success: "Success set chest"
