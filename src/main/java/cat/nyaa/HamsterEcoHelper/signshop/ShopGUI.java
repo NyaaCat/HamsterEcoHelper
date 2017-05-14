@@ -6,7 +6,6 @@ import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
-import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,10 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ShopGUI extends ShopInventoryHolder {
     public static String lore_code = ChatColor.translateAlternateColorCodes('&', "&f&f&9&e&c&1&4&a&5&1&1&2&0&7&4&r");
@@ -169,10 +165,21 @@ public class ShopGUI extends ShopInventoryHolder {
                     tax = (price / 100) * plugin.signShopManager.getTax();
                 }
                 if (plugin.eco.enoughMoney(player, price + tax) || isEditMode()) {
-                    Utils.GiveStat stat = Utils.giveItem(player, shopItem.getItemStack(amount));
-                    player.sendMessage(I18n.format("user.auc.item_given_" + stat.name()));
+                    OfflinePlayer owner = shop.getPlayer();
+                    Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, owner, shopItem.getItemStack(amount), price, tax);
+                    if(!stat.isPresent()){
+                        new Message("")
+                                .append(I18n.format("user.market.buy_fail", owner.getName(), price), shopItem.getItemStack(amount))
+                                .send(player);
+                        return false;
+                    }
+                    shopItem.setAmount(shopItem.getAmount() - amount);
+                    shopItems.set(itemId, shopItem);
+                    shop.setItems(shopItems, ShopMode.SELL);
+                    plugin.database.setSignShop(shopOwner, shop);
+                    plugin.signShopManager.updateGUI(shopOwner, mode);
+                    player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
                     if (!isEditMode()) {
-                        OfflinePlayer owner = shop.getPlayer();
                         if (owner.isOnline()) {
                             new Message("")
                                     .append(I18n.format("user.signshop.buy.notice", player.getName(), price),
@@ -182,21 +189,10 @@ public class ShopGUI extends ShopInventoryHolder {
                         new Message("")
                                 .append(I18n.format("user.signshop.buy.success", owner.getName(), price + tax),
                                         shopItem.getItemStack(amount)).send(player);
-                        plugin.eco.withdraw(player, price + tax);
-                        plugin.eco.deposit(owner, price);
-                        if (tax > 0.0D) {
-                            HamsterEcoHelperTransactionApiEvent event = new HamsterEcoHelperTransactionApiEvent(tax);
-                            plugin.getServer().getPluginManager().callEvent(event);
-                        }
                         plugin.logger.info(I18n.format("log.info.signshop_bought",
                                 Utils.getItemName(shopItem.getItemStack(amount)), amount,
                                 price, player.getName(), shop.getPlayer().getName()));
                     }
-                    shopItem.setAmount(shopItem.getAmount() - amount);
-                    shopItems.set(itemId, shopItem);
-                    shop.setItems(shopItems, ShopMode.SELL);
-                    plugin.database.setSignShop(shopOwner, shop);
-                    plugin.signShopManager.updateGUI(shopOwner, mode);
                     return true;
                 } else {
                     player.sendMessage(I18n.format("user.warn.no_enough_money"));
