@@ -15,10 +15,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class MarketGUI extends ShopInventoryHolder {
     public int currentPage = 1;
@@ -138,8 +135,16 @@ public class MarketGUI extends ShopInventoryHolder {
                 tax = (price / 100) * plugin.config.market_tax;
             }
             if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
-                Utils.GiveStat stat = Utils.giveItem(player, item.getItemStack(amount));
-                player.sendMessage(I18n.format("user.auc.item_given_" + stat.name()));
+                Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, item.getPlayer(), item.getItemStack(amount), price, tax);
+                if(!stat.isPresent()){
+                    new Message("")
+                            .append(I18n.format("user.market.buy_fail", item.getPlayer().getName(), price), item.getItemStack(amount))
+                            .send(player);
+                    return false;
+                }
+                plugin.database.marketBuy(player, itemId, amount);
+                plugin.marketManager.updateAllGUI();
+                player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
                 plugin.logger.info(I18n.format("log.info.market_bought", itemId, Utils.getItemName(item.getItemStack()),
                         amount, price, player.getName(), item.getPlayer().getName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
@@ -152,16 +157,8 @@ public class MarketGUI extends ShopInventoryHolder {
                     new Message("")
                             .append(I18n.format("user.market.buy_success", item.getPlayer().getName(), price), item.getItemStack(amount))
                             .send(player);
-                    plugin.eco.withdraw(player, price + tax);
-                    plugin.eco.deposit(item.getPlayer(), price);
-                    if (plugin.config.market_tax > 0 && tax > 0.0D) {
-                        HamsterEcoHelperTransactionApiEvent event = new HamsterEcoHelperTransactionApiEvent(tax);
-                        plugin.getServer().getPluginManager().callEvent(event);
-                    }
                 }
-                plugin.database.marketBuy(player, itemId, amount);
                 plugin.marketManager.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
-                plugin.marketManager.updateAllGUI();
                 return true;
             } else {
                 player.sendMessage(I18n.format("user.warn.no_enough_money"));

@@ -11,6 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Optional;
+
 import static cat.nyaa.HamsterEcoHelper.utils.Utils.uid;
 
 public class AuctionInstance {
@@ -28,6 +30,7 @@ public class AuctionInstance {
     private OfflinePlayer currentPlayer = null;
     private CheckPointListener checkPointListener;
     private String itemName;
+
     public AuctionInstance(OfflinePlayer player, ItemStack itemToGive, double startPrice, double stepPrice, double reservePrice, int timeout, boolean hideName, HamsterEcoHelper plugin, Runnable finishCallback) {
         itemStack = itemToGive;
         startPr = startPrice;
@@ -109,41 +112,53 @@ public class AuctionInstance {
             plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, "", "NO_PLAYER_BID"));
         } else {
             boolean success = false;
-            if(owner != null) {
+            if (owner != null) {
                 plugin.auctionManager.cooldown.put(owner.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerAuctionCooldownTicks * 50));
             }
             if (currentHighPrice >= reservePrice) {
-                success = e.withdraw(currentPlayer, currentHighPrice);
-                if (success && this.owner != null) {
+                success = e.enoughMoney(currentPlayer, currentHighPrice);
+            }
+            if (success) {
+                if (this.owner != null) {
+                    double commissionFee = 0.0D;
                     if (plugin.config.playerAuctionCommissionFee > 0) {
-                        double commissionFee = (currentHighPrice / 100) * plugin.config.playerAuctionCommissionFee;
-                        e.deposit(this.owner, currentHighPrice - commissionFee);
-                        plugin.balanceAPI.deposit(commissionFee);
+                        commissionFee = (currentHighPrice / 100) * plugin.config.playerAuctionCommissionFee;
+                    }
+                    Optional<Utils.GiveStat> stat = e.transaction(currentPlayer, owner, itemStack, currentHighPrice, commissionFee);
+                    if (stat.isPresent()) {
+                        if (currentPlayer.isOnline() && currentPlayer instanceof Player) {
+                            ((Player) currentPlayer).sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
+                        }
                     } else {
-                        e.deposit(this.owner, currentHighPrice);
+                        success = false;
+                    }
+                } else {
+                    if (e.withdraw(currentPlayer, currentHighPrice)) {
+                        Utils.GiveStat stat = Utils.giveItem(currentPlayer, itemStack);
+                        if (currentPlayer.isOnline() && currentPlayer instanceof Player) {
+                            ((Player) currentPlayer).sendMessage(I18n.format("user.auc.item_given_" + stat.name()));
+                        }
+                        if (this.owner == null && plugin.balanceAPI.isEnabled()) {
+                            plugin.balanceAPI.deposit(currentHighPrice);
+                            plugin.config.save();
+                            plugin.logger.info(I18n.format("log.info.current_balance", plugin.balanceAPI.getBalance()));
+                        }
+                    } else {
+                        success = false;
                     }
                 }
             }
-            if (success) {
-                Utils.GiveStat stat = Utils.giveItem(currentPlayer, itemStack);
-                if (currentPlayer.isOnline() && currentPlayer instanceof Player) {
-                    ((Player) currentPlayer).sendMessage(I18n.format("user.auc.item_given_" + stat.name()));
-                }
-                new Message(I18n.format("user.auc.success_0")).append(itemStack)
-                        .appendFormat(plugin.i18n, "user.auc.success_1", currentPlayer.getName())
-                        .broadcast();
-                plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "SUCCESS"));
-                if (this.owner == null && plugin.balanceAPI.isEnabled()) {
-                    plugin.balanceAPI.deposit(currentHighPrice);
-                    plugin.config.save();
-                    plugin.logger.info(I18n.format("log.info.current_balance", plugin.balanceAPI.getBalance()));
-                }
-            } else {
+            if (!success) {
                 if (this.owner != null && this.itemStack != null) {
                     Utils.giveItem(this.owner, this.itemStack);
                 }
                 new Message(I18n.format("user.auc.fail")).append(itemStack).broadcast();
                 plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "NOT_ENOUGH_MONEY"));
+            } else {
+                new Message(I18n.format("user.auc.success_0")).append(itemStack)
+                                                              .appendFormat(plugin.i18n, "user.auc.success_1", currentPlayer.getName())
+                                                              .broadcast();
+                plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "SUCCESS"));
             }
         }
         this.itemStack = null;
