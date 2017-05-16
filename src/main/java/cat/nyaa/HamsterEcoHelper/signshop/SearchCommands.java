@@ -108,7 +108,6 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                 if (id == -1) {
                     materialLimit = Material.valueOf(itemLimit.toUpperCase());
                 } else {
-                    //noinspection deprecation
                     materialLimit = Material.getMaterial(id);
                     if (materialLimit == null) throw new IllegalArgumentException();
                 }
