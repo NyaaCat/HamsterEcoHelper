@@ -25,6 +25,7 @@ public class Events implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().getHolder() instanceof ShopGUI ||

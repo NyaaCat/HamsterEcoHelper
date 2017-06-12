@@ -75,6 +75,7 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                         .send(sender));
     }
 
+    @SuppressWarnings("deprecation")
     @SubCommand(value = "search", permission = "heh.signshop.search")
     @DefaultCommand(permission = "heh.signshop.search")
     public void search(CommandSender sender, Arguments args) {
@@ -107,7 +108,6 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                 if (id == -1) {
                     materialLimit = Material.valueOf(itemLimit.toUpperCase());
                 } else {
-                    //noinspection deprecation
                     materialLimit = Material.getMaterial(id);
                     if (materialLimit == null) throw new IllegalArgumentException();
                 }
@@ -129,101 +129,106 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
         if (matchLore) cd += plugin.config.search_lore_cooldown_tick * 50;
         if (matchEnch) cd += plugin.config.search_ench_cooldown_tick * 50;
         cooldown.put(searcher, cd);
-
         List<SignShop> signShops = plugin.database.getSignShops();
-        LinkedListMultimap<SignShop, ShopItem> match = LinkedListMultimap.create();
 
-        for (SignShop shop : signShops) {
-            UUID owner = shop.getOwner();
-            Set<Sign> signOwned = plugin.signShopManager.signLocations
-                                              .stream()
-                                              .filter(sign -> sign.getOwner().equals(owner))
-                                              .filter(sign -> sign.shopMode == ShopMode.SELL)
-                                              .collect(Collectors.toSet());
-            if (signOwned.isEmpty()) continue;
-            if (ownerLimit != null && !ownerLimit.equalsIgnoreCase(Bukkit.getOfflinePlayer(owner).getName())) continue;
-            if (rangeLimit != -1 &&
-                    signOwned.stream().noneMatch(sign ->
-                            (curLoc.getWorld().equals(sign.getLocation().getWorld()))
-                                    && (curLoc.distance(sign.getLocation()) < rangeLimit))) {
-                continue;
+        Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            final LinkedListMultimap<SignShop, ShopItem> match = LinkedListMultimap.create();
+            for (SignShop shop : signShops) {
+                UUID owner = shop.getOwner();
+                Set<Sign> signOwned = plugin.signShopManager.signLocations
+                        .stream()
+                        .filter(sign -> sign.getOwner().equals(owner))
+                        .filter(sign -> sign.shopMode == ShopMode.SELL)
+                        .collect(Collectors.toSet());
+                if (signOwned.isEmpty()) continue;
+                if (ownerLimit != null && !ownerLimit.equalsIgnoreCase(Bukkit.getOfflinePlayer(owner).getName()))
+                    continue;
+                if (rangeLimit != -1 &&
+                        signOwned.stream().noneMatch(sign ->
+                                (curLoc.getWorld().equals(sign.getLocation().getWorld()))
+                                        && (curLoc.distance(sign.getLocation()) < rangeLimit))) {
+                    continue;
+                }
+                List<ShopItem> items = shop.getItems(ShopMode.SELL);
+                items.stream().filter(
+                        shopItem -> {
+                            boolean loreMatch;
+                            boolean enchMatch;
+                            ItemStack stack = shopItem.getItemStack(shopItem.getAmount());
+                            ItemMeta meta = stack.getItemMeta();
+                            if (materialLimit != null && !materialLimit.equals(stack.getType())) return false;
+                            if (matchLore) {
+                                if (meta.hasLore()) {
+                                    loreMatch = meta.getLore().stream()
+                                                    .map(ChatColor::stripColor)
+                                                    .map(String::toLowerCase)
+                                                    .anyMatch(lore -> keywords.stream().anyMatch(lore::contains) || "*".equals(keywords.get(0)));
+                                    if (loreMatch) return true;
+                                }
+                            }
+                            if (matchLoreOnly) return false;
+                            if (matchEnch) {
+                                Map<Enchantment, Integer> enchants = meta.getEnchants();
+                                if (meta instanceof EnchantmentStorageMeta) {
+                                    enchants = ((EnchantmentStorageMeta) meta).getStoredEnchants();
+                                }
+                                enchMatch = enchants.entrySet()
+                                                    .stream().flatMap(enchEntry ->
+                                                Stream.of(
+                                                        I18nUtils.getEnchantmentDisplayName(enchEntry, "zh_cn"),
+                                                        I18nUtils.getEnchantmentDisplayName(enchEntry, "en_us")
+                                                )
+                                        )
+                                                    .map(ChatColor::stripColor)
+                                                    .map(String::toLowerCase)
+                                                    .anyMatch(ench -> keywords.stream().anyMatch(ench::contains) || "*".equals(keywords.get(0)));
+                                if (enchMatch) return true;
+                            }
+                            if (matchEnchOnly) return false;
+                            String zhName = ChatColor.stripColor(I18nUtils.getItemDisplayName(stack, "zh_cn")).toLowerCase();
+                            String enName = ChatColor.stripColor(I18nUtils.getItemDisplayName(stack, "en_us")).toLowerCase();
+                            return "*".equals(keywords.get(0)) || keywords.stream().anyMatch(zhName::contains) || keywords.stream().anyMatch(enName::contains);
+                        }
+                ).forEach(shopItem -> match.put(shop, shopItem));
             }
-            List<ShopItem> items = shop.getItems(ShopMode.SELL);
-            items.stream().filter(
-                    shopItem -> {
-                        boolean loreMatch;
-                        boolean enchMatch;
-                        ItemStack stack = shopItem.getItemStack(shopItem.getAmount());
-                        ItemMeta meta = stack.getItemMeta();
-                        if (materialLimit != null && !materialLimit.equals(stack.getType())) return false;
-                        if (matchLore) {
-                            if (meta.hasLore()) {
-                                loreMatch = meta.getLore().stream()
-                                                .map(ChatColor::stripColor)
-                                                .map(String::toLowerCase)
-                                                .anyMatch(lore -> keywords.stream().anyMatch(lore::contains) || "*".equals(keywords.get(0)));
-                                if (loreMatch) return true;
-                            }
-                        }
-                        if (matchLoreOnly) return false;
-                        if (matchEnch) {
-                            Map<Enchantment, Integer> enchants = meta.getEnchants();
-                            if (meta instanceof EnchantmentStorageMeta) {
-                                enchants = ((EnchantmentStorageMeta) meta).getStoredEnchants();
-                            }
-                            enchMatch = enchants.entrySet()
-                                                .stream().flatMap(enchEntry ->
-                                            Stream.of(
-                                                    I18nUtils.getEnchantmentDisplayName(enchEntry, "zh_cn"),
-                                                    I18nUtils.getEnchantmentDisplayName(enchEntry, "en_us")
-                                            )
-                                    )
-                                                .map(ChatColor::stripColor)
-                                                .map(String::toLowerCase)
-                                                .anyMatch(ench -> keywords.stream().anyMatch(ench::contains) || "*".equals(keywords.get(0)));
-                            if (enchMatch) return true;
-                        }
-                        if (matchEnchOnly) return false;
-                        String zhName = ChatColor.stripColor(I18nUtils.getItemDisplayName(stack, "zh_cn")).toLowerCase();
-                        String enName = ChatColor.stripColor(I18nUtils.getItemDisplayName(stack, "en_us")).toLowerCase();
-                        return "*".equals(keywords.get(0)) || keywords.stream().anyMatch(zhName::contains) || keywords.stream().anyMatch(enName::contains);
+            if (match.isEmpty()) {
+                Bukkit.getServer().getScheduler().runTask(plugin, () -> msg(sender, "user.signshop.search.no_result"));
+                return;
+            }
+            Bukkit.getServer().getScheduler().runTask(plugin, () -> {
+                match.keySet().forEach(ss -> {
+                    Stream<Sign> sis = plugin.signShopManager.signLocations.stream().filter(sign -> sign.getOwner().equals(ss.getOwner())).filter(sign -> sign.shopMode == ShopMode.SELL);
+                    if (curLoc != null) {
+                        sis = sis.filter(sign -> curLoc.getWorld().equals(sign.getLocation().getWorld()))
+                                 .sorted(Comparator.comparingDouble(a -> a.getLocation().distance(curLoc)));
+                        if (rangeLimit != -1)
+                            sis = sis.filter(sign -> curLoc.distance(sign.getLocation()) < rangeLimit);
                     }
-            ).forEach(shopItem -> match.put(shop, shopItem));
-        }
-        if (match.isEmpty()) {
-            msg(sender, "user.signshop.search.no_result");
-            return;
-        }
-        match.keySet().forEach(ss -> {
-            Stream<Sign> sis = plugin.signShopManager.signLocations.stream().filter(sign -> sign.getOwner().equals(ss.getOwner())).filter(sign -> sign.shopMode == ShopMode.SELL);
-            if (curLoc != null) {
-                sis = sis.filter(sign -> curLoc.getWorld().equals(sign.getLocation().getWorld()))
-                         .sorted(Comparator.comparingDouble(a -> a.getLocation().distance(curLoc)));
-                if (rangeLimit != -1) sis = sis.filter(sign -> curLoc.distance(sign.getLocation()) < rangeLimit);
-            }
-            sis.findFirst().ifPresent(si -> msg(sender, "user.signshop.search.sign_of", ss.getPlayer().getName(), si.getX(), si.getY(), si.getZ()));
+                    sis.findFirst().ifPresent(si -> msg(sender, "user.signshop.search.sign_of", ss.getPlayer().getName(), si.getX(), si.getY(), si.getZ()));
+                });
+                List<Map.Entry<SignShop, ShopItem>> result = match.entries().stream().sorted(Comparator.comparingDouble(a -> a.getValue().getUnitPrice())).collect(Collectors.toList());
+                searchResult.put(searcher, result);
+                msg(sender, "user.signshop.search.page", 1, (int) Math.ceil(result.size() / 9.0d));
+                if (player != null) {
+                    result.stream().limit(9).forEach(pair ->
+                            new Message("")
+                                    .append(I18n.format("user.signshop.search.result",
+                                            Bukkit.getOfflinePlayer(pair.getKey().getOwner())
+                                                  .getName(),
+                                            pair.getValue().getUnitPrice()
+                                    ), pair.getValue().itemStack)
+                                    .send(player));
+                } else {
+                    result.stream().limit(9).forEach(pair ->
+                            sender.sendMessage(new Message("")
+                                    .append(I18n.format("user.signshop.search.result",
+                                            Bukkit.getOfflinePlayer(pair.getKey().getOwner())
+                                                  .getName(),
+                                            pair.getValue().getUnitPrice()
+                                    ), pair.getValue().itemStack)
+                                    .inner.toLegacyText()));
+                }
+            });
         });
-        List<Map.Entry<SignShop, ShopItem>> result = match.entries().stream().sorted(Comparator.comparingDouble(a -> a.getValue().getUnitPrice())).collect(Collectors.toList());
-        searchResult.put(searcher, result);
-        msg(sender, "user.signshop.search.page", 1, (int) Math.ceil(result.size() / 9.0d));
-        if (player != null) {
-            result.stream().limit(9).forEach(pair ->
-                    new Message("")
-                            .append(I18n.format("user.signshop.search.result",
-                                    Bukkit.getOfflinePlayer(pair.getKey().getOwner())
-                                          .getName(),
-                                    pair.getValue().getUnitPrice()
-                            ), pair.getValue().itemStack)
-                            .send(player));
-        } else {
-            result.stream().limit(9).forEach(pair ->
-                    sender.sendMessage(new Message("")
-                            .append(I18n.format("user.signshop.search.result",
-                                    Bukkit.getOfflinePlayer(pair.getKey().getOwner())
-                                          .getName(),
-                                    pair.getValue().getUnitPrice()
-                            ), pair.getValue().itemStack)
-                            .inner.toLegacyText()));
-        }
     }
 }

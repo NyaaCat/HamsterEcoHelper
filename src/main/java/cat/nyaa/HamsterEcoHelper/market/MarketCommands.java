@@ -49,6 +49,7 @@ public class MarketCommands extends CommandReceiver<HamsterEcoHelper> {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @SubCommand(value = "view", permission = "heh.view")
     public void view(CommandSender sender, Arguments args) {
         Player player = asPlayer(sender);
