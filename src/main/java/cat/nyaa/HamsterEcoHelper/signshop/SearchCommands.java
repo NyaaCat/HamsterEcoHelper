@@ -75,6 +75,7 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                         .send(sender));
     }
 
+    @SuppressWarnings("deprecation")
     @SubCommand(value = "search", permission = "heh.signshop.search")
     @DefaultCommand(permission = "heh.signshop.search")
     public void search(CommandSender sender, Arguments args) {
