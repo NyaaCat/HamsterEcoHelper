@@ -1,6 +1,9 @@
 plugins {
     id 'java'
-    id 'org.inferred.processors' version '1.2.11'
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 sourceCompatibility = 1.8
@@ -57,13 +60,15 @@ dependencies {
         transitive = false
     }
     compile files('lib/LocketteProAPI.jar')
-    processor 'org.librazy:NyaaUtilsLangChecker:1.0-SNAPSHOT'
+    compile ('org.librazy:NyaaUtilsLangChecker:1.0-SNAPSHOT') {
+        transitive = false
+    }
 }
 
 String nyaaCoreLangDir = System.getenv("NYAACORE_LANG_DIR")
 
 compileJava {
-    options.compilerArgs += ["-Xplugin:NyaaUtilsLangAnnotationProcessor"]
+    options.compilerArgs += ["-Xlint:deprecation", "-Xlint:unchecked"]
     if (nyaaCoreLangDir != null) {
         options.compilerArgs += ["-ALANG_DIR_ADDITIONAL_PATH=" + nyaaCoreLangDir]
     }

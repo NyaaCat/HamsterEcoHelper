@@ -184,13 +184,14 @@ public class AuctionInstance {
                     if (currentHighPrice >= 0)
                         new Message(I18n.format("user.auc.third", currentHighPrice)).broadcast(new Permission("heh.bid"));
                     finish();
-                    /*
+
                     stage = 3;
-                    checkPointListener = new CheckPointListener();
-                    checkPointListener.runTaskLater(plugin, timeout);
                     break;
                 case 3:
-                    finish();*/
+                    // BukkitRunnable sucks again
+                    checkPointListener.cancel();
+                    checkPointListener = null;
+                    break;
             }
         }
 
