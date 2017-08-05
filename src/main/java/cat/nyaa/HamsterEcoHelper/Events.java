@@ -8,11 +8,11 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -55,7 +55,7 @@ public class Events implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerPickupItem(PlayerPickupItemEvent e) {
+    public void onPickupItem(EntityPickupItemEvent e) {
         if (e.getItem() != null && MarketManager.isMarketItem(e.getItem().getItemStack())) {
             e.getItem().setItemStack(new ItemStack(Material.AIR));
             e.setCancelled(true);
