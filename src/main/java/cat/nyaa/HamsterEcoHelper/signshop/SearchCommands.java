@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.NumberConversions;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +39,13 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                         .build();
     private HashMap<UUID, Long> cooldown = new HashMap<>();
     private HamsterEcoHelper plugin;
+
+    private static double distance(Location loc, Sign sign) {
+        return Math.sqrt(
+                NumberConversions.square(loc.getX() - sign.x) +
+                        NumberConversions.square(loc.getY() - sign.y) +
+                        NumberConversions.square(loc.getZ() - sign.z));
+    }
 
     public SearchCommands(Object plugin, LanguageRepository i18n) {
         super((HamsterEcoHelper) plugin, i18n);
@@ -66,13 +74,13 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
         }
         msg(sender, "user.signshop.search.page", page + 1, (int) Math.ceil(result.size() / 9.0d));
         result.stream().skip(start).limit(9).forEach(pair ->
-                new Message("")
-                        .append(I18n.format("user.signshop.search.result",
-                                Bukkit.getOfflinePlayer(pair.getKey().getOwner())
-                                      .getName(),
-                                pair.getValue().getUnitPrice()
-                        ), pair.getValue().itemStack)
-                        .send(sender));
+                                                             new Message("")
+                                                                     .append(I18n.format("user.signshop.search.result",
+                                                                             Bukkit.getOfflinePlayer(pair.getKey().getOwner())
+                                                                                   .getName(),
+                                                                             pair.getValue().getUnitPrice()
+                                                                     ), pair.getValue().itemStack)
+                                                                     .send(sender));
     }
 
     @SuppressWarnings("deprecation")
@@ -129,6 +137,9 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
         if (matchLore) cd += plugin.config.search_lore_cooldown_tick * 50;
         if (matchEnch) cd += plugin.config.search_ench_cooldown_tick * 50;
         cooldown.put(searcher, cd);
+
+        UUID limitUuid = ownerLimit == null ? null : Bukkit.getOfflinePlayer(ownerLimit).getUniqueId();
+
         List<SignShop> signShops = plugin.database.getSignShops();
 
         Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -136,17 +147,17 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
             for (SignShop shop : signShops) {
                 UUID owner = shop.getOwner();
                 Set<Sign> signOwned = plugin.signShopManager.signLocations
-                        .stream()
-                        .filter(sign -> sign.getOwner().equals(owner))
-                        .filter(sign -> sign.shopMode == ShopMode.SELL)
-                        .collect(Collectors.toSet());
+                                              .stream()
+                                              .filter(sign -> sign.getOwner().equals(owner))
+                                              .filter(sign -> sign.shopMode == ShopMode.SELL)
+                                              .collect(Collectors.toSet());
                 if (signOwned.isEmpty()) continue;
-                if (ownerLimit != null && !ownerLimit.equalsIgnoreCase(Bukkit.getOfflinePlayer(owner).getName()))
+                if (ownerLimit != null && limitUuid != owner)
                     continue;
                 if (rangeLimit != -1 &&
-                        signOwned.stream().noneMatch(sign ->
-                                (curLoc.getWorld().equals(sign.getLocation().getWorld()))
-                                        && (curLoc.distance(sign.getLocation()) < rangeLimit))) {
+                            signOwned.stream().noneMatch(sign ->
+                                                                 curLoc.getWorld().getName().equals(sign.getWorld())
+                                                                         && distance(curLoc, sign) < rangeLimit)) {
                     continue;
                 }
                 List<ShopItem> items = shop.getItems(ShopMode.SELL);
@@ -174,10 +185,10 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                                 }
                                 enchMatch = enchants.entrySet()
                                                     .stream().flatMap(enchEntry ->
-                                                Stream.of(
-                                                        I18nUtils.getEnchantmentDisplayName(enchEntry, "zh_cn"),
-                                                        I18nUtils.getEnchantmentDisplayName(enchEntry, "en_us")
-                                                )
+                                                                              Stream.of(
+                                                                                      I18nUtils.getEnchantmentDisplayName(enchEntry, "zh_cn"),
+                                                                                      I18nUtils.getEnchantmentDisplayName(enchEntry, "en_us")
+                                                                              )
                                         )
                                                     .map(ChatColor::stripColor)
                                                     .map(String::toLowerCase)
@@ -211,22 +222,22 @@ public class SearchCommands extends CommandReceiver<HamsterEcoHelper> {
                 msg(sender, "user.signshop.search.page", 1, (int) Math.ceil(result.size() / 9.0d));
                 if (player != null) {
                     result.stream().limit(9).forEach(pair ->
-                            new Message("")
-                                    .append(I18n.format("user.signshop.search.result",
-                                            Bukkit.getOfflinePlayer(pair.getKey().getOwner())
-                                                  .getName(),
-                                            pair.getValue().getUnitPrice()
-                                    ), pair.getValue().itemStack)
-                                    .send(player));
+                                                             new Message("")
+                                                                     .append(I18n.format("user.signshop.search.result",
+                                                                             Bukkit.getOfflinePlayer(pair.getKey().getOwner())
+                                                                                   .getName(),
+                                                                             pair.getValue().getUnitPrice()
+                                                                     ), pair.getValue().itemStack)
+                                                                     .send(player));
                 } else {
                     result.stream().limit(9).forEach(pair ->
-                            sender.sendMessage(new Message("")
-                                    .append(I18n.format("user.signshop.search.result",
-                                            Bukkit.getOfflinePlayer(pair.getKey().getOwner())
-                                                  .getName(),
-                                            pair.getValue().getUnitPrice()
-                                    ), pair.getValue().itemStack)
-                                    .inner.toLegacyText()));
+                                                             sender.sendMessage(new Message("")
+                                                                                        .append(I18n.format("user.signshop.search.result",
+                                                                                                Bukkit.getOfflinePlayer(pair.getKey().getOwner())
+                                                                                                      .getName(),
+                                                                                                pair.getValue().getUnitPrice()
+                                                                                        ), pair.getValue().itemStack)
+                                                                                        .inner.toLegacyText()));
                 }
             });
         });
