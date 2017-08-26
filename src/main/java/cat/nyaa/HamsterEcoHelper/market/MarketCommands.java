@@ -11,8 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.text.DecimalFormat;
-
 public class MarketCommands extends CommandReceiver<HamsterEcoHelper> {
     private HamsterEcoHelper plugin;
 
@@ -38,6 +36,10 @@ public class MarketCommands extends CommandReceiver<HamsterEcoHelper> {
             }
             ItemStack item = getItemInHand(sender);
             if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
+                if (MarketManager.containsBook(item)) {
+                    msg(sender, "user.error.shulker_box_contains_book");
+                    return;
+                }
                 if (plugin.marketManager.offer(player, item, price)) {
                     player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
                 }

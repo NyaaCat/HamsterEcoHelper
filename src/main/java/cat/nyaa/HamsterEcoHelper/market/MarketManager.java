@@ -11,7 +11,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -135,5 +138,21 @@ public class MarketManager extends BukkitRunnable {
                 plugin.logger.info(I18n.format("log.info.placement_fee", itemCount, fail));
             }
         }
+    }
+
+    public static boolean containsBook(ItemStack item) {
+        if (item.hasItemMeta() && item.getItemMeta() instanceof BlockStateMeta) {
+            BlockStateMeta blockStateMeta = (BlockStateMeta) item.getItemMeta();
+            if (blockStateMeta.hasBlockState() && blockStateMeta.getBlockState() instanceof InventoryHolder) {
+                InventoryHolder inventoryHolder = (InventoryHolder) blockStateMeta.getBlockState();
+                for (ItemStack itemStack : inventoryHolder.getInventory().getContents()) {
+                    if (itemStack != null && itemStack.getType() != Material.AIR &&
+                            itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof BookMeta) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

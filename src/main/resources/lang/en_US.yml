@@ -69,6 +69,7 @@ user:
     command_exception: "Internal server error. Unable to run command."
     bad_enum: "Not valid for enum type: %s. Values: %s"
     unknown_item: "unknown item: %s"
+    shulker_box_contains_book: "You can't sell shulker box contains book"
   warn:
     no_enough_money: "You do not have that much money"
     not_high_enough: "Invalid price, at least %.2f$"
