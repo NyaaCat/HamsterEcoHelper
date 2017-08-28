@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class RequisitionCommands extends CommandReceiver<HamsterEcoHelper> {
+public class RequisitionCommands extends CommandReceiver {
     private HamsterEcoHelper plugin;
 
     public RequisitionCommands(Object plugin, LanguageRepository i18n) {

@@ -9,7 +9,7 @@ import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LottoCommands extends CommandReceiver<HamsterEcoHelper> {
+public class LottoCommands extends CommandReceiver {
 
     private final HamsterEcoHelper plugin;
 

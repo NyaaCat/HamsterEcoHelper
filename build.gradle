@@ -45,6 +45,11 @@ repositories {
         name 'nu-langchecker'
         url 'https://raw.githubusercontent.com/Librazy/NyaaUtilsLangChecker/maven-repo'
     }
+
+    maven {
+        name 'langutils-repo'
+        url 'https://raw.github.com/MascusJeoraly/LanguageUtils/mvn-repo/'
+    }
 }
 
 dependencies {
@@ -53,7 +58,7 @@ dependencies {
     compile('cat.nyaa:nyaautils:4.0-SNAPSHOT') {
         transitive = false
     }
-    compile('cat.nyaa:nyaacore:3.0-SNAPSHOT') {
+    compile('cat.nyaa:nyaacore:4.0-SNAPSHOT') {
         transitive = false
     }
     compile('net.ess3:Essentials:2.13-SNAPSHOT') {
@@ -61,6 +66,9 @@ dependencies {
     }
     compile files('lib/LocketteProAPI.jar')
     compile ('org.librazy:NyaaUtilsLangChecker:1.0-SNAPSHOT') {
+        transitive = false
+    }
+    compile('com.meowj:LangUtils:1.9') {
         transitive = false
     }
 }

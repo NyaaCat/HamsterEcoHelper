@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BalanceCommands extends CommandReceiver<HamsterEcoHelper> {
+public class BalanceCommands extends CommandReceiver {
     private HamsterEcoHelper plugin;
 
     public BalanceCommands(Object plugin, LanguageRepository i18n) {

@@ -8,7 +8,7 @@ import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class StorageCommands extends CommandReceiver<HamsterEcoHelper> {
+public class StorageCommands extends CommandReceiver {
 
     private final HamsterEcoHelper plugin;
 

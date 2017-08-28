@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
-public class SignShopCommands extends CommandReceiver<HamsterEcoHelper> {
+public class SignShopCommands extends CommandReceiver {
     @SubCommand("storage")
     public StorageCommands storageCommands;
     @SubCommand("lotto")

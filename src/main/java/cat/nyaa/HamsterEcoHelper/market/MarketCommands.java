@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class MarketCommands extends CommandReceiver<HamsterEcoHelper> {
+public class MarketCommands extends CommandReceiver {
     private HamsterEcoHelper plugin;
 
     public MarketCommands(Object plugin, LanguageRepository i18n) {

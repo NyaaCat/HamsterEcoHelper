@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandHandler extends CommandReceiver<HamsterEcoHelper> {
+public class CommandHandler extends CommandReceiver {
 
     private final HamsterEcoHelper plugin;
     @SubCommand("auction")

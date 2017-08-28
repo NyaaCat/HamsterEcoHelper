@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class AuctionCommands extends CommandReceiver<HamsterEcoHelper> {
+public class AuctionCommands extends CommandReceiver {
     private HamsterEcoHelper plugin;
 
     public AuctionCommands(Object plugin, LanguageRepository i18n) {
