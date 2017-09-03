@@ -19,4 +19,22 @@ public class QuestCommon {
             return null;
         }
     }
+
+    public static boolean hasStation(Location loc) {
+        return HamsterEcoHelper.instance.database.query(QuestStation.class)
+                .whereEq("world", loc.getWorld().getName())
+                .whereEq("x", loc.getBlockX())
+                .whereEq("y", loc.getBlockY())
+                .whereEq("z", loc.getBlockZ())
+                .count() > 0;
+    }
+
+    public static void removeStation(Location loc) {
+        HamsterEcoHelper.instance.database.query(QuestStation.class)
+                .whereEq("world", loc.getWorld().getName())
+                .whereEq("x", loc.getBlockX())
+                .whereEq("y", loc.getBlockY())
+                .whereEq("z", loc.getBlockZ())
+                .delete();
+    }
 }

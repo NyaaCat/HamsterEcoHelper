@@ -153,6 +153,7 @@ public class Utils {
     }
 
     public static List<ItemStack> decodeItemStacks(String items) {
+        if (items.length() <= 0) return new ArrayList<>();
         String[] a = items.split(",");
         List<ItemStack> r = new ArrayList<>();
         for (String str : a) r.add(decodeItemStack(str));

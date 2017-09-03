@@ -7,8 +7,12 @@ import cat.nyaa.nyaacore.database.PrimaryKey;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @DataTable("quest_entry")
 public class QuestEntry {
@@ -21,39 +25,39 @@ public class QuestEntry {
 
     @DataColumn
     @PrimaryKey
-    public String id;
+    public String id = UUID.randomUUID().toString();
+    @DataColumn("station_id")
+    public String stationId = ""; // which station this quest is in
     @DataColumn
-    public String station_id; // which station this quest is in
+    public String questName = "";
     @DataColumn
-    public String questName;
+    public String questDescription = "";
     @DataColumn
-    public String questDescription;
+    public String publisher = ""; // uuid of the player who published the quest
     @DataColumn
-    public String publisher; // uuid of the player who published the quest
+    public Boolean claimable = false; // if this quest can be claimed by a player
     @DataColumn
-    public Boolean claimable; // if this quest can be claimed by a player
+    public Boolean isRecurrentQuest = false; // if the quest can be claimed by many players. NOTE: the rewards will be created from nowhere (i.e. duplicated)
     @DataColumn
-    public Boolean isRecurrentQuest; // if the quest can be claimed by many players. NOTE: the rewards will be created from nowhere (i.e. duplicated)
-    @DataColumn
-    public Long singlePlayerClaimLimit; // how many time a single player can claim this quest, valid only if is recurrent quest
+    public Long singlePlayerClaimLimit = -1L; // how many time a single player can claim this quest, valid only if is recurrent quest
 
-    public QuestType prerequisiteType; // NONE, ITEM or MONEY
-    public List<ItemStack> prerequisiteItems;
+    public QuestType prerequisiteType = QuestType.NONE; // NONE, ITEM or MONEY
+    public List<ItemStack> prerequisiteItems = new ArrayList<>();
     @DataColumn("prereq_money")
-    public Double prerequisiteMoney;
+    public Double prerequisiteMoney = 0D;
 
-    public List<ItemStack> earlyRewardItems; // items will be given to player when they claimed the quest
+    public List<ItemStack> earlyRewardItems = new ArrayList<>(); // items will be given to player when they claimed the quest
 
-    public QuestType targetType; // NONE, ITEM or OTHER
-    public List<ItemStack> targetItems;
+    public QuestType targetType = QuestType.NONE; // ITEM or OTHER
+    public List<ItemStack> targetItems = new ArrayList<>();
 
-    public QuestType rewardType; // NONE, ITEM or MONEY
-    public List<ItemStack> rewardItem;
+    public QuestType rewardType = QuestType.NONE; // NONE, ITEM or MONEY
+    public List<ItemStack> rewardItem = new ArrayList<>();
     @DataColumn("reward_money")
-    public Double rewardMoney;
+    public Double rewardMoney = 0D;
 
-    public ZonedDateTime questExpire; // when will the quest expire
-    public Duration questTimeLimit; // the time limit the quest should be finished once it's claimed
+    public ZonedDateTime questExpire = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault()); // when will the quest expire
+    public Duration questTimeLimit = Duration.parse("PT-1H"); // the time limit the quest should be finished once it's claimed
 
     @DataColumn("prereq_type")
     public String getPrerequisiteType() {

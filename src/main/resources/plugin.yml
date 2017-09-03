@@ -42,8 +42,8 @@ permissions:
       heh.signshop.lotto: true
       heh.signshop.search: true
       heh.ads: true
-      heh.quest.publish: true
-      heh.quest.accept: true
+      heh.quest.post: true
+      heh.quest.claim: true
   heh.admin:
     description: Permission node for operators
     default: op

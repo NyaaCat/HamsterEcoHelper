@@ -4,6 +4,7 @@ import cat.nyaa.HamsterEcoHelper.ads.AdsCommands;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
+import cat.nyaa.HamsterEcoHelper.quest.QuestCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
 import cat.nyaa.HamsterEcoHelper.signshop.SearchCommands;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopCommands;
@@ -38,6 +39,8 @@ public class CommandHandler extends CommandReceiver {
     public AdsCommands adsCommands;
     @SubCommand("search")
     public SearchCommands searchCommands;
+    @SubCommand("quest")
+    public QuestCommands questCommands;
 
     public CommandHandler(HamsterEcoHelper plugin, LanguageRepository i18n) {
         super(plugin, i18n);

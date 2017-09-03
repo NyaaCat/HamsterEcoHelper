@@ -70,6 +70,7 @@ user:
     bad_enum: "Not valid for enum type: %s. Values: %s"
     unknown_item: "unknown item: %s"
     shulker_box_contains_book: "You can't sell shulker box contains book"
+    not_sign: "You must look at a sign"
   warn:
     no_enough_money: "You do not have that much money"
     not_high_enough: "Invalid price, at least %.2f$"
@@ -215,6 +216,43 @@ user:
   quest:
     invalid_fee: "Invalid posting fee."
     station_created: "Quest station created"
+    station_removed: "Quest station removed"
+    cannot_break: "You cannot break this station"
+    has_ongoing_quest: "There are quests in progress."
+    not_station: "Please look at a quest station sign."
+
+
+    wizard:
+      waiting_name: "Please type the quest name:"
+      waiting_description: "Please type the quest description:"
+      waiting_prereq_type: "Prerequisite type (item/money/none):"
+      waiting_prereq_money: "Prerequisite money amount:"
+      waiting_prereq_item: "Hold the item you want as prerequisite in hand and type \"add\" or \"end\""
+
+      waiting_early_reward_item: "Hold the item you want as early reward in hand and type \"add\" or \"end\""
+
+      waiting_target_type: "Target type (item/other):"
+      waiting_target_item: "Hold the item you want as target in hand and type \"add\" or \"end\""
+
+      waiting_reward_type: "Reward type (item/money/none):"
+      waiting_reward_money: "Reward money amount:"
+      waiting_reward_item: "Hold the item you want as reward in hand and type \"add\" or \"end\""
+
+      waiting_time_limit: "Time Limit for this quest?"
+      waiting_expire_in: "This quest expires in?"
+
+      waiting_is_recurrent: "Is this a recurrent quest(y/n)?"
+      waiting_claim_limit: "What's the claim limit for each player?"
+      waiting_enabled: "Should this quest be available now?"
+
+      finish: "Type \"confirm\" or \"cancel\" to complete the wizard."
+
+      at_least_one: "You need at least one item. Try again."
+      hold_item_plz: "Please hold a item in hand."
+      invalid_number: "Not a valid number. Try again."
+      invalid_time: "Not a valid time. Try again."
+      added: "Quest added."
+      cancelled: "Quest wizard cancelled."
 manual:
   no_description: "No description"
   no_usage: "No usage"
