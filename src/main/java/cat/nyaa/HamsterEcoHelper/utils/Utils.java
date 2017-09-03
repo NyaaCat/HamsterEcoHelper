@@ -2,6 +2,8 @@ package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
+import cat.nyaa.nyaacore.utils.ReflectionUtils;
+import com.google.common.io.BaseEncoding;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -9,9 +11,15 @@ import org.bukkit.inventory.ItemStack;
 import org.librazy.nyaautils_lang_checker.LangKey;
 import org.librazy.nyaautils_lang_checker.LangKeyType;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 public class Utils {
     public static final Random random = new Random();
@@ -87,5 +95,67 @@ public class Utils {
             itemName += "(" + item.getType().name() + ":" + item.getDurability() + ")";
         }
         return itemName;
+    }
+
+    public static String encodeItemStack(ItemStack item) {
+        byte[] nbt = ReflectionUtils.dumpRawNbt(item);
+        byte[] compressedNbt = null;
+        try {
+            Deflater compresser = new Deflater();
+            compresser.setInput(nbt);
+            compresser.finish();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            while (!compresser.finished()) {
+                byte[] buf = new byte[1024];
+                int len = compresser.deflate(buf);
+                bos.write(buf, 0, len);
+            }
+            compresser.end();
+            bos.close();
+            compressedNbt = bos.toByteArray();
+            return BaseEncoding.base64().encode(compressedNbt);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static ItemStack decodeItemStack(String item) {
+        byte[] nbt;
+        byte[] compressedNbt = BaseEncoding.base64().decode(item);
+
+        try {
+            Inflater decompresser = new Inflater();
+            decompresser.setInput(compressedNbt);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            while (!decompresser.finished()) {
+                byte[] buf = new byte[1024];
+                int len = decompresser.inflate(buf);
+                bos.write(buf, 0, len);
+            }
+            decompresser.end();
+            bos.close();
+            nbt = bos.toByteArray();
+            return ReflectionUtils.loadItemStackFromNbt(nbt);
+        } catch (DataFormatException | IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static String encodeItemStacks(List<ItemStack> items) {
+        if (items.size() <= 0) return "";
+        StringBuilder b = new StringBuilder();
+        b.append(encodeItemStack(items.get(0)));
+        for (int i=1;i<items.size();i++) {
+            b.append(",");
+            b.append(encodeItemStack(items.get(i)));
+        }
+        return b.toString();
+    }
+
+    public static List<ItemStack> decodeItemStacks(String items) {
+        String[] a = items.split(",");
+        List<ItemStack> r = new ArrayList<>();
+        for (String str : a) r.add(decodeItemStack(str));
+        return r;
     }
 }

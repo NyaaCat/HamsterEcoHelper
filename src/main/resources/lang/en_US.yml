@@ -212,6 +212,9 @@ user:
     unmute: "Unmute success."
     message: "[Ads by %s] &r%s&r"
     message_too_long: "ad text max length is %d"
+  quest:
+    invalid_fee: "Invalid posting fee."
+    station_created: "Quest station created"
 manual:
   no_description: "No description"
   no_usage: "No usage"
