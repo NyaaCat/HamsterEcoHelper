@@ -2,38 +2,50 @@ package cat.nyaa.HamsterEcoHelper.balance;
 
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import cat.nyaa.nyaacore.utils.IPCUtils;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class BalanceAPI extends BukkitRunnable {
-    private final HamsterEcoHelper plugin;
 
     public BalanceAPI(HamsterEcoHelper pl) {
-        plugin = pl;
-        runTaskTimer(plugin, 20, plugin.config.balance_SaveIntervalTicks);
-    }
-  
-    public boolean isEnabled() {
-        return plugin.config.enable_balance;
-    }
-
-    public double getBalance() {
-        return plugin.config.variablesConfig.balance;
-    }
-
-    public double setBalance(double money) {
-        return plugin.config.variablesConfig.balance = money;
+        try {
+            IPCUtils.registerMethod("heh_balance_enabled", BalanceAPI.class.getMethod("isEnabled"));
+            IPCUtils.registerMethod("heh_balance_get", BalanceAPI.class.getMethod("getBalance"));
+            IPCUtils.registerMethod("heh_balance_set", BalanceAPI.class.getMethod("setBalance", double.class));
+            IPCUtils.registerMethod("heh_balance_deposit", BalanceAPI.class.getMethod("deposit", double.class));
+            IPCUtils.registerMethod("heh_balance_withdraw", BalanceAPI.class.getMethod("withdraw", double.class));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        runTaskTimer(pl, 20, pl.config.balance_SaveIntervalTicks);
     }
 
-    public void withdraw(double money) {
-        plugin.config.variablesConfig.balance -= money;
+    public static boolean isEnabled() {
+        return HamsterEcoHelper.instance.config.enable_balance;
     }
 
-    public void deposit(double money) {
-        plugin.config.variablesConfig.balance += money;
+    public static double getBalance() {
+        return HamsterEcoHelper.instance.config.variablesConfig.balance;
+    }
+
+    public static double setBalance(double money) {
+        return HamsterEcoHelper.instance.config.variablesConfig.balance = money;
+    }
+
+    public static void withdraw(double money) {
+        if (isEnabled() && money > 0.0D) {
+            HamsterEcoHelper.instance.config.variablesConfig.balance -= money;
+        }
+    }
+
+    public static void deposit(double money) {
+        if (isEnabled() && money > 0.0D) {
+            HamsterEcoHelper.instance.config.variablesConfig.balance += money;
+        }
     }
 
     @Override
     public void run() {
-        plugin.config.variablesConfig.save();
+        HamsterEcoHelper.instance.config.variablesConfig.save();
     }
 }

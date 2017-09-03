@@ -32,11 +32,6 @@ repositories {
     }
 
     maven {
-        name 'nyaa'
-        url 'https://raw.githubusercontent.com/NyaaCat/nyaautils/maven-repo'
-    }
-
-    maven {
         name 'NyaaCore'
         url 'https://raw.githubusercontent.com/NyaaCat/NyaaCore/maven-repo'
     }
@@ -55,9 +50,6 @@ repositories {
 dependencies {
     compile 'org.spigotmc:spigot-api:1.12.1-R0.1-SNAPSHOT'
     compile 'net.milkbowl.vault:VaultAPI:1.6'
-    compile('cat.nyaa:nyaautils:4.0-SNAPSHOT') {
-        transitive = false
-    }
     compile('cat.nyaa:nyaacore:4.0-SNAPSHOT') {
         transitive = false
     }

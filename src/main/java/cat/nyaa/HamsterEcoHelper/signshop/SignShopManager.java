@@ -3,15 +3,14 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
-import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import cat.nyaa.nyaacore.Message;
-import com.google.common.collect.HashMultimap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -266,8 +265,7 @@ public class SignShopManager {
                             plugin.eco.deposit(player, price - tax);
                             plugin.eco.withdraw(shopOwner, price);
                             if (tax > 0.0D) {
-                                HamsterEcoHelperTransactionApiEvent event = new HamsterEcoHelperTransactionApiEvent(tax);
-                                plugin.getServer().getPluginManager().callEvent(event);
+                                BalanceAPI.deposit(tax);
                             }
                             new Message("").append(I18n.format("user.signshop.sell.success",
                                     shopOwner.getName(), price - tax), itemStack).send(player);

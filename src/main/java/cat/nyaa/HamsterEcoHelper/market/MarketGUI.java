@@ -6,7 +6,6 @@ import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopInventoryHolder;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
-import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.*;
 import org.bukkit.entity.Player;

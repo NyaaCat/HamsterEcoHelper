@@ -2,8 +2,8 @@ package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
 import cat.nyaa.nyaacore.utils.ReflectionUtils;
-import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
@@ -74,8 +74,7 @@ public class EconomyUtil {
             }
             step = 2;
             if (tax > 0.0D) {
-                HamsterEcoHelperTransactionApiEvent event = new HamsterEcoHelperTransactionApiEvent(tax);
-                plugin.getServer().getPluginManager().callEvent(event);
+                BalanceAPI.deposit(tax);
             }
             step = 3;
             Utils.GiveStat stat = Utils.giveItem(buyer, item);
@@ -91,8 +90,7 @@ public class EconomyUtil {
             switch (step) {
                 case 3:
                     plugin.getLogger().warning(I18n.format("log.error.transaction_fail_rollback_tax", tax));
-                    HamsterEcoHelperTransactionApiEvent rollbackEvent = new HamsterEcoHelperTransactionApiEvent(-tax);
-                    plugin.getServer().getPluginManager().callEvent(rollbackEvent);
+                    BalanceAPI.withdraw(tax);
                     //fallthrough
                 case 2:
                     boolean status2Seller = plugin.eco.withdraw(seller, price);

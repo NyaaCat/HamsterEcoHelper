@@ -1,9 +1,9 @@
 package cat.nyaa.HamsterEcoHelper;
 
+import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
 import cat.nyaa.HamsterEcoHelper.market.MarketGUI;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopGUI;
-import cat.nyaa.nyaautils.api.events.HamsterEcoHelperTransactionApiEvent;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -79,15 +79,8 @@ public class Events implements Listener {
             }
             if (penalty > 0.0D && plugin.eco.withdraw(event.getEntity(), penalty)) {
                 event.getEntity().sendMessage(I18n.format("user.death_penalty.message", penalty));
-                plugin.balanceAPI.deposit(penalty);
+                BalanceAPI.deposit(penalty);
             }
-        }
-    }
-
-    @EventHandler
-    public void onHamsterEcoHelperTransactionApiEvent(HamsterEcoHelperTransactionApiEvent event) {
-        if (plugin.balanceAPI.isEnabled() && event.getCost() > 0.0D) {
-            plugin.balanceAPI.deposit(event.getCost());
         }
     }
 }
