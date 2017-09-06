@@ -2,6 +2,7 @@ package cat.nyaa.HamsterEcoHelper.quest;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -27,6 +28,8 @@ public class QuestWizard implements Listener {
     private final QuestEntry entry;
     private State state;
     private Timer timer;
+
+    private final boolean reallyTakeItem;
 
     private class Timer extends BukkitRunnable {
         boolean cancelled = false;
@@ -91,12 +94,19 @@ public class QuestWizard implements Listener {
         p.sendMessage(I18n.format("user.quest.wizard." + state.name().toLowerCase()));
         Bukkit.getServer().getPluginManager().registerEvents(this, HamsterEcoHelper.instance);
         timer = new Timer(timeout);
+        this.reallyTakeItem = !p.hasPermission("heh.quest.admin");
     }
 
     private void cancelWizard() {
         state = CANCEL;
         player.sendMessage(I18n.format("user.quest.wizard.cancelled"));
         HandlerList.unregisterAll(this);
+        if (reallyTakeItem) { // give items back
+            for (ItemStack item : entry.rewardItem) {
+                Utils.giveItem(player, item);
+            }
+            HamsterEcoHelper.instance.eco.deposit(player, entry.rewardMoney);
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -157,7 +167,7 @@ public class QuestWizard implements Listener {
                     state = WAITING_TIME_LIMIT;
                 }
                 break;
-            case WAITING_REWARD_ITEM: // TODO remove item from user inventory
+            case WAITING_REWARD_ITEM:
                 if ("end".equalsIgnoreCase(input)) {
                     if (entry.rewardItem == null || entry.rewardItem.size() <= 0) {
                         player.sendMessage(I18n.format("user.quest.wizard.at_least_one"));
@@ -170,6 +180,9 @@ public class QuestWizard implements Listener {
                         player.sendMessage(I18n.format("user.quest.wizard.hold_item_plz"));
                     } else {
                         entry.rewardItem.add(stack.clone());
+                        if (reallyTakeItem) {
+                            player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                        }
                     }
                 }
                 break;
@@ -178,6 +191,7 @@ public class QuestWizard implements Listener {
                     double money = Double.parseDouble(input);
                     entry.rewardMoney = money;
                     state = WAITING_TIME_LIMIT;
+                    HamsterEcoHelper.instance.eco.withdraw(player, money);
                 } catch (NumberFormatException ex) {
                     player.sendMessage(I18n.format("user.quest.wizard.invalid_number"));
                 }

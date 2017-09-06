@@ -2,8 +2,10 @@ package cat.nyaa.HamsterEcoHelper.quest;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.quest.gui.QuestStationGui;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestEntry;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestStation;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,7 +16,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 
 import java.util.List;
 
@@ -75,6 +80,14 @@ public class QuestListener implements Listener {
             for (QuestEntry q : quests) {
                 event.getPlayer().sendMessage("QUEST: " + q.questName);
             }
+            QuestStationGui.getStationGui(station).openFor(event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClicked(InventoryClickEvent ev) {
+        if (ev.getClickedInventory().getHolder() instanceof QuestStationGui) {
+            ((QuestStationGui)ev.getClickedInventory().getHolder()).onInventoryClicked(ev);
         }
     }
 }
