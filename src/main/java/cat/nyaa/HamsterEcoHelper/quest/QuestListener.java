@@ -17,6 +17,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -75,22 +76,23 @@ public class QuestListener implements Listener {
             Block block = event.getClickedBlock();
             QuestStation station = QuestCommon.toQuestStation(block.getLocation());
             if (station == null) return;
-            event.getPlayer().sendMessage("Station clicked");
-            List<QuestEntry> quests = plugin.database.query(QuestEntry.class).whereEq("station_id", station.id).select();
-            for (QuestEntry q : quests) {
-                event.getPlayer().sendMessage("QUEST: " + q.questName);
-            }
             QuestStationGui.getStationGui(station).openFor(event.getPlayer());
         }
     }
 
     @EventHandler
     public void onInventoryClicked(InventoryClickEvent ev) {
-        if (ev.getClickedInventory().getHolder() instanceof QuestStationGui) {
-            ((QuestStationGui)ev.getClickedInventory().getHolder()).onInventoryClicked(ev);
+        if (ev.getClickedInventory() == null) return;
+        if (ev.getClickedInventory().getHolder() instanceof QuestStationGui && ev.getWhoClicked() instanceof Player) {
+            ((QuestStationGui)ev.getClickedInventory().getHolder()).onInventoryClicked(ev, ev.getClickedInventory(), (Player) ev.getWhoClicked());
         }
-        if (ev.getClickedInventory().getHolder() == plugin.commandHandler.questCommands.gui) {
-            plugin.commandHandler.questCommands.gui.onInventoryClicked(ev);
+    }
+
+    @EventHandler
+    public void onInventoryClosed(InventoryCloseEvent ev) {
+        if (ev.getInventory() == null) return;
+        if (ev.getInventory().getHolder() instanceof QuestStationGui) {
+            ((QuestStationGui)ev.getInventory().getHolder()).onInventoryClosed(ev);
         }
     }
 }

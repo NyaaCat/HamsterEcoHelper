@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +22,7 @@ import java.util.UUID;
  * otherwise synchronization issues will occur
  */
 public abstract class PaginatedListGui implements InventoryHolder {
+    // TODO openedUI & openedUiPages desync handling
     protected final Map<UUID, Inventory> openedUI = new TreeMap<>();
     protected final Map<UUID, Integer> openedUiPages = new TreeMap<>(); // pages count from 0
     protected final String basicTitle;
@@ -34,7 +36,6 @@ public abstract class PaginatedListGui implements InventoryHolder {
 
     protected PaginatedListGui(String title) {
         basicTitle = title;
-        contentChanged();
     }
 
     /**
@@ -113,34 +114,36 @@ public abstract class PaginatedListGui implements InventoryHolder {
     /**
      * event callback.
      * plugins are required to register their own listener.
-     * this may be changed when this API gets merged into NyaaCore.
+     * TODO this may be changed when this API gets merged into NyaaCore.
+     *
      * @param ev
      */
-    public void onInventoryClicked(InventoryClickEvent ev) {
+    public void onInventoryClicked(InventoryClickEvent ev, Inventory inv, Player p) {
         // TODO change all System.err
+        if (ev.getClickedInventory() != inv) throw new IllegalArgumentException();
+        if (inv == null) throw new IllegalArgumentException();
+        if (this != inv.getHolder()) throw new IllegalArgumentException();
+        if (p == null || p != ev.getWhoClicked()) throw new IllegalArgumentException();
+        if (!ev.isLeftClick()) return;
+
         ev.setCancelled(true);
         if (guiFrozen) return;
-        if (ev.getClickedInventory() == null) return;
-        if (!(ev.getWhoClicked() instanceof Player)) {
-            System.err.print("inventory not clicked by player?");
-            return;
-        }
-        Player p = (Player)ev.getWhoClicked();
-        if (!openedUI.containsKey(p.getUniqueId()) || !openedUiPages.containsKey(p.getUniqueId())) {
+        UUID id = p.getUniqueId();
+        if (!openedUI.containsKey(id) || !openedUiPages.containsKey(id)) {
             System.err.print("user not registered in gui");
             return;
         }
-        Inventory inv = ev.getClickedInventory();
-        if (!inv.equals(openedUI.get(p.getUniqueId()))) {
-            System.err.print("user clicked on unknown inventory");
+        if (!inv.equals(openedUI.get(id))) {
+            System.err.print("user clicked on inventory not eq record");
             return;
         }
-        Integer page = openedUiPages.get(ev.getWhoClicked().getUniqueId());
+        Integer page = openedUiPages.get(id);
         Integer slot = ev.getSlot();
+        if (inv.getItem(slot).getType() == Material.AIR) return;
         if (slot >= 0 && slot < 45) { //clicked on item
             String key = fullContentCache.getKey(page * 45 + slot);
             if (key != null) {
-                itemClicked(p, key);
+                itemClicked(p, key, ev.isShiftClick());
             } else {
                 // TODO user clicked on an empty slot. Need better handling
                 //System.err.print("user clicked slot out of range");
@@ -154,6 +157,13 @@ public abstract class PaginatedListGui implements InventoryHolder {
         } else { // unknown buttons
             System.err.print("user clicked on unknown slot");
         }
+    }
+
+    public void onInventoryClosed(InventoryCloseEvent ev) {
+        UUID id = ev.getPlayer().getUniqueId();
+        openedUiPages.remove(id);
+        openedUI.remove(id);
+        if (openedUI.size() == 0) guiCompletelyClosed();
     }
 
     /**
@@ -170,7 +180,7 @@ public abstract class PaginatedListGui implements InventoryHolder {
      * TODO: subclasses may need another cache to store the itemKeys, maybe we can avoid this?
      * @param itemKey the key returned by {@link #getFullGuiContent()}
      */
-    protected abstract void itemClicked(Player player, String itemKey);
+    protected abstract void itemClicked(Player player, String itemKey, boolean isShiftClick);
 
     /**
      * Invoked when all inventories of this gui are closed by players.
@@ -186,6 +196,8 @@ public abstract class PaginatedListGui implements InventoryHolder {
      * on the contents.
      * When invoked, PaginatedListGui will invalid the cache immediately
      * call {@link #getFullGuiContent()} again, and refresh all opened inventories.
+     *
+     * You must call this from subclass constructor to initialize the cache.
      * TODO: players may unintentionally click on the wrong item if there are many players competing.
      * TODO: adding a short cooldown time may be a good idea?
      */

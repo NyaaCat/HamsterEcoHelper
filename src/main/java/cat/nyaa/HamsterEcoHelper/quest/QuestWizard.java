@@ -215,6 +215,7 @@ public class QuestWizard implements Listener {
                 break;
             case FINISH:
                 entry.claimable = true;
+                entry.iconMaterial = Material.BOOK_AND_QUILL.name();
                 HamsterEcoHelper.instance.database.query(QuestEntry.class).insert(entry);
                 HandlerList.unregisterAll(this);
                 player.sendMessage(I18n.format("user.quest.wizard.added"));

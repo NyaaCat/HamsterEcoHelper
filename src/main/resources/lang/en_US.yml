@@ -226,6 +226,22 @@ user:
     prev_page: "Previous page"
     next_page: "Next page"
 
+    menu:
+      title: "&6&lQuest: %s"
+      title_not_available: "&6&mQuest: %s"
+      shift_click: "SHIFT+CLICK for more info"
+      not_available: "This quest is not available"
+      name: "Name: %s"
+      desc: "Description: %s"
+      target_other: "Manually verified by publisher"
+      target_item: "Target item: "
+      reward_item: "Reward item: "
+      reward_money: "Reward money: %.3f"
+      reward_none: "This quest is a voluntary work"
+      time_limit: "Time limit: %s"
+      available_before: "Available before: %s"
+
+
 
     wizard:
       waiting_name: "Please type the quest name:"

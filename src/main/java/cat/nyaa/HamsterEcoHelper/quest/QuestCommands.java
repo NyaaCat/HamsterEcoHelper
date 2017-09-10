@@ -41,31 +41,6 @@ public class QuestCommands extends CommandReceiver{
         new QuestWizard(station.id, asPlayer(sender), 30);
     }
 
-    public PaginatedListGui gui;
-    @SubCommand(value = "test", permission = "heh.quest.admin")
-    public void testCmd(CommandSender sender, Arguments args) {
-        gui = new PaginatedListGui("Dummy") {
-            @Override
-            protected PairList<String, ItemStack> getFullGuiContent() {
-                PairList<String, ItemStack> ret = new PairList<>();
-                for (int i = 0; i < 150;i++) {
-                    ItemStack n = new ItemStack(Material.BOOK);
-                    ItemMeta m = n.getItemMeta();
-                    m.setDisplayName("Book #" + Integer.toString(i));
-                    n.setItemMeta(m);
-                    ret.put(Integer.toString(i), n);
-                }
-                return ret;
-            }
-
-            @Override
-            protected void itemClicked(Player player, String itemKey) {
-                player.sendMessage("Clicked item #" + itemKey);
-            }
-        };
-        gui.openFor(asPlayer(sender));
-    }
-
     public Sign getSignLookat(CommandSender sender) {
         Player p = asPlayer(sender);
         Block b = p.getTargetBlock((Set<Material>) null, 5);// TODO use nms rayTrace

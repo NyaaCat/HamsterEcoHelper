@@ -4,6 +4,7 @@ import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.nyaacore.database.DataColumn;
 import cat.nyaa.nyaacore.database.DataTable;
 import cat.nyaa.nyaacore.database.PrimaryKey;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
@@ -40,6 +41,8 @@ public class QuestEntry {
     public Boolean isRecurrentQuest = false; // if the quest can be claimed by many players. NOTE: the rewards will be created from nowhere (i.e. duplicated)
     @DataColumn
     public Long singlePlayerClaimLimit = -1L; // how many time a single player can claim this quest, valid only if is recurrent quest
+    @DataColumn
+    public String iconMaterial = "";
 
     public QuestType prerequisiteType = QuestType.NONE; // NONE, ITEM or MONEY
     public List<ItemStack> prerequisiteItems = new ArrayList<>();
@@ -138,5 +141,15 @@ public class QuestEntry {
 
     public void setQuestTimeLimit(String questTimeLimit) {
         this.questTimeLimit = Duration.parse(questTimeLimit);
+    }
+
+    public Material getIconMaterial() {
+        try {
+            return Material.valueOf(iconMaterial);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.err.println("icon material not exists for " + id);
+            return Material.BOOK_AND_QUILL;
+        }
     }
 }
