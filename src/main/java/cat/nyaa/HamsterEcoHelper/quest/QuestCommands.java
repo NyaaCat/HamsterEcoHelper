@@ -2,6 +2,8 @@ package cat.nyaa.HamsterEcoHelper.quest;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.quest.gui.PaginatedListGui;
+import cat.nyaa.HamsterEcoHelper.quest.gui.PairList;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestStation;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
@@ -10,6 +12,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Set;
 
@@ -37,6 +41,31 @@ public class QuestCommands extends CommandReceiver{
         new QuestWizard(station.id, asPlayer(sender), 30);
     }
 
+    public PaginatedListGui gui;
+    @SubCommand(value = "test", permission = "heh.quest.admin")
+    public void testCmd(CommandSender sender, Arguments args) {
+        gui = new PaginatedListGui("Dummy") {
+            @Override
+            protected PairList<String, ItemStack> getFullGuiContent() {
+                PairList<String, ItemStack> ret = new PairList<>();
+                for (int i = 0; i < 150;i++) {
+                    ItemStack n = new ItemStack(Material.BOOK);
+                    ItemMeta m = n.getItemMeta();
+                    m.setDisplayName("Book #" + Integer.toString(i));
+                    n.setItemMeta(m);
+                    ret.put(Integer.toString(i), n);
+                }
+                return ret;
+            }
+
+            @Override
+            protected void itemClicked(Player player, String itemKey) {
+                player.sendMessage("Clicked item #" + itemKey);
+            }
+        };
+        gui.openFor(asPlayer(sender));
+    }
+
     public Sign getSignLookat(CommandSender sender) {
         Player p = asPlayer(sender);
         Block b = p.getTargetBlock((Set<Material>) null, 5);// TODO use nms rayTrace
@@ -46,6 +75,4 @@ public class QuestCommands extends CommandReceiver{
         }
         return (Sign)b.getState();
     }
-
-
 }

@@ -38,6 +38,10 @@ public class PairList<K, V> implements Iterable<PairList<K, V>.Pair>{
         return index>=l.size()? null:l.get(index).key;
     }
 
+    public int size() {
+        return l.size();
+    }
+
     @Override
     public Iterator<Pair> iterator() {
         return new Iterator<Pair>() {

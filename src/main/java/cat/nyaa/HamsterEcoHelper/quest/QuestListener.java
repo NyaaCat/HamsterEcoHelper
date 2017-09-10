@@ -89,5 +89,8 @@ public class QuestListener implements Listener {
         if (ev.getClickedInventory().getHolder() instanceof QuestStationGui) {
             ((QuestStationGui)ev.getClickedInventory().getHolder()).onInventoryClicked(ev);
         }
+        if (ev.getClickedInventory().getHolder() == plugin.commandHandler.questCommands.gui) {
+            plugin.commandHandler.questCommands.gui.onInventoryClicked(ev);
+        }
     }
 }

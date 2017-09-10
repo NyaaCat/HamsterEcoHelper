@@ -220,6 +220,11 @@ user:
     cannot_break: "You cannot break this station"
     has_ongoing_quest: "There are quests in progress."
     not_station: "Please look at a quest station sign."
+    title_page: " - Page %d"
+    first_page: "This is the first page"
+    last_page: "This is the last page"
+    prev_page: "Previous page"
+    next_page: "Next page"
 
 
     wizard:
