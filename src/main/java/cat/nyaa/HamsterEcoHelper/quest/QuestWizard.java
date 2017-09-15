@@ -13,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.librazy.nyaautils_lang_checker.LangKey;
+import org.librazy.nyaautils_lang_checker.LangKeyType;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -54,6 +56,7 @@ public class QuestWizard implements Listener {
         }
     }
 
+    @LangKey(type = LangKeyType.SUFFIX)
     enum State {
         WAITING_NAME,
         WAITING_DESCRIPTION,
