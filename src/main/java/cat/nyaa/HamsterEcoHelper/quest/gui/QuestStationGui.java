@@ -2,7 +2,9 @@ package cat.nyaa.HamsterEcoHelper.quest.gui;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.quest.QuestCommon;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestEntry;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestInstance;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestStation;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
@@ -13,6 +15,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+
+import static cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestInstance.QuestStatus.IN_PROGRESS;
 
 public class QuestStationGui extends PaginatedListGui {
     // static methods to make gui unique for each station
@@ -57,9 +61,14 @@ public class QuestStationGui extends PaginatedListGui {
             player.sendMessage(I18n.format("user.quest.menu.not_available"));
             return;
         }
-        if (!isShiftClicked) {
-            player.sendMessage("NOT IMPLEMENTED");
-            // QuestCommon.claimQuest(player, e)
+        if (isShiftClicked) {
+            try {
+                QuestCommon.claimQuest(player, e.id);
+                player.sendMessage(I18n.format("user.quest.menu.claimed"));
+            } catch (RuntimeException ex) {
+                ex.printStackTrace();
+                player.sendMessage(I18n.format(ex.getMessage()));
+            }
         } else {
             player.sendMessage(I18n.format("user.quest.menu.name", e.questName));
             player.sendMessage(I18n.format("user.quest.menu.desc", e.questDescription));
@@ -76,6 +85,7 @@ public class QuestStationGui extends PaginatedListGui {
             }
             player.sendMessage(I18n.format("user.quest.menu.time_limit", e.questTimeLimit.toString()));
             player.sendMessage(I18n.format("user.quest.menu.available_before", e.questExpire.toString()));
+            player.sendMessage(I18n.format("user.quest.menu.shift_to_accept"));
         }
         Bukkit.getServer().getScheduler().runTask(HamsterEcoHelper.instance,player::closeInventory);
     }

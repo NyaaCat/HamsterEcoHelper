@@ -22,6 +22,7 @@ import java.util.UUID;
  * otherwise synchronization issues will occur
  */
 public abstract class PaginatedListGui implements InventoryHolder {
+    public static final int PAGE_CAPACITY = 45; // NOTE: this size doesn't include control line. So the actual size will be 9 larger.
     // TODO openedUI & openedUiPages desync handling
     protected final Map<UUID, Inventory> openedUI = new TreeMap<>();
     protected final Map<UUID, Integer> openedUiPages = new TreeMap<>(); // pages count from 0
@@ -54,20 +55,20 @@ public abstract class PaginatedListGui implements InventoryHolder {
     private void showPlayerPage(Player p, int page) {
         UUID id = p.getUniqueId();
         if (page >=0 && page < maxPage) {
-            Inventory inv = Bukkit.createInventory(this, 54, basicTitle + I18n.format("user.quest.title_page", page + 1));
-            ItemStack[] tmp = fullContentCache.getValues(page*45, (page+1)*45).toArray(new ItemStack[0]);
+            Inventory inv = Bukkit.createInventory(this, PAGE_CAPACITY + 9, basicTitle + I18n.format("user.quest.title_page", page + 1));
+            ItemStack[] tmp = fullContentCache.getValues(page*PAGE_CAPACITY, (page+1)*PAGE_CAPACITY).toArray(new ItemStack[0]);
             inv.setContents(tmp);
 
             // set prev/next page buttons
             if (page == 0) {
-                inv.setItem(45, getNamedItem(Material.BARRIER, I18n.format("user.quest.first_page")));
+                inv.setItem(PAGE_CAPACITY, getNamedItem(Material.BARRIER, I18n.format("user.quest.first_page")));
             } else {
-                inv.setItem(45, getNamedItem(Material.ARROW, I18n.format("user.quest.prev_page")));
+                inv.setItem(PAGE_CAPACITY, getNamedItem(Material.ARROW, I18n.format("user.quest.prev_page")));
             }
             if (page == maxPage - 1) {
-                inv.setItem(53, getNamedItem(Material.BARRIER, I18n.format("user.quest.last_page")));
+                inv.setItem(PAGE_CAPACITY+8, getNamedItem(Material.BARRIER, I18n.format("user.quest.last_page")));
             } else {
-                inv.setItem(53, getNamedItem(Material.ARROW, I18n.format("user.quest.next_page")));
+                inv.setItem(PAGE_CAPACITY+8, getNamedItem(Material.ARROW, I18n.format("user.quest.next_page")));
             }
 
             openedUiPages.put(id, page);
@@ -139,20 +140,20 @@ public abstract class PaginatedListGui implements InventoryHolder {
         }
         Integer page = openedUiPages.get(id);
         Integer slot = ev.getSlot();
-        if (inv.getItem(slot).getType() == Material.AIR) return;
-        if (slot >= 0 && slot < 45) { //clicked on item
-            String key = fullContentCache.getKey(page * 45 + slot);
+        if (inv.getItem(slot) == null || inv.getItem(slot).getType() == Material.AIR) return;
+        if (slot >= 0 && slot < PAGE_CAPACITY) { //clicked on item
+            String key = fullContentCache.getKey(page * PAGE_CAPACITY + slot);
             if (key != null) {
                 itemClicked(p, key, ev.isShiftClick());
             } else {
                 // TODO user clicked on an empty slot. Need better handling
                 //System.err.print("user clicked slot out of range");
             }
-        } else if (slot == 45) { // previous page
+        } else if (slot == PAGE_CAPACITY) { // previous page
             if (page - 1 >= 0) showPlayerPage(p, page - 1);
-        } else if (slot == 53) { // next page
+        } else if (slot == PAGE_CAPACITY + 8) { // next page
             if (page + 1 < maxPage) showPlayerPage(p, page + 1);
-        } else if (slot > 45 && slot < 53) { // custom buttons
+        } else if (slot > PAGE_CAPACITY && slot < PAGE_CAPACITY + 8) { // custom buttons
             // TODO not implemented
         } else { // unknown buttons
             System.err.print("user clicked on unknown slot");

@@ -17,6 +17,9 @@ import java.util.UUID;
 
 @DataTable("quest_entry")
 public class QuestEntry {
+    public static final ZonedDateTime NEVER_EXPIRE = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC+0"));
+    public static final Duration NO_TIME_LIMIT = Duration.ZERO.minusSeconds(1);
+
     public enum QuestType {
         NONE,
         ITEM,
@@ -151,5 +154,15 @@ public class QuestEntry {
             System.err.println("icon material not exists for " + id);
             return Material.BOOK_AND_QUILL;
         }
+    }
+
+    public boolean isExpired() {
+        if (questExpire.toEpochSecond() == 0) return false;
+        return questExpire.isBefore(ZonedDateTime.now());
+    }
+
+    public boolean completedInTime(ZonedDateTime startTime) {
+        if (questTimeLimit.isNegative()) return true;
+        return startTime.plus(questTimeLimit).isAfter(ZonedDateTime.now());
     }
 }

@@ -4,30 +4,34 @@ import cat.nyaa.nyaacore.database.DataColumn;
 import cat.nyaa.nyaacore.database.DataTable;
 import cat.nyaa.nyaacore.database.PrimaryKey;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @DataTable("quest_instance")
 public class QuestInstance {
+    private static final ZonedDateTime EPOCH = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC+0"));
     public enum QuestStatus {
         IN_PROGRESS,
         UNVERIFIED,
 
         COMPLETED,
         CANCELLED,
-        TIMEOUT;
+        TIMEOUT,
+        INVALID;
     }
 
     @DataColumn
     @PrimaryKey
-    public String id;
+    public String id = "";
     @DataColumn
-    public String questId;
+    public String questId = "";
     @DataColumn
-    public String claimer; // uuid of the player who claimed the quest
+    public String claimer = ""; // uuid of the player who claimed the quest
 
-    public QuestStatus status;
-    public ZonedDateTime startTime;
-    public ZonedDateTime endTime;
+    public QuestStatus status = QuestStatus.INVALID;
+    public ZonedDateTime startTime = EPOCH;
+    public ZonedDateTime endTime = EPOCH;
 
     @DataColumn("status")
     public String getStatus() {

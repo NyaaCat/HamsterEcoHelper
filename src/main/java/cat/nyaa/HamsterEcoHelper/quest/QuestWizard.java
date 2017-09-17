@@ -5,6 +5,7 @@ import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestEntry;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -124,22 +125,29 @@ public class QuestWizard implements Listener {
             return;
         }
 
+        input = ChatColor.translateAlternateColorCodes('&', input);
+
         switch (state) {
             case WAITING_NAME:
+                player.sendMessage(input);
                 entry.questName = input;
                 state = State.WAITING_DESCRIPTION;
                 break;
             case WAITING_DESCRIPTION:
+                player.sendMessage(input);
                 entry.questDescription = input;
                 state = State.WAITING_TARGET_TYPE;
                 break;
             case WAITING_TARGET_TYPE:
+                player.sendMessage(input);
                 if ("item".equalsIgnoreCase(input)) {
                     entry.targetType = QuestEntry.QuestType.ITEM;
                     state = State.WAITING_TARGET_ITEM;
-                } else {
+                } else if ("other".equalsIgnoreCase(input)) {
                     entry.targetType = QuestEntry.QuestType.OTHER;
                     state = State.WAITING_REWARD_TYPE;
+                } else {
+                    player.sendMessage(I18n.format("user.quest.wizard.invalid_option"));
                 }
                 break;
             case WAITING_TARGET_ITEM:
@@ -155,6 +163,7 @@ public class QuestWizard implements Listener {
                         player.sendMessage(I18n.format("user.quest.wizard.hold_item_plz"));
                     } else {
                         entry.targetItems.add(stack.clone());
+                        player.sendMessage(I18n.format("user.quest.wizard.item_added"));
                     }
                 }
                 break;
@@ -165,9 +174,11 @@ public class QuestWizard implements Listener {
                 } else if ("money".equalsIgnoreCase(input)) {
                     entry.rewardType = QuestEntry.QuestType.MONEY;
                     state = State.WAITING_REWARD_MONEY;
-                } else {
+                } else if ("none".equalsIgnoreCase(input)) {
                     entry.rewardType = QuestEntry.QuestType.NONE;
                     state = WAITING_TIME_LIMIT;
+                } else {
+                    player.sendMessage(I18n.format("user.quest.wizard.invalid_option"));
                 }
                 break;
             case WAITING_REWARD_ITEM:
@@ -183,6 +194,7 @@ public class QuestWizard implements Listener {
                         player.sendMessage(I18n.format("user.quest.wizard.hold_item_plz"));
                     } else {
                         entry.rewardItem.add(stack.clone());
+                        player.sendMessage(I18n.format("user.quest.wizard.item_added"));
                         if (reallyTakeItem) {
                             player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
                         }
@@ -191,6 +203,7 @@ public class QuestWizard implements Listener {
                 break;
             case WAITING_REWARD_MONEY:
                 try {
+                    player.sendMessage(input);
                     double money = Double.parseDouble(input);
                     entry.rewardMoney = money;
                     state = WAITING_TIME_LIMIT;
@@ -200,21 +213,30 @@ public class QuestWizard implements Listener {
                 }
                 break;
             case WAITING_TIME_LIMIT:
-                try {
-                    entry.questTimeLimit = Duration.parse(input);
-                    state = WAITING_EXPIRE_IN;
-                } catch (DateTimeParseException ex) {
-                    player.sendMessage(I18n.format("user.quest.wizard.invalid_time"));
+                if ("unlimited".equalsIgnoreCase(input)) {
+                    entry.questTimeLimit = QuestEntry.NO_TIME_LIMIT;
+                } else {
+                    Duration dur = parseDuration(input);
+                    if (dur == null) {
+                        player.sendMessage(I18n.format("user.quest.wizard.invalid_time"));
+                        break;
+                    }
+                    entry.questTimeLimit = dur;
                 }
+                state = WAITING_EXPIRE_IN;
                 break;
             case WAITING_EXPIRE_IN:
-                try {
-                    Duration dur = Duration.parse(input);
+                if ("never".equalsIgnoreCase(input)) {
+                    entry.questExpire = QuestEntry.NEVER_EXPIRE;
+                } else {
+                    Duration dur = parseDuration(input);
+                    if (dur == null) {
+                        player.sendMessage(I18n.format("user.quest.wizard.invalid_time"));
+                        break;
+                    }
                     entry.questExpire = ZonedDateTime.now().plus(dur);
-                    state = FINISH;
-                } catch (DateTimeParseException ex) {
-                    player.sendMessage(I18n.format("user.quest.wizard.invalid_time"));
                 }
+                state = FINISH;
                 break;
             case FINISH:
                 entry.claimable = true;
@@ -228,5 +250,36 @@ public class QuestWizard implements Listener {
         }
         player.sendMessage(I18n.format("user.quest.wizard." + state.name().toLowerCase()));
         timer = new Timer(timeout);
+    }
+
+    /**
+     * format = 1d1h1m1s
+     * any combination of [dhms] works
+     * @param input
+     * @return
+     */
+    private static Duration parseDuration(String input) {
+        String num = "";
+        Duration dur = Duration.ZERO;
+        for (char ch : input.toCharArray()) {
+            if (ch == 'd' || ch == 'h' || ch == 'm'||ch == 's') {
+                try {
+                    int n = Integer.parseInt(num);
+                    if (n < 0) return null;
+                    switch (ch) {
+                        case 'd': dur = dur.plusDays(n); break;
+                        case 'h': dur = dur.plusHours(n); break;
+                        case 'm': dur = dur.plusMinutes(n); break;
+                        case 's': dur = dur.plusSeconds(n); break;
+                    }
+                    num = "";
+                } catch (NumberFormatException ex) {
+                    return null;
+                }
+            } else {
+                num += ch;
+            }
+        }
+        return dur;
     }
 }

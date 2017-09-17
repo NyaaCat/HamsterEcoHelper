@@ -229,7 +229,7 @@ user:
     menu:
       title: "&6&lQuest: %s"
       title_not_available: "&6&mQuest: %s"
-      shift_click: "SHIFT+CLICK for more info"
+      shift_click: "CLICK for more info"
       not_available: "This quest is not available"
       name: "Name: %s"
       desc: "Description: %s"
@@ -240,40 +240,57 @@ user:
       reward_none: "This quest is a voluntary work"
       time_limit: "Time limit: %s"
       available_before: "Available before: %s"
+      shift_to_accept: "Shift click to accept this quest"
+
+      reject_unfinished: "You cannot accept this quest because you have another quest in progress."
+      reject_unavailable: "Quest not available"
+      reject_expired: "Quest expired"
+      reject_finished: "You've done this quest"
+      claimed: "You claimed this quest"
+
+    submit:
+      no_entry: "Cannot find QuestEntry: %s"
+      timeout: "I'm sorry but you didn't make it in time."
+      need_verification: "Your achievement will be under examination"
+      bad_target_type: "Internal error, bad target type, please contact OP. %s"
+      target_not_satisfy: "You may want to check the quest requirements once more."
+      quest_complete: "QUEST COMPLETE!"
 
 
 
     wizard:
-      waiting_name: "Please type the quest name:"
-      waiting_description: "Please type the quest description:"
-      waiting_prereq_type: "Prerequisite type (item/money/none):"
-      waiting_prereq_money: "Prerequisite money amount:"
-      waiting_prereq_item: "Hold the item you want as prerequisite in hand and type \"add\" or \"end\""
+      waiting_name: "&2Please type the quest name:"
+      waiting_description: "&2Please type the quest description:"
+      waiting_prereq_type: "&2Prerequisite type (item/money/none):"
+      waiting_prereq_money: "&2Prerequisite money amount:"
+      waiting_prereq_item: "&2Hold the item you want as prerequisite in hand and type \"add\" or \"end\""
 
-      waiting_early_reward_item: "Hold the item you want as early reward in hand and type \"add\" or \"end\""
+      waiting_early_reward_item: "&2Hold the item you want as early reward in hand and type \"add\" or \"end\""
 
-      waiting_target_type: "Target type (item/other):"
-      waiting_target_item: "Hold the item you want as target in hand and type \"add\" or \"end\""
+      waiting_target_type: "&2Target type (item/other):"
+      waiting_target_item: "&2Hold the item you want as target in hand and type \"add\" or \"end\""
 
-      waiting_reward_type: "Reward type (item/money/none):"
-      waiting_reward_money: "Reward money amount:"
-      waiting_reward_item: "Hold the item you want as reward in hand and type \"add\" or \"end\""
+      waiting_reward_type: "&2Reward type (item/money/none):"
+      waiting_reward_money: "&2Reward money amount:"
+      waiting_reward_item: "&2Hold the item you want as reward in hand and type \"add\" or \"end\""
 
-      waiting_time_limit: "Time Limit for this quest?"
-      waiting_expire_in: "This quest expires in?"
+      waiting_time_limit: "&2Time Limit for this quest (1d1m1h1s|unlimited)?"
+      waiting_expire_in: "&2This quest expires in (1d1m1h1s|never)?"
 
-      waiting_is_recurrent: "Is this a recurrent quest(y/n)?"
-      waiting_claim_limit: "What's the claim limit for each player?"
-      waiting_enabled: "Should this quest be available now?"
+      waiting_is_recurrent: "&2Is this a recurrent quest(y/n)?"
+      waiting_claim_limit: "&2What's the claim limit for each player?"
+      waiting_enabled: "&2Should this quest be available now?"
 
-      finish: "Type \"confirm\" or \"cancel\" to complete the wizard."
+      finish: "&2Type \"confirm\" or \"cancel\" to complete the wizard."
 
-      at_least_one: "You need at least one item. Try again."
-      hold_item_plz: "Please hold a item in hand."
-      invalid_number: "Not a valid number. Try again."
-      invalid_time: "Not a valid time. Try again."
-      added: "Quest added."
-      cancelled: "Quest wizard cancelled."
+      at_least_one: "&4You need at least one item. Try again."
+      hold_item_plz: "&4Please hold a item in hand."
+      invalid_number: "&4Not a valid number. Try again."
+      invalid_time: "&4Not a valid time. Try again."
+      invalid_option: "&4Not a valid value. Try again."
+      item_added: "&7Item added."
+      added: "&2Quest added."
+      cancelled: "&4Quest wizard cancelled."
 manual:
   no_description: "No description"
   no_usage: "No usage"

@@ -41,6 +41,11 @@ public class QuestCommands extends CommandReceiver{
         new QuestWizard(station.id, asPlayer(sender), 30);
     }
 
+    @SubCommand(value = "finish", permission = "heh.quest.claim")
+    public void submitQuest(CommandSender sender, Arguments args) {
+        QuestCommon.submitQuest(asPlayer(sender));
+    }
+
     public Sign getSignLookat(CommandSender sender) {
         Player p = asPlayer(sender);
         Block b = p.getTargetBlock((Set<Material>) null, 5);// TODO use nms rayTrace
