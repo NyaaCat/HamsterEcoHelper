@@ -4,6 +4,7 @@ import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestEntry;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestStation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -78,6 +79,8 @@ public class QuestWizard implements Listener {
         WAITING_TIME_LIMIT,
         WAITING_EXPIRE_IN,
 
+        WAITING_ICON_MATERIAL, // TODO
+
         WAITING_IS_RECURRENT,
         WAITING_CLAIM_LIMIT,
         WAITING_ENABLED,
@@ -95,10 +98,15 @@ public class QuestWizard implements Listener {
         entry.publisher = p.getUniqueId().toString();
         entry.stationId = stationUUID;
         state = State.WAITING_NAME;
-        p.sendMessage(I18n.format("user.quest.wizard." + state.name().toLowerCase()));
         Bukkit.getServer().getPluginManager().registerEvents(this, HamsterEcoHelper.instance);
         timer = new Timer(timeout);
         this.reallyTakeItem = !p.hasPermission("heh.quest.admin");
+        Bukkit.getScheduler().runTaskLater(HamsterEcoHelper.instance, new Runnable() {
+            @Override
+            public void run() {
+                p.sendMessage(I18n.format("user.quest.wizard." + state.name().toLowerCase()));
+            }
+        }, 1L);
     }
 
     private void cancelWizard() {
@@ -205,9 +213,15 @@ public class QuestWizard implements Listener {
                 try {
                     player.sendMessage(input);
                     double money = Double.parseDouble(input);
+                    if (reallyTakeItem) {
+                        if (!HamsterEcoHelper.instance.eco.enoughMoney(player, money)) {
+                            player.sendMessage(I18n.format("user.quest.wizard.not_enough_money"));
+                            break;
+                        }
+                        HamsterEcoHelper.instance.eco.withdraw(player, money);
+                    }
                     entry.rewardMoney = money;
                     state = WAITING_TIME_LIMIT;
-                    HamsterEcoHelper.instance.eco.withdraw(player, money);
                 } catch (NumberFormatException ex) {
                     player.sendMessage(I18n.format("user.quest.wizard.invalid_number"));
                 }
@@ -236,10 +250,32 @@ public class QuestWizard implements Listener {
                     }
                     entry.questExpire = ZonedDateTime.now().plus(dur);
                 }
+                state = reallyTakeItem ? FINISH : WAITING_IS_RECURRENT;
+                break;
+            case WAITING_IS_RECURRENT:
+                entry.isRecurrentQuest = "yes".equalsIgnoreCase(input);
+                state = reallyTakeItem ? FINISH : WAITING_ENABLED;
+                break;
+            case WAITING_ENABLED:
+                entry.claimable = "yes".equalsIgnoreCase(input);
+                entry.masked = !entry.claimable;
                 state = FINISH;
                 break;
             case FINISH:
-                entry.claimable = true;
+                if (reallyTakeItem) {
+                    entry.claimable = true;
+                    QuestStation station = HamsterEcoHelper.instance.database.query(QuestStation.class).whereEq("id", this.station.toString()).selectUniqueUnchecked();
+                    if (station == null) {
+                        player.sendMessage(I18n.format("user.quest.wizard.station_invalid", this.station.toString()));
+                        cancelWizard();
+                        return;
+                    }
+                    if (!HamsterEcoHelper.instance.eco.enoughMoney(player, station.postingFee)) {
+                        player.sendMessage(I18n.format("user.quest.wizard.not_enough_money_posting"));
+                        break;
+                    }
+                    HamsterEcoHelper.instance.eco.withdraw(player, station.postingFee); // TODO system balance
+                }
                 entry.iconMaterial = Material.BOOK_AND_QUILL.name();
                 HamsterEcoHelper.instance.database.query(QuestEntry.class).insert(entry);
                 HandlerList.unregisterAll(this);

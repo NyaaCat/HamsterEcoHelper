@@ -38,6 +38,12 @@ public class QuestCommands extends CommandReceiver{
             msg(sender, "user.quest.not_station");
             return;
         }
+
+        if (!plugin.eco.enoughMoney(asPlayer(sender), station.postingFee)) {
+            msg(sender, "user.quest.wizard.not_enough_money_posting");
+            return;
+        }
+
         new QuestWizard(station.id, asPlayer(sender), 30);
     }
 

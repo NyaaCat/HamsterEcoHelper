@@ -46,6 +46,8 @@ public class QuestEntry {
     public Long singlePlayerClaimLimit = -1L; // how many time a single player can claim this quest, valid only if is recurrent quest
     @DataColumn
     public String iconMaterial = "";
+    @DataColumn
+    public Boolean masked = false;
 
     public QuestType prerequisiteType = QuestType.NONE; // NONE, ITEM or MONEY
     public List<ItemStack> prerequisiteItems = new ArrayList<>();

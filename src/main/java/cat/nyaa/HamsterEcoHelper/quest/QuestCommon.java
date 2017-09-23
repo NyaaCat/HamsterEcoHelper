@@ -7,17 +7,14 @@ import cat.nyaa.HamsterEcoHelper.utils.database.Database;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestEntry;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestInstance;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestStation;
-import cat.nyaa.nyaacore.database.BaseDatabase;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
-import net.milkbowl.vault.item.Items;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -76,7 +73,7 @@ public class QuestCommon {
             throw new RuntimeException("user.quest.menu.reject_unfinished");
         }
 
-        if (!quest.claimable) throw new RuntimeException("user.quest.menu.reject_unavailable");
+        if (!quest.claimable || quest.masked) throw new RuntimeException("user.quest.menu.reject_unavailable");
         if (quest.isExpired()) throw new RuntimeException("user.quest.menu.reject_expired");
         // TODO prereq etc.
 
@@ -88,13 +85,15 @@ public class QuestCommon {
             q.status = IN_PROGRESS;
             q.startTime = ZonedDateTime.now();
 
-            quest.claimable = false;
-
-            db.query(QuestEntry.class).whereEq("id", questId).update(quest, "claimable");
+            if (!quest.isRecurrentQuest) {
+                quest.claimable = false;
+                db.query(QuestEntry.class).whereEq("id", questId).update(quest, "claimable");
+            }
             db.query(QuestInstance.class).insert(q);
         }
     }
 
+    /* Check the database for all in-progress quest of this player and submit them */
     public static void submitQuest(Player player) {
         String playerId = player.getUniqueId().toString();
         Database db = HamsterEcoHelper.instance.database;
@@ -104,112 +103,126 @@ public class QuestCommon {
                 .select();
         for (QuestInstance q : quests) {
             String questId = q.questId;
-            QuestEntry e = selectUniqueUnchecked(db.query(QuestEntry.class).whereEq("id", questId));
-            // TODO reset quest claimable
+            QuestEntry e = db.query(QuestEntry.class).whereEq("id", questId).selectUniqueUnchecked();
             if (e == null) {
                 player.sendMessage(I18n.format("user.quest.submit.no_entry", questId));
-                q.status = CANCELLED;
-                db.query(QuestInstance.class).update(q, "status");
+                q.status = INVALID;
+                q.endTime = ZonedDateTime.now();
+                db.query(QuestInstance.class).whereEq("id", q.id).update(q, "status", "end_time");
                 continue;
             }
+
+            player.sendMessage(I18n.format("user.quest.submit.submitting", e.questName));
 
             if (!e.completedInTime(q.startTime)) {
                 player.sendMessage(I18n.format("user.quest.submit.timeout"));
                 q.status = TIMEOUT;
-                db.query(QuestInstance.class).update(q, "status");
+                q.endTime = ZonedDateTime.now();
+                if (!e.isRecurrentQuest && !e.isExpired()) {
+                    e.claimable = true;
+                    db.query(QuestEntry.class).whereEq("id", e.id).update(e, "claimable");
+                }
+                db.query(QuestInstance.class).whereEq("id", q.id).update(q, "status", "end_time");
                 continue;
             }
 
             if (e.targetType == QuestEntry.QuestType.OTHER) {
                 player.sendMessage(I18n.format("user.quest.submit.need_verification"));
+                UUID publisherId = UUID.fromString(e.publisher);
+                if (Bukkit.getPlayer(publisherId) != null) Bukkit.getPlayer(publisherId).sendMessage(
+                        I18n.format("user.quest.quest_need_verify", player.getName(), e.questName));
                 q.status = UNVERIFIED;
-                db.query(QuestInstance.class).update(q, "status");
+                q.endTime = ZonedDateTime.now();
+                db.query(QuestInstance.class).whereEq("id", q.id).update(q, "status", "end_time");
             } else if (e.targetType == QuestEntry.QuestType.ITEM) {
-                List<ItemStack> ret = withdrawInventoryAtomic(player.getInventory(), e.targetItems);
+                List<ItemStack> ret = InventoryUtils.withdrawInventoryAtomic(player.getInventory(), e.targetItems);
                 if (ret == null) {
-                    // TODO return target item to publisher notification.
-                    //for (ItemStack item : e.targetItems) Utils.giveItem(Bukkit.getOfflinePlayer(UUID.fromString(e.publisher)), item);
+                    UUID publisherId = UUID.fromString(e.publisher);
+                    for (ItemStack item : e.targetItems) Utils.giveItem(Bukkit.getOfflinePlayer(publisherId), item);
+                    msgIfOnline(e.publisher, "user.quest.quest_complete_by");
                     switch (e.rewardType) {
                         case ITEM: for (ItemStack i : e.rewardItem) Utils.giveItem(player, i); break;
                         case MONEY: HamsterEcoHelper.instance.eco.deposit(player, e.rewardMoney); break;
                         default: break;
                     }
                     q.status = COMPLETED;
-                    // TODO update endTime
-                    db.query(QuestInstance.class).update(q, "status");
+                    q.endTime = ZonedDateTime.now();
+                    db.query(QuestInstance.class).whereEq("id", q.id).update(q, "status", "end_time");
                     player.sendMessage(I18n.format("user.quest.submit.quest_complete", e.id));
                 } else {
                     player.sendMessage(I18n.format("user.quest.submit.target_not_satisfy", e.id));
                 }
             } else {
                 player.sendMessage(I18n.format("user.quest.submit.bad_target_type", e.id));
-                q.status = CANCELLED;
-                db.query(QuestInstance.class).update(q, "status");
+                q.status = INVALID;
+                q.endTime = ZonedDateTime.now();
+                db.query(QuestInstance.class).whereEq("id", q.id).update(q, "status", "end_time");
             }
-
-
-
         }
     }
 
-    // TODO move to NC
-    private static <T> T selectUniqueUnchecked(BaseDatabase.Query<T> q) {
-        try {
-            return q.selectUnique();
-        } catch (RuntimeException ex) {
-            return null;
-        }
-    }
-
-    /**
-     * Remove items from inventory.
-     * Either all removed or none removed.
-     * @param inv the inventory
-     * @param itemToBeTaken items to be removed
-     * @return If null, then all designated items are removed. If not null, it contains the items missing
-     * TODO move to NC
-     */
-    private static List<ItemStack> withdrawInventoryAtomic(Inventory inv, List<ItemStack> itemToBeTaken) {
-        ItemStack[] itemStacks = inv.getContents();
-        ItemStack[] cloneStacks = new ItemStack[itemStacks.length];
-        for (int i = 0; i < itemStacks.length; i++) {
-            cloneStacks[i] = itemStacks[i] == null ? null : itemStacks[i].clone();
-        }
-
-        List<ItemStack> ret = new ArrayList<>();
-
-        for (ItemStack item : itemToBeTaken) {
-            int sizeReq = item.getAmount();
-
-            for (int i = 0; i < cloneStacks.length;i++) {
-                if (cloneStacks[i] == null) continue;
-                if (cloneStacks[i].isSimilar(item)) {
-                    int sizeSupp = cloneStacks[i].getAmount();
-                    if (sizeSupp > sizeReq) {
-                        cloneStacks[i].setAmount(sizeSupp - sizeReq);
-                        sizeReq = 0;
-                        break;
-                    } else {
-                        cloneStacks[i] = null;
-                        sizeReq -= sizeSupp;
-                        if (sizeReq == 0) break;
-                    }
-                }
+    public static void confirmQuest(String questInstanceId, boolean confirmed) {
+        Database db = HamsterEcoHelper.instance.database;
+        QuestInstance questInstance = db.query(QuestInstance.class).whereEq("id", questInstanceId).selectUnique();
+        if (questInstance.status != UNVERIFIED) throw new IllegalArgumentException("quest status incorrect, expecting UNVERIFIED: " + questInstanceId);
+        QuestEntry questEntry = db.query(QuestEntry.class).whereEq("id", questInstance.questId).selectUnique();
+        UUID claimerId = UUID.fromString(questInstance.claimer);
+        if (!confirmed) {
+            msgIfOnline(claimerId, "user.quest.rejected", questEntry.questName);
+            questInstance.status = QuestInstance.QuestStatus.REJECTED;
+            db.query(QuestInstance.class).whereEq("id", questInstanceId).update(questInstance, "status");
+            if (!questEntry.isRecurrentQuest && !questEntry.isExpired()) {
+                questEntry.claimable = true;
+                db.query(QuestEntry.class).whereEq("id", questEntry.id).update(questEntry, "claimable");
             }
-
-            if (sizeReq > 0) {
-                ItemStack n = item.clone();
-                item.setAmount(sizeReq);
-                ret.add(n);
-            }
-        }
-
-        if (ret.size() == 0) {
-            inv.setContents(cloneStacks);
-            return null;
         } else {
-            return ret;
+            OfflinePlayer claimer = Bukkit.getOfflinePlayer(claimerId);
+            switch (questEntry.rewardType) {
+                case ITEM: for (ItemStack i : questEntry.rewardItem) Utils.giveItem(claimer, i); break;
+                case MONEY: HamsterEcoHelper.instance.eco.deposit(claimer, questEntry.rewardMoney); break;
+                default: break;
+            }
+            questInstance.status = COMPLETED;
+            db.query(QuestInstance.class).whereEq("id", questInstanceId).update(questInstance, "status");
+            msgIfOnline(claimerId, "user.quest.verified", questEntry.questName);
         }
     }
 
+    public static void cancelQuest(String questInstanceId) {
+        Database db = HamsterEcoHelper.instance.database;
+        QuestInstance questInstance = db.query(QuestInstance.class).whereEq("id", questInstanceId).selectUnique();
+        if (questInstance.status != IN_PROGRESS && questInstance.status != UNVERIFIED)
+            throw new IllegalArgumentException("quest status incorrect, expecting IN_PROGRESS or UNVERIFIED: " + questInstanceId);
+        QuestEntry questEntry = db.query(QuestEntry.class).whereEq("id", questInstance.questId).selectUnique();
+        msgIfOnline(questInstance.claimer, "user.quest.cancelled", questEntry.questName);
+        questInstance.status = QuestInstance.QuestStatus.CANCELLED;
+        questInstance.endTime = ZonedDateTime.now();
+        db.query(QuestInstance.class).whereEq("id", questInstance.id).update(questInstance, "status", "end_time");
+        if (!questEntry.isRecurrentQuest && !questEntry.isExpired()) {
+            questEntry.claimable = true;
+            db.query(QuestEntry.class).whereEq("id", questEntry.id).update(questEntry, "claimable");
+        }
+    }
+
+    public static void withdrawQuest(String questEntryId) {
+        Database db = HamsterEcoHelper.instance.database;
+        QuestEntry questEntry = db.query(QuestEntry.class).whereEq("id", questEntryId).selectUnique();
+        for (QuestInstance qi : db.query(QuestInstance.class).whereEq("questId", questEntryId).select())
+            if (qi.status == IN_PROGRESS || qi.status == UNVERIFIED)
+                cancelQuest(qi.id);
+        questEntry.masked = true;
+        db.query(QuestEntry.class).whereEq("id", questEntryId).update(questEntry, "masked");
+        msgIfOnline(questEntry.publisher, "user.quest.withdrawn", questEntry.questName);
+    }
+
+    private static void msgIfOnline(String id, String template, Object... objs) {;
+        UUID uid = UUID.fromString(id);
+        msgIfOnline(uid, template, objs);
+    }
+
+    private static void msgIfOnline(UUID uid, String template, Object... objs) {
+        if (Bukkit.getPlayer(uid) != null) {
+            Bukkit.getPlayer(uid).sendMessage(I18n.format(template, objs));
+        }
+    }
 }

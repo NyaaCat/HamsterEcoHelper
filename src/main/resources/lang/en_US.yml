@@ -226,6 +226,13 @@ user:
     prev_page: "Previous page"
     next_page: "Next page"
 
+    rejected: "Your submitted quest %s is rejected by the publisher"
+    verified: "Your submitted quest %s has been verified by the publisher"
+    cancelled: "Your quest %s is cancelled"
+    withdrawn: "Your quest %s is withdrawn"
+    quest_completed_by: "One of your quests is completed and target items are put into your inventory."
+    quest_need_verify: "Player %s has completed the quest %s. You are invited to verify the accomplishments."
+
     menu:
       title: "&6&lQuest: %s"
       title_not_available: "&6&mQuest: %s"
@@ -250,6 +257,7 @@ user:
 
     submit:
       no_entry: "Cannot find QuestEntry: %s"
+      submitting: "Submit quest: %s"
       timeout: "I'm sorry but you didn't make it in time."
       need_verification: "Your achievement will be under examination"
       bad_target_type: "Internal error, bad target type, please contact OP. %s"
@@ -274,12 +282,12 @@ user:
       waiting_reward_money: "&2Reward money amount:"
       waiting_reward_item: "&2Hold the item you want as reward in hand and type \"add\" or \"end\""
 
-      waiting_time_limit: "&2Time Limit for this quest (1d1m1h1s|unlimited)?"
-      waiting_expire_in: "&2This quest expires in (1d1m1h1s|never)?"
+      waiting_time_limit: "&2Time Limit for this quest (1d1h1m1s|unlimited)?"
+      waiting_expire_in: "&2This quest expires in (1d1h1m1s|never)?"
 
-      waiting_is_recurrent: "&2Is this a recurrent quest(y/n)?"
+      waiting_is_recurrent: "&2Is this a recurrent quest(yes/no)?"
       waiting_claim_limit: "&2What's the claim limit for each player?"
-      waiting_enabled: "&2Should this quest be available now?"
+      waiting_enabled: "&2Should this quest be available now(yes/no)?"
 
       finish: "&2Type \"confirm\" or \"cancel\" to complete the wizard."
 
@@ -291,6 +299,9 @@ user:
       item_added: "&7Item added."
       added: "&2Quest added."
       cancelled: "&4Quest wizard cancelled."
+      not_enough_money: "&4Not enough money. Try again."
+      not_enough_money_posting: "&4Not enough money to post a quest on the station."
+      station_invalid: "&4Invalid station, please contact OP: %s"
 manual:
   no_description: "No description"
   no_usage: "No usage"

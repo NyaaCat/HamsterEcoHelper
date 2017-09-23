@@ -2,6 +2,7 @@ package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
+import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import cat.nyaa.nyaacore.utils.ReflectionUtils;
 import com.google.common.io.BaseEncoding;
 import org.bukkit.Bukkit;
@@ -98,7 +99,7 @@ public class Utils {
     }
 
     public static String encodeItemStack(ItemStack item) {
-        byte[] nbt = ReflectionUtils.dumpRawNbt(item);
+        byte[] nbt = ItemStackUtils.toBinaryNbt(item);
         byte[] compressedNbt = null;
         try {
             Deflater compresser = new Deflater();
@@ -135,7 +136,7 @@ public class Utils {
             decompresser.end();
             bos.close();
             nbt = bos.toByteArray();
-            return ReflectionUtils.loadItemStackFromNbt(nbt);
+            return ItemStackUtils.fromBinaryNbt(nbt);
         } catch (DataFormatException | IOException ex) {
             throw new RuntimeException(ex);
         }

@@ -17,6 +17,7 @@ public class QuestInstance {
 
         COMPLETED,
         CANCELLED,
+        REJECTED,
         TIMEOUT,
         INVALID;
     }
