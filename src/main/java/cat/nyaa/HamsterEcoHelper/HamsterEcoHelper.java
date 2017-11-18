@@ -5,7 +5,6 @@ import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
 import cat.nyaa.HamsterEcoHelper.market.MarketListener;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
-import cat.nyaa.HamsterEcoHelper.quest.QuestListener;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopManager;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
@@ -34,7 +33,6 @@ public class HamsterEcoHelper extends JavaPlugin {
     public MarketListener marketListener;
     public AdsManager adsManager;
     public Essentials ess = null;
-    public QuestListener questListener;
 
     @Override
     public void onEnable() {
@@ -55,7 +53,6 @@ public class HamsterEcoHelper extends JavaPlugin {
         balanceAPI = new BalanceAPI(this);
         signShopManager = new SignShopManager(this);
         signShopListener = new SignShopListener(this);
-        questListener = new QuestListener(this);
         adsManager = new AdsManager(this);
         if (getServer().getPluginManager().getPlugin("Essentials") != null) {
             this.ess = (Essentials) getServer().getPluginManager().getPlugin("Essentials");

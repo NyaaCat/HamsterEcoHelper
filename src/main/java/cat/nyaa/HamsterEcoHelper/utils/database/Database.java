@@ -5,9 +5,6 @@ import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemLog;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.TempStorageRepo;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestEntry;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestInstance;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.quest.QuestStation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
@@ -54,10 +51,7 @@ public class Database extends SQLiteDatabase {
                 Sign.class,
                 ShopStorageLocation.class,
                 SignShop.class,
-                LottoStorageLocation.class,
-                QuestStation.class,
-                QuestEntry.class,
-                QuestInstance.class
+                LottoStorageLocation.class
         };
     }
 
