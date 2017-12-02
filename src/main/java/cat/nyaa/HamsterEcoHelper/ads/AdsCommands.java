@@ -3,7 +3,6 @@ package cat.nyaa.HamsterEcoHelper.ads;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.ChatColor;
@@ -65,7 +64,7 @@ public class AdsCommands extends CommandReceiver {
                     plugin.config.adsConfig.pos++;
                     plugin.config.adsConfig.adsDataList.put(plugin.config.adsConfig.pos,
                             new AdsData(plugin.config.adsConfig.pos, player.getUniqueId(), adText, displayAmount));
-                    BalanceAPI.deposit(totalPrice);
+                    plugin.systemBalance.deposit(totalPrice, plugin);
                     plugin.eco.withdraw(player, totalPrice);
                     plugin.logger.info(I18n.format("log.info.ads_add",
                             plugin.config.adsConfig.pos, displayAmount, adText, player.getName()));

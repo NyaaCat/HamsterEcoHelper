@@ -2,14 +2,16 @@ package cat.nyaa.HamsterEcoHelper;
 
 import cat.nyaa.HamsterEcoHelper.ads.AdsManager;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionManager;
-import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
+import cat.nyaa.HamsterEcoHelper.balance.SystemBalance;
 import cat.nyaa.HamsterEcoHelper.market.MarketListener;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
+import cat.nyaa.HamsterEcoHelper.signshop.SignShopListener;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopManager;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
 import cat.nyaa.HamsterEcoHelper.utils.database.Database;
-import cat.nyaa.HamsterEcoHelper.signshop.SignShopListener;
+import cat.nyaa.nyaacore.component.ISystemBalance;
+import cat.nyaa.nyaacore.component.NyaaComponent;
 import com.earth2me.essentials.Essentials;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,7 +29,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public CommandHandler commandHandler;
     public MarketManager marketManager;
     public I18n i18n;
-    public BalanceAPI balanceAPI;
+    public SystemBalance systemBalance;
     public SignShopManager signShopManager;
     public SignShopListener signShopListener;
     public MarketListener marketListener;
@@ -46,11 +48,12 @@ public class HamsterEcoHelper extends JavaPlugin {
         getCommand("hamsterecohelper").setTabCompleter(commandHandler);
         database = new Database(this);
         eco = new EconomyUtil(this);
+        systemBalance = new SystemBalance(this);
+        NyaaComponent.register(ISystemBalance.class, systemBalance);
         auctionManager = new AuctionManager(this);
         reqManager = new RequisitionManager(this);
         marketManager = new MarketManager(this);
         marketListener = new MarketListener(this);
-        balanceAPI = new BalanceAPI(this);
         signShopManager = new SignShopManager(this);
         signShopListener = new SignShopListener(this);
         adsManager = new AdsManager(this);
@@ -66,6 +69,7 @@ public class HamsterEcoHelper extends JavaPlugin {
         auctionManager.cancel();
         reqManager.halt();
         reqManager.cancel();
+        systemBalance.cancel();
         config.save();
         ess = null;
     }
@@ -79,8 +83,11 @@ public class HamsterEcoHelper extends JavaPlugin {
         marketManager.closeAllGUI();
         marketManager.cancel();
         adsManager.cancel();
+        systemBalance.cancel();
         config.load();
         i18n.load();
+        systemBalance = new SystemBalance(this);
+        NyaaComponent.register(ISystemBalance.class, systemBalance);
         auctionManager = new AuctionManager(this);
         reqManager = new RequisitionManager(this);
         signShopManager = new SignShopManager(this);

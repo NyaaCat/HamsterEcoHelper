@@ -30,6 +30,7 @@ log:
     signshop_lotto: "lotto: {item: \"%s\", amount: %d, price: %.2f, player: \"%s\", from: \"%s\"}"
     ads_add: "add ads: {id: %d, amount: %d, text: \"%s\", player: \"%s\"}"
     ads_remove: "remove ads: {id: %d, text: \"%s\", player: \"%s\"}"
+    system_balance: "system balance {type: %s, amount: %s, current_balance: %s, plugin: %s}"
   error:
     missing_sqlite_driver: "SQLite Driver not found. Plugin disabled."
     enable_fail: "Plugin failed to enable"

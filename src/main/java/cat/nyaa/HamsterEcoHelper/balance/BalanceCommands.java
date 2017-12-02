@@ -27,7 +27,7 @@ public class BalanceCommands extends CommandReceiver {
                 playerName = args.next();
             } else if (type.equals("percent")) {
                 double percent = args.nextDouble();
-                amount = (plugin.balanceAPI.getBalance() / 100) * percent;
+                amount = (plugin.systemBalance.getBalance() / 100) * percent;
                 playerName = args.next();
                 double min = args.length() >= 6 ? args.nextDouble("#.##") : -1;
                 double max = args.length() == 7 ? args.nextDouble("#.##") : -1;
@@ -47,7 +47,7 @@ public class BalanceCommands extends CommandReceiver {
             }
             Player player = Bukkit.getPlayer(playerName);
             if (player != null) {
-                plugin.balanceAPI.withdraw(amount);
+                plugin.systemBalance.withdraw(amount, plugin);
                 plugin.eco.deposit(player, amount);
                 msg(sender, "user.balance.pay", amount, playerName);
                 msg(player, "user.balance.pay_notice", amount);
@@ -80,7 +80,7 @@ public class BalanceCommands extends CommandReceiver {
         Player player = Bukkit.getPlayer(playerName);
         if (player != null) {
             if (plugin.eco.withdraw(player, amount)) {
-                plugin.balanceAPI.deposit(amount);
+                plugin.systemBalance.deposit(amount, plugin);
                 msg(sender, "user.balance.take", amount, playerName);
                 msg(player, "user.balance.take_notice", amount);
             } else {
@@ -94,6 +94,6 @@ public class BalanceCommands extends CommandReceiver {
 
     @CommandHandler.SubCommand(value = "view", permission = "heh.balance.view")
     public void viewbalance(CommandSender sender, CommandHandler.Arguments args) {
-        msg(sender, "user.balance.current_balance", plugin.balanceAPI.getBalance());
+        msg(sender, "user.balance.current_balance", plugin.systemBalance.getBalance());
     }
 }

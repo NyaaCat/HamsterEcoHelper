@@ -68,6 +68,7 @@ public class MarketManager extends BukkitRunnable {
                 return false;
             } else {
                 plugin.eco.withdraw(player, plugin.config.market_offer_fee);
+                plugin.systemBalance.deposit(plugin.config.market_offer_fee, plugin);
             }
         }
         long id = plugin.database.marketOffer(player, item, unit_price);
@@ -133,7 +134,7 @@ public class MarketManager extends BukkitRunnable {
                     }
                 }
                 if (fail < itemCount) {
-                    plugin.balanceAPI.deposit((itemCount - fail) * plugin.config.market_placement_fee);
+                    plugin.systemBalance.deposit((itemCount - fail) * plugin.config.market_placement_fee, plugin);
                 }
                 plugin.logger.info(I18n.format("log.info.placement_fee", itemCount, fail));
             }

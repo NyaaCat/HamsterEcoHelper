@@ -138,10 +138,10 @@ public class AuctionInstance {
                         if (currentPlayer.isOnline() && currentPlayer instanceof Player) {
                             ((Player) currentPlayer).sendMessage(I18n.format("user.auc.item_given_" + stat.name()));
                         }
-                        if (this.owner == null && plugin.balanceAPI.isEnabled()) {
-                            plugin.balanceAPI.deposit(currentHighPrice);
+                        if (this.owner == null && plugin.systemBalance.isEnabled()) {
+                            plugin.systemBalance.deposit(currentHighPrice, plugin);
                             plugin.config.save();
-                            plugin.logger.info(I18n.format("log.info.current_balance", plugin.balanceAPI.getBalance()));
+                            plugin.logger.info(I18n.format("log.info.current_balance", plugin.systemBalance.getBalance()));
                         }
                     } else {
                         success = false;

@@ -2,8 +2,7 @@ package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.balance.BalanceAPI;
-import cat.nyaa.nyaacore.utils.ReflectionUtils;
+import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
@@ -74,7 +73,7 @@ public class EconomyUtil {
             }
             step = 2;
             if (tax > 0.0D) {
-                BalanceAPI.deposit(tax);
+                plugin.systemBalance.deposit(tax, plugin);
             }
             step = 3;
             Utils.GiveStat stat = Utils.giveItem(buyer, item);
@@ -82,7 +81,7 @@ public class EconomyUtil {
         } catch (Exception e) {
             plugin.getLogger().warning(I18n.format("log.error.transaction_fail", buyer.getName(), seller.getName(), Utils.getItemName(item), price, tax));
             try {
-                plugin.getLogger().warning(I18n.format("log.error.transaction_fail_dump", ReflectionUtils.convertItemStackToJson(item)));
+                plugin.getLogger().warning(I18n.format("log.error.transaction_fail_dump", ItemStackUtils.itemToJson(item)));
             } catch (Exception r) {
                 plugin.getLogger().warning("failed to dump item json");
             }
@@ -90,7 +89,7 @@ public class EconomyUtil {
             switch (step) {
                 case 3:
                     plugin.getLogger().warning(I18n.format("log.error.transaction_fail_rollback_tax", tax));
-                    BalanceAPI.withdraw(tax);
+                    plugin.systemBalance.withdraw(tax, plugin);
                     //fallthrough
                 case 2:
                     boolean status2Seller = plugin.eco.withdraw(seller, price);

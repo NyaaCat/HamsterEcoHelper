@@ -30,7 +30,7 @@ public class AuctionManager extends BukkitRunnable {
             plugin.logger.info(I18n.format("log.info.auc_not_enough_player", Bukkit.getOnlinePlayers().size(), plugin.config.auctionMinimalPlayer));
             return;
         }
-        if (plugin.balanceAPI.isEnabled() && plugin.balanceAPI.getBalance() > 0) {
+        if (plugin.systemBalance.isEnabled() && plugin.systemBalance.getBalance() >= 0D) {
             return;
         }
         int delay = Utils.inclusiveRandomInt(0, plugin.config.auctionMaxDelayTicks);

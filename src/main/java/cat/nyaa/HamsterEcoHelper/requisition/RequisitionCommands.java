@@ -119,8 +119,8 @@ public class RequisitionCommands extends CommandReceiver {
         } else {
             msg(p, "user.req.success", price);
             plugin.eco.deposit(p, price);
-            if (req.owner == null && plugin.balanceAPI.isEnabled()) {
-                plugin.balanceAPI.withdraw(price);
+            if (req.owner == null && plugin.systemBalance.isEnabled()) {
+                plugin.systemBalance.withdraw(price, plugin);
             }
         }
     }
