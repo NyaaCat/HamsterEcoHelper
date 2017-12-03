@@ -47,7 +47,7 @@ public class BalanceCommands extends CommandReceiver {
             }
             Player player = Bukkit.getPlayer(playerName);
             if (player != null) {
-                plugin.systemBalance.withdraw(amount, plugin);
+                plugin.systemBalance.withdrawAllowDebt(amount, plugin);
                 plugin.eco.deposit(player, amount);
                 msg(sender, "user.balance.pay", amount, playerName);
                 msg(player, "user.balance.pay_notice", amount);
