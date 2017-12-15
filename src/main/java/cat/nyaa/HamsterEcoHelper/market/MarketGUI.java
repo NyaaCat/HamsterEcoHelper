@@ -5,7 +5,7 @@ import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopInventoryHolder;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem_v2;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -74,12 +74,12 @@ public class MarketGUI extends ShopInventoryHolder {
             offset = (page - 1) * (45);
         }
         setCurrentPage(page);
-        List<MarketItem> marketItem = plugin.database.getMarketItems(offset, 45, seller);
-        if (marketItem != null) {
-            for (int i = 0; i < marketItem.size(); i++) {
-                MarketItem mItem = marketItem.get(i);
+        List<MarketItem_v2> items = plugin.database.getMarketItems(offset, 45, seller);
+        if (items != null) {
+            for (int i = 0; i < items.size(); i++) {
+                MarketItem_v2 mItem = items.get(i);
                 itemsID.put(i, mItem.getId());
-                ItemStack itemStack = mItem.getItemStack();
+                ItemStack itemStack = mItem.getItem();
                 addLore(mItem.getPlayer(), itemStack, mItem.getUnitPrice());
                 inventory.setItem(i, itemStack);
             }
@@ -118,43 +118,44 @@ public class MarketGUI extends ShopInventoryHolder {
     }
 
     public boolean clickItem(Player player, int slot, boolean shift) {
-        long itemId = slot;
+        long marketItemID = slot;
         int amount = 1;
         if (this.itemsID.containsKey(slot)) {
-            itemId = this.itemsID.get(slot);
+            marketItemID = this.itemsID.get(slot);
         }
-        MarketItem item = plugin.marketManager.getItem(itemId);
-        if (item != null && item.getItemStack().getType() != Material.AIR && item.getAmount() > 0) {
+        MarketItem_v2 marketItem = plugin.marketManager.getItem(marketItemID);
+        if (marketItem != null && marketItem.getItem().getType() != Material.AIR && marketItem.getAmount() > 0) {
             if (shift) {
-                amount = item.getAmount().intValue();
+                amount = marketItem.getAmount();
             }
-            double price = item.getUnitPrice() * amount;
+            double price = marketItem.getUnitPrice() * amount;
             double tax = 0.0D;
             if (plugin.config.market_tax > 0) {
                 tax = (price / 100) * plugin.config.market_tax;
             }
-            if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
-                Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, item.getPlayer(), item.getItemStack(amount), price, tax);
-                if(!stat.isPresent()){
+            if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(marketItem.getPlayerId())) {
+                ItemStack item = marketItem.getItem(amount);
+                Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, marketItem.getPlayer(), item, price, tax);
+                if (!stat.isPresent()) {
                     new Message("")
-                            .append(I18n.format("user.market.buy_fail", item.getPlayer().getName(), price), item.getItemStack(amount))
+                            .append(I18n.format("user.market.buy_fail", marketItem.getPlayer().getName(), price), item)
                             .send(player);
                     return false;
                 }
-                plugin.database.marketBuy(player, itemId, amount);
+                plugin.database.marketBuy(marketItemID, amount);
                 plugin.marketManager.updateAllGUI();
                 player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
-                plugin.logger.info(I18n.format("log.info.market_bought", itemId, Utils.getItemName(item.getItemStack()),
-                        amount, price, player.getName(), item.getPlayer().getName()));
-                if (!player.getUniqueId().equals(item.getPlayerId())) {
-                    if (item.getPlayer().isOnline()) {
+                plugin.logger.info(I18n.format("log.info.market_bought", marketItemID, Utils.getItemName(item),
+                        amount, price, player.getName(), marketItem.getPlayer().getName(), marketItem.itemID));
+                if (!player.getUniqueId().equals(marketItem.getPlayerId())) {
+                    if (marketItem.getPlayer().isOnline()) {
                         new Message("")
                                 .append(I18n.format("user.market.someone_bought",
-                                        player.getName(), price + tax), item.getItemStack(amount))
-                                .send((Player) item.getPlayer());
+                                        player.getName(), price + tax), item)
+                                .send((Player) marketItem.getPlayer());
                     }
                     new Message("")
-                            .append(I18n.format("user.market.buy_success", item.getPlayer().getName(), price), item.getItemStack(amount))
+                            .append(I18n.format("user.market.buy_success", marketItem.getPlayer().getName(), price), item)
                             .send(player);
                 }
                 plugin.marketManager.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);

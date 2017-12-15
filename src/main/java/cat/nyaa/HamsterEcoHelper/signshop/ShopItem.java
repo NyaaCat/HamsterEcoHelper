@@ -2,7 +2,7 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
-
+@Deprecated
 public class ShopItem {
     public int amount;
     public ItemStack itemStack;

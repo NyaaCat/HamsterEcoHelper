@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Base64;
 import java.util.UUID;
-
+@Deprecated
 @DataTable("market")
 public class MarketItem {
     @DataColumn("id")

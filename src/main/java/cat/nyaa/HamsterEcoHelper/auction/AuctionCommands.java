@@ -1,7 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.Material;
@@ -115,10 +114,6 @@ public class AuctionCommands extends CommandReceiver {
         double stepPrice = args.nextDouble("#.##");
         if (stepPrice <= 0) {
             msg(sender, "user.auc.step_price_error");
-            return;
-        }
-        if(MarketManager.containsBook(item)){
-            msg(sender,"user.error.shulker_box_contains_book");
             return;
         }
         int reservePrice = 0;

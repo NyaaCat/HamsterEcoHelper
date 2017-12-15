@@ -6,7 +6,7 @@ import cat.nyaa.nyaacore.database.PrimaryKey;
 
 import java.util.Base64;
 import java.util.UUID;
-
+@Deprecated
 @DataTable("temporary_storage")
 public class TempStorageRepo {
     @DataColumn("player_id")

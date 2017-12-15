@@ -1,12 +1,9 @@
 package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemLog;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.utils.ReflectionUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -175,17 +172,5 @@ public class RequisitionCommands extends CommandReceiver {
             plugin.eco.withdraw(player, amount * unitPrice);
             plugin.reqManager.cooldown.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
         }
-    }
-
-    @SubCommand(value = "giveitem", permission = "heh.giveitem")
-    public void GiveItem(CommandSender sender, Arguments args) {
-        Player p = asPlayer(sender);
-        ItemLog item = plugin.database.getItemLog(args.nextInt());
-        if (item != null) {
-            Utils.giveItem(p, item.getItemStack());
-            p.sendMessage("player: " + Bukkit.getPlayer(item.getOwner()).getName());
-            p.sendMessage("price: " + item.getPrice());
-        }
-
     }
 }
