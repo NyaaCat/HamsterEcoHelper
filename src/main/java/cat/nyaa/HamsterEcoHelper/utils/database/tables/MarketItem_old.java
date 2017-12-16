@@ -3,25 +3,26 @@ package cat.nyaa.HamsterEcoHelper.utils.database.tables;
 import cat.nyaa.nyaacore.database.DataColumn;
 import cat.nyaa.nyaacore.database.DataTable;
 import cat.nyaa.nyaacore.database.PrimaryKey;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Base64;
 import java.util.UUID;
-
-@DataTable("itemlog")
-public class ItemLog {
+@Deprecated
+@DataTable("market")
+public class MarketItem_old {
     @DataColumn("id")
     @PrimaryKey
     public Long id;
-    @DataColumn("owner")
-    public String owner;
+    @DataColumn("player_id")
+    public String playerId;
     @DataColumn("item")
     public String item;
     public int amount;
-    @DataColumn("price")
-    public Double price;
+    private Double unitPrice;
 
     public Long getId() {
         return id;
@@ -31,14 +32,18 @@ public class ItemLog {
         this.id = id;
     }
 
-    public UUID getOwner() {
-        return UUID.fromString(owner);
+    public UUID getPlayerId() {
+        return UUID.fromString(playerId);
     }
 
-    public void setOwner(UUID owner) {
-        this.owner = owner.toString();
+    public void setPlayerId(UUID uuid) {
+        this.playerId = uuid.toString();
     }
 
+    public OfflinePlayer getPlayer(){
+        return Bukkit.getOfflinePlayer(getPlayerId());
+    }
+    
     public ItemStack getItemStack() {
         YamlConfiguration yaml = new YamlConfiguration();
         try {
@@ -47,7 +52,7 @@ public class ItemLog {
             e.printStackTrace();
         }
         ItemStack itemStack = yaml.getItemStack("item");
-        itemStack.setAmount(this.amount);
+        itemStack.setAmount((int) this.amount);
         return itemStack;
     }
 
@@ -63,7 +68,7 @@ public class ItemLog {
         item.setAmount(amount);
         return item;
     }
-
+    
     @DataColumn("amount")
     public Long getAmount() {
         return (long) amount;
@@ -73,12 +78,13 @@ public class ItemLog {
         this.amount = amount.intValue();
     }
 
-    public Double getPrice() {
-        return price;
+    @DataColumn("unit_price")
+    public Double getUnitPrice() {
+        return unitPrice;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
+    public void setUnitPrice(Double unit_price) {
+        this.unitPrice = unit_price;
     }
 
 }

@@ -5,7 +5,7 @@ import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShopItem;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ShopGUI extends ShopInventoryHolder {
     public static String lore_code = ChatColor.translateAlternateColorCodes('&', "&f&f&9&e&c&1&4&a&5&1&1&2&0&7&4&r");
@@ -25,9 +26,9 @@ public class ShopGUI extends ShopInventoryHolder {
     public Sign sign;
     public ShopMode mode;
     public int currentPage = 1;
+    public HashMap<Integer, Long> itemsID = new HashMap<>();
     private HamsterEcoHelper plugin;
     private Player player;
-
 
     public ShopGUI(HamsterEcoHelper pl, Player player, Sign sign) {
         this.plugin = pl;
@@ -104,11 +105,12 @@ public class ShopGUI extends ShopInventoryHolder {
             offset = (page - 1) * 45;
         }
         setCurrentPage(page);
-        List<ShopItem> shopItems = getShopItems(offset, 45);
+        List<SignShopItem> shopItems = getShopItems(offset, 45);
         if (shopItems != null) {
             for (int i = 0; i < shopItems.size(); i++) {
-                ShopItem item = shopItems.get(i);
-                inventory.setItem(i, addLore(item.getItemStack(item.getAmount()), item.getUnitPrice()));
+                SignShopItem item = shopItems.get(i);
+                itemsID.put(i, item.id);
+                inventory.setItem(i, addLore(item.getItem(), item.unitPrice));
             }
         }
         if (page > 1) {
@@ -133,71 +135,65 @@ public class ShopGUI extends ShopInventoryHolder {
     }
 
     public boolean clickItem(Player player, int slot, boolean shift) {
-        int itemId = slot;
+        long shopItemID = slot;
         int amount = 1;
-        if (getCurrentPage() > 1) {
-            itemId = ((getCurrentPage() - 1) * 45) + slot;
+        if (this.itemsID.containsKey(slot)) {
+            shopItemID = this.itemsID.get(slot);
         }
-        SignShop shop = plugin.database.getSignShop(shopOwner);
-        List<ShopItem> shopItems = new ArrayList<>();
-        shopItems = shop.getItems(mode);
-        if (shopItems.size() > itemId) {
-            ShopItem shopItem = shopItems.get(itemId);
-            if (shopItem == null || !(shopItem.getAmount() > 0)) {
-                player.closeInventory();
-                return false;
+        if (getCurrentPage() > 1) {
+            shopItemID = ((getCurrentPage() - 1) * 45) + slot;
+        }
+        SignShopItem shopItem = plugin.database.getSignShopItem(shopItemID);
+        if (shopItem == null || !(shopItem.amount > 0)) {
+            player.closeInventory();
+            return false;
+        }
+        if (shift) {
+            amount = shopItem.getAmount();
+        }
+        if (shopItem.getItem().getType() != Material.AIR) {
+            if (mode.equals(ShopMode.BUY)) {
+                plugin.database.removeSignShopItem(shopItemID);
+                this.openGUI(player, this.getCurrentPage());
+                return true;
             }
-            if (shift) {
-                amount = shopItem.getAmount();
+            double price = shopItem.unitPrice * amount;
+            double tax = 0.0D;
+            if (plugin.signShopManager.getTax() > 0) {
+                tax = (price / 100) * plugin.signShopManager.getTax();
             }
-            if (shopItem.getItemStack(1).getType() != Material.AIR) {
-                if (mode.equals(ShopMode.BUY)) {
-                    shopItem.setAmount(0);
-                    shopItems.set(itemId, shopItem);
-                    shop.setItems(shopItems, ShopMode.BUY);
-                    plugin.database.setSignShop(shopOwner, shop);
-                    this.openGUI(player, this.getCurrentPage());
-                    return true;
+            if (plugin.eco.enoughMoney(player, price + tax) || isEditMode()) {
+                ItemStack item = shopItem.getItem(amount);
+                OfflinePlayer owner = shopItem.getPlayer();
+                Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, owner, item, price, tax);
+                if (!stat.isPresent()) {
+                    new Message("")
+                            .append(I18n.format("user.market.buy_fail", owner.getName(), price), item)
+                            .send(player);
+                    return false;
                 }
-                double price = shopItem.getUnitPrice() * amount;
-                double tax = 0.0D;
-                if (plugin.signShopManager.getTax() > 0) {
-                    tax = (price / 100) * plugin.signShopManager.getTax();
-                }
-                if (plugin.eco.enoughMoney(player, price + tax) || isEditMode()) {
-                    OfflinePlayer owner = shop.getPlayer();
-                    Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, owner, shopItem.getItemStack(amount), price, tax);
-                    if(!stat.isPresent()){
+                shopItem.amount = shopItem.amount - amount;
+                plugin.database.updateSignShopItem(shopOwner, shopItem);
+                plugin.signShopManager.updateGUI(shopOwner, mode);
+                player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
+                if (!isEditMode()) {
+                    if (owner.isOnline()) {
                         new Message("")
-                                .append(I18n.format("user.market.buy_fail", owner.getName(), price), shopItem.getItemStack(amount))
-                                .send(player);
-                        return false;
+                                .append(I18n.format("user.signshop.buy.notice", player.getName(), price),
+                                        item)
+                                .send(Bukkit.getPlayer(shopOwner));
                     }
-                    shopItem.setAmount(shopItem.getAmount() - amount);
-                    shopItems.set(itemId, shopItem);
-                    shop.setItems(shopItems, ShopMode.SELL);
-                    plugin.database.setSignShop(shopOwner, shop);
-                    plugin.signShopManager.updateGUI(shopOwner, mode);
-                    player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
-                    if (!isEditMode()) {
-                        if (owner.isOnline()) {
-                            new Message("")
-                                    .append(I18n.format("user.signshop.buy.notice", player.getName(), price),
-                                            shopItem.getItemStack(amount))
-                                    .send(Bukkit.getPlayer(shopOwner));
-                        }
-                        new Message("")
-                                .append(I18n.format("user.signshop.buy.success", owner.getName(), price + tax),
-                                        shopItem.getItemStack(amount)).send(player);
-                        plugin.logger.info(I18n.format("log.info.signshop_bought",
-                                Utils.getItemName(shopItem.getItemStack(amount)), amount,
-                                price, player.getName(), shop.getPlayer().getName()));
-                    }
-                    return true;
-                } else {
-                    player.sendMessage(I18n.format("user.warn.no_enough_money"));
-                    return true;
+                    new Message("")
+                            .append(I18n.format("user.signshop.buy.success", owner.getName(), price + tax),
+                                    item).send(player);
+                    plugin.logger.info(I18n.format("log.info.signshop_bought",
+                            Utils.getItemName(item), amount,
+                            price, player.getName(), shopItem.getPlayer().getName(), shopItem.itemID));
                 }
+                return true;
+            } else {
+                player.sendMessage(I18n.format("user.warn.no_enough_money"));
+                return true;
             }
         }
         player.closeInventory();
@@ -216,17 +212,11 @@ public class ShopGUI extends ShopInventoryHolder {
         this.currentPage = page;
     }
 
-    public List<ShopItem> getShopItems(int offset, int limit) {
-        List<ShopItem> list = new ArrayList<>();
-        List<ShopItem> tmp = new ArrayList<>();
-        tmp = plugin.database.getSignShop(shopOwner).getItems(mode);
-        for (int i = offset; i < tmp.size(); i++) {
-            list.add(tmp.get(i));
-            if (list.size() >= limit) {
-                break;
-            }
-        }
-        return list;
+    public List<SignShopItem> getShopItems(int offset, int limit) {
+        List<SignShopItem> tmp = plugin.database.getSignShopItems(shopOwner, mode)
+                .stream().skip(offset).limit(limit).collect(Collectors.toList());
+        ;
+        return tmp;
     }
 
     public boolean isEditMode() {

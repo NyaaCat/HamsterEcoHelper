@@ -1,7 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.market;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.Bukkit;
@@ -36,10 +35,6 @@ public class MarketCommands extends CommandReceiver {
             }
             ItemStack item = getItemInHand(sender);
             if (item != null && item.getType() != Material.AIR && item.getAmount() > 0) {
-                if (MarketManager.containsBook(item)) {
-                    msg(sender, "user.error.shulker_box_contains_book");
-                    return;
-                }
                 if (plugin.marketManager.offer(player, item, price)) {
                     player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
                 }
@@ -65,17 +60,10 @@ public class MarketCommands extends CommandReceiver {
         }
     }
 
-    @SubCommand(value = "givemarketitem", permission = "heh.giveitem")
+    @SubCommand(value = "give", permission = "heh.giveitem")
     public void give(CommandSender sender, Arguments args) {
         Player player = asPlayer(sender);
-        MarketItem item = plugin.marketManager.getItem(args.nextInt());
-        if (item != null) {
-            int slot = player.getInventory().firstEmpty();
-            if (slot >= 0 && player.getInventory().getItem(slot) == null) {
-                msg(player, "user.market.offered", item.getPlayer().getName());
-                msg(player, "user.market.unit_price", item.getUnitPrice());
-                player.getInventory().setItem(slot, item.getItemStack(1));
-            }
-        }
+        ItemStack item = plugin.database.getItemByID(args.nextInt());
+        player.getInventory().addItem(item);
     }
 }

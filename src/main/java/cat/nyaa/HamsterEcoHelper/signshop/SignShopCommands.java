@@ -3,7 +3,6 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 import cat.nyaa.HamsterEcoHelper.CommandHandler;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.nyaacore.CommandReceiver;
@@ -95,10 +94,6 @@ public class SignShopCommands extends CommandReceiver {
                     double unitPrice = args.nextDouble("#.##");
                     if (!(unitPrice >= 0.01)) {
                         msg(sender, "user.error.not_double");
-                        return;
-                    }
-                    if(MarketManager.containsBook(itemStack)){
-                        msg(sender,"user.error.shulker_box_contains_book");
                         return;
                     }
                     if (itemStack.getAmount() > 0) {

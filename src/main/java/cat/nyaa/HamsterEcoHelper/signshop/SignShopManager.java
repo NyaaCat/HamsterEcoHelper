@@ -7,9 +7,9 @@ import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
-import cat.nyaa.nyaacore.utils.InventoryUtils;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShopItem;
 import cat.nyaa.nyaacore.Message;
+import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -94,13 +94,11 @@ public class SignShopManager {
     }
 
     public int getItemCount(Player player) {
-        return plugin.database.getSignShop(player.getUniqueId()).getItems(ShopMode.SELL).size() +
-                plugin.database.getSignShop(player.getUniqueId()).getItems(ShopMode.BUY).size();
+        return getItemCount(player.getUniqueId(), ShopMode.SELL) + getItemCount(player.getUniqueId(), ShopMode.BUY);
     }
 
     public int getItemCount(UUID owner, ShopMode mode) {
-        List<ShopItem> list = plugin.database.getSignShop(owner).getItems(mode);
-        return list.size();
+        return plugin.database.getSignShopItems(owner, mode).size();
     }
 
     public int getSignLimit(Player player) {
@@ -199,7 +197,7 @@ public class SignShopManager {
     }
 
     public void printItemsList(Player player, Sign sign) {
-        List<ShopItem> list = plugin.database.getSignShop(sign.getOwner()).getItems(ShopMode.BUY);
+        List<SignShopItem> list = plugin.database.getSignShopItems(sign.getOwner(), ShopMode.BUY);
         if (list.isEmpty()) {
             printShopInfo(player, sign);
             player.sendMessage(I18n.format("user.signshop.empty"));
@@ -207,49 +205,28 @@ public class SignShopManager {
         }
         player.sendMessage(I18n.format("user.signshop.sell.title", sign.getPlayer().getName()));
         if (getTax() > 0) {
-            for (ShopItem item : list) {
-                new Message("").append(I18n.format("user.signshop.sell.unit_price_with_tax", item.getUnitPrice(),
-                        ((item.getUnitPrice() / 100) * getTax())), item.getItemStack(1)).send(player);
+            for (SignShopItem item : list) {
+                new Message("").append(I18n.format("user.signshop.sell.unit_price_with_tax", item.unitPrice,
+                        ((item.unitPrice / 100) * getTax())), item.getItem(1)).send(player);
             }
         } else {
-            for (ShopItem item : list) {
-                new Message("").append(I18n.format("user.signshop.sell.unit_price", item.getUnitPrice()),
-                        item.getItemStack(1)).send(player);
+            for (SignShopItem item : list) {
+                new Message("").append(I18n.format("user.signshop.sell.unit_price", item.unitPrice),
+                        item.getItem(1)).send(player);
             }
         }
     }
 
-    public void addItemToSellList(UUID owner, ItemStack itemStack, double unitPrice) {
-        SignShop shop = plugin.database.getSignShop(owner);
-        List<ShopItem> list = shop.getItems(ShopMode.SELL);
-        list.add(0, new ShopItem(itemStack, itemStack.getAmount(), unitPrice));
-        shop.setItems(list, ShopMode.SELL);
-        plugin.database.setSignShop(owner, shop);
-    }
-
-    public void addItemToBuyList(UUID uuid, ItemStack itemStack, double unitPrice) {
-        SignShop shop = plugin.database.getSignShop(uuid);
-        List<ShopItem> list = shop.getItems(ShopMode.BUY);
-        list.add(0, new ShopItem(itemStack, 1, unitPrice));
-        shop.setItems(list, ShopMode.BUY);
-        plugin.database.setSignShop(uuid, shop);
-    }
-
     public void addItemToShop(UUID uuid, ItemStack itemStack, int amount, double unitPrice, ShopMode mode) {
-        SignShop shop = plugin.database.getSignShop(uuid);
-        List<ShopItem> list = shop.getItems(mode);
-        list.add(0, new ShopItem(itemStack.clone(), amount, unitPrice));
-        shop.setItems(list, mode);
-        plugin.database.setSignShop(uuid, shop);
+        plugin.database.addItemToSignShop(uuid, itemStack, unitPrice, mode);
     }
 
     public boolean sellItemToShop(Player player, ItemStack itemStack, Sign sign) {
-        SignShop shop = plugin.database.getSignShop(sign.getOwner());
-        List<ShopItem> list = shop.getItems(ShopMode.BUY);
-        for (ShopItem shopItem : list) {
-            if (shopItem.getItemStack(1).isSimilar(itemStack)) {
-                OfflinePlayer shopOwner = shop.getPlayer();
-                double price = itemStack.getAmount() * shopItem.getUnitPrice();
+        List<SignShopItem> list = plugin.database.getSignShopItems(sign.getOwner(), ShopMode.BUY);
+        for (SignShopItem shopItem : list) {
+            if (shopItem.getItem().isSimilar(itemStack)) {
+                OfflinePlayer shopOwner = shopItem.getPlayer();
+                double price = itemStack.getAmount() * shopItem.unitPrice;
                 double tax = 0.0D;
                 if (getTax() > 0) {
                     tax = (price / 100) * getTax();
@@ -270,10 +247,10 @@ public class SignShopManager {
                                     shopOwner.getName(), price - tax), itemStack).send(player);
                             if (shopOwner.isOnline()) {
                                 new Message("").append(I18n.format("user.signshop.sell.notice",
-                                        player.getName(), price), itemStack).send(Bukkit.getPlayer(shop.getOwner()));
+                                        player.getName(), price), itemStack).send(Bukkit.getPlayer(sign.getOwner()));
                             }
                             plugin.logger.info(I18n.format("log.info.signshop_sell", Utils.getItemName(itemStack),
-                                    itemStack.getAmount(), price, player.getName(), shopOwner.getName()));
+                                    itemStack.getAmount(), price, player.getName(), shopOwner.getName(), shopItem.itemID));
                             return true;
                         }
                     }

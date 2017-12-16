@@ -87,7 +87,7 @@ public class RequisitionInstance {
             itemName += "(" + item.getType().name() + ":" + item.getDurability() + ")";
         }
         logger = plugin.getLogger();
-        long id = plugin.database.addItemLog(player, item, unitPrice, amountRemains);
+        long id = plugin.database.getItemID(item);
         plugin.getLogger().info(I18n.format("log.info.player_req_start", id, player.getName(), itemName,
                 reqAmount, unitPrice, templateItem.timeoutTicks, uid(this)));
 

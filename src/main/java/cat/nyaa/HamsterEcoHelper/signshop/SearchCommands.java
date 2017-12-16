@@ -3,7 +3,7 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShopItem;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.Message;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SearchCommands extends CommandReceiver {
-    private Cache<UUID, List<Map.Entry<SignShop, ShopItem>>> searchResult =
+    private Cache<UUID, List<Map.Entry<Sign, SignShopItem>>> searchResult =
             CacheBuilder.newBuilder()
                         .concurrencyLevel(2)
                         .maximumSize(10000)
@@ -61,7 +61,7 @@ public class SearchCommands extends CommandReceiver {
     public void page(CommandSender sender, Arguments args) {
         Player player = sender instanceof Player ? (Player) sender : null;
         UUID searcher = player == null ? new UUID(2333, 2333) : player.getUniqueId();
-        List<Map.Entry<SignShop, ShopItem>> result = searchResult.getIfPresent(searcher);
+        List<Map.Entry<Sign, SignShopItem>> result = searchResult.getIfPresent(searcher);
         if (result == null) {
             msg(sender, "user.signshop.search.no_recent_result");
             return;
@@ -78,8 +78,8 @@ public class SearchCommands extends CommandReceiver {
                                                                      .append(I18n.format("user.signshop.search.result",
                                                                              Bukkit.getOfflinePlayer(pair.getKey().getOwner())
                                                                                    .getName(),
-                                                                             pair.getValue().getUnitPrice()
-                                                                     ), pair.getValue().itemStack)
+                                                                             pair.getValue().unitPrice
+                                                                     ), pair.getValue().getItem())
                                                                      .send(sender));
     }
 
@@ -140,11 +140,11 @@ public class SearchCommands extends CommandReceiver {
 
         UUID limitUuid = ownerLimit == null ? null : Bukkit.getOfflinePlayer(ownerLimit).getUniqueId();
 
-        List<SignShop> signShops = plugin.database.getSignShops();
+        List<Sign> signShops = plugin.database.getSignShops();
 
         Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            final LinkedListMultimap<SignShop, ShopItem> match = LinkedListMultimap.create();
-            for (SignShop shop : signShops) {
+            final LinkedListMultimap<Sign, SignShopItem> match = LinkedListMultimap.create();
+            for (Sign shop : signShops) {
                 UUID owner = shop.getOwner();
                 Set<Sign> signOwned = plugin.signShopManager.signLocations
                                               .stream()
@@ -160,12 +160,12 @@ public class SearchCommands extends CommandReceiver {
                                                                          && distance(curLoc, sign) < rangeLimit)) {
                     continue;
                 }
-                List<ShopItem> items = shop.getItems(ShopMode.SELL);
+                List<SignShopItem> items = plugin.database.getSignShopItems(shop.getOwner(), ShopMode.SELL);
                 items.stream().filter(
                         shopItem -> {
                             boolean loreMatch;
                             boolean enchMatch;
-                            ItemStack stack = shopItem.getItemStack(shopItem.getAmount());
+                            ItemStack stack = shopItem.getItem();
                             ItemMeta meta = stack.getItemMeta();
                             if (materialLimit != null && !materialLimit.equals(stack.getType())) return false;
                             if (matchLore) {
@@ -211,13 +211,13 @@ public class SearchCommands extends CommandReceiver {
                     Stream<Sign> sis = plugin.signShopManager.signLocations.stream().filter(sign -> sign.getOwner().equals(ss.getOwner())).filter(sign -> sign.shopMode == ShopMode.SELL);
                     if (curLoc != null) {
                         sis = sis.filter(sign -> curLoc.getWorld().equals(sign.getLocation().getWorld()))
-                                 .sorted(Comparator.comparingDouble(a -> a.getLocation().distance(curLoc)));
+                                .sorted(Comparator.comparingDouble(a -> a.getLocation().distance(curLoc)));
                         if (rangeLimit != -1)
                             sis = sis.filter(sign -> curLoc.distance(sign.getLocation()) < rangeLimit);
                     }
                     sis.findFirst().ifPresent(si -> msg(sender, "user.signshop.search.sign_of", ss.getPlayer().getName(), si.getX(), si.getY(), si.getZ()));
                 });
-                List<Map.Entry<SignShop, ShopItem>> result = match.entries().stream().sorted(Comparator.comparingDouble(a -> a.getValue().getUnitPrice())).collect(Collectors.toList());
+                List<Map.Entry<Sign, SignShopItem>> result = match.entries().stream().sorted(Comparator.comparingDouble(a -> a.getValue().unitPrice)).collect(Collectors.toList());
                 searchResult.put(searcher, result);
                 msg(sender, "user.signshop.search.page", 1, (int) Math.ceil(result.size() / 9.0d));
                 if (player != null) {
@@ -226,8 +226,8 @@ public class SearchCommands extends CommandReceiver {
                                                                      .append(I18n.format("user.signshop.search.result",
                                                                              Bukkit.getOfflinePlayer(pair.getKey().getOwner())
                                                                                    .getName(),
-                                                                             pair.getValue().getUnitPrice()
-                                                                     ), pair.getValue().itemStack)
+                                                                             pair.getValue().unitPrice
+                                                                     ), pair.getValue().getItem())
                                                                      .send(player));
                 } else {
                     result.stream().limit(9).forEach(pair ->
@@ -235,8 +235,8 @@ public class SearchCommands extends CommandReceiver {
                                                                                         .append(I18n.format("user.signshop.search.result",
                                                                                                 Bukkit.getOfflinePlayer(pair.getKey().getOwner())
                                                                                                       .getName(),
-                                                                                                pair.getValue().getUnitPrice()
-                                                                                        ), pair.getValue().itemStack)
+                                                                                                pair.getValue().unitPrice
+                                                                                        ), pair.getValue().getItem())
                                                                                         .inner.toLegacyText()));
                 }
             });

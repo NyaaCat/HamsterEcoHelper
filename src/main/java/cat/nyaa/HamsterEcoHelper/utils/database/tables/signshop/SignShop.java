@@ -17,6 +17,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+@Deprecated
 @DataTable("signshop")
 public class SignShop {
     @DataColumn("id")

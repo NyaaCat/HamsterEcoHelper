@@ -1,6 +1,7 @@
-package cat.nyaa.HamsterEcoHelper.utils.database.tables;
+package cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
 import cat.nyaa.nyaacore.database.DataColumn;
 import cat.nyaa.nyaacore.database.DataTable;
 import cat.nyaa.nyaacore.database.PrimaryKey;
@@ -10,19 +11,21 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-@DataTable("marketitem")
-public class MarketItem {
+@DataTable("signshopitem")
+public class SignShopItem {
     @DataColumn("item_id")
     public Long itemID;
+    @DataColumn("amount")
+    public Long amount;
+    @DataColumn("unit_price")
+    public Double unitPrice;
     @DataColumn("id")
     @PrimaryKey
     public Long id;
     @DataColumn("player_id")
     public UUID playerId;
-    @DataColumn("amount")
-    private Long amount;
-    @DataColumn("unit_price")
-    public Double unitPrice;
+    @DataColumn("type")
+    public ShopMode type;
 
     public OfflinePlayer getPlayer() {
         return Bukkit.getOfflinePlayer(playerId);

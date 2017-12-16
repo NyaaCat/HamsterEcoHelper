@@ -243,8 +243,9 @@ public class SignShopListener implements Listener {
                                 player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
                                 new Message("").append(I18n.format("user.signshop.lotto.success",
                                         price, owner.getName()), item).send(player);
+                                long itemID = plugin.database.getItemID(item);
                                 plugin.logger.info(I18n.format("log.info.signshop_lotto", Utils.getItemName(item),
-                                        item.getAmount(), price, player.getName(), owner.getName()));
+                                        item.getAmount(), price, player.getName(), owner.getName(), itemID));
                                 if (owner.isOnline()) {
                                     if (tax > 0.0D) {
                                         new Message("").append(I18n.format("user.signshop.lotto.notice_with_tax",
