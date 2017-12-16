@@ -53,40 +53,67 @@ public class Database extends SQLiteDatabase {
                 LottoStorageLocation.class,
                 ItemDB.class,
                 SignShopItem.class,
-                MarketItem_v2.class,
-                TempStorageRepo_v2.class
+                MarketItem_v2.class
         };
     }
 
     public List<ItemStack> getTemporaryStorage(OfflinePlayer player) {
-        Query<TempStorageRepo_v2> result = query(TempStorageRepo_v2.class).whereEq("player_id", player.getUniqueId().toString());
+        Query<TempStorageRepo> result = query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString());
         if (result == null || result.count() == 0) return Collections.emptyList();
-        return result.selectUnique().getItems();
+        YamlConfiguration cfg = new YamlConfiguration();
+        try {
+            cfg.loadFromString(result.selectUnique().yaml);
+        } catch (InvalidConfigurationException ex) {
+            ex.printStackTrace();
+            return Collections.emptyList();
+        }
+        List<ItemStack> ret = new ArrayList<>();
+        for (String key : cfg.getKeys(false)) {
+            ret.add(cfg.getItemStack(key));
+        }
+        return ret;
     }
 
     public void addTemporaryStorage(OfflinePlayer player, ItemStack item) {
-        Query<TempStorageRepo_v2> result = query(TempStorageRepo_v2.class).whereEq("player_id", player.getUniqueId().toString());
+        Query<TempStorageRepo> result = query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString());
+        YamlConfiguration cfg = new YamlConfiguration();
         boolean update;
-        List<ItemStack> items = new ArrayList<>();
-        items.add(item.clone());
         if (result == null || result.count() == 0) {
             update = false;
+            cfg.set("0", item);
         } else {
             update = true;
-            items.addAll(result.selectUnique().getItems());
+            YamlConfiguration tmp = new YamlConfiguration();
+            try {
+                tmp.loadFromString(result.selectUnique().yaml);
+            } catch (InvalidConfigurationException ex) {
+                ex.printStackTrace();
+                throw new RuntimeException(ex);
+            }
+
+            List<ItemStack> items = new ArrayList<>();
+            for (String key : tmp.getKeys(false)) {
+                items.add(tmp.getItemStack(key));
+            }
+            items.add(item);
+
+            for (int i = 0; i < items.size(); i++) {
+                cfg.set(Integer.toString(i), items.get(i));
+            }
         }
-        TempStorageRepo_v2 bean = new TempStorageRepo_v2();
+
+        TempStorageRepo bean = new TempStorageRepo();
         bean.setPlayerId(player.getUniqueId());
-        bean.setItems(items);
+        bean.yaml = cfg.saveToString();
         if (update) {
             result.update(bean);
         } else {
-            query(TempStorageRepo_v2.class).insert(bean);
+            query(TempStorageRepo.class).insert(bean);
         }
     }
 
     public void clearTemporaryStorage(OfflinePlayer player) {
-        Query<TempStorageRepo_v2> query = query(TempStorageRepo_v2.class).whereEq("player_id", player.getUniqueId().toString());
+        Query<TempStorageRepo> query = query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString());
         if (query != null && query.count() != 0) {
             query.delete();
         }
@@ -389,28 +416,6 @@ public class Database extends SQLiteDatabase {
                             id++;
                         }
                     }
-                }
-            }
-        }
-        List<TempStorageRepo> repos = query(TempStorageRepo.class).select();
-        if (repos != null && !repos.isEmpty()) {
-            for (TempStorageRepo repo : repos) {
-                if (repo != null) {
-                    YamlConfiguration cfg = new YamlConfiguration();
-                    try {
-                        cfg.loadFromString(repo.yaml);
-                    } catch (InvalidConfigurationException ex) {
-                        ex.printStackTrace();
-                        continue;
-                    }
-                    List<ItemStack> items = new ArrayList<>();
-                    for (String key : cfg.getKeys(false)) {
-                        items.add(cfg.getItemStack(key));
-                    }
-                    TempStorageRepo_v2 s = new TempStorageRepo_v2();
-                    s.setPlayerId(repo.getPlayerId());
-                    s.setItems(items);
-                    query(TempStorageRepo_v2.class).insert(s);
                 }
             }
         }
