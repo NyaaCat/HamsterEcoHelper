@@ -10,17 +10,9 @@ import org.bukkit.inventory.ItemStack;
 public class ItemDB {
     @DataColumn("id")
     @PrimaryKey
-    private Long id;
+    public Long id;
     @DataColumn("item")
     private ItemStack item;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public ItemStack getItemStack() {
         return item.clone();

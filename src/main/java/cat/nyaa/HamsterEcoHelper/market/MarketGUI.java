@@ -5,7 +5,7 @@ import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopInventoryHolder;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem_v2;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -74,13 +74,13 @@ public class MarketGUI extends ShopInventoryHolder {
             offset = (page - 1) * (45);
         }
         setCurrentPage(page);
-        List<MarketItem_v2> items = plugin.database.getMarketItems(offset, 45, seller);
+        List<MarketItem> items = plugin.database.getMarketItems(offset, 45, seller);
         if (items != null) {
             for (int i = 0; i < items.size(); i++) {
-                MarketItem_v2 mItem = items.get(i);
-                itemsID.put(i, mItem.getId());
+                MarketItem mItem = items.get(i);
+                itemsID.put(i, mItem.id);
                 ItemStack itemStack = mItem.getItem();
-                addLore(mItem.getPlayer(), itemStack, mItem.getUnitPrice());
+                addLore(mItem.getPlayer(), itemStack, mItem.unitPrice);
                 inventory.setItem(i, itemStack);
             }
         }
@@ -123,17 +123,17 @@ public class MarketGUI extends ShopInventoryHolder {
         if (this.itemsID.containsKey(slot)) {
             marketItemID = this.itemsID.get(slot);
         }
-        MarketItem_v2 marketItem = plugin.marketManager.getItem(marketItemID);
+        MarketItem marketItem = plugin.marketManager.getItem(marketItemID);
         if (marketItem != null && marketItem.getItem().getType() != Material.AIR && marketItem.getAmount() > 0) {
             if (shift) {
                 amount = marketItem.getAmount();
             }
-            double price = marketItem.getUnitPrice() * amount;
+            double price = marketItem.unitPrice * amount;
             double tax = 0.0D;
             if (plugin.config.market_tax > 0) {
                 tax = (price / 100) * plugin.config.market_tax;
             }
-            if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(marketItem.getPlayerId())) {
+            if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(marketItem.playerId)) {
                 ItemStack item = marketItem.getItem(amount);
                 Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, marketItem.getPlayer(), item, price, tax);
                 if (!stat.isPresent()) {
@@ -147,7 +147,7 @@ public class MarketGUI extends ShopInventoryHolder {
                 player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
                 plugin.logger.info(I18n.format("log.info.market_bought", marketItemID, Utils.getItemName(item),
                         amount, price, player.getName(), marketItem.getPlayer().getName(), marketItem.itemID));
-                if (!player.getUniqueId().equals(marketItem.getPlayerId())) {
+                if (!player.getUniqueId().equals(marketItem.playerId)) {
                     if (marketItem.getPlayer().isOnline()) {
                         new Message("")
                                 .append(I18n.format("user.market.someone_bought",

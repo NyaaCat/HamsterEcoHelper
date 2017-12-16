@@ -206,12 +206,12 @@ public class SignShopManager {
         player.sendMessage(I18n.format("user.signshop.sell.title", sign.getPlayer().getName()));
         if (getTax() > 0) {
             for (SignShopItem item : list) {
-                new Message("").append(I18n.format("user.signshop.sell.unit_price_with_tax", item.getUnitPrice(),
-                        ((item.getUnitPrice() / 100) * getTax())), item.getItem(1)).send(player);
+                new Message("").append(I18n.format("user.signshop.sell.unit_price_with_tax", item.unitPrice,
+                        ((item.unitPrice / 100) * getTax())), item.getItem(1)).send(player);
             }
         } else {
             for (SignShopItem item : list) {
-                new Message("").append(I18n.format("user.signshop.sell.unit_price", item.getUnitPrice()),
+                new Message("").append(I18n.format("user.signshop.sell.unit_price", item.unitPrice),
                         item.getItem(1)).send(player);
             }
         }
@@ -226,7 +226,7 @@ public class SignShopManager {
         for (SignShopItem shopItem : list) {
             if (shopItem.getItem().isSimilar(itemStack)) {
                 OfflinePlayer shopOwner = shopItem.getPlayer();
-                double price = itemStack.getAmount() * shopItem.getUnitPrice();
+                double price = itemStack.getAmount() * shopItem.unitPrice;
                 double tax = 0.0D;
                 if (getTax() > 0) {
                     tax = (price / 100) * getTax();

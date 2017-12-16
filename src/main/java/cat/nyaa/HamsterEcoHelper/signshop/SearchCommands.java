@@ -78,7 +78,7 @@ public class SearchCommands extends CommandReceiver {
                                                                      .append(I18n.format("user.signshop.search.result",
                                                                              Bukkit.getOfflinePlayer(pair.getKey().getOwner())
                                                                                    .getName(),
-                                                                             pair.getValue().getUnitPrice()
+                                                                             pair.getValue().unitPrice
                                                                      ), pair.getValue().getItem())
                                                                      .send(sender));
     }
@@ -217,7 +217,7 @@ public class SearchCommands extends CommandReceiver {
                     }
                     sis.findFirst().ifPresent(si -> msg(sender, "user.signshop.search.sign_of", ss.getPlayer().getName(), si.getX(), si.getY(), si.getZ()));
                 });
-                List<Map.Entry<Sign, SignShopItem>> result = match.entries().stream().sorted(Comparator.comparingDouble(a -> a.getValue().getUnitPrice())).collect(Collectors.toList());
+                List<Map.Entry<Sign, SignShopItem>> result = match.entries().stream().sorted(Comparator.comparingDouble(a -> a.getValue().unitPrice)).collect(Collectors.toList());
                 searchResult.put(searcher, result);
                 msg(sender, "user.signshop.search.page", 1, (int) Math.ceil(result.size() / 9.0d));
                 if (player != null) {
@@ -226,7 +226,7 @@ public class SearchCommands extends CommandReceiver {
                                                                      .append(I18n.format("user.signshop.search.result",
                                                                              Bukkit.getOfflinePlayer(pair.getKey().getOwner())
                                                                                    .getName(),
-                                                                             pair.getValue().getUnitPrice()
+                                                                             pair.getValue().unitPrice
                                                                      ), pair.getValue().getItem())
                                                                      .send(player));
                 } else {
@@ -235,7 +235,7 @@ public class SearchCommands extends CommandReceiver {
                                                                                         .append(I18n.format("user.signshop.search.result",
                                                                                                 Bukkit.getOfflinePlayer(pair.getKey().getOwner())
                                                                                                       .getName(),
-                                                                                                pair.getValue().getUnitPrice()
+                                                                                                pair.getValue().unitPrice
                                                                                         ), pair.getValue().getItem())
                                                                                         .inner.toLegacyText()));
                 }

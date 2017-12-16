@@ -3,7 +3,10 @@ package cat.nyaa.HamsterEcoHelper.utils.database;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopItem;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.*;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemDB;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem_old;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.TempStorageRepo;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.*;
 import cat.nyaa.nyaacore.database.SQLiteDatabase;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
@@ -46,14 +49,14 @@ public class Database extends SQLiteDatabase {
     protected Class<?>[] getTables() {
         return new Class<?>[]{
                 TempStorageRepo.class,
-                MarketItem.class,
+                MarketItem_old.class,
                 Sign.class,
                 ShopStorageLocation.class,
                 SignShop.class,
                 LottoStorageLocation.class,
                 ItemDB.class,
                 SignShopItem.class,
-                MarketItem_v2.class
+                MarketItem.class
         };
     }
 
@@ -119,16 +122,16 @@ public class Database extends SQLiteDatabase {
         }
     }
 
-    public List<MarketItem_v2> getMarketItems(int offset, int limit, UUID seller) {
-        ArrayList<MarketItem_v2> list = new ArrayList<>();
-        Query<MarketItem_v2> result;
+    public List<MarketItem> getMarketItems(int offset, int limit, UUID seller) {
+        ArrayList<MarketItem> list = new ArrayList<>();
+        Query<MarketItem> result;
         if (seller == null) {
-            result = query(MarketItem_v2.class).where("amount", ">", 0);
+            result = query(MarketItem.class).where("amount", ">", 0);
         } else {
-            result = query(MarketItem_v2.class).where("amount", ">", 0).whereEq("player_id", seller.toString());
+            result = query(MarketItem.class).where("amount", ">", 0).whereEq("player_id", seller.toString());
         }
         if (result != null && result.count() > 0) {
-            List<MarketItem_v2> tmp = result.select();
+            List<MarketItem> tmp = result.select();
             Collections.reverse(tmp);
             for (int i = 0; i < tmp.size(); i++) {
                 if (i + 1 > offset) {
@@ -143,34 +146,34 @@ public class Database extends SQLiteDatabase {
     }
 
     public long marketOffer(Player player, ItemStack itemStack, double unit_price) {
-        MarketItem_v2 item = new MarketItem_v2();
+        MarketItem item = new MarketItem();
         item.itemID = getItemID(itemStack);
         item.setAmount(itemStack.getAmount());
-        item.setPlayerId(player.getUniqueId());
-        item.setUnitPrice(unit_price);
+        item.playerId = player.getUniqueId();
+        item.unitPrice = unit_price;
         long id = 1;
-        for (MarketItem_v2 marketItem : query(MarketItem_v2.class).select()) {
-            if (marketItem.getId() >= id) {
-                id = marketItem.getId() + 1;
+        for (MarketItem marketItem : query(MarketItem.class).select()) {
+            if (marketItem.id >= id) {
+                id = marketItem.id + 1;
             }
         }
-        item.setId(id);
-        query(MarketItem_v2.class).insert(item);
-        return item.getId();
+        item.id = id;
+        query(MarketItem.class).insert(item);
+        return item.id;
     }
 
     public void marketBuy(long itemId, int amount) {
-        Query<MarketItem_v2> query = query(MarketItem_v2.class).whereEq("id", itemId);
+        Query<MarketItem> query = query(MarketItem.class).whereEq("id", itemId);
         if (query != null && query.count() != 0) {
-            MarketItem_v2 mItem = query.selectUnique();
+            MarketItem mItem = query.selectUnique();
             mItem.setAmount(mItem.getAmount() - amount);
-            mItem.setId(itemId);
+            mItem.id = itemId;
             query.update(mItem);
         }
     }
 
     public int getMarketPlayerItemCount(OfflinePlayer player) {
-        Query<MarketItem_v2> query = query(MarketItem_v2.class).whereEq("player_id", player.getUniqueId().toString()).where("amount", ">", 0);
+        Query<MarketItem> query = query(MarketItem.class).whereEq("player_id", player.getUniqueId().toString()).where("amount", ">", 0);
         if (query != null && query.count() > 0) {
             return query.count();
         }
@@ -178,15 +181,15 @@ public class Database extends SQLiteDatabase {
     }
 
     public int getMarketItemCount() {
-        Query<MarketItem_v2> query = query(MarketItem_v2.class).where("amount", ">", 0);
+        Query<MarketItem> query = query(MarketItem.class).where("amount", ">", 0);
         if (query != null && query.count() != 0) {
             return query.count();
         }
         return 0;
     }
 
-    public MarketItem_v2 getMarketItem(long id) {
-        Query<MarketItem_v2> query = query(MarketItem_v2.class).whereEq("id", id);
+    public MarketItem getMarketItem(long id) {
+        Query<MarketItem> query = query(MarketItem.class).whereEq("id", id);
         if (query != null && query.count() != 0) {
             return query.selectUnique();
         }
@@ -265,13 +268,13 @@ public class Database extends SQLiteDatabase {
     }
 
     public void updateSignShopItem(UUID owner, SignShopItem item) {
-        Query<SignShopItem> query = query(SignShopItem.class).whereEq("id", item.getId());
+        Query<SignShopItem> query = query(SignShopItem.class).whereEq("id", item.id);
         if (query != null && query.count() > 0) {
             SignShopItem signShopItem = query.selectUnique();
-            signShopItem.setAmount(item.getAmount());
-            signShopItem.setPlayerId(owner);
-            signShopItem.setUnitPrice(item.getUnitPrice());
-            signShopItem.setType(item.getType());
+            signShopItem.amount = item.amount;
+            signShopItem.playerId = owner;
+            signShopItem.unitPrice = item.unitPrice;
+            signShopItem.type = item.type;
             signShopItem.itemID = item.itemID;
             query.update(item);
         }
@@ -296,18 +299,18 @@ public class Database extends SQLiteDatabase {
         SignShopItem item = new SignShopItem();
         item.itemID = getItemID(itemStack);
         item.setAmount(itemStack.getAmount());
-        item.setPlayerId(owner);
-        item.setUnitPrice(unitPrice);
-        item.setType(type);
+        item.playerId = owner;
+        item.unitPrice = unitPrice;
+        item.type = type;
         long id = 1;
         for (SignShopItem shopItem : query(SignShopItem.class).select()) {
-            if (shopItem.getId() >= id) {
-                id = shopItem.getId() + 1;
+            if (shopItem.id >= id) {
+                id = shopItem.id + 1;
             }
         }
-        item.setId(id);
+        item.id = id;
         query(SignShopItem.class).insert(item);
-        return item.getId();
+        return item.id;
     }
 
     public ShopStorageLocation getChestLocation(UUID owner) {
@@ -355,20 +358,20 @@ public class Database extends SQLiteDatabase {
         i.setItemStack(item.clone());
         Query<ItemDB> r = query(ItemDB.class).whereEq("item", ItemStackUtils.itemToBase64(i.getItemStack()));
         if (r != null && r.count() > 0) {
-            return r.selectUnique().getId();
+            return r.selectUnique().id;
         } else {
             long id = 1L;
             List<ItemDB> query = query(ItemDB.class).select();
             if (query != null && query(ItemDB.class).count() > 0) {
                 for (ItemDB data : query) {
-                    if (data.getId() >= id) {
-                        id = data.getId() + 1;
+                    if (data.id >= id) {
+                        id = data.id + 1;
                     }
                 }
             }
-            i.setId(id);
+            i.id = id;
             this.query(ItemDB.class).insert(i);
-            return i.getId();
+            return i.id;
         }
     }
 
@@ -379,24 +382,23 @@ public class Database extends SQLiteDatabase {
         } else {
             plugin.logger.warning("convert item database...");
         }
-        List<MarketItem> MarketItems = query(MarketItem.class).select();
+        List<MarketItem_old> MarketItems = query(MarketItem_old.class).select();
         if (MarketItems != null && MarketItems.size() > 0) {
-            for (MarketItem item : MarketItems) {
+            for (MarketItem_old item : MarketItems) {
                 if (item.getAmount() > 0) {
-                    MarketItem_v2 mItem = new MarketItem_v2();
+                    MarketItem mItem = new MarketItem();
                     plugin.logger.info("market item id: " + item.getId());
-                    mItem.setId(item.getId());
+                    mItem.id = item.getId();
                     mItem.setAmount(item.amount);
-                    mItem.itemID = getItemID(item.getItemStack(1));
-                    mItem.setPlayerId(item.getPlayerId());
-                    mItem.setUnitPrice(item.getUnitPrice());
-                    query(MarketItem_v2.class).insert(mItem);
+                    mItem.itemID = getItemID(item.getItemStack());
+                    mItem.playerId = item.getPlayerId();
+                    mItem.unitPrice = item.getUnitPrice();
+                    query(MarketItem.class).insert(mItem);
                 }
             }
         }
         List<SignShop> signShops = query(SignShop.class).select();
         if (MarketItems != null && MarketItems.size() > 0) {
-            long id = 1L;
             for (SignShop shop : signShops) {
                 for (ShopMode mode : ShopMode.values()) {
                     if (mode == ShopMode.LOTTO) {
@@ -405,15 +407,7 @@ public class Database extends SQLiteDatabase {
                     plugin.logger.info("signshop: " + shop.getOwner().toString() + " " + mode.name());
                     for (ShopItem item : shop.getItems(mode)) {
                         if (item.getAmount() > 0) {
-                            SignShopItem signShopItem = new SignShopItem();
-                            signShopItem.setId(id);
-                            signShopItem.setAmount(item.getAmount());
-                            signShopItem.itemID = getItemID(item.getItemStack(1));
-                            signShopItem.setPlayerId(shop.getPlayer().getUniqueId());
-                            signShopItem.setUnitPrice(item.getUnitPrice());
-                            signShopItem.setType(mode);
-                            query(SignShopItem.class).insert(signShopItem);
-                            id++;
+                            addItemToSignShop(shop.getPlayer().getUniqueId(), item.itemStack, item.getUnitPrice(), mode);
                         }
                     }
                 }

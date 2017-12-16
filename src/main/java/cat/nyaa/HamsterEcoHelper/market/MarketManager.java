@@ -4,7 +4,7 @@ package cat.nyaa.HamsterEcoHelper.market;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem_v2;
+import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
 import cat.nyaa.nyaacore.Message;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
@@ -79,7 +79,7 @@ public class MarketManager extends BukkitRunnable {
         return true;
     }
 
-    public MarketItem_v2 getItem(long itemId) {
+    public MarketItem getItem(long itemId) {
         return plugin.database.getMarketItem(itemId);
     }
 
@@ -123,12 +123,12 @@ public class MarketManager extends BukkitRunnable {
             int itemCount = plugin.database.getMarketItemCount();
             if (itemCount > 0) {
                 int fail = 0;
-                List<MarketItem_v2> items = plugin.database.getMarketItems(0, itemCount, null);
-                for (MarketItem_v2 item : items) {
+                List<MarketItem> items = plugin.database.getMarketItems(0, itemCount, null);
+                for (MarketItem item : items) {
                     if (!plugin.eco.withdraw(item.getPlayer(), plugin.config.market_placement_fee)) {
                         fail++;
                         plugin.logger.info(I18n.format("log.info.placement_fee_fail",
-                                item.getId(), item.getPlayer().getName(), "Not enough money"));
+                                item.id, item.getPlayer().getName(), "Not enough money"));
                     }
                 }
                 if (fail < itemCount) {

@@ -109,8 +109,8 @@ public class ShopGUI extends ShopInventoryHolder {
         if (shopItems != null) {
             for (int i = 0; i < shopItems.size(); i++) {
                 SignShopItem item = shopItems.get(i);
-                itemsID.put(i, item.getId());
-                inventory.setItem(i, addLore(item.getItem(), item.getUnitPrice()));
+                itemsID.put(i, item.id);
+                inventory.setItem(i, addLore(item.getItem(), item.unitPrice));
             }
         }
         if (page > 1) {
@@ -144,7 +144,7 @@ public class ShopGUI extends ShopInventoryHolder {
             shopItemID = ((getCurrentPage() - 1) * 45) + slot;
         }
         SignShopItem shopItem = plugin.database.getSignShopItem(shopItemID);
-        if (shopItem == null || !(shopItem.getAmount() > 0)) {
+        if (shopItem == null || !(shopItem.amount > 0)) {
             player.closeInventory();
             return false;
         }
@@ -157,7 +157,7 @@ public class ShopGUI extends ShopInventoryHolder {
                 this.openGUI(player, this.getCurrentPage());
                 return true;
             }
-            double price = shopItem.getUnitPrice() * amount;
+            double price = shopItem.unitPrice * amount;
             double tax = 0.0D;
             if (plugin.signShopManager.getTax() > 0) {
                 tax = (price / 100) * plugin.signShopManager.getTax();
@@ -172,7 +172,7 @@ public class ShopGUI extends ShopInventoryHolder {
                             .send(player);
                     return false;
                 }
-                shopItem.setAmount(shopItem.getAmount() - amount);
+                shopItem.amount = shopItem.amount - amount;
                 plugin.database.updateSignShopItem(shopOwner, shopItem);
                 plugin.signShopManager.updateGUI(shopOwner, mode);
                 player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
