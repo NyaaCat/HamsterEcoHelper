@@ -49,21 +49,21 @@ admin:
     run_auc_fail: ''
 user:
   info:
-    not_player: ''
+    not_player: 只有玩家可執行此操作
     not_item_hand: ''
     no_current_auction: ''
     no_current_requisition: ''
     balance: ''
     back: ''
     next_page: ''
-    command_complete: ''
+    command_complete: 指令已執行!
     has_temporary_storage: ''
     mute: ''
     unmute: ''
     cooldown: ''
     player_not_found: ''
   error:
-    bad_command: ''
+    bad_command: '無效的指令: %s'
     not_int: ''
     not_double: ''
     command_exception: ''
