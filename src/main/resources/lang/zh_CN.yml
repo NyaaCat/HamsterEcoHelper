@@ -68,17 +68,17 @@ user:
     balance: '&a现金：&f%.2f'
     back: '&f返回'
     next_page: '&f下一页'
-    command_complete: 命令已执行
+    command_complete: 命令已执行！
     has_temporary_storage: 你的临时物品栏中有物品，使用 /heh retrieve 进行取回
     mute: 你将不会再收到广播信息，可使用 /heh unmute 来解除静音
     unmute: 解除静音成功
     cooldown: 请等待 %d 秒
     player_not_found: 未找到玩家 %s
   error:
-    bad_command: 无效的指令：%s
+    bad_command: 无效的命令：%s
     not_int: 不是有效的整数
     not_double: 不是有效的数字
-    command_exception: 内部错误，无法执行此命令
+    command_exception: 内部错误，无法执行此命令。
     bad_enum: 不是枚举 %s 中的有效项，可用的值为：%s
     unknown_item: 未知物品：%s
     shulker_box_contains_book: 不能出售含有书的潜影盒
