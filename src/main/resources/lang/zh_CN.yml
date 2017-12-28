@@ -95,7 +95,7 @@ user:
     mystery_item_placeholder: 未知物品
     new_price_0: 玩家 %s 给出了更高的价格
     new_price_1: ：%.2f$
-    new_price_success: 出价成功
+    new_price_success: 出价成功！
     first: '%.2f$ 第一次'
     second: '%.2f$ 第二次'
     third: '%.2f$ 第三次'
