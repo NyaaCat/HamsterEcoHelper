@@ -1,7 +1,7 @@
 log:
   warn:
     bad_subcommand: 无效的子命令处理过程：%s
-    lang_not_found: 未找到语言 %s
+    lang_not_found: 未找到语言 %s。
   info:
     using_language: 将使用语言 %s
     installing_db: 正在安装数据库...
@@ -43,22 +43,22 @@ log:
     ads_remove: '移除广告：{id: %d, text: "%s", player: "%s"}'
     system_balance: '系统余额：{type: %s, amount: %s, current_balance: %s, plugin: %s}'
   error:
-    missing_sqlite_driver: 未找到 SQLite 驱动程序，插件已禁用
+    missing_sqlite_driver: 未找到 SQLite 驱动程序，插件已禁用。
     enable_fail: 插件启用失败
-    transaction_fail: '交易失败：{seller: "%s", buyer: "%s", item: "%s", price: %.2f, tax:
-      %.2f}'
+    transaction_fail: ' 交易失败：{seller: "%s", buyer: "%s", item: "%s", price: %.2f,
+      tax: %.2f}'
     transaction_fail_dump: 物品JSON："%s"
     transaction_fail_rollback_tax: '回滚 TransactionApiEvent: {tax: %.2f}'
     transaction_fail_rollback_money: '回滚现金交易：{player: "%s", price: %.2f, status: "%s"}'
 admin:
   info:
-    save_done: 强制保存成功
-    load_done: 强制加载成功
+    save_done: 强制保存成功。
+    load_done: 强制加载成功。
   error:
     req_id_oor: 征购ID超出范围：%d～%d
     auc_id_oor: 拍卖ID超出范围：%d～%d
-    run_req_fail: 启动征购失败，可能有其它征购正在进行中
-    run_auc_fail: 启动拍卖失败，可能有其它拍卖正在进行中
+    run_req_fail: 启动征购失败，可能有其它征购正在进行中。
+    run_auc_fail: 启动拍卖失败，可能有其它拍卖正在进行中。
 user:
   info:
     not_player: 只有玩家可执行此操作
@@ -71,7 +71,7 @@ user:
     command_complete: 命令已执行！
     has_temporary_storage: 你的临时物品栏中有物品，使用 /heh retrieve 进行取回
     mute: 你将不会再收到广播信息，可使用 /heh unmute 来解除静音
-    unmute: 解除静音成功
+    unmute: 解除静音成功。
     cooldown: 请等待 %d 秒
     player_not_found: 未找到玩家 %s
   error:
@@ -100,7 +100,7 @@ user:
     second: '%.2f$ 第二次'
     third: '%.2f$ 第三次'
     halted: 拍卖中止
-    success_0: 拍卖结束，物品：
+    success_0: '拍卖结束！物品： '
     success_1: ' 被玩家 %s 拍下'
     fail: 拍卖结束，无人竞得物品：
     item_given_INVENTORY: 物品已放入你的背包
@@ -115,16 +115,16 @@ user:
     player_req_1: ×%d 个，单价 %.2f，剩余时间 %.2f 秒，请手持对应物品输入 /heh sell [数量] 参与征购
     hint_req_0: 当前正在征购：
     hint_req_1: ，还需要 %d 个，单价 %.2f，剩余时间 %.2f 秒，请手持对应物品输入 /heh sell [数量] 参与征购
-    finish: 征购结束
-    halted: 征购中止
-    success: 出售成功，$%.2f 已添加到你的账户
-    fail: 你不能出售这个物品
-    not_enough: 手中的物品数量不足
-    sell_amount_limit: 你最多可以出售 %d 个物品
-    not_match: 手中的物品与征购物品不符
-    sold_out: 征购数量已满，征购完成
+    finish: 征购结束。
+    halted: 征购中止。
+    success: 出售成功，$%.2f 已添加到你的账户。
+    fail: 你不能出售这个物品。
+    not_enough: 手中的物品数量不足。
+    sell_amount_limit: 你最多可以出售 %d 个物品。
+    not_match: 手中的物品与征购物品不符。
+    sold_out: 征购数量已满，征购完成。
     sold_amount_0: '玩家 %s 售出了 %d 个 '
-    sold_amount_1: ！还需要 %d 个
+    sold_amount_1: ！还需要 %d 个。
     sell_to_self: 你不能向自己出售物品
   market:
     title: '&2[市场]'
@@ -132,14 +132,14 @@ user:
     unit_price_with_tax: '&a单价：&f%s &a＋&f%s &a（&a税率 &f%d%%）'
     offered: '&a由 &f%s &a提供'
     my_items: '&a我的物品（%d/%d）'
-    broadcast: 新物品：{itemName}×{amount} 已上架！使用 /heh view 来查看
-    someone_bought: '%s 向你购买了 {itemName} 并支付给你 $%.2f'
+    broadcast: 新物品：{itemName}×{amount} 已上架！使用 /heh view 来查看。
+    someone_bought: '%s 向你购买了 {itemName} 并支付给你 $%.2f。'
     buy_success: 你购买了 {itemName} 并支付给 %s $%.2f.
-    buy_fail: 购买 {itemName}（出售者：%s，价格：$%.2f）失败，服务器内部错误
+    buy_fail: 购买 {itemName}（出售者：%s，价格：$%.2f）失败，服务器内部错误。
     not_enough_slot: 已无足够的店铺空位
   retrieve:
     need_confirm: 物品将掉落于你的当前位置，请在确保安全后，输入 /heh retrieve confirm 确认操作
-    no_item: 你没有可以取回的物品
+    no_item: 你没有可以取回的物品。
   death_penalty:
     message: 你失去了 %.2f 作为死亡惩罚
   balance:
@@ -173,9 +173,9 @@ user:
       select_chest: 请右键点击要设置的箱子
       info: '箱子位置：世界 %s, x: %d, y: %d, z: %d'
     lotto:
-      confirm: 再次右键点击木牌将确认抽奖操作
+      confirm: 再次右键点击木牌将确认抽奖操作。
       success: 你支付了 %s 给 %s 并获得了 {itemName}×{amount}
-      fail: 将 %s 支付给 %s 失败，服务器内部错误
+      fail: 将 %s 支付给 %s 失败，服务器内部错误。
       notice: '%s 从你的店里购买了 {itemName}×{amount} 并支付了 %s'
       notice_with_tax: '%s 从你的店里购买了 {itemName}×{amount} 并支付了 %s（含税 %s）'
       set_success: 设置奖池箱成功
@@ -222,8 +222,8 @@ user:
       no_permission: 你没有权限删除这条广告
       success: 删除广告成功
     mute: 你将不会再收到广告，使用 /heh ads unmute 取消静音
-    unmute: 取消静音成功
-    message: '[Ads by %s] &r%s&r'
+    unmute: 取消静音成功。
+    message: '[%s 的广告] &r%s&r'
     message_too_long: 广告内容最长为 %d 个字符
 manual:
   no_description: 无描述
@@ -232,40 +232,40 @@ manual:
     description: 拍卖相关指令
     usage: 用法：/heh auction help
     auc:
-      description: 发起拍卖
+      description: 发起拍卖。
       usage: 用法：/heh auction auc [起拍价|int] [步进价|int] [保留价|int]
     addauc:
-      description: 将手中的物品添加至系统拍卖列表
+      description: 将手中的物品添加至系统拍卖列表。
       usage: 用法：/heh auction addauc [起拍价|int] [步进价|int] [随机权重|double] [是否隐藏名称|bool]
         [等待刻数|int]
     bid:
-      description: 向正在进行的拍卖出价
+      description: 向正在进行的拍卖出价。
       usage: 用法：/heh auction bid [出价值|int]
     haltauc:
-      description: 中止正在进行的拍卖
+      description: 中止正在进行的拍卖。
       usage: 用法：/heh auction haltauc
     runauc:
-      description: 启动系统拍卖
+      description: 启动系统拍卖。
       usage: 用法：/heh auction runauc
   requisition:
     description: 征购相关指令
     usage: 用法：/heh requisition help
     addreq:
-      description: 将手中的物品添加至系统征购列表
+      description: 将手中的物品添加至系统征购列表。
       usage: 用法：/heh requisition addreq [最低单价|int] [最高单价|int] [最小数量|int] [最大数量|int]
         [随机权重|double] [超时刻数|int] [是否精确匹配|bool] [最小伤害值|int] [最大伤害值|int] [是否匹配附魔|string:EXACT:CONTAINS:ARBITRARY]
         [是否匹配Lore|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [是否匹配名称|string:EXACT:EXACT_TEXT:ARBITRARY]
     req:
-      description: 发起征购
+      description: 发起征购。
       usage: 用法：/heh requisition req [物品名称] [单价|int] [征购数量|int]
     runreq:
-      description: 启动系统征购
+      description: 启动系统征购。
       usage: 用法：/heh requisition runreq
     sell:
-      description: 将手中的物品出售给正在进行的征购
+      description: 将手中的物品出售给正在进行的征购。
       usage: 用法：/heh requisition sell [出售数量|int]
     haltreq:
-      description: 中止正在进行的征购
+      description: 中止正在进行的征购。
       usage: 用法：/heh requisition haltreq
   market:
     description: 市场相关指令
@@ -333,13 +333,13 @@ manual:
       description: 取消广告静音
       usage: 用法：/heh ads unmute
   retrieve:
-    description: 从临时道具栏中取回物品
+    description: 从临时道具栏中取回物品。
     usage: 用法：/heh retrieve [confirm]
   save:
-    description: 强制保存配置
+    description: 强制保存配置。
     usage: 用法：/heh save
   force-load:
-    description: 强制重新加载配置，并丢弃未保存的配置信息
+    description: 强制重新加载配置，并丢弃未保存的配置信息。
     usage: 用法：/heh force-load
   version:
     description: 显示版本和授权信息
