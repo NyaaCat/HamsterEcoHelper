@@ -2,25 +2,17 @@ package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
-import cat.nyaa.nyaacore.utils.ItemStackUtils;
-import cat.nyaa.nyaacore.utils.ReflectionUtils;
-import com.google.common.io.BaseEncoding;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.librazy.nyaautils_lang_checker.LangKey;
 import org.librazy.nyaautils_lang_checker.LangKeyType;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 public class Utils {
     public static final Random random = new Random();
@@ -96,5 +88,16 @@ public class Utils {
             itemName += "(" + item.getType().name() + ":" + item.getDurability() + ")";
         }
         return itemName;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Material getMaterial(String name) {
+        Material m = null;
+        if (name.toLowerCase().contains("minecraft:")) {
+            m = Bukkit.getServer().getUnsafe().getMaterialFromInternalName(name);
+        } else {
+            m = Material.matchMaterial(name);
+        }
+        return m;
     }
 }

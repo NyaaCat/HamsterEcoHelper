@@ -2,11 +2,13 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.utils.Utils;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.Message;
+import cat.nyaa.nyaacore.utils.ReflectionUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;
@@ -105,26 +107,14 @@ public class SearchCommands extends CommandReceiver {
         boolean matchEnch = matchEnchOnly || advancedOption.contains("ench");
         final int rangeLimit = player == null ? -1 : args.argInt("r", args.argInt("range", -1));
         final Material materialLimit;
-        try {
-            if (itemLimit != null) {
-                int id;
-                try {
-                    id = Integer.parseInt(itemLimit);
-                } catch (NumberFormatException e) {
-                    id = -1;
-                }
-                if (id == -1) {
-                    materialLimit = Material.valueOf(itemLimit.toUpperCase());
-                } else {
-                    materialLimit = Material.getMaterial(id);
-                    if (materialLimit == null) throw new IllegalArgumentException();
-                }
-            } else {
-                materialLimit = null;
+        if (itemLimit != null) {
+            materialLimit = Utils.getMaterial(itemLimit);
+            if (materialLimit == null || materialLimit == Material.AIR || !ReflectionUtils.isValidItem(new ItemStack(materialLimit))) {
+                msg(sender, "user.error.unknown_item", itemLimit);
+                return;
             }
-        } catch (IllegalArgumentException e) {
-            msg(sender, "user.error.unknown_item", itemLimit);
-            return;
+        } else {
+            materialLimit = null;
         }
         while (args.top() != null) {
             keywords.add(args.next().toLowerCase());

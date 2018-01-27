@@ -137,7 +137,7 @@ public class RequisitionCommands extends CommandReceiver {
         }
 
         Player player = asPlayer(sender);
-        String itemName = args.next().toUpperCase();
+        String itemName = args.nextString().toUpperCase();
         ItemStack item = null;
         double unitPrice = args.nextDouble("#.##");
         int amount = args.nextInt();
@@ -155,13 +155,11 @@ public class RequisitionCommands extends CommandReceiver {
         if (itemName.equals("HAND")) {
             item = getItemInHand(sender).clone();
         } else {
-            try {
-                item = new ItemStack(Material.valueOf(itemName));
-            } catch (IllegalArgumentException e) {
-                msg(sender, "user.error.unknown_item", itemName);
-                return;
+            Material material = Utils.getMaterial(itemName);
+            if (material != null) {
+                item = new ItemStack(material);
             }
-            if (!ReflectionUtils.isValidItem(item)) {
+            if (item == null || !ReflectionUtils.isValidItem(item)) {
                 msg(sender, "user.error.unknown_item", itemName);
                 return;
             }
