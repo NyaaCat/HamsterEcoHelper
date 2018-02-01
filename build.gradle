@@ -6,6 +6,12 @@ configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
+// Version strings used for CI
+// Note the spaces before and after the equals sign
+ext.majorVersion = 3
+ext.minorVersion = 0
+ext.minecraftVersion = "1.12"
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
