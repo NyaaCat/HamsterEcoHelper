@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @DataTable("signshop_location")
 public class Sign {
-    @DataColumn("id")
+    @DataColumn(value = "id", length = 36)
     @PrimaryKey
     public String id;
     @DataColumn("owner")

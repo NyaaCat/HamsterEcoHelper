@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @DataTable("temporary_storage")
 public class TempStorageRepo {
-    @DataColumn("player_id")
+    @DataColumn(value = "player_id", length = 36)
     @PrimaryKey
     public String playerId;
     @DataColumn("yaml")

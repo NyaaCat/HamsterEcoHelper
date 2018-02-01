@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @DataTable("signshop_storage")
 public class ShopStorageLocation {
-    @DataColumn("owner")
+    @DataColumn(value = "owner", length = 36)
     @PrimaryKey
     public String owner;
     @DataColumn("world")
