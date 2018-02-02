@@ -102,7 +102,7 @@ user:
     halted: 拍卖中止
     success_0: '拍卖结束！物品： '
     success_1: ' 被玩家 %s 拍下'
-    fail: 拍卖结束，无人竞得物品：
+    fail: '拍卖结束，无人竞得物品： '
     item_given_INVENTORY: 物品已放入你的背包
     item_given_ENDER_CHEST: 物品已放入你的末影箱
     item_given_TEMPORARY_STORAGE: 物品已放入临时道具栏，使用 /heh retrieve 取回
