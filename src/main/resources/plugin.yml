@@ -47,7 +47,7 @@ permissions:
     default: op
     children:
       heh.user: true
-      heh.removesignshop: false
+      heh.removesignshop: true
       heh.addauction: true
       heh.addrequisition: true
       heh.debug: true

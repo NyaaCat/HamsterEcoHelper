@@ -8,13 +8,14 @@ import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLoca
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
-import cat.nyaa.nyaacore.utils.InventoryUtils;
 import cat.nyaa.nyaacore.Message;
+import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -145,7 +146,7 @@ public class SignShopManager {
 
     public boolean createShopSign(Player player, Block block, ShopMode mode) {
         if (getSign(block) != null) {
-            removeSign(block, player);
+            removeSign(block);
         }
         plugin.logger.info(I18n.format("log.info.signshop_create", player.getName(), mode.name(),
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
@@ -157,7 +158,7 @@ public class SignShopManager {
 
     public boolean createLottoSign(Player player, Block block, ShopMode mode, double lottoPrice) {
         if (getSign(block) != null) {
-            removeSign(block, player);
+            removeSign(block);
         }
         plugin.logger.info(I18n.format("log.info.signshop_create_lotto", player.getName(), lottoPrice,
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
@@ -170,7 +171,7 @@ public class SignShopManager {
         return true;
     }
 
-    public boolean removeSign(Block block, Player player) {
+    public boolean removeSign(Block block) {
         Iterator<Sign> it = signLocations.iterator();
         while (it.hasNext()) {
             Sign sign = it.next();
@@ -182,9 +183,6 @@ public class SignShopManager {
                     OfflinePlayer p = sign.getPlayer();
                     plugin.logger.info(I18n.format("log.info.signshop_remove", p.getName(), sign.getShopMode(),
                             block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
-                    if (p.getUniqueId() != player.getUniqueId()) {
-                        plugin.logger.info(" by " + player.getName());
-                    }
                     it.remove();
                     return true;
                 }
@@ -349,6 +347,34 @@ public class SignShopManager {
                     plugin.signShopManager.openShopGUI(player, shopGUI.sign, shopGUI.currentPage);
                 }
             }
+        }
+    }
+
+    public void removePlayerSignShops(OfflinePlayer owner, CommandSender sender, boolean removeSignBlock) {
+        List<Sign> signs = new ArrayList<>();
+        for (Sign s : signLocations) {
+            if (owner.getUniqueId().equals(s.getOwner())) {
+                signs.add(s);
+            }
+        }
+        if (!signs.isEmpty()) {
+            for (Sign s : signs) {
+                removeSign(s.getLocation().getBlock());
+                if (s.getLocation().getWorld() != null && SignShopManager.isSign(s.getLocation().getBlock())) {
+                    if (removeSignBlock) {
+                        s.getLocation().getBlock().setType(Material.AIR);
+                    } else {
+                        org.bukkit.block.Sign sign = (org.bukkit.block.Sign) s.getLocation().getBlock().getState();
+                        for (int i = 0; i < 4; i++) {
+                            sign.setLine(i, "");
+                        }
+                        sign.update();
+                    }
+                }
+                sender.sendMessage(I18n.format("user.signshop.remove.success", s.world, s.x, s.y, s.z));
+            }
+        } else {
+            sender.sendMessage(I18n.format("user.signshop.remove.no_sign"));
         }
     }
 }
