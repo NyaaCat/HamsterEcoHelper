@@ -131,9 +131,11 @@ public class SignShopListener implements Listener {
         if (SignShopManager.isSign(block)) {
             Sign sign = plugin.signShopManager.getSign(block);
             if (sign != null) {
-                if (sign.getOwner().equals(player.getUniqueId()) || player.hasPermission("heh.removesignshop") && player.isSneaking() && player.getGameMode() == GameMode.CREATIVE) {
+                if (sign.getOwner().equals(player.getUniqueId()) ||
+                        (player.hasPermission("heh.removesignshop") && player.isSneaking() &&
+                                player.getGameMode() == GameMode.CREATIVE)) {
                     event.setCancelled(false);
-                    plugin.signShopManager.removeSign(block, player);
+                    plugin.signShopManager.removeSign(block);
                     player.sendMessage(I18n.format("user.signshop.break.success"));
                 } else {
                     player.sendMessage(I18n.format("user.signshop.break.no_permission"));

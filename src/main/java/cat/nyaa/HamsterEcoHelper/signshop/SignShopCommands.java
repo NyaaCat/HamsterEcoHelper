@@ -8,7 +8,9 @@ import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocat
 import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -113,5 +115,17 @@ public class SignShopCommands extends CommandReceiver {
             }
         }
         player.sendMessage(I18n.format("user.signshop.not_sign"));
+    }
+
+    @SubCommand(value = "remove", permission = "heh.removesignshop")
+    public void remove(CommandSender sender, Arguments args) {
+        String name = args.nextString();
+        boolean removeBlock = args.top() != null && args.nextBoolean();
+        OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+        if (player != null) {
+            plugin.signShopManager.removePlayerSignShops(player, sender, removeBlock);
+        } else {
+            msg(sender, "user.info.player_not_found", name);
+        }
     }
 }

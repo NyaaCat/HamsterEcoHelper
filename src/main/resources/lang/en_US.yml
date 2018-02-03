@@ -219,6 +219,9 @@ user:
       sign_of: Sign of %s's shop at x:%d y:%d z:%d
       page: Page %d of %d
       page_out_of_bound: Page out of bound
+    remove:
+      no_sign: "this player does not have any signshop"
+      success: "signshop removed at (%s, X: %d,Y: %d, Z: %d)"
     print_shop_info: 'Shop owner: %s, shop mode: %s'
   ads:
     add:
@@ -319,6 +322,9 @@ manual:
     sell:
       description: Sell item
       usage: 'Usage: /heh shop sell [UnitPrice|double]'
+    remove:
+      description: Remove a player's all signshop
+      usage: 'Usage: /heh shop remove [player] [removeBlock]'
     lotto:
       description: Show/set lotto storage info
       info:
