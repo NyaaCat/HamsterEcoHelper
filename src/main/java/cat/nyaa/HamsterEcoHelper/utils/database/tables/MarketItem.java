@@ -1,25 +1,27 @@
 package cat.nyaa.HamsterEcoHelper.utils.database.tables;
 
-import cat.nyaa.nyaacore.database.DataColumn;
-import cat.nyaa.nyaacore.database.DataTable;
-import cat.nyaa.nyaacore.database.PrimaryKey;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Base64;
 import java.util.UUID;
 
-@DataTable("market")
+@Entity
+@Table(name = "market")
 public class MarketItem {
-    @DataColumn("id")
-    @PrimaryKey
+    @Column(name = "id")
+    @Id
     public Long id;
-    @DataColumn("player_id")
+    @Column(name = "player_id")
     public String playerId;
-    @DataColumn("item")
+    @Column(name = "item")
     public String item;
     public int amount;
     private Double unitPrice;
@@ -69,7 +71,7 @@ public class MarketItem {
         return item;
     }
     
-    @DataColumn("amount")
+    @Column(name = "amount")
     public Long getAmount() {
         return (long) amount;
     }
@@ -78,7 +80,7 @@ public class MarketItem {
         this.amount = amount.intValue();
     }
 
-    @DataColumn("unit_price")
+    @Column(name = "unit_price")
     public Double getUnitPrice() {
         return unitPrice;
     }

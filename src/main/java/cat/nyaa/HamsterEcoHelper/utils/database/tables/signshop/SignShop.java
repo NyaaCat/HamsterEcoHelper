@@ -2,9 +2,6 @@ package cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop;
 
 import cat.nyaa.HamsterEcoHelper.signshop.ShopItem;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
-import cat.nyaa.nyaacore.database.DataColumn;
-import cat.nyaa.nyaacore.database.DataTable;
-import cat.nyaa.nyaacore.database.PrimaryKey;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -12,19 +9,24 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-@DataTable("signshop")
+@Entity
+@Table(name = "signshop")
 public class SignShop {
-    @DataColumn(value = "id", length = 36)
-    @PrimaryKey
+    @Column(name = "id", length = 36)
+    @Id
     public String id;
     public String yaml = "";
 
-    @DataColumn("yaml")
+    @Column(name = "yaml")
     public String getYaml() {
         return Base64.getEncoder().encodeToString(this.yaml.getBytes());
     }
