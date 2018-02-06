@@ -64,12 +64,15 @@ public class EconomyUtil {
                 Utils.GiveStat stat = Utils.giveItem(buyer, item);
                 return Optional.of(stat);
             }
-            if (!plugin.eco.withdraw(buyer, price + tax)) {
+            EconomyResponse withdraw = eco.withdrawPlayer(buyer, price + tax);
+            if (!withdraw.transactionSuccess()) {
+                plugin.getLogger().info(I18n.format("log.info.withdraw_fail", buyer.getName(), seller.getName(), Utils.getItemName(item), price, tax, withdraw.errorMessage));
                 return Optional.empty();
             }
             step = 1;
-            if (!plugin.eco.deposit(seller, price)) {
-                throw new RuntimeException("");
+            EconomyResponse deposit = eco.depositPlayer(seller, price);
+            if (!deposit.transactionSuccess()) {
+                throw new RuntimeException(deposit.errorMessage);
             }
             step = 2;
             if (tax > 0.0D) {
@@ -83,6 +86,7 @@ public class EconomyUtil {
             try {
                 plugin.getLogger().warning(I18n.format("log.error.transaction_fail_dump", ItemStackUtils.itemToJson(item)));
             } catch (Exception r) {
+                r.printStackTrace();
                 plugin.getLogger().warning("failed to dump item json");
             }
             e.printStackTrace();
@@ -92,14 +96,14 @@ public class EconomyUtil {
                     plugin.systemBalance.withdraw(tax, plugin);
                     //fallthrough
                 case 2:
-                    boolean status2Seller = plugin.eco.withdraw(seller, price);
+                    EconomyResponse status2Seller = eco.withdrawPlayer(seller, price);
                     plugin.getLogger().warning(I18n.format("log.error.transaction_fail_rollback_money",
-                            seller.getName(), -price, status2Seller));
+                            seller.getName(), -price, status2Seller.transactionSuccess(), status2Seller.errorMessage));
                     //fallthrough
                 case 1:
-                    boolean status1Buyer = plugin.eco.deposit(buyer, price + tax);
+                    EconomyResponse status1Buyer = eco.depositPlayer(buyer, price + tax);
                     plugin.getLogger().warning(I18n.format("log.error.transaction_fail_rollback_money",
-                            buyer.getName(), price + tax, status1Buyer));
+                            buyer.getName(), price + tax, status1Buyer.transactionSuccess(), status1Buyer.errorMessage));
                 case 0:
                     break;
                 default:

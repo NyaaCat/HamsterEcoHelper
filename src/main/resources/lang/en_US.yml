@@ -46,6 +46,8 @@ log:
     ads_remove: 'remove ads: {id: %d, text: "%s", player: "%s"}'
     system_balance: 'system balance {type: %s, amount: %s, current_balance: %s, plugin:
       %s}'
+    withdraw_fail: 'Withdraw failed: {buyer: "%s", seller: "%s", item: "%s",
+      price: %.2f, tax: %.2f, message: "%s"}'
   error:
     missing_sqlite_driver: SQLite Driver not found. Plugin disabled.
     enable_fail: Plugin failed to enable
@@ -54,7 +56,7 @@ log:
     transaction_fail_dump: 'item json: "%s"'
     transaction_fail_rollback_tax: 'Rollback TransactionApiEvent: {tax: %.2f}'
     transaction_fail_rollback_money: 'Rollback money transaction: {player: "%s", price:
-      %.2f, status: "%s"}'
+      %.2f, status: "%s", message: "%s"}'
 admin:
   info:
     save_done: Force save done.
