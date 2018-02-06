@@ -49,7 +49,7 @@ log:
   error:
     missing_sqlite_driver: SQLite Driver not found. Plugin disabled.
     enable_fail: Plugin failed to enable
-    transaction_fail: ' Transaction failed: {seller: "%s", buyer: "%s", item: "%s",
+    transaction_fail: 'Transaction failed: {buyer: "%s", seller: "%s", item: "%s",
       price: %.2f, tax: %.2f}'
     transaction_fail_dump: 'item json: "%s"'
     transaction_fail_rollback_tax: 'Rollback TransactionApiEvent: {tax: %.2f}'

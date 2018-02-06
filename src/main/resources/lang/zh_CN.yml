@@ -45,7 +45,7 @@ log:
   error:
     missing_sqlite_driver: 未找到 SQLite 驱动程序，插件已禁用。
     enable_fail: 插件启用失败
-    transaction_fail: ' 交易失败：{seller: "%s", buyer: "%s", item: "%s", price: %.2f,
+    transaction_fail: '交易失败：{buyer: "%s", seller: "%s", item: "%s", price: %.2f,
       tax: %.2f}'
     transaction_fail_dump: 物品JSON："%s"
     transaction_fail_rollback_tax: '回滚 TransactionApiEvent: {tax: %.2f}'
