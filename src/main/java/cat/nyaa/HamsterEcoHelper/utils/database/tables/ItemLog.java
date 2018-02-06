@@ -1,26 +1,28 @@
 package cat.nyaa.HamsterEcoHelper.utils.database.tables;
 
-import cat.nyaa.nyaacore.database.DataColumn;
-import cat.nyaa.nyaacore.database.DataTable;
-import cat.nyaa.nyaacore.database.PrimaryKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Base64;
 import java.util.UUID;
 
-@DataTable("itemlog")
+@Entity
+@Table(name = "itemlog")
 public class ItemLog {
-    @DataColumn("id")
-    @PrimaryKey
+    @Column(name = "id")
+    @Id
     public Long id;
-    @DataColumn("owner")
+    @Column(name = "owner")
     public String owner;
-    @DataColumn("item")
+    @Column(name = "item")
     public String item;
     public int amount;
-    @DataColumn("price")
+    @Column(name = "price")
     public Double price;
 
     public Long getId() {
@@ -64,7 +66,7 @@ public class ItemLog {
         return item;
     }
 
-    @DataColumn("amount")
+    @Column(name = "amount")
     public Long getAmount() {
         return (long) amount;
     }

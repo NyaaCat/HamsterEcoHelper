@@ -10,3 +10,9 @@ marketBroadcastCooldown: 120
 marketSlot:
     default: 10
     builder: 15
+database:
+    provider: sqlite
+    connection:
+        autoscan: true
+        package: cat.nyaa.HamsterEcoHelper.utils.database.tables
+        file: HamsterEcoHelper.db
