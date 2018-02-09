@@ -1,14 +1,7 @@
-package cat.nyaa.HamsterEcoHelper.utils.database;
+package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemLog;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.TempStorageRepo;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLocation;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
 import cat.nyaa.nyaacore.database.SQLiteDatabase;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -30,6 +23,11 @@ public class Database extends SQLiteDatabase {
         super();
         this.plugin = plugin;
         connect();
+        int newDatabaseVersion = DatabaseUpdater.updateDatabase(this, plugin.config.database_version);
+        if (newDatabaseVersion != plugin.config.database_version) {
+            plugin.config.database_version = newDatabaseVersion;
+            plugin.config.save();
+        }
     }
 
     @Override
@@ -101,7 +99,7 @@ public class Database extends SQLiteDatabase {
         }
 
         TempStorageRepo bean = new TempStorageRepo();
-        bean.setPlayerId(player.getUniqueId());
+        bean.playerId = player.getUniqueId();
         bean.yaml = cfg.saveToString();
         if (update) {
             result.update(bean);

@@ -3,9 +3,9 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLocation;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
+import cat.nyaa.HamsterEcoHelper.database.LottoStorageLocation;
+import cat.nyaa.HamsterEcoHelper.database.Sign;
 import cat.nyaa.nyaacore.Message;
 import me.crafter.mc.lockettepro.LocketteProAPI;
 import org.bukkit.Bukkit;
@@ -236,7 +236,7 @@ public class SignShopListener implements Listener {
                                 if (plugin.signShopManager.getTax() > 0) {
                                     tax = (price / 100) * plugin.signShopManager.getTax();
                                 }
-                                Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, owner, item, price - tax ,tax);
+                                Optional<MiscUtils.GiveStat> stat = plugin.eco.transaction(player, owner, item, price - tax ,tax);
                                 if(!stat.isPresent()){
                                     new Message(I18n.format("user.signshop.lotto.fail",
                                             price, owner.getName())).send(player);
@@ -245,7 +245,7 @@ public class SignShopListener implements Listener {
                                 player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
                                 new Message("").append(I18n.format("user.signshop.lotto.success",
                                         price, owner.getName()), item).send(player);
-                                plugin.logger.info(I18n.format("log.info.signshop_lotto", Utils.getItemName(item),
+                                plugin.logger.info(I18n.format("log.info.signshop_lotto", MiscUtils.getItemName(item),
                                         item.getAmount(), price, player.getName(), owner.getName()));
                                 if (owner.isOnline()) {
                                     if (tax > 0.0D) {

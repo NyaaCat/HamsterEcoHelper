@@ -2,9 +2,9 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
+import cat.nyaa.HamsterEcoHelper.database.Sign;
+import cat.nyaa.HamsterEcoHelper.database.SignShop;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.Message;
@@ -108,7 +108,7 @@ public class SearchCommands extends CommandReceiver {
         final int rangeLimit = player == null ? -1 : args.argInt("r", args.argInt("range", -1));
         final Material materialLimit;
         if (itemLimit != null) {
-            materialLimit = Utils.getMaterial(itemLimit);
+            materialLimit = MiscUtils.getMaterial(itemLimit);
             if (materialLimit == null || materialLimit == Material.AIR || !ReflectionUtils.isValidItem(new ItemStack(materialLimit))) {
                 msg(sender, "user.error.unknown_item", itemLimit);
                 return;

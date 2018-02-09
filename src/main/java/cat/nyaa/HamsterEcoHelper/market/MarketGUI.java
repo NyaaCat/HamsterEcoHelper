@@ -4,8 +4,8 @@ package cat.nyaa.HamsterEcoHelper.market;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopInventoryHolder;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
+import cat.nyaa.HamsterEcoHelper.database.MarketItem;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -134,7 +134,7 @@ public class MarketGUI extends ShopInventoryHolder {
                 tax = (price / 100) * plugin.config.market_tax;
             }
             if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
-                Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, item.getPlayer(), item.getItemStack(amount), price, tax);
+                Optional<MiscUtils.GiveStat> stat = plugin.eco.transaction(player, item.getPlayer(), item.getItemStack(amount), price, tax);
                 if(!stat.isPresent()){
                     new Message("")
                             .append(I18n.format("user.market.buy_fail", item.getPlayer().getName(), price), item.getItemStack(amount))
@@ -144,7 +144,7 @@ public class MarketGUI extends ShopInventoryHolder {
                 plugin.database.marketBuy(player, itemId, amount);
                 plugin.marketManager.updateAllGUI();
                 player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
-                plugin.logger.info(I18n.format("log.info.market_bought", itemId, Utils.getItemName(item.getItemStack()),
+                plugin.logger.info(I18n.format("log.info.market_bought", itemId, MiscUtils.getItemName(item.getItemStack()),
                         amount, price, player.getName(), item.getPlayer().getName()));
                 if (!player.getUniqueId().equals(item.getPlayerId())) {
                     if (item.getPlayer().isOnline()) {

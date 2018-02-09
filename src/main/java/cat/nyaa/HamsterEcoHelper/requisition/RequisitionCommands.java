@@ -1,8 +1,8 @@
 package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.ItemLog;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
+import cat.nyaa.HamsterEcoHelper.database.ItemLog;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.utils.ReflectionUtils;
@@ -155,7 +155,7 @@ public class RequisitionCommands extends CommandReceiver {
         if (itemName.equals("HAND")) {
             item = getItemInHand(sender).clone();
         } else {
-            Material material = Utils.getMaterial(itemName);
+            Material material = MiscUtils.getMaterial(itemName);
             if (material != null) {
                 item = new ItemStack(material);
             }
@@ -180,7 +180,7 @@ public class RequisitionCommands extends CommandReceiver {
         Player p = asPlayer(sender);
         ItemLog item = plugin.database.getItemLog(args.nextInt());
         if (item != null) {
-            Utils.giveItem(p, item.getItemStack());
+            MiscUtils.giveItem(p, item.getItemStack());
             p.sendMessage("player: " + Bukkit.getPlayer(item.getOwner()).getName());
             p.sendMessage("price: " + item.getPrice());
         }

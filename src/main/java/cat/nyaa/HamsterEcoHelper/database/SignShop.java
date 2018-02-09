@@ -1,4 +1,4 @@
-package cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop;
+package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.HamsterEcoHelper.signshop.ShopItem;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;

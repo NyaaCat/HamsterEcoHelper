@@ -2,7 +2,7 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public class RequisitionManager extends BukkitRunnable {
         if (plugin.systemBalance.isEnabled() && plugin.systemBalance.getBalance() <= 0D) {
             return;
         }
-        int delay = Utils.inclusiveRandomInt(0, plugin.config.requisitionMaxDelayTicks);
+        int delay = MiscUtils.inclusiveRandomInt(0, plugin.config.requisitionMaxDelayTicks);
         (new BukkitRunnable() {
             @Override
             public void run() {
@@ -46,7 +46,7 @@ public class RequisitionManager extends BukkitRunnable {
     public boolean newRequisition() {
         if (currentReq != null) return false;
         if (plugin.config.requisitionConfig.itemsForReq.isEmpty()) return false;
-        RequisitionSpecification item = Utils.randomWithWeight(
+        RequisitionSpecification item = MiscUtils.randomWithWeight(
                 plugin.config.requisitionConfig.itemsForReq,
                 (RequisitionSpecification i) -> i.randomWeight
         );
@@ -59,8 +59,8 @@ public class RequisitionManager extends BukkitRunnable {
         if (currentReq != null) return false;
         if (item == null) return false;
 
-        int unitPrice = Utils.inclusiveRandomInt(item.minPurchasePrice, item.maxPurchasePrice);
-        int amount = item.maxAmount < 0 ? -1 : Utils.inclusiveRandomInt(item.minAmount, item.maxAmount);
+        int unitPrice = MiscUtils.inclusiveRandomInt(item.minPurchasePrice, item.maxPurchasePrice);
+        int amount = item.maxAmount < 0 ? -1 : MiscUtils.inclusiveRandomInt(item.minAmount, item.maxAmount);
         currentReq = new RequisitionInstance(item, unitPrice, amount, plugin, () -> this.currentReq = null);
         if (plugin.config.requisitionHintInterval > 0) {
             currentReq.new RequisitionHintTimer(this, plugin.config.requisitionHintInterval, plugin);

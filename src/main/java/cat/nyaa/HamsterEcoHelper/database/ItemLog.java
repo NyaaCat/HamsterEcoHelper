@@ -1,8 +1,9 @@
-package cat.nyaa.HamsterEcoHelper.utils.database.tables;
+package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.nyaacore.database.DataColumn;
 import cat.nyaa.nyaacore.database.DataTable;
 import cat.nyaa.nyaacore.database.PrimaryKey;
+import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +17,7 @@ public class ItemLog {
     @PrimaryKey
     public Long id;
     @DataColumn("owner")
-    public String owner;
+    public UUID owner;
     @DataColumn("item")
     public String item;
     public int amount;
@@ -32,34 +33,24 @@ public class ItemLog {
     }
 
     public UUID getOwner() {
-        return UUID.fromString(owner);
+        return owner;
     }
 
     public void setOwner(UUID owner) {
-        this.owner = owner.toString();
+        this.owner = owner;
     }
 
     public ItemStack getItemStack() {
-        YamlConfiguration yaml = new YamlConfiguration();
-        try {
-            yaml.loadFromString(new String(Base64.getDecoder().decode(item)));
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-        ItemStack itemStack = yaml.getItemStack("item");
-        itemStack.setAmount(this.amount);
-        return itemStack;
+        return getItemStack(amount);
     }
 
     public void setItemStack(ItemStack item) {
-        YamlConfiguration yaml = new YamlConfiguration();
-        yaml.set("item", item);
-        this.item = Base64.getEncoder().encodeToString(yaml.saveToString().getBytes());
+        this.item = ItemStackUtils.itemToBase64(item);
         amount = item.getAmount();
     }
 
     public ItemStack getItemStack(int amount) {
-        ItemStack item = getItemStack();
+        ItemStack item = ItemStackUtils.itemFromBase64(this.item);
         item.setAmount(amount);
         return item;
     }

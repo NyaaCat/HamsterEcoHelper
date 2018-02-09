@@ -3,11 +3,11 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.LottoStorageLocation;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
+import cat.nyaa.HamsterEcoHelper.database.LottoStorageLocation;
+import cat.nyaa.HamsterEcoHelper.database.ShopStorageLocation;
+import cat.nyaa.HamsterEcoHelper.database.Sign;
+import cat.nyaa.HamsterEcoHelper.database.SignShop;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
@@ -270,7 +270,7 @@ public class SignShopManager {
                                 new Message("").append(I18n.format("user.signshop.sell.notice",
                                         player.getName(), price), itemStack).send(Bukkit.getPlayer(shop.getOwner()));
                             }
-                            plugin.logger.info(I18n.format("log.info.signshop_sell", Utils.getItemName(itemStack),
+                            plugin.logger.info(I18n.format("log.info.signshop_sell", MiscUtils.getItemName(itemStack),
                                     itemStack.getAmount(), price, player.getName(), shopOwner.getName()));
                             return true;
                         }

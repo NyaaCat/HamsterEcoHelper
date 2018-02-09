@@ -1,6 +1,5 @@
-package cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop;
+package cat.nyaa.HamsterEcoHelper.database;
 
-import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
 import cat.nyaa.nyaacore.database.DataColumn;
 import cat.nyaa.nyaacore.database.DataTable;
 import cat.nyaa.nyaacore.database.PrimaryKey;
@@ -10,34 +9,26 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.UUID;
 
-@DataTable("signshop_location")
-public class Sign {
-    @DataColumn("id")
-    @PrimaryKey
-    public String id;
+@DataTable("signshop_storage")
+public class ShopStorageLocation {
     @DataColumn("owner")
+    @PrimaryKey
     public String owner;
-    public ShopMode shopMode;
     @DataColumn("world")
-    public String world = "";
+    public String world;
     @DataColumn("x")
     public Long x;
     @DataColumn("y")
     public Long y;
     @DataColumn("z")
     public Long z;
-    @DataColumn("lotto_price")
-    public Double lotto_price = 0.0D;
 
-    public Sign() {
+    public ShopStorageLocation() {
     }
 
-    public Double getLotto_price() {
-        return lotto_price;
-    }
-
-    public void setLotto_price(Double lotto_price) {
-        this.lotto_price = lotto_price;
+    public ShopStorageLocation(UUID player, Location loc) {
+        setOwner(player);
+        setLocation(loc);
     }
 
     public void setOwner(String owner) {
@@ -76,23 +67,6 @@ public class Sign {
         this.z = z;
     }
 
-    @DataColumn("mode")
-    public String getShopMode() {
-        return shopMode.name();
-    }
-
-    public void setShopMode(String shopMode) {
-        this.shopMode = ShopMode.valueOf(shopMode.toUpperCase());
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public Location getLocation() {
         if (Bukkit.getServer().getWorld(world) != null) {
             return new Location(Bukkit.getServer().getWorld(world), x, y, z);
@@ -105,15 +79,6 @@ public class Sign {
         this.setX((long) loc.getBlockX());
         this.setY((long) loc.getBlockY());
         this.setZ((long) loc.getBlockZ());
-        this.setId("world:" + world + ",x:" + x + ",y:" + y + ",z:" + z);
-    }
-
-    public void setLocation(String world, int x, int y, int z) {
-        this.setWorld(world);
-        this.setX((long) x);
-        this.setY((long) y);
-        this.setZ((long) z);
-        this.setId("world:" + world + ",x:" + x + ",y:" + y + ",z:" + z);
     }
 
     public UUID getOwner() {
@@ -127,6 +92,5 @@ public class Sign {
     public OfflinePlayer getPlayer() {
         return Bukkit.getOfflinePlayer(getOwner());
     }
-
 
 }

@@ -3,7 +3,7 @@ package cat.nyaa.HamsterEcoHelper.auction;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -13,7 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Optional;
 
-import static cat.nyaa.HamsterEcoHelper.utils.Utils.uid;
+import static cat.nyaa.HamsterEcoHelper.utils.MiscUtils.uid;
 
 public class AuctionInstance {
     public double currentHighPrice = -1;
@@ -106,7 +106,7 @@ public class AuctionInstance {
         EconomyUtil e = plugin.eco;
         if (currentPlayer == null) {
             if (this.owner != null && this.itemStack != null) {
-                Utils.giveItem(this.owner, this.itemStack);
+                MiscUtils.giveItem(this.owner, this.itemStack);
             }
             new Message(I18n.format("user.auc.fail")).append(itemStack).broadcast();
             plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, "", "NO_PLAYER_BID"));
@@ -124,7 +124,7 @@ public class AuctionInstance {
                     if (plugin.config.playerAuctionCommissionFee > 0) {
                         commissionFee = (currentHighPrice / 100) * plugin.config.playerAuctionCommissionFee;
                     }
-                    Optional<Utils.GiveStat> stat = e.transaction(currentPlayer, owner, itemStack, currentHighPrice, commissionFee);
+                    Optional<MiscUtils.GiveStat> stat = e.transaction(currentPlayer, owner, itemStack, currentHighPrice, commissionFee);
                     if (stat.isPresent()) {
                         if (currentPlayer.isOnline() && currentPlayer instanceof Player) {
                             ((Player) currentPlayer).sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
@@ -134,7 +134,7 @@ public class AuctionInstance {
                     }
                 } else {
                     if (e.withdraw(currentPlayer, currentHighPrice)) {
-                        Utils.GiveStat stat = Utils.giveItem(currentPlayer, itemStack);
+                        MiscUtils.GiveStat stat = MiscUtils.giveItem(currentPlayer, itemStack);
                         if (currentPlayer.isOnline() && currentPlayer instanceof Player) {
                             ((Player) currentPlayer).sendMessage(I18n.format("user.auc.item_given_" + stat.name()));
                         }
@@ -150,7 +150,7 @@ public class AuctionInstance {
             }
             if (!success) {
                 if (this.owner != null && this.itemStack != null) {
-                    Utils.giveItem(this.owner, this.itemStack);
+                    MiscUtils.giveItem(this.owner, this.itemStack);
                 }
                 new Message(I18n.format("user.auc.fail")).append(itemStack).broadcast();
                 plugin.logger.info(I18n.format("log.info.auc_finish", uid(this), currentHighPrice, currentPlayer.getName(), "NOT_ENOUGH_MONEY"));
@@ -169,7 +169,7 @@ public class AuctionInstance {
 
     public void halt() {
         if (this.owner != null && this.itemStack != null) {
-            Utils.giveItem(this.owner, this.itemStack);
+            MiscUtils.giveItem(this.owner, this.itemStack);
             this.itemStack = null;
             this.owner = null;
         }

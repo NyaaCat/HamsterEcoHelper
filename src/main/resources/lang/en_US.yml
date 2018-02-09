@@ -245,6 +245,7 @@ user:
     unmute: Unmute success.
     message: '[Ads by %s] &r%s&r'
     message_too_long: ad text max length is %d
+    no_adid: "No such AdsID"
 manual:
   no_description: No description
   no_usage: No usage
