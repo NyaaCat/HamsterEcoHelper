@@ -1,7 +1,7 @@
 package cat.nyaa.HamsterEcoHelper.market;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
+import cat.nyaa.HamsterEcoHelper.database.MarketItem;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.Bukkit;

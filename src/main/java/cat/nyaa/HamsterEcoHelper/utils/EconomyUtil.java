@@ -57,11 +57,11 @@ public class EconomyUtil {
         return rsp.transactionSuccess();
     }
 
-    public synchronized Optional<Utils.GiveStat> transaction(OfflinePlayer buyer, OfflinePlayer seller, ItemStack item, double price, double tax) {
+    public synchronized Optional<MiscUtils.GiveStat> transaction(OfflinePlayer buyer, OfflinePlayer seller, ItemStack item, double price, double tax) {
         int step = 0;
         try {
             if (buyer.equals(seller)) {
-                Utils.GiveStat stat = Utils.giveItem(buyer, item);
+                MiscUtils.GiveStat stat = MiscUtils.giveItem(buyer, item);
                 return Optional.of(stat);
             }
             if (!plugin.eco.withdraw(buyer, price + tax)) {
@@ -76,10 +76,10 @@ public class EconomyUtil {
                 plugin.systemBalance.deposit(tax, plugin);
             }
             step = 3;
-            Utils.GiveStat stat = Utils.giveItem(buyer, item);
+            MiscUtils.GiveStat stat = MiscUtils.giveItem(buyer, item);
             return Optional.of(stat);
         } catch (Exception e) {
-            plugin.getLogger().warning(I18n.format("log.error.transaction_fail", buyer.getName(), seller.getName(), Utils.getItemName(item), price, tax));
+            plugin.getLogger().warning(I18n.format("log.error.transaction_fail", buyer.getName(), seller.getName(), MiscUtils.getItemName(item), price, tax));
             try {
                 plugin.getLogger().warning(I18n.format("log.error.transaction_fail_dump", ItemStackUtils.itemToJson(item)));
             } catch (Exception r) {

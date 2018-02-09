@@ -91,23 +91,17 @@ public class AdsCommands extends CommandReceiver {
 
     @SubCommand(value = "revoke", permission = "heh.ads")
     public void revoke(CommandSender sender, Arguments args) {
-        if (args.length() == 3) {
-            Player player = asPlayer(sender);
-            int adID = args.nextInt();
-            if (plugin.config.adsConfig.adsDataList.containsKey(adID)) {
-                AdsData ad = plugin.config.adsConfig.adsDataList.get(adID);
-                if (player.getUniqueId().equals(ad.getUUID()) || player.hasPermission("heh.admin")) {
-                    msg(sender, "user.ads.revoke.success");
-                    plugin.logger.info(I18n.format("log.info.ads_remove", ad.id, ad.text,
-                            plugin.getServer().getOfflinePlayer(ad.getUUID()).getName()));
-                    plugin.config.adsConfig.adsDataList.remove(adID);
-                    plugin.config.adsConfig.save();
-                    return;
-                } else {
-                    msg(sender, "user.ads.revoke.no_permission");
-                    return;
-                }
-            }
+        Player player = asPlayer(sender);
+        int adID = args.nextInt();
+        AdsData ad = getAdDataById(adID);
+        if (player.getUniqueId().equals(ad.getUUID()) || player.hasPermission("heh.admin")) {
+            msg(sender, "user.ads.revoke.success");
+            plugin.logger.info(I18n.format("log.info.ads_remove", ad.id, ad.text,
+                    plugin.getServer().getOfflinePlayer(ad.getUUID()).getName()));
+            plugin.config.adsConfig.adsDataList.remove(adID);
+            plugin.config.adsConfig.save();
+        } else {
+            msg(sender, "user.ads.revoke.no_permission");
         }
     }
 
@@ -126,6 +120,14 @@ public class AdsCommands extends CommandReceiver {
         if (plugin.config.adsConfig.muteList.contains(player.getUniqueId().toString())) {
             msg(sender, "user.ads.unmute");
             plugin.config.adsConfig.muteList.remove(player.getUniqueId().toString());
+        }
+    }
+
+    private AdsData getAdDataById(int id) {
+        if (plugin.config.adsConfig.adsDataList.containsKey(id)) {
+            return plugin.config.adsConfig.adsDataList.get(id);
+        } else {
+            throw new BadCommandException("user.ads.no_adid");
         }
     }
 }

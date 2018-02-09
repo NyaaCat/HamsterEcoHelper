@@ -2,7 +2,7 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.ShopStorageLocation;
+import cat.nyaa.HamsterEcoHelper.database.ShopStorageLocation;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.command.CommandSender;

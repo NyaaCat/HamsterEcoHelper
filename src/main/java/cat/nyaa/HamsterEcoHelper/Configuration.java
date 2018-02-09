@@ -99,6 +99,8 @@ public class Configuration extends PluginConfigure {
     public long search_lore_cooldown_tick = 200;
     @Serializable(name = "search.ench_additional_tick")
     public long search_ench_cooldown_tick = 200;
+    @Serializable
+    public int database_version = 0;
 
 
     public Map<String, Integer> signshop_sign_limit = new HashMap<>();

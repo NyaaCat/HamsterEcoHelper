@@ -3,8 +3,8 @@ package cat.nyaa.HamsterEcoHelper.market;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.MarketItem;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
+import cat.nyaa.HamsterEcoHelper.database.MarketItem;
 import cat.nyaa.nyaacore.Message;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
@@ -72,7 +72,7 @@ public class MarketManager extends BukkitRunnable {
             }
         }
         long id = plugin.database.marketOffer(player, item, unit_price);
-        plugin.logger.info(I18n.format("log.info.market_offer", id, Utils.getItemName(item), item.getAmount(), unit_price, player.getName()));
+        plugin.logger.info(I18n.format("log.info.market_offer", id, MiscUtils.getItemName(item), item.getAmount(), unit_price, player.getName()));
         if (plugin.config.marketBroadcast && (System.currentTimeMillis() - lastBroadcast) > (plugin.config.marketBroadcastCooldown * 1000)) {
             lastBroadcast = System.currentTimeMillis();
             new Message("").append(I18n.format("user.market.broadcast"), item).broadcast();

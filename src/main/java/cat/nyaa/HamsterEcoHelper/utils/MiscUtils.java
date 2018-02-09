@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
-public class Utils {
+public class MiscUtils {
     public static final Random random = new Random();
 
     public static <T> int randomIdWithWeight(List<T> items, Function<T, Double> weightOperator) {

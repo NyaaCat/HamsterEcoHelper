@@ -2,7 +2,7 @@ package cat.nyaa.HamsterEcoHelper.auction;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public class AuctionManager extends BukkitRunnable {
         if (plugin.systemBalance.isEnabled() && plugin.systemBalance.getBalance() >= 0D) {
             return;
         }
-        int delay = Utils.inclusiveRandomInt(0, plugin.config.auctionMaxDelayTicks);
+        int delay = MiscUtils.inclusiveRandomInt(0, plugin.config.auctionMaxDelayTicks);
         (new BukkitRunnable() {
             @Override
             public void run() {
@@ -62,7 +62,7 @@ public class AuctionManager extends BukkitRunnable {
         if (plugin.auctionManager != this) return false;
         if (currentAuction != null) return false;
         if (plugin.config.auctionConfig.itemsForAuction.size() == 0) return false;
-        AuctionItemTemplate bidItem = Utils.randomWithWeight(plugin.config.auctionConfig.itemsForAuction,
+        AuctionItemTemplate bidItem = MiscUtils.randomWithWeight(plugin.config.auctionConfig.itemsForAuction,
                 (AuctionItemTemplate temp) -> temp.randomWeight);
         if (bidItem == null) return false; // wtf?
 

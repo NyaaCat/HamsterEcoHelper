@@ -2,7 +2,7 @@ package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Logger;
 
-import static cat.nyaa.HamsterEcoHelper.utils.Utils.uid;
+import static cat.nyaa.HamsterEcoHelper.utils.MiscUtils.uid;
 
 public class RequisitionInstance {
     private final Runnable finishCallback;
@@ -135,7 +135,7 @@ public class RequisitionInstance {
         if (owner != null) {
             ItemStack tmp = itemHand.clone();
             tmp.setAmount(amount);
-            Utils.giveItem(owner, tmp);
+            MiscUtils.giveItem(owner, tmp);
         }
 
         if (amountRemains >= 0) amountRemains -= amount;

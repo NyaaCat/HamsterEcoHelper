@@ -3,9 +3,9 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.Utils;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.Sign;
-import cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop.SignShop;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
+import cat.nyaa.HamsterEcoHelper.database.Sign;
+import cat.nyaa.HamsterEcoHelper.database.SignShop;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -166,7 +166,7 @@ public class ShopGUI extends ShopInventoryHolder {
                 }
                 if (plugin.eco.enoughMoney(player, price + tax) || isEditMode()) {
                     OfflinePlayer owner = shop.getPlayer();
-                    Optional<Utils.GiveStat> stat = plugin.eco.transaction(player, owner, shopItem.getItemStack(amount), price, tax);
+                    Optional<MiscUtils.GiveStat> stat = plugin.eco.transaction(player, owner, shopItem.getItemStack(amount), price, tax);
                     if(!stat.isPresent()){
                         new Message("")
                                 .append(I18n.format("user.market.buy_fail", owner.getName(), price), shopItem.getItemStack(amount))
@@ -190,7 +190,7 @@ public class ShopGUI extends ShopInventoryHolder {
                                 .append(I18n.format("user.signshop.buy.success", owner.getName(), price + tax),
                                         shopItem.getItemStack(amount)).send(player);
                         plugin.logger.info(I18n.format("log.info.signshop_bought",
-                                Utils.getItemName(shopItem.getItemStack(amount)), amount,
+                                MiscUtils.getItemName(shopItem.getItemStack(amount)), amount,
                                 price, player.getName(), shop.getPlayer().getName()));
                     }
                     return true;

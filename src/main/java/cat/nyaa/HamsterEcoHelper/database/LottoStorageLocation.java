@@ -1,4 +1,4 @@
-package cat.nyaa.HamsterEcoHelper.utils.database.tables.signshop;
+package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.nyaacore.database.DataColumn;
 import cat.nyaa.nyaacore.database.DataTable;
@@ -9,8 +9,8 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.UUID;
 
-@DataTable("signshop_storage")
-public class ShopStorageLocation {
+@DataTable("signshop_lotto")
+public class LottoStorageLocation {
     @DataColumn("owner")
     @PrimaryKey
     public String owner;
@@ -23,10 +23,10 @@ public class ShopStorageLocation {
     @DataColumn("z")
     public Long z;
 
-    public ShopStorageLocation() {
+    public LottoStorageLocation() {
     }
 
-    public ShopStorageLocation(UUID player, Location loc) {
+    public LottoStorageLocation(UUID player, Location loc) {
         setOwner(player);
         setLocation(loc);
     }

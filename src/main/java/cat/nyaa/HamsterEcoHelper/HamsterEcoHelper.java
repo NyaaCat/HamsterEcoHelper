@@ -9,7 +9,7 @@ import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopListener;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopManager;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
-import cat.nyaa.HamsterEcoHelper.utils.database.Database;
+import cat.nyaa.HamsterEcoHelper.database.Database;
 import cat.nyaa.nyaacore.component.ISystemBalance;
 import cat.nyaa.nyaacore.component.NyaaComponent;
 import com.earth2me.essentials.Essentials;
