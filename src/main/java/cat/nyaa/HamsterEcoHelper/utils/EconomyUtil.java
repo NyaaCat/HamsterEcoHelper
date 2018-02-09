@@ -66,7 +66,7 @@ public class EconomyUtil {
             }
             EconomyResponse withdraw = eco.withdrawPlayer(buyer, price + tax);
             if (!withdraw.transactionSuccess()) {
-                plugin.getLogger().info(I18n.format("log.info.withdraw_fail", buyer.getName(), seller.getName(), Utils.getItemName(item), price, tax, withdraw.errorMessage));
+                plugin.getLogger().info(I18n.format("log.info.withdraw_fail", buyer.getName(), seller.getName(), MiscUtils.getItemName(item), price, tax, withdraw.errorMessage));
                 return Optional.empty();
             }
             step = 1;
