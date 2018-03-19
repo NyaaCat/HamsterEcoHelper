@@ -142,25 +142,25 @@ public class Database extends SQLiteDatabase {
         MarketItem item = new MarketItem();
         item.setItemStack(itemStack);
         item.amount = itemStack.getAmount();
-        item.setPlayerId(player.getUniqueId());
-        item.setUnitPrice(unit_price);
+        item.playerId = player.getUniqueId();
+        item.unitPrice = unit_price;
         long id = 1;
         for (MarketItem marketItem : query(MarketItem.class).select()) {
             if (marketItem.id >= id) {
                 id = marketItem.id + 1;
             }
         }
-        item.setId(id);
+        item.id = id;
         query(MarketItem.class).insert(item);
-        return item.getId();
+        return item.id;
     }
 
     public void marketBuy(Player player, long itemId, int amount) {
         Query<MarketItem> query = query(MarketItem.class).whereEq("id", itemId);
         if (query != null && query.count() != 0) {
             MarketItem mItem = query.selectUnique();
-            mItem.setAmount(mItem.getAmount() - amount);
-            mItem.setId(itemId);
+            mItem.amount = mItem.amount - amount;
+            mItem.id = itemId;
             query.update(mItem);
         }
         return;
@@ -201,9 +201,9 @@ public class Database extends SQLiteDatabase {
 
     public long addItemLog(OfflinePlayer player, ItemStack item, double price, int amount) {
         ItemLog i = new ItemLog();
-        i.setOwner(player.getUniqueId());
+        i.owner = player.getUniqueId();
         i.setItemStack(item);
-        i.setPrice(price);
+        i.price = price;
         i.amount = amount;
         long id = 1;
         for (ItemLog log : query(ItemLog.class).select()) {
@@ -211,9 +211,9 @@ public class Database extends SQLiteDatabase {
                 id = log.id + 1;
             }
         }
-        i.setId(id);
+        i.id = id;
         this.query(ItemLog.class).insert(i);
-        return i.getId();
+        return i.id;
     }
 
     public List<Sign> getShopSigns() {
@@ -222,10 +222,10 @@ public class Database extends SQLiteDatabase {
 
     public Sign createShopSign(OfflinePlayer player, Block block, ShopMode mode) {
         Sign shopLocation = new Sign();
-        shopLocation.setOwner(player.getUniqueId());
+        shopLocation.owner = player.getUniqueId();
         shopLocation.setLocation(block.getLocation());
         shopLocation.shopMode = mode;
-        Query sign = query(Sign.class).whereEq("id", shopLocation.getId());
+        Query sign = query(Sign.class).whereEq("id", shopLocation.id);
         if (sign != null) {
             sign.delete();
         }
@@ -235,11 +235,11 @@ public class Database extends SQLiteDatabase {
 
     public Sign createLottoSign(OfflinePlayer player, Block block, ShopMode mode, double price) {
         Sign shopLocation = new Sign();
-        shopLocation.setOwner(player.getUniqueId());
+        shopLocation.owner = player.getUniqueId();
         shopLocation.setLocation(block.getLocation());
         shopLocation.shopMode = mode;
-        shopLocation.setLotto_price(price);
-        Query sign = query(Sign.class).whereEq("id", shopLocation.getId());
+        shopLocation.lotto_price = price;
+        Query sign = query(Sign.class).whereEq("id", shopLocation.id);
         if (sign != null) {
             sign.delete();
         }
@@ -250,7 +250,7 @@ public class Database extends SQLiteDatabase {
     public boolean removeShopSign(Block block) {
         Sign shopLocation = new Sign();
         shopLocation.setLocation(block.getLocation());
-        Query sign = query(Sign.class).whereEq("id", shopLocation.getId());
+        Query sign = query(Sign.class).whereEq("id", shopLocation.id);
         if (sign != null) {
             sign.delete();
             return true;
@@ -261,7 +261,7 @@ public class Database extends SQLiteDatabase {
     public boolean removeShopSign(String world, int x, int y, int z) {
         Sign shopLocation = new Sign();
         shopLocation.setLocation(world, x, y, z);
-        Query sign = query(Sign.class).whereEq("id", shopLocation.getId());
+        Query sign = query(Sign.class).whereEq("id", shopLocation.id);
         if (sign != null) {
             sign.delete();
             return true;
@@ -279,7 +279,7 @@ public class Database extends SQLiteDatabase {
             return shop.selectUnique();
         }
         SignShop s = new SignShop();
-        s.setOwner(owner);
+        s.owner = owner;
         return s;
     }
 

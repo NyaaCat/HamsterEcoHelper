@@ -130,7 +130,7 @@ public class MarketManager extends BukkitRunnable {
                     if (!plugin.eco.withdraw(item.getPlayer(), plugin.config.market_placement_fee)) {
                         fail++;
                         plugin.logger.info(I18n.format("log.info.placement_fee_fail",
-                                item.getId(), item.getPlayer().getName(), "Not enough money"));
+                                item.id, item.getPlayer().getName(), "Not enough money"));
                     }
                 }
                 if (fail < itemCount) {

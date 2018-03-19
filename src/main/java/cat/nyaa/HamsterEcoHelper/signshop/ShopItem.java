@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 public class ShopItem {
     public int amount;
     public ItemStack itemStack;
-    private Double unitPrice;
+    public Double unitPrice;
 
     public ShopItem(ConfigurationSection section) {
         itemStack = section.getItemStack("item");
@@ -25,26 +25,6 @@ public class ShopItem {
         section.set("item", itemStack);
         section.set("amount", amount);
         section.set("unit_price", unitPrice);
-    }
-
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    public void setItemStack(ItemStack item) {
-        this.itemStack = item.clone();
     }
 
     public ItemStack getItemStack(int amount) {

@@ -3,9 +3,9 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.HamsterEcoHelper.database.Sign;
 import cat.nyaa.HamsterEcoHelper.database.SignShop;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,7 +32,7 @@ public class ShopGUI extends ShopInventoryHolder {
     public ShopGUI(HamsterEcoHelper pl, Player player, Sign sign) {
         this.plugin = pl;
         this.player = player;
-        shopOwner = sign.getOwner();
+        shopOwner = sign.owner;
         this.sign = sign;
         mode = sign.shopMode;
     }
@@ -108,7 +108,7 @@ public class ShopGUI extends ShopInventoryHolder {
         if (shopItems != null) {
             for (int i = 0; i < shopItems.size(); i++) {
                 ShopItem item = shopItems.get(i);
-                inventory.setItem(i, addLore(item.getItemStack(item.getAmount()), item.getUnitPrice()));
+                inventory.setItem(i, addLore(item.getItemStack(item.amount), item.unitPrice));
             }
         }
         if (page > 1) {
@@ -143,23 +143,23 @@ public class ShopGUI extends ShopInventoryHolder {
         shopItems = shop.getItems(mode);
         if (shopItems.size() > itemId) {
             ShopItem shopItem = shopItems.get(itemId);
-            if (shopItem == null || !(shopItem.getAmount() > 0)) {
+            if (shopItem == null || !(shopItem.amount > 0)) {
                 player.closeInventory();
                 return false;
             }
             if (shift) {
-                amount = shopItem.getAmount();
+                amount = shopItem.amount;
             }
             if (shopItem.getItemStack(1).getType() != Material.AIR) {
                 if (mode.equals(ShopMode.BUY)) {
-                    shopItem.setAmount(0);
+                    shopItem.amount = 0;
                     shopItems.set(itemId, shopItem);
                     shop.setItems(shopItems, ShopMode.BUY);
                     plugin.database.setSignShop(shopOwner, shop);
                     this.openGUI(player, this.getCurrentPage());
                     return true;
                 }
-                double price = shopItem.getUnitPrice() * amount;
+                double price = shopItem.unitPrice * amount;
                 double tax = 0.0D;
                 if (plugin.signShopManager.getTax() > 0) {
                     tax = (price / 100) * plugin.signShopManager.getTax();
@@ -173,7 +173,7 @@ public class ShopGUI extends ShopInventoryHolder {
                                 .send(player);
                         return false;
                     }
-                    shopItem.setAmount(shopItem.getAmount() - amount);
+                    shopItem.amount = shopItem.amount - amount;
                     shopItems.set(itemId, shopItem);
                     shop.setItems(shopItems, ShopMode.SELL);
                     plugin.database.setSignShop(shopOwner, shop);

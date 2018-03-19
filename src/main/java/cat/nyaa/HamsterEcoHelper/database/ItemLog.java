@@ -4,11 +4,8 @@ import cat.nyaa.nyaacore.database.DataColumn;
 import cat.nyaa.nyaacore.database.DataTable;
 import cat.nyaa.nyaacore.database.PrimaryKey;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Base64;
 import java.util.UUID;
 
 @DataTable("itemlog")
@@ -23,22 +20,6 @@ public class ItemLog {
     public int amount;
     @DataColumn("price")
     public Double price;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public UUID getOwner() {
-        return owner;
-    }
-
-    public void setOwner(UUID owner) {
-        this.owner = owner;
-    }
 
     public ItemStack getItemStack() {
         return getItemStack(amount);
@@ -63,13 +44,4 @@ public class ItemLog {
     public void setAmount(Long amount) {
         this.amount = amount.intValue();
     }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
 }

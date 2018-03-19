@@ -120,14 +120,14 @@ public class SignShopManager {
         Iterator<Sign> it = signLocations.iterator();
         while (it.hasNext()) {
             Sign sign = it.next();
-            if (player.getUniqueId().equals(sign.getOwner())) {
+            if (player.getUniqueId().equals(sign.owner)) {
                 if (sign.getLocation() != null && isSign(sign.getLocation().getBlock())) {
                     signCount++;
                 } else {
                     plugin.logger.info(I18n.format("log.info.signshop_remove", sign.getPlayer().getName(),
-                            sign.getShopMode(), sign.getWorld(), sign.getX(), sign.getY(), sign.getZ()));
-                    plugin.database.removeShopSign(sign.getWorld(),
-                            sign.getX().intValue(), sign.getY().intValue(), sign.getZ().intValue());
+                            sign.shopMode.name(), sign.world, sign.x, sign.y, sign.z));
+                    plugin.database.removeShopSign(sign.world,
+                            sign.x.intValue(), sign.y.intValue(), sign.z.intValue());
                     it.remove();
                 }
             }
@@ -181,7 +181,7 @@ public class SignShopManager {
                         attachedBlocks.remove(block.getLocation());
                     }
                     OfflinePlayer p = sign.getPlayer();
-                    plugin.logger.info(I18n.format("log.info.signshop_remove", p.getName(), sign.getShopMode(),
+                    plugin.logger.info(I18n.format("log.info.signshop_remove", p.getName(), sign.shopMode.name(),
                             block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
                     it.remove();
                     return true;
@@ -197,7 +197,7 @@ public class SignShopManager {
     }
 
     public void printItemsList(Player player, Sign sign) {
-        List<ShopItem> list = plugin.database.getSignShop(sign.getOwner()).getItems(ShopMode.BUY);
+        List<ShopItem> list = plugin.database.getSignShop(sign.owner).getItems(ShopMode.BUY);
         if (list.isEmpty()) {
             printShopInfo(player, sign);
             player.sendMessage(I18n.format("user.signshop.empty"));
@@ -206,12 +206,12 @@ public class SignShopManager {
         player.sendMessage(I18n.format("user.signshop.sell.title", sign.getPlayer().getName()));
         if (getTax() > 0) {
             for (ShopItem item : list) {
-                new Message("").append(I18n.format("user.signshop.sell.unit_price_with_tax", item.getUnitPrice(),
-                        ((item.getUnitPrice() / 100) * getTax())), item.getItemStack(1)).send(player);
+                new Message("").append(I18n.format("user.signshop.sell.unit_price_with_tax", item.unitPrice,
+                        ((item.unitPrice / 100) * getTax())), item.getItemStack(1)).send(player);
             }
         } else {
             for (ShopItem item : list) {
-                new Message("").append(I18n.format("user.signshop.sell.unit_price", item.getUnitPrice()),
+                new Message("").append(I18n.format("user.signshop.sell.unit_price", item.unitPrice),
                         item.getItemStack(1)).send(player);
             }
         }
@@ -242,12 +242,12 @@ public class SignShopManager {
     }
 
     public boolean sellItemToShop(Player player, ItemStack itemStack, Sign sign) {
-        SignShop shop = plugin.database.getSignShop(sign.getOwner());
+        SignShop shop = plugin.database.getSignShop(sign.owner);
         List<ShopItem> list = shop.getItems(ShopMode.BUY);
         for (ShopItem shopItem : list) {
             if (shopItem.getItemStack(1).isSimilar(itemStack)) {
                 OfflinePlayer shopOwner = shop.getPlayer();
-                double price = itemStack.getAmount() * shopItem.getUnitPrice();
+                double price = itemStack.getAmount() * shopItem.unitPrice;
                 double tax = 0.0D;
                 if (getTax() > 0) {
                     tax = (price / 100) * getTax();
@@ -268,7 +268,7 @@ public class SignShopManager {
                                     shopOwner.getName(), price - tax), itemStack).send(player);
                             if (shopOwner.isOnline()) {
                                 new Message("").append(I18n.format("user.signshop.sell.notice",
-                                        player.getName(), price), itemStack).send(Bukkit.getPlayer(shop.getOwner()));
+                                        player.getName(), price), itemStack).send(Bukkit.getPlayer(shop.owner));
                             }
                             plugin.logger.info(I18n.format("log.info.signshop_sell", MiscUtils.getItemName(itemStack),
                                     itemStack.getAmount(), price, player.getName(), shopOwner.getName()));
@@ -300,11 +300,11 @@ public class SignShopManager {
     }
 
     public void printShopInfo(Player player, Sign sign) {
-        player.sendMessage(I18n.format("user.signshop.print_shop_info", sign.getPlayer().getName(), sign.getShopMode()));
+        player.sendMessage(I18n.format("user.signshop.print_shop_info", sign.getPlayer().getName(), sign.shopMode.name()));
     }
 
     public ItemStack getLottoItem(Player player, Sign sign) {
-        LottoStorageLocation loc = plugin.database.getLottoStorageLocation(sign.getOwner());
+        LottoStorageLocation loc = plugin.database.getLottoStorageLocation(sign.owner);
         if (loc == null || loc.getLocation() == null || !isChest(loc.getLocation().getBlock())) {
             return null;
         }
@@ -353,7 +353,7 @@ public class SignShopManager {
     public void removePlayerSignShops(OfflinePlayer owner, CommandSender sender, boolean removeSignBlock) {
         List<Sign> signs = new ArrayList<>();
         for (Sign s : signLocations) {
-            if (owner.getUniqueId().equals(s.getOwner())) {
+            if (owner.getUniqueId().equals(s.owner)) {
                 signs.add(s);
             }
         }

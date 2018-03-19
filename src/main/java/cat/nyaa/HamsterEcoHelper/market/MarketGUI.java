@@ -78,9 +78,9 @@ public class MarketGUI extends ShopInventoryHolder {
         if (marketItem != null) {
             for (int i = 0; i < marketItem.size(); i++) {
                 MarketItem mItem = marketItem.get(i);
-                itemsID.put(i, mItem.getId());
+                itemsID.put(i, mItem.id);
                 ItemStack itemStack = mItem.getItemStack();
-                addLore(mItem.getPlayer(), itemStack, mItem.getUnitPrice());
+                addLore(mItem.getPlayer(), itemStack, mItem.unitPrice);
                 inventory.setItem(i, itemStack);
             }
         }
@@ -128,12 +128,12 @@ public class MarketGUI extends ShopInventoryHolder {
             if (shift) {
                 amount = item.getAmount().intValue();
             }
-            double price = item.getUnitPrice() * amount;
+            double price = item.unitPrice * amount;
             double tax = 0.0D;
             if (plugin.config.market_tax > 0) {
                 tax = (price / 100) * plugin.config.market_tax;
             }
-            if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.getPlayerId())) {
+            if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.playerId)) {
                 Optional<MiscUtils.GiveStat> stat = plugin.eco.transaction(player, item.getPlayer(), item.getItemStack(amount), price, tax);
                 if(!stat.isPresent()){
                     new Message("")
@@ -146,7 +146,7 @@ public class MarketGUI extends ShopInventoryHolder {
                 player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
                 plugin.logger.info(I18n.format("log.info.market_bought", itemId, MiscUtils.getItemName(item.getItemStack()),
                         amount, price, player.getName(), item.getPlayer().getName()));
-                if (!player.getUniqueId().equals(item.getPlayerId())) {
+                if (!player.getUniqueId().equals(item.playerId)) {
                     if (item.getPlayer().isOnline()) {
                         new Message("")
                                 .append(I18n.format("user.market.someone_bought",

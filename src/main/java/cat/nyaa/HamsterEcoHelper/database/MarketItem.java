@@ -6,11 +6,8 @@ import cat.nyaa.nyaacore.database.PrimaryKey;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Base64;
 import java.util.UUID;
 
 @DataTable("market")
@@ -23,26 +20,11 @@ public class MarketItem {
     @DataColumn("item")
     public String item;
     public int amount;
-    private Double unitPrice;
+    @DataColumn("unit_price")
+    public Double unitPrice;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public UUID getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(UUID uuid) {
-        this.playerId = uuid;
-    }
-
-    public OfflinePlayer getPlayer(){
-        return Bukkit.getOfflinePlayer(getPlayerId());
+    public OfflinePlayer getPlayer() {
+        return Bukkit.getOfflinePlayer(playerId);
     }
 
     public ItemStack getItemStack() {
@@ -51,7 +33,7 @@ public class MarketItem {
 
     public void setItemStack(ItemStack item) {
         this.item = ItemStackUtils.itemToBase64(item);
-        amount = item.getAmount();
+        this.amount = item.getAmount();
     }
 
     public ItemStack getItemStack(int amount) {
@@ -59,7 +41,7 @@ public class MarketItem {
         item.setAmount(amount);
         return item;
     }
-    
+
     @DataColumn("amount")
     public Long getAmount() {
         return (long) amount;
@@ -68,14 +50,4 @@ public class MarketItem {
     public void setAmount(Long amount) {
         this.amount = amount.intValue();
     }
-
-    @DataColumn("unit_price")
-    public Double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(Double unit_price) {
-        this.unitPrice = unit_price;
-    }
-
 }

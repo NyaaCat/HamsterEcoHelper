@@ -29,7 +29,7 @@ public class StorageCommands extends CommandReceiver {
             player.sendMessage(I18n.format("user.signshop.storage.set"));
             return;
         }
-        player.sendMessage(I18n.format("user.signshop.storage.info", chest.getWorld(),
+        player.sendMessage(I18n.format("user.signshop.storage.info", chest.world,
                 chest.getLocation().getBlockX(), chest.getLocation().getBlockY(), chest.getLocation().getBlockZ()));
     }
 

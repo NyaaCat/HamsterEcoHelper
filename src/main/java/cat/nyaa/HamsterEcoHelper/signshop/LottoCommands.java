@@ -31,7 +31,7 @@ public class LottoCommands extends CommandReceiver {
             player.sendMessage(I18n.format("user.signshop.lotto.set_storage"));
             return;
         }
-        player.sendMessage(I18n.format("user.signshop.lotto.info", loc.getWorld(),
+        player.sendMessage(I18n.format("user.signshop.lotto.info", loc.world,
                 loc.getLocation().getBlockX(), loc.getLocation().getBlockY(), loc.getLocation().getBlockZ()));
     }
 

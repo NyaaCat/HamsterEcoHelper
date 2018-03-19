@@ -46,7 +46,7 @@ public class SignShopCommands extends CommandReceiver {
             Block block = blockIterator.next();
             if (SignShopManager.isSign(block)) {
                 Sign sign = plugin.signShopManager.getSign(block);
-                if (sign != null && player.getUniqueId().equals(sign.getOwner())) {
+                if (sign != null && player.getUniqueId().equals(sign.owner)) {
                     if (plugin.signShopManager.getItemCount(player) >= plugin.signShopManager.getSlotLimit(player)) {
                         player.sendMessage(I18n.format("user.signshop.not_enough_slot"));
                         return;
@@ -88,7 +88,7 @@ public class SignShopCommands extends CommandReceiver {
             Block block = blockIterator.next();
             if (SignShopManager.isSign(block)) {
                 Sign sign = plugin.signShopManager.getSign(block);
-                if (sign != null && player.getUniqueId().equals(sign.getOwner())) {
+                if (sign != null && player.getUniqueId().equals(sign.owner)) {
                     if (plugin.signShopManager.getItemCount(player) >= plugin.signShopManager.getSlotLimit(player)) {
                         player.sendMessage(I18n.format("user.signshop.not_enough_slot"));
                         return;

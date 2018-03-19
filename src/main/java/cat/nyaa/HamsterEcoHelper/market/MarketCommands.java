@@ -73,7 +73,7 @@ public class MarketCommands extends CommandReceiver {
             int slot = player.getInventory().firstEmpty();
             if (slot >= 0 && player.getInventory().getItem(slot) == null) {
                 msg(player, "user.market.offered", item.getPlayer().getName());
-                msg(player, "user.market.unit_price", item.getUnitPrice());
+                msg(player, "user.market.unit_price", item.unitPrice);
                 player.getInventory().setItem(slot, item.getItemStack(1));
             }
         }

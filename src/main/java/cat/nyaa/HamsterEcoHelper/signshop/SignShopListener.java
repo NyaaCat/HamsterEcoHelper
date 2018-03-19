@@ -131,7 +131,7 @@ public class SignShopListener implements Listener {
         if (SignShopManager.isSign(block)) {
             Sign sign = plugin.signShopManager.getSign(block);
             if (sign != null) {
-                if (sign.getOwner().equals(player.getUniqueId()) ||
+                if (sign.owner.equals(player.getUniqueId()) ||
                         (player.hasPermission("heh.removesignshop") && player.isSneaking() &&
                                 player.getGameMode() == GameMode.CREATIVE)) {
                     event.setCancelled(false);
@@ -179,14 +179,14 @@ public class SignShopListener implements Listener {
             Sign sign = plugin.signShopManager.getSign(block);
             if (sign != null) {
                 event.setCancelled(true);
-                if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && (player.getUniqueId().equals(sign.getOwner()) || player.hasPermission("heh.removesignshop") && player.isSneaking() && player.getGameMode() == GameMode.CREATIVE)) {
+                if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && (player.getUniqueId().equals(sign.owner) || player.hasPermission("heh.removesignshop") && player.isSneaking() && player.getGameMode() == GameMode.CREATIVE)) {
                     event.setCancelled(false);
                     return;
                 }
                 if (ShopMode.SELL.equals(sign.shopMode) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     plugin.signShopManager.openShopGUI(player, sign, 1);
                 } else if (ShopMode.BUY.equals(sign.shopMode)) {
-                    if (sign.getOwner().equals(player.getUniqueId())) {
+                    if (sign.owner.equals(player.getUniqueId())) {
                         plugin.signShopManager.openShopGUI(player, sign, 1);
                     } else {
                         ItemStack item = player.getInventory().getItemInMainHand();
@@ -211,7 +211,7 @@ public class SignShopListener implements Listener {
                         }
                     }
                 } else if (ShopMode.LOTTO.equals(sign.shopMode) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    if (sign.getOwner().equals(player.getUniqueId())) {
+                    if (sign.owner.equals(player.getUniqueId())) {
                         event.setCancelled(false);
                         return;
                     } else {
@@ -223,7 +223,7 @@ public class SignShopListener implements Listener {
                         }
                     }
                     lottoConfirm.remove(player.getUniqueId());
-                    double price = sign.getLotto_price();
+                    double price = sign.lotto_price;
                     if (price > 0.0D) {
                         if (plugin.eco.enoughMoney(player, price)) {
                             ItemStack item = plugin.signShopManager.getLottoItem(player, sign);
@@ -250,10 +250,10 @@ public class SignShopListener implements Listener {
                                 if (owner.isOnline()) {
                                     if (tax > 0.0D) {
                                         new Message("").append(I18n.format("user.signshop.lotto.notice_with_tax",
-                                                player.getName(), price - tax, tax), item).send(Bukkit.getPlayer(sign.getOwner()));
+                                                player.getName(), price - tax, tax), item).send(Bukkit.getPlayer(sign.owner));
                                     } else {
                                         new Message("").append(I18n.format("user.signshop.lotto.notice",
-                                                player.getName(), price), item).send(Bukkit.getPlayer(sign.getOwner()));
+                                                player.getName(), price), item).send(Bukkit.getPlayer(sign.owner));
                                     }
                                 }
                             }

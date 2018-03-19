@@ -21,7 +21,7 @@ import java.util.UUID;
 public class SignShop {
     @DataColumn("id")
     @PrimaryKey
-    public String id;
+    public UUID owner;
     public String yaml = "";
 
     @DataColumn("yaml")
@@ -33,24 +33,8 @@ public class SignShop {
         this.yaml = new String(Base64.getDecoder().decode(yaml));
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public OfflinePlayer getPlayer() {
-        return Bukkit.getOfflinePlayer(getOwner());
-    }
-
-    public UUID getOwner() {
-        return UUID.fromString(id);
-    }
-
-    public void setOwner(UUID uuid) {
-        id = uuid.toString();
+        return Bukkit.getOfflinePlayer(owner);
     }
 
     public void setItems(List<ShopItem> list, ShopMode mode) {
@@ -89,7 +73,7 @@ public class SignShop {
         ConfigurationSection section = configuration.createSection(path);
         for (int i = 0; i < list.size(); i++) {
             ShopItem item = list.get(i);
-            if (item.getAmount() > 0 && item.getItemStack(1).getType() != Material.AIR) {
+            if (item.amount > 0 && item.getItemStack(1).getType() != Material.AIR) {
                 list.get(i).save(section.createSection(String.valueOf(i)));
             }
         }

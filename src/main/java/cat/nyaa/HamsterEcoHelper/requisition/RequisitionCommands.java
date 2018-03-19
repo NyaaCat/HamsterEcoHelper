@@ -181,8 +181,8 @@ public class RequisitionCommands extends CommandReceiver {
         ItemLog item = plugin.database.getItemLog(args.nextInt());
         if (item != null) {
             MiscUtils.giveItem(p, item.getItemStack());
-            p.sendMessage("player: " + Bukkit.getPlayer(item.getOwner()).getName());
-            p.sendMessage("price: " + item.getPrice());
+            p.sendMessage("player: " + Bukkit.getPlayer(item.owner).getName());
+            p.sendMessage("price: " + item.price);
         }
 
     }

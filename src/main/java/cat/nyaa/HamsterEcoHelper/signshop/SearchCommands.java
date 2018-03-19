@@ -78,9 +78,9 @@ public class SearchCommands extends CommandReceiver {
         result.stream().skip(start).limit(9).forEach(pair ->
                                                              new Message("")
                                                                      .append(I18n.format("user.signshop.search.result",
-                                                                             Bukkit.getOfflinePlayer(pair.getKey().getOwner())
+                                                                             Bukkit.getOfflinePlayer(pair.getKey().owner)
                                                                                    .getName(),
-                                                                             pair.getValue().getUnitPrice()
+                                                                             pair.getValue().unitPrice
                                                                      ), pair.getValue().itemStack)
                                                                      .send(sender));
     }
@@ -135,10 +135,10 @@ public class SearchCommands extends CommandReceiver {
         Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             final LinkedListMultimap<SignShop, ShopItem> match = LinkedListMultimap.create();
             for (SignShop shop : signShops) {
-                UUID owner = shop.getOwner();
+                UUID owner = shop.owner;
                 Set<Sign> signOwned = plugin.signShopManager.signLocations
                                               .stream()
-                                              .filter(sign -> sign.getOwner().equals(owner))
+                                              .filter(sign -> sign.owner.equals(owner))
                                               .filter(sign -> sign.shopMode == ShopMode.SELL)
                                               .collect(Collectors.toSet());
                 if (signOwned.isEmpty()) continue;
@@ -146,7 +146,7 @@ public class SearchCommands extends CommandReceiver {
                     continue;
                 if (rangeLimit != -1 &&
                             signOwned.stream().noneMatch(sign ->
-                                                                 curLoc.getWorld().getName().equals(sign.getWorld())
+                                                                 curLoc.getWorld().getName().equals(sign.world)
                                                                          && distance(curLoc, sign) < rangeLimit)) {
                     continue;
                 }
@@ -155,7 +155,7 @@ public class SearchCommands extends CommandReceiver {
                         shopItem -> {
                             boolean loreMatch;
                             boolean enchMatch;
-                            ItemStack stack = shopItem.getItemStack(shopItem.getAmount());
+                            ItemStack stack = shopItem.getItemStack(shopItem.amount);
                             ItemMeta meta = stack.getItemMeta();
                             if (materialLimit != null && !materialLimit.equals(stack.getType())) return false;
                             if (matchLore) {
@@ -198,34 +198,34 @@ public class SearchCommands extends CommandReceiver {
             }
             Bukkit.getServer().getScheduler().runTask(plugin, () -> {
                 match.keySet().forEach(ss -> {
-                    Stream<Sign> sis = plugin.signShopManager.signLocations.stream().filter(sign -> sign.getOwner().equals(ss.getOwner())).filter(sign -> sign.shopMode == ShopMode.SELL);
+                    Stream<Sign> sis = plugin.signShopManager.signLocations.stream().filter(sign -> sign.owner.equals(ss.owner)).filter(sign -> sign.shopMode == ShopMode.SELL);
                     if (curLoc != null) {
                         sis = sis.filter(sign -> curLoc.getWorld().equals(sign.getLocation().getWorld()))
                                  .sorted(Comparator.comparingDouble(a -> a.getLocation().distance(curLoc)));
                         if (rangeLimit != -1)
                             sis = sis.filter(sign -> curLoc.distance(sign.getLocation()) < rangeLimit);
                     }
-                    sis.findFirst().ifPresent(si -> msg(sender, "user.signshop.search.sign_of", ss.getPlayer().getName(), si.getX(), si.getY(), si.getZ()));
+                    sis.findFirst().ifPresent(si -> msg(sender, "user.signshop.search.sign_of", ss.getPlayer().getName(), si.x, si.y, si.z));
                 });
-                List<Map.Entry<SignShop, ShopItem>> result = match.entries().stream().sorted(Comparator.comparingDouble(a -> a.getValue().getUnitPrice())).collect(Collectors.toList());
+                List<Map.Entry<SignShop, ShopItem>> result = match.entries().stream().sorted(Comparator.comparingDouble(a -> a.getValue().unitPrice)).collect(Collectors.toList());
                 searchResult.put(searcher, result);
                 msg(sender, "user.signshop.search.page", 1, (int) Math.ceil(result.size() / 9.0d));
                 if (player != null) {
                     result.stream().limit(9).forEach(pair ->
                                                              new Message("")
                                                                      .append(I18n.format("user.signshop.search.result",
-                                                                             Bukkit.getOfflinePlayer(pair.getKey().getOwner())
+                                                                             Bukkit.getOfflinePlayer(pair.getKey().owner)
                                                                                    .getName(),
-                                                                             pair.getValue().getUnitPrice()
+                                                                             pair.getValue().unitPrice
                                                                      ), pair.getValue().itemStack)
                                                                      .send(player));
                 } else {
                     result.stream().limit(9).forEach(pair ->
                                                              sender.sendMessage(new Message("")
                                                                                         .append(I18n.format("user.signshop.search.result",
-                                                                                                Bukkit.getOfflinePlayer(pair.getKey().getOwner())
+                                                                                                Bukkit.getOfflinePlayer(pair.getKey().owner)
                                                                                                       .getName(),
-                                                                                                pair.getValue().getUnitPrice()
+                                                                                                pair.getValue().unitPrice
                                                                                         ), pair.getValue().itemStack)
                                                                                         .inner.toLegacyText()));
                 }
