@@ -42,13 +42,13 @@ log:
     ads_add: '新增广告：{id: %d, amount: %d, text: "%s", player: "%s"}'
     ads_remove: '移除广告：{id: %d, text: "%s", player: "%s"}'
     system_balance: '系统余额：{type: %s, amount: %s, current_balance: %s, plugin: %s}'
-    withdraw_fail: '付款失败：{buyer: "%s", seller: "%s", item: "%s",
-      price: %.2f, tax: %.2f, message: "%s"}'
+    withdraw_fail: '付款失败：{buyer: "%s", seller: "%s", item: "%s", price: %.2f, tax:
+      %.2f, message: "%s"}'
   error:
     missing_sqlite_driver: 未找到 SQLite 驱动程序，插件已禁用。
     enable_fail: 插件启用失败
-    transaction_fail: '交易失败：{buyer: "%s", seller: "%s", item: "%s", price: %.2f,
-      tax: %.2f}'
+    transaction_fail: '交易失败：{buyer: "%s", seller: "%s", item: "%s", price: %.2f, tax:
+      %.2f}'
     transaction_fail_dump: 物品JSON："%s"
     transaction_fail_rollback_tax: '回滚 TransactionApiEvent: {tax: %.2f}'
     transaction_fail_rollback_money: '回滚现金交易：{player: "%s", price: %.2f, status: "%s",
@@ -208,6 +208,9 @@ user:
       page: 第 %d 页 / 共 %d 页
       page_out_of_bound: 页码超出范围
     print_shop_info: 商店所有者：%s，商店模式：%s
+    remove:
+      no_sign: 该玩家没有开设任何木牌商店
+      success: '位于 (%s, X: %d,Y: %d, Z: %d) 的木牌商店已移除'
   ads:
     add:
       price: 单价：%d，总价：%d
@@ -228,6 +231,7 @@ user:
     unmute: 取消静音成功。
     message: '[%s 的广告] &r%s&r'
     message_too_long: 广告内容最长为 %d 个字符
+    no_adid: 找不到指定的 AdsID
 manual:
   no_description: 无描述
   no_usage: 无用法说明
@@ -314,6 +318,8 @@ manual:
       set:
         description: 设置抽奖奖池箱位置
         usage: 用法：/heh shop lotto set
+    remove:
+      description: 移除指定玩家的所有木牌商店
   search:
     description: 在市场中搜索物品
     usage: "用法：/heh search 关键字 [i|item:物品ID或名称] [p|player:玩家名称] [r|range:搜索半径] [a|advanced:ench|lore|enchonly|loreonly]\
