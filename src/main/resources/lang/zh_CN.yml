@@ -90,14 +90,14 @@ user:
     no_enough_money: 你没有足够的现金
     not_high_enough: 无效的价格，至少应为 %.2f$
   auc:
-    new_auction_0: 新拍卖：
+    new_auction_0: '新拍卖： '
     new_auction_1: ，起步价：%.2f$，步进价：%.2f$，请在 %d 秒内用 /heh bid [价格] 参与出价
-    player_auction_0: 玩家 %s 发起了拍卖：
+    player_auction_0: '玩家 %s 发起了拍卖： '
     player_auction_1: ，起步价：%.2f$，步进价：%.2f$，请在 %d 秒内用 /heh bid [价格] 参与出价
     new_auction_unknown: 拍卖：未知物品，起步价：%.2f$，步进价：%.2f$，请在 %d 秒内用 /heh bid [价格] 参与出价
     mystery_item_placeholder: 未知物品
-    new_price_0: 玩家 %s 给出了更高的价格
-    new_price_1: ：%.2f$
+    new_price_0: '玩家 %s 给出了更高的价格 '
+    new_price_1: ' ：%.2f$'
     new_price_success: 出价成功！
     first: '%.2f$ 第一次'
     second: '%.2f$ 第二次'
@@ -112,11 +112,11 @@ user:
     reserve_price_error: 保留价必须高于起步价
     step_price_error: 步进价必须大于0
   req:
-    new_req_0: 新征购：
+    new_req_0: '新征购： '
     new_req_1: ×%d 个，单价 %.2f，剩余时间 %.2f 秒，请手持对应物品输入 /heh sell [数量] 参与征购
-    player_req_0: 玩家 %s 发起了征购：
+    player_req_0: '玩家 %s 发起了征购： '
     player_req_1: ×%d 个，单价 %.2f，剩余时间 %.2f 秒，请手持对应物品输入 /heh sell [数量] 参与征购
-    hint_req_0: 当前正在征购：
+    hint_req_0: '当前正在征购： '
     hint_req_1: ，还需要 %d 个，单价 %.2f，剩余时间 %.2f 秒，请手持对应物品输入 /heh sell [数量] 参与征购
     finish: 征购结束。
     halted: 征购中止。
