@@ -320,6 +320,7 @@ manual:
         usage: 用法：/heh shop lotto set
     remove:
       description: 移除指定玩家的所有木牌商店
+      usage: '用法: /heh shop remove [player] [removeBlock]'
   search:
     description: 在市场中搜索物品
     usage: "用法：/heh search 关键字 [i|item:物品ID或名称] [p|player:玩家名称] [r|range:搜索半径] [a|advanced:ench|lore|enchonly|loreonly]\
