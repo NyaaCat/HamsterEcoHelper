@@ -1,17 +1,15 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
-import cat.nyaa.nyaacore.database.DataColumn;
-import cat.nyaa.nyaacore.database.DataTable;
-import cat.nyaa.nyaacore.database.PrimaryKey;
-
-import java.util.Base64;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
-@DataTable("temporary_storage")
+@Table(name = "temporary_storage")
 public class TempStorageRepo {
-    @DataColumn("player_id")
-    @PrimaryKey
+    @Column(name = "player_id")
+    @Id
     public UUID playerId;
-    @DataColumn("yaml")
+    @Column(name = "yaml")
     public String yaml = "";
 }

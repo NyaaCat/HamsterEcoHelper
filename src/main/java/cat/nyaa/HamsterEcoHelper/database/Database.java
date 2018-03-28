@@ -2,59 +2,34 @@ package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
-import cat.nyaa.nyaacore.database.SQLiteDatabase;
+import cat.nyaa.nyaacore.database.DatabaseUtils;
+import cat.nyaa.nyaacore.database.Query;
+import cat.nyaa.nyaacore.database.RelationalDB;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-public class Database extends SQLiteDatabase {
+public class Database implements Cloneable {
     private final HamsterEcoHelper plugin;
+    final RelationalDB database;
 
     public Database(HamsterEcoHelper plugin) {
-        super();
+        database = DatabaseUtils.get();
         this.plugin = plugin;
-        connect();
-        int newDatabaseVersion = DatabaseUpdater.updateDatabase(this, plugin.config.database_version);
+        database.connect();
+        int newDatabaseVersion = DatabaseUpdater.updateDatabase(Database.this, plugin.config.database_version);
         if (newDatabaseVersion != plugin.config.database_version) {
             plugin.config.database_version = newDatabaseVersion;
             plugin.config.save();
         }
     }
 
-    @Override
-    protected String getFileName() {
-        return "HamsterEcoHelper.db";
-    }
-
-    @Override
-    protected JavaPlugin getPlugin() {
-        return plugin;
-    }
-
-    @Override
-    protected Class<?>[] getTables() {
-        return new Class<?>[]{
-                TempStorageRepo.class,
-                ItemLog.class,
-                MarketItem.class,
-                Sign.class,
-                ShopStorageLocation.class,
-                SignShop.class,
-                LottoStorageLocation.class
-        };
-    }
-
     public List<ItemStack> getTemporaryStorage(OfflinePlayer player) {
-        Query<TempStorageRepo> result = query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString());
+        Query<TempStorageRepo> result = database.query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString());
         if (result == null || result.count() == 0) return Collections.emptyList();
         YamlConfiguration cfg = new YamlConfiguration();
         try {
@@ -71,7 +46,7 @@ public class Database extends SQLiteDatabase {
     }
 
     public void addTemporaryStorage(OfflinePlayer player, ItemStack item) {
-        Query<TempStorageRepo> result = query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString());
+        Query<TempStorageRepo> result = database.query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString());
         YamlConfiguration cfg = new YamlConfiguration();
         boolean update;
         if (result == null || result.count() == 0) {
@@ -104,12 +79,12 @@ public class Database extends SQLiteDatabase {
         if (update) {
             result.update(bean);
         } else {
-            query(TempStorageRepo.class).insert(bean);
+            database.query(TempStorageRepo.class).insert(bean);
         }
     }
 
     public void clearTemporaryStorage(OfflinePlayer player) {
-        Query<TempStorageRepo> query = query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString());
+        Query<TempStorageRepo> query = database.query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString());
         if (query != null && query.count() != 0) {
             query.delete();
         }
@@ -119,9 +94,9 @@ public class Database extends SQLiteDatabase {
         ArrayList<MarketItem> list = new ArrayList<>();
         Query<MarketItem> result;
         if (seller == null) {
-            result = query(MarketItem.class).where("amount", ">", 0);
+            result = database.query(MarketItem.class).where("amount", ">", 0);
         } else {
-            result = query(MarketItem.class).where("amount", ">", 0).whereEq("player_id", seller.toString());
+            result = database.query(MarketItem.class).where("amount", ">", 0).whereEq("player_id", seller.toString());
         }
         if (result != null && result.count() > 0) {
             List<MarketItem> tmp = result.select();
@@ -145,18 +120,18 @@ public class Database extends SQLiteDatabase {
         item.playerId = player.getUniqueId();
         item.unitPrice = unit_price;
         long id = 1;
-        for (MarketItem marketItem : query(MarketItem.class).select()) {
+        for (MarketItem marketItem : database.query(MarketItem.class).select()) {
             if (marketItem.id >= id) {
                 id = marketItem.id + 1;
             }
         }
         item.id = id;
-        query(MarketItem.class).insert(item);
+        database.query(MarketItem.class).insert(item);
         return item.id;
     }
 
     public void marketBuy(Player player, long itemId, int amount) {
-        Query<MarketItem> query = query(MarketItem.class).whereEq("id", itemId);
+        Query<MarketItem> query = database.query(MarketItem.class).whereEq("id", itemId);
         if (query != null && query.count() != 0) {
             MarketItem mItem = query.selectUnique();
             mItem.amount = mItem.amount - amount;
@@ -167,7 +142,7 @@ public class Database extends SQLiteDatabase {
     }
 
     public int getMarketPlayerItemCount(OfflinePlayer player) {
-        Query<MarketItem> query = query(MarketItem.class).whereEq("player_id", player.getUniqueId().toString()).where("amount", ">", 0);
+        Query<MarketItem> query = database.query(MarketItem.class).whereEq("player_id", player.getUniqueId().toString()).where("amount", ">", 0);
         if (query != null && query.count() > 0) {
             return query.count();
         }
@@ -175,7 +150,7 @@ public class Database extends SQLiteDatabase {
     }
 
     public int getMarketItemCount() {
-        Query<MarketItem> query = query(MarketItem.class).where("amount", ">", 0);
+        Query<MarketItem> query = database.query(MarketItem.class).where("amount", ">", 0);
         if (query != null && query.count() != 0) {
             return query.count();
         }
@@ -183,7 +158,7 @@ public class Database extends SQLiteDatabase {
     }
 
     public MarketItem getMarketItem(long id) {
-        Query<MarketItem> query = query(MarketItem.class).whereEq("id", id);
+        Query<MarketItem> query = database.query(MarketItem.class).whereEq("id", id);
         if (query != null && query.count() != 0) {
             return query.selectUnique();
         }
@@ -192,7 +167,7 @@ public class Database extends SQLiteDatabase {
 
 
     public ItemLog getItemLog(long id) {
-        Query<ItemLog> log = query(ItemLog.class).whereEq("id", id);
+        Query<ItemLog> log = database.query(ItemLog.class).whereEq("id", id);
         if (log != null && log.count() != 0) {
             return log.selectUnique();
         }
@@ -206,18 +181,18 @@ public class Database extends SQLiteDatabase {
         i.price = price;
         i.amount = amount;
         long id = 1;
-        for (ItemLog log : query(ItemLog.class).select()) {
+        for (ItemLog log : database.query(ItemLog.class).select()) {
             if (log.id >= id) {
                 id = log.id + 1;
             }
         }
         i.id = id;
-        this.query(ItemLog.class).insert(i);
+        database.query(ItemLog.class).insert(i);
         return i.id;
     }
 
     public List<Sign> getShopSigns() {
-        return query(Sign.class).select();
+        return database.query(Sign.class).select();
     }
 
     public Sign createShopSign(OfflinePlayer player, Block block, ShopMode mode) {
@@ -225,11 +200,11 @@ public class Database extends SQLiteDatabase {
         shopLocation.owner = player.getUniqueId();
         shopLocation.setLocation(block.getLocation());
         shopLocation.shopMode = mode;
-        Query sign = query(Sign.class).whereEq("id", shopLocation.id);
+        Query<Sign> sign = database.query(Sign.class).whereEq("id", shopLocation.id);
         if (sign != null) {
             sign.delete();
         }
-        this.query(Sign.class).insert(shopLocation);
+        database.query(Sign.class).insert(shopLocation);
         return shopLocation;
     }
 
@@ -239,18 +214,18 @@ public class Database extends SQLiteDatabase {
         shopLocation.setLocation(block.getLocation());
         shopLocation.shopMode = mode;
         shopLocation.lotto_price = price;
-        Query sign = query(Sign.class).whereEq("id", shopLocation.id);
+        Query<Sign> sign = database.query(Sign.class).whereEq("id", shopLocation.id);
         if (sign != null) {
             sign.delete();
         }
-        this.query(Sign.class).insert(shopLocation);
+        database.query(Sign.class).insert(shopLocation);
         return shopLocation;
     }
 
     public boolean removeShopSign(Block block) {
         Sign shopLocation = new Sign();
         shopLocation.setLocation(block.getLocation());
-        Query sign = query(Sign.class).whereEq("id", shopLocation.id);
+        Query<Sign> sign = database.query(Sign.class).whereEq("id", shopLocation.id);
         if (sign != null) {
             sign.delete();
             return true;
@@ -261,7 +236,7 @@ public class Database extends SQLiteDatabase {
     public boolean removeShopSign(String world, int x, int y, int z) {
         Sign shopLocation = new Sign();
         shopLocation.setLocation(world, x, y, z);
-        Query sign = query(Sign.class).whereEq("id", shopLocation.id);
+        Query<Sign> sign = database.query(Sign.class).whereEq("id", shopLocation.id);
         if (sign != null) {
             sign.delete();
             return true;
@@ -270,11 +245,11 @@ public class Database extends SQLiteDatabase {
     }
 
     public List<SignShop> getSignShops() {
-        return query(SignShop.class).select();
+        return database.query(SignShop.class).select();
     }
 
     public SignShop getSignShop(UUID owner) {
-        Query<SignShop> shop = query(SignShop.class).whereEq("id", owner.toString());
+        Query<SignShop> shop = database.query(SignShop.class).whereEq("id", owner.toString());
         if (shop != null && shop.count() == 1) {
             return shop.selectUnique();
         }
@@ -284,15 +259,15 @@ public class Database extends SQLiteDatabase {
     }
 
     public void setSignShop(UUID owner, SignShop shop) {
-        Query s = query(SignShop.class).whereEq("id", owner.toString());
+        Query<SignShop> s = database.query(SignShop.class).whereEq("id", owner.toString());
         if (s != null) {
             s.delete();
         }
-        query(SignShop.class).insert(shop);
+        database.query(SignShop.class).insert(shop);
     }
 
     public ShopStorageLocation getChestLocation(UUID owner) {
-        Query<ShopStorageLocation> loc = query(ShopStorageLocation.class).whereEq("owner", owner.toString());
+        Query<ShopStorageLocation> loc = database.query(ShopStorageLocation.class).whereEq("owner", owner.toString());
         if (loc != null && loc.count() != 0) {
             return loc.selectUnique();
         }
@@ -300,15 +275,15 @@ public class Database extends SQLiteDatabase {
     }
 
     public void setChestLocation(UUID owner, ShopStorageLocation location) {
-        Query s = query(ShopStorageLocation.class).whereEq("owner", owner.toString());
+        Query<ShopStorageLocation> s = database.query(ShopStorageLocation.class).whereEq("owner", owner.toString());
         if (s != null) {
             s.delete();
         }
-        query(ShopStorageLocation.class).insert(location);
+        database.query(ShopStorageLocation.class).insert(location);
     }
 
     public LottoStorageLocation getLottoStorageLocation(UUID owner) {
-        Query<LottoStorageLocation> loc = query(LottoStorageLocation.class).whereEq("owner", owner.toString());
+        Query<LottoStorageLocation> loc = database.query(LottoStorageLocation.class).whereEq("owner", owner.toString());
         if (loc != null && loc.count() != 0) {
             return loc.selectUnique();
         }
@@ -316,10 +291,10 @@ public class Database extends SQLiteDatabase {
     }
 
     public void setLottoStorageLocation(UUID owner, LottoStorageLocation location) {
-        Query s = query(LottoStorageLocation.class).whereEq("owner", owner.toString());
+        Query<LottoStorageLocation> s = database.query(LottoStorageLocation.class).whereEq("owner", owner.toString());
         if (s != null) {
             s.delete();
         }
-        query(LottoStorageLocation.class).insert(location);
+        database.query(LottoStorageLocation.class).insert(location);
     }
 }

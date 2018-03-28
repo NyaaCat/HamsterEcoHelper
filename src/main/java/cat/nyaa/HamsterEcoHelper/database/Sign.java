@@ -1,33 +1,33 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
-import cat.nyaa.nyaacore.database.DataColumn;
-import cat.nyaa.nyaacore.database.DataTable;
-import cat.nyaa.nyaacore.database.PrimaryKey;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
-@DataTable("signshop_location")
+@Table(name = "signshop_location")
 public class Sign {
-    @DataColumn("id")
-    @PrimaryKey
+    @Column(name = "id")
+    @Id
     public String id;
-    @DataColumn("owner")
+    @Column(name = "owner")
     public UUID owner;
-    @DataColumn("mode")
+    @Column(name = "mode")
     public ShopMode shopMode;
-    @DataColumn("world")
+    @Column(name = "world")
     public String world = "";
-    @DataColumn("x")
+    @Column(name = "x")
     public Long x;
-    @DataColumn("y")
+    @Column(name = "y")
     public Long y;
-    @DataColumn("z")
+    @Column(name = "z")
     public Long z;
-    @DataColumn("lotto_price")
+    @Column(name = "lotto_price")
     public Double lotto_price = 0.0D;
 
     public Sign() {

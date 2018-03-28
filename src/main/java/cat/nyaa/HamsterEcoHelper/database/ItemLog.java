@@ -1,24 +1,24 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
-import cat.nyaa.nyaacore.database.DataColumn;
-import cat.nyaa.nyaacore.database.DataTable;
-import cat.nyaa.nyaacore.database.PrimaryKey;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.inventory.ItemStack;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
-@DataTable("itemlog")
+@Table(name = "itemlog")
 public class ItemLog {
-    @DataColumn("id")
-    @PrimaryKey
+    @Column(name = "id")
+    @Id
     public Long id;
-    @DataColumn("owner")
+    @Column(name = "owner")
     public UUID owner;
-    @DataColumn("item")
+    @Column(name = "item")
     public String item;
     public int amount;
-    @DataColumn("price")
+    @Column(name = "price")
     public Double price;
 
     public ItemStack getItemStack() {
@@ -36,7 +36,7 @@ public class ItemLog {
         return item;
     }
 
-    @DataColumn("amount")
+    @Column(name = "amount")
     public Long getAmount() {
         return (long) amount;
     }
