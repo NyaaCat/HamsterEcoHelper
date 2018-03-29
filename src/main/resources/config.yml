@@ -14,5 +14,5 @@ database:
     provider: sqlite
     connection:
         autoscan: true
-        package: cat.nyaa.HamsterEcoHelper.utils.database.tables
+        package: cat.nyaa.HamsterEcoHelper.database
         file: HamsterEcoHelper.db
