@@ -10,6 +10,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 @Table(name = "signshop")
 public class SignShop {
     @Column(name = "id")
