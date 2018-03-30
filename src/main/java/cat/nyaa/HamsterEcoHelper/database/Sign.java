@@ -5,10 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -19,6 +16,7 @@ public class Sign {
     public String id;
     @Column(name = "owner")
     public UUID owner;
+    @Enumerated(EnumType.STRING)
     @Column(name = "mode")
     public ShopMode shopMode;
     @Column(name = "world")
