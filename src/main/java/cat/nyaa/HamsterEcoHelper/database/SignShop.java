@@ -9,10 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -20,13 +17,15 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "signshop")
+@Access(AccessType.FIELD)
 public class SignShop {
     @Column(name = "id")
     @Id
     public UUID owner;
     public String yaml = "";
 
-    @Column(name = "yaml")
+    @Access(AccessType.PROPERTY)
+    @Column(name = "yaml", columnDefinition = "LONGTEXT")
     public String getYaml() {
         return Base64.getEncoder().encodeToString(this.yaml.getBytes());
     }

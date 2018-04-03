@@ -12,6 +12,6 @@ public class TempStorageRepo {
     @Column(name = "player_id")
     @Id
     public UUID playerId;
-    @Column(name = "yaml")
+    @Column(name = "yaml", columnDefinition = "LONGTEXT")
     public String yaml = "";
 }

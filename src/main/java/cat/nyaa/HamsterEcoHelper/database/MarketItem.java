@@ -19,7 +19,7 @@ public class MarketItem {
     public Long id;
     @Column(name= "player_id")
     public UUID playerId;
-    @Column(name= "item")
+    @Column(name= "item", columnDefinition = "LONGTEXT")
     public String item;
     public int amount;
     @Column(name= "unit_price")
