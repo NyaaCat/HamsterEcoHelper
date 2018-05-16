@@ -16,15 +16,24 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Access(AccessType.PROPERTY)
 @Table(name = "signshop")
-@Access(AccessType.FIELD)
 public class SignShop {
-    @Column(name = "id")
-    @Id
+
     public UUID owner;
+
     public String yaml = "";
 
-    @Access(AccessType.PROPERTY)
+    @Column(name = "id")
+    @Id
+    public String getOwner() {
+        return owner.toString();
+    }
+
+    public void setOwner(String owner) {
+        this.owner = UUID.fromString(owner);
+    }
+
     @Column(name = "yaml", columnDefinition = "LONGTEXT")
     public String getYaml() {
         return Base64.getEncoder().encodeToString(this.yaml.getBytes());
@@ -34,6 +43,7 @@ public class SignShop {
         this.yaml = new String(Base64.getDecoder().decode(yaml));
     }
 
+    @Transient
     public OfflinePlayer getPlayer() {
         return Bukkit.getOfflinePlayer(owner);
     }
@@ -42,6 +52,7 @@ public class SignShop {
         saveItems(mode.name(), list);
     }
 
+    @Transient
     public List<ShopItem> getItems(ShopMode mode) {
         return loadItems(mode.name());
     }

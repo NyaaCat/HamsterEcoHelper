@@ -5,25 +5,34 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
+@Access(AccessType.FIELD)
 @Table(name= "market")
 public class MarketItem {
     @Column(name= "id")
     @Id
     public Long id;
-    @Column(name= "player_id")
     public UUID playerId;
     @Column(name= "item", columnDefinition = "LONGTEXT")
     public String item;
     public int amount;
     @Column(name= "unit_price")
     public Double unitPrice;
+
+
+    @Access(AccessType.PROPERTY)
+    @Column(name= "player_id")
+    @Id
+    public String getPlayerId() {
+        return playerId.toString();
+    }
+
+    public void setPlayerId(String owner) {
+        this.playerId = UUID.fromString(owner);
+    }
 
     public OfflinePlayer getPlayer() {
         return Bukkit.getOfflinePlayer(playerId);
@@ -44,6 +53,7 @@ public class MarketItem {
         return item;
     }
 
+    @Access(AccessType.PROPERTY)
     @Column(name= "amount")
     public Long getAmount() {
         return (long) amount;

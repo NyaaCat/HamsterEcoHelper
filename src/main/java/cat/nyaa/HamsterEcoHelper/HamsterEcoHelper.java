@@ -71,6 +71,7 @@ public class HamsterEcoHelper extends JavaPlugin {
         reqManager.cancel();
         systemBalance.cancel();
         config.save();
+        database.database.close();
         ess = null;
     }
 

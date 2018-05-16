@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class Database implements Cloneable {
     private final HamsterEcoHelper plugin;
-    final RelationalDB database;
+    public final RelationalDB database;
 
     public Database(HamsterEcoHelper plugin) {
         database = DatabaseUtils.get();

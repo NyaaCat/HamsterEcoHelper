@@ -10,11 +10,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "signshop_location")
+@Access(AccessType.FIELD)
 public class Sign {
     @Column(name = "id")
     @Id
     public String id;
-    @Column(name = "owner")
     public UUID owner;
     @Enumerated(EnumType.STRING)
     @Column(name = "mode")
@@ -31,6 +31,16 @@ public class Sign {
     public Double lotto_price = 0.0D;
 
     public Sign() {
+    }
+
+    @Access(AccessType.PROPERTY)
+    @Column(name= "owner")
+    public String getOwner() {
+        return owner.toString();
+    }
+
+    public void setOwner(String owner) {
+        this.owner = UUID.fromString(owner);
     }
 
     public Location getLocation() {

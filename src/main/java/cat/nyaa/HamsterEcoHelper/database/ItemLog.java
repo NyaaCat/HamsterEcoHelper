@@ -3,25 +3,33 @@ package cat.nyaa.HamsterEcoHelper.database;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Table(name = "itemlog")
+@Access(AccessType.FIELD)
 public class ItemLog {
     @Column(name = "id")
     @Id
     public Long id;
-    @Column(name = "owner")
+
     public UUID owner;
     @Column(name = "item", columnDefinition = "LONGTEXT")
     public String item;
     public int amount;
     @Column(name = "price")
     public Double price;
+
+    @Access(AccessType.PROPERTY)
+    @Column(name = "owner")
+    public String getOwner() {
+        return owner.toString();
+    }
+
+    public void setOwner(String owner) {
+        this.owner = UUID.fromString(owner);
+    }
 
     public ItemStack getItemStack() {
         return getItemStack(amount);
@@ -38,6 +46,7 @@ public class ItemLog {
         return item;
     }
 
+    @Access(AccessType.PROPERTY)
     @Column(name = "amount")
     public Long getAmount() {
         return (long) amount;

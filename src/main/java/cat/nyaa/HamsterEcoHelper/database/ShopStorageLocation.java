@@ -3,17 +3,14 @@ package cat.nyaa.HamsterEcoHelper.database;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Table(name = "signshop_storage")
+@Access(AccessType.FIELD)
 public class ShopStorageLocation {
-    @Column(name = "owner")
-    @Id
+
     public UUID owner;
     @Column(name = "world")
     public String world;
@@ -30,6 +27,17 @@ public class ShopStorageLocation {
     public ShopStorageLocation(UUID player, Location loc) {
         this.owner = player;
         setLocation(loc);
+    }
+
+    @Access(AccessType.PROPERTY)
+    @Column(name= "owner")
+    @Id
+    public String getOwner() {
+        return owner.toString();
+    }
+
+    public void setOwner(String owner) {
+        this.owner = UUID.fromString(owner);
     }
 
     public Location getLocation() {

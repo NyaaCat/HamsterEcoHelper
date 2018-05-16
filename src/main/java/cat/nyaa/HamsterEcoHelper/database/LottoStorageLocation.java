@@ -4,17 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Table(name= "signshop_lotto")
+@Access(AccessType.FIELD)
 public class LottoStorageLocation {
-    @Column(name= "owner")
-    @Id
+
     public UUID owner;
     @Column(name= "world")
     public String world;
@@ -26,6 +23,17 @@ public class LottoStorageLocation {
     public Long z;
 
     public LottoStorageLocation() {
+    }
+
+    @Access(AccessType.PROPERTY)
+    @Column(name= "owner")
+    @Id
+    public String getOwner() {
+        return owner.toString();
+    }
+
+    public void setOwner(String owner) {
+        this.owner = UUID.fromString(owner);
     }
 
     public LottoStorageLocation(UUID player, Location loc) {
