@@ -8,7 +8,7 @@ import java.util.UUID;
 @Access(AccessType.FIELD)
 public class TempStorageRepo {
     public UUID playerId;
-    @Column(name = "yaml", columnDefinition = "LONGTEXT")
+    @Column(name = "yaml", columnDefinition = "MEDIUMTEXT")
     public String yaml = "";
 
     @Access(AccessType.PROPERTY)

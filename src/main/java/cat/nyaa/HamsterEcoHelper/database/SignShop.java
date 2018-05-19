@@ -34,7 +34,7 @@ public class SignShop {
         this.owner = UUID.fromString(owner);
     }
 
-    @Column(name = "yaml", columnDefinition = "LONGTEXT")
+    @Column(name = "yaml", columnDefinition = "MEDIUMTEXT")
     public String getYaml() {
         return Base64.getEncoder().encodeToString(this.yaml.getBytes());
     }

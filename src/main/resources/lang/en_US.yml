@@ -61,6 +61,9 @@ admin:
   info:
     save_done: Force save done.
     load_done: Force load done.
+    dump:
+      ing: Dumping "%s" from "%s", %d remaining.
+      finished: Finished database dumping from "%s".
   error:
     req_id_oor: Requisition Id out of range %d~%d
     auc_id_oor: Auction Id out of range %d~%d

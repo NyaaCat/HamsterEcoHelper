@@ -16,7 +16,7 @@ public class MarketItem {
     @Id
     public Long id;
     public UUID playerId;
-    @Column(name = "item", columnDefinition = "LONGTEXT")
+    @Column(name = "item", columnDefinition = "MEDIUMTEXT")
     public String item;
     public int amount;
     @Column(name = "unit_price")
@@ -25,7 +25,6 @@ public class MarketItem {
 
     @Access(AccessType.PROPERTY)
     @Column(name = "player_id")
-    @Id
     public String getPlayerId() {
         return playerId.toString();
     }

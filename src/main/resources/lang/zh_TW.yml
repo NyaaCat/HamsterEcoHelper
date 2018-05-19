@@ -42,6 +42,9 @@ admin:
   info:
     save_done: ''
     load_done: ''
+    dump:
+      ing: ''
+      finished: ''
   error:
     req_id_oor: ''
     auc_id_oor: ''

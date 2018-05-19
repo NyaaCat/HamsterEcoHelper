@@ -15,7 +15,7 @@ public class ItemLog {
     public Long id;
 
     public UUID owner;
-    @Column(name = "item", columnDefinition = "LONGTEXT")
+    @Column(name = "item", columnDefinition = "MEDIUMTEXT")
     public String item;
     public int amount;
     @Column(name = "price")

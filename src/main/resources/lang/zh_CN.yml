@@ -57,6 +57,9 @@ admin:
   info:
     save_done: 强制保存成功。
     load_done: 强制加载成功。
+    dump:
+      ing: 正在导入 "%s" 自 "%s", 剩余 %d。
+      finished: 已完成来着 "%s" 的数据库导入。
   error:
     req_id_oor: 征购ID超出范围：%d～%d
     auc_id_oor: 拍卖ID超出范围：%d～%d
