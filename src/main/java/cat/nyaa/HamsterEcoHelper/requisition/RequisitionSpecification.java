@@ -29,7 +29,7 @@ public class RequisitionSpecification implements ISerializable {
     public int timeoutTicks = 20 * 60 * 5; // 5 minutes
 
     public MatchingSpecification matchRule = new MatchingSpecification();
-    
+
     @Override
     public void deserialize(ConfigurationSection s) {
         ISerializable.deserialize(s, this);

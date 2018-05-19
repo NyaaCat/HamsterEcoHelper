@@ -12,7 +12,7 @@ public class TempStorageRepo {
     public String yaml = "";
 
     @Access(AccessType.PROPERTY)
-    @Column(name= "player_id")
+    @Column(name = "player_id")
     @Id
     public String getPlayerId() {
         return playerId.toString();

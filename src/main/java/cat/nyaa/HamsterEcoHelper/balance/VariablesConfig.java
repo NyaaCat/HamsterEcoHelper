@@ -24,5 +24,5 @@ public class VariablesConfig extends FileConfigure {
     protected JavaPlugin getPlugin() {
         return plugin;
     }
-    
+
 }

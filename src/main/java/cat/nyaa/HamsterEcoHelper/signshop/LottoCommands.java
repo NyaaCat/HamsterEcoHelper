@@ -27,7 +27,7 @@ public class LottoCommands extends CommandReceiver {
         Player player = asPlayer(sender);
         LottoStorageLocation loc = plugin.database.getLottoStorageLocation(player.getUniqueId());
         if (loc == null || loc.getLocation() == null ||
-                !SignShopManager.isChest(loc.getLocation().getBlock())) {
+                    !SignShopManager.isChest(loc.getLocation().getBlock())) {
             player.sendMessage(I18n.format("user.signshop.lotto.set_storage"));
             return;
         }

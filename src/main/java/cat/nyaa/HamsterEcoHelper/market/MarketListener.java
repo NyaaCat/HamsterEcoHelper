@@ -19,9 +19,9 @@ public class MarketListener implements Listener {
         if (event.getInventory().getHolder() instanceof MarketGUI) {
             event.setCancelled(true);
             if (event.getAction().equals(InventoryAction.PICKUP_ONE) ||
-                    event.getAction().equals(InventoryAction.PICKUP_ALL) ||
-                    event.getAction().equals(InventoryAction.PICKUP_HALF) ||
-                    event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+                        event.getAction().equals(InventoryAction.PICKUP_ALL) ||
+                        event.getAction().equals(InventoryAction.PICKUP_HALF) ||
+                        event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
                 ((MarketGUI) event.getInventory().getHolder()).onInventoryClick(event);
             } else {
                 event.getWhoClicked().closeInventory();

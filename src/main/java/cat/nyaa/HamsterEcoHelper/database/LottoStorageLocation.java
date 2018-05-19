@@ -8,25 +8,30 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name= "signshop_lotto")
+@Table(name = "signshop_lotto")
 @Access(AccessType.FIELD)
 public class LottoStorageLocation {
 
     public UUID owner;
-    @Column(name= "world")
+    @Column(name = "world")
     public String world;
-    @Column(name= "x")
+    @Column(name = "x")
     public Long x;
-    @Column(name= "y")
+    @Column(name = "y")
     public Long y;
-    @Column(name= "z")
+    @Column(name = "z")
     public Long z;
 
     public LottoStorageLocation() {
     }
 
+    public LottoStorageLocation(UUID player, Location loc) {
+        this.owner = player;
+        setLocation(loc);
+    }
+
     @Access(AccessType.PROPERTY)
-    @Column(name= "owner")
+    @Column(name = "owner")
     @Id
     public String getOwner() {
         return owner.toString();
@@ -34,11 +39,6 @@ public class LottoStorageLocation {
 
     public void setOwner(String owner) {
         this.owner = UUID.fromString(owner);
-    }
-
-    public LottoStorageLocation(UUID player, Location loc) {
-        this.owner = player;
-        setLocation(loc);
     }
 
     public Location getLocation() {

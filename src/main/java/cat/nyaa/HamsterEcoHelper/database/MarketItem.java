@@ -10,21 +10,21 @@ import java.util.UUID;
 
 @Entity
 @Access(AccessType.FIELD)
-@Table(name= "market")
+@Table(name = "market")
 public class MarketItem {
-    @Column(name= "id")
+    @Column(name = "id")
     @Id
     public Long id;
     public UUID playerId;
-    @Column(name= "item", columnDefinition = "LONGTEXT")
+    @Column(name = "item", columnDefinition = "LONGTEXT")
     public String item;
     public int amount;
-    @Column(name= "unit_price")
+    @Column(name = "unit_price")
     public Double unitPrice;
 
 
     @Access(AccessType.PROPERTY)
-    @Column(name= "player_id")
+    @Column(name = "player_id")
     @Id
     public String getPlayerId() {
         return playerId.toString();
@@ -54,7 +54,7 @@ public class MarketItem {
     }
 
     @Access(AccessType.PROPERTY)
-    @Column(name= "amount")
+    @Column(name = "amount")
     public Long getAmount() {
         return (long) amount;
     }

@@ -30,7 +30,7 @@ public class ShopStorageLocation {
     }
 
     @Access(AccessType.PROPERTY)
-    @Column(name= "owner")
+    @Column(name = "owner")
     @Id
     public String getOwner() {
         return owner.toString();

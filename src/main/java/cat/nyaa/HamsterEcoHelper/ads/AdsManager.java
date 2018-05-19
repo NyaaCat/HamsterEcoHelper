@@ -102,7 +102,7 @@ public class AdsManager extends BukkitRunnable {
                 player.sendMessage(I18n.format("user.ads.message", adOwner.getName(), getMessage(ads.text)));
                 it.remove();
                 if ((!plugin.config.ads_count_afk && isAFK(player)) ||
-                        (!plugin.config.ads_count_self && player.getUniqueId().equals(ads.getUUID()))) {
+                            (!plugin.config.ads_count_self && player.getUniqueId().equals(ads.getUUID()))) {
                 } else {
                     ads.displayed++;
                     displayCount++;
@@ -113,7 +113,7 @@ public class AdsManager extends BukkitRunnable {
             }
             if (displayCount > 0) {
                 plugin.getServer().getConsoleSender().
-                        sendMessage(I18n.format("user.ads.message", adOwner.getName(), getMessage(ads.text)));
+                                                             sendMessage(I18n.format("user.ads.message", adOwner.getName(), getMessage(ads.text)));
             }
             if (ads.displayed >= ads.display_total) {
                 plugin.config.adsConfig.adsDataList.remove(tmp.get(0));

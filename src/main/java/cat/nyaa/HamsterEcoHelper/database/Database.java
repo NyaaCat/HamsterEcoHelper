@@ -3,7 +3,6 @@ package cat.nyaa.HamsterEcoHelper.database;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
 import cat.nyaa.nyaacore.database.DatabaseUtils;
-import cat.nyaa.nyaacore.database.Query;
 import cat.nyaa.nyaacore.database.RelationalDB;
 import cat.nyaa.nyaacore.database.TransactionalQuery;
 import org.bukkit.OfflinePlayer;
@@ -19,8 +18,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class Database implements Cloneable {
-    private final HamsterEcoHelper plugin;
     public final RelationalDB database;
+    private final HamsterEcoHelper plugin;
 
     public Database(HamsterEcoHelper plugin) {
         database = DatabaseUtils.get();

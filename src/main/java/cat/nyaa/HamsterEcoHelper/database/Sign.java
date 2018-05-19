@@ -34,7 +34,7 @@ public class Sign {
     }
 
     @Access(AccessType.PROPERTY)
-    @Column(name= "owner")
+    @Column(name = "owner")
     public String getOwner() {
         return owner.toString();
     }

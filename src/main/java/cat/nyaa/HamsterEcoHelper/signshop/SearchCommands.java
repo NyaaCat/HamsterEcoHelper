@@ -2,9 +2,9 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.HamsterEcoHelper.database.Sign;
 import cat.nyaa.HamsterEcoHelper.database.SignShop;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.Message;
@@ -42,16 +42,16 @@ public class SearchCommands extends CommandReceiver {
     private HashMap<UUID, Long> cooldown = new HashMap<>();
     private HamsterEcoHelper plugin;
 
+    public SearchCommands(Object plugin, LanguageRepository i18n) {
+        super((HamsterEcoHelper) plugin, i18n);
+        this.plugin = (HamsterEcoHelper) plugin;
+    }
+
     private static double distance(Location loc, Sign sign) {
         return Math.sqrt(
                 NumberConversions.square(loc.getX() - sign.x) +
                         NumberConversions.square(loc.getY() - sign.y) +
                         NumberConversions.square(loc.getZ() - sign.z));
-    }
-
-    public SearchCommands(Object plugin, LanguageRepository i18n) {
-        super((HamsterEcoHelper) plugin, i18n);
-        this.plugin = (HamsterEcoHelper) plugin;
     }
 
     @Override

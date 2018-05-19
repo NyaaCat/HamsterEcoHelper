@@ -75,7 +75,7 @@ public class ShopGUI extends ShopInventoryHolder {
                     unitPrice, tax, plugin.signShopManager.getTax()));
         } else {
             lore.add(0, lore_code + ChatColor.RESET +
-                    I18n.format("user.market.unit_price", unitPrice));
+                                I18n.format("user.market.unit_price", unitPrice));
         }
         if (isEditMode()) {
             lore.add(1, I18n.format("user.signshop.edit"));
@@ -167,7 +167,7 @@ public class ShopGUI extends ShopInventoryHolder {
                 if (plugin.eco.enoughMoney(player, price + tax) || isEditMode()) {
                     OfflinePlayer owner = shop.getPlayer();
                     Optional<MiscUtils.GiveStat> stat = plugin.eco.transaction(player, owner, shopItem.getItemStack(amount), price, tax);
-                    if(!stat.isPresent()){
+                    if (!stat.isPresent()) {
                         new Message("")
                                 .append(I18n.format("user.market.buy_fail", owner.getName(), price), shopItem.getItemStack(amount))
                                 .send(player);

@@ -3,9 +3,9 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.HamsterEcoHelper.database.LottoStorageLocation;
 import cat.nyaa.HamsterEcoHelper.database.Sign;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.Message;
 import me.crafter.mc.lockettepro.LocketteProAPI;
 import org.bukkit.Bukkit;
@@ -45,9 +45,9 @@ public class SignShopListener implements Listener {
         if (event.getInventory().getHolder() instanceof ShopGUI) {
             event.setCancelled(true);
             if (event.getAction().equals(InventoryAction.PICKUP_ONE) ||
-                    event.getAction().equals(InventoryAction.PICKUP_ALL) ||
-                    event.getAction().equals(InventoryAction.PICKUP_HALF) ||
-                    event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+                        event.getAction().equals(InventoryAction.PICKUP_ALL) ||
+                        event.getAction().equals(InventoryAction.PICKUP_HALF) ||
+                        event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
                 Player player = (Player) event.getWhoClicked();
                 ((ShopGUI) event.getInventory().getHolder()).onInventoryClick(event);
             } else {
@@ -132,8 +132,8 @@ public class SignShopListener implements Listener {
             Sign sign = plugin.signShopManager.getSign(block);
             if (sign != null) {
                 if (sign.owner.equals(player.getUniqueId()) ||
-                        (player.hasPermission("heh.removesignshop") && player.isSneaking() &&
-                                player.getGameMode() == GameMode.CREATIVE)) {
+                            (player.hasPermission("heh.removesignshop") && player.isSneaking() &&
+                                     player.getGameMode() == GameMode.CREATIVE)) {
                     event.setCancelled(false);
                     plugin.signShopManager.removeSign(block);
                     player.sendMessage(I18n.format("user.signshop.break.success"));
@@ -157,7 +157,7 @@ public class SignShopListener implements Listener {
                 event.setCancelled(true);
                 ShopMode mode = selectChest.get(p.getUniqueId());
                 if (mode.equals(ShopMode.LOTTO)) {
-                    if(plugin.config.lotto_force_locked && plugin.getServer().getPluginManager().getPlugin("LockettePro") != null){
+                    if (plugin.config.lotto_force_locked && plugin.getServer().getPluginManager().getPlugin("LockettePro") != null) {
                         if (!LocketteProAPI.isLocked(block) || !LocketteProAPI.isOwner(block, p)) {
                             p.sendMessage(I18n.format("user.signshop.chest_must_locked"));
                             return;
@@ -174,7 +174,7 @@ public class SignShopListener implements Listener {
             return;
         }
         if ((event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)) &&
-                SignShopManager.isSign(block)) {
+                    SignShopManager.isSign(block)) {
             Player player = event.getPlayer();
             Sign sign = plugin.signShopManager.getSign(block);
             if (sign != null) {
@@ -191,7 +191,7 @@ public class SignShopListener implements Listener {
                     } else {
                         ItemStack item = player.getInventory().getItemInMainHand();
                         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) ||
-                                item == null || item.getType().equals(Material.AIR) || !(item.getAmount() > 0)) {
+                                    item == null || item.getType().equals(Material.AIR) || !(item.getAmount() > 0)) {
                             plugin.signShopManager.printItemsList(player, sign);
                         } else {
                             ItemStack itemStack = item.clone();
@@ -216,7 +216,7 @@ public class SignShopListener implements Listener {
                         return;
                     } else {
                         if (!lottoConfirm.containsKey(player.getUniqueId()) ||
-                                System.currentTimeMillis() - lottoConfirm.get(player.getUniqueId()) >= 5000) {
+                                    System.currentTimeMillis() - lottoConfirm.get(player.getUniqueId()) >= 5000) {
                             lottoConfirm.put(player.getUniqueId(), System.currentTimeMillis());
                             player.sendMessage(I18n.format("user.signshop.lotto.confirm"));
                             return;
@@ -236,8 +236,8 @@ public class SignShopListener implements Listener {
                                 if (plugin.signShopManager.getTax() > 0) {
                                     tax = (price / 100) * plugin.signShopManager.getTax();
                                 }
-                                Optional<MiscUtils.GiveStat> stat = plugin.eco.transaction(player, owner, item, price - tax ,tax);
-                                if(!stat.isPresent()){
+                                Optional<MiscUtils.GiveStat> stat = plugin.eco.transaction(player, owner, item, price - tax, tax);
+                                if (!stat.isPresent()) {
                                     new Message(I18n.format("user.signshop.lotto.fail",
                                             price, owner.getName())).send(player);
                                     return;
@@ -295,8 +295,8 @@ public class SignShopListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         if (player.getOpenInventory() != null &&
-                player.getOpenInventory().getTopInventory() != null &&
-                player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
+                    player.getOpenInventory().getTopInventory() != null &&
+                    player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
             player.closeInventory();
         }
     }

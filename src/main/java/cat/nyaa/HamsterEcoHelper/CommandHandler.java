@@ -47,7 +47,7 @@ public class CommandHandler extends CommandReceiver {
     public String getHelpPrefix() {
         return "";
     }
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length > 0) {

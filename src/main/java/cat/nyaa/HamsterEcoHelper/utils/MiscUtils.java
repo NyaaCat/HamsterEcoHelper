@@ -22,8 +22,8 @@ public class MiscUtils {
 
         double[] weightList = new double[items.size()];
         weightList[0] = weightOperator.apply(items.get(0));
-        for (int i = 1; i< items.size(); i++) {
-            weightList[i] = weightList[i-1] + weightOperator.apply(items.get(i));
+        for (int i = 1; i < items.size(); i++) {
+            weightList[i] = weightList[i - 1] + weightOperator.apply(items.get(i));
         }
 
         double rnd = random.nextDouble() * weightList[weightList.length - 1];
@@ -45,22 +45,17 @@ public class MiscUtils {
         return min + random.nextInt(max - min + 1);
     }
 
-    @LangKey(type = LangKeyType.SUFFIX) public enum GiveStat {
-        INVENTORY,
-        ENDER_CHEST,
-        TEMPORARY_STORAGE
-    }
-
     /**
      * Put Item into player's inventory/ender chest/temporary-storage-zone
+     *
      * @return 1: put into player's inventory
-     *         2: put into ender chest
-     *         3: put into temporary storage
+     * 2: put into ender chest
+     * 3: put into temporary storage
      */
     public static GiveStat giveItem(OfflinePlayer player, ItemStack item) {
         if (player.isOnline()) {
             Player p = Bukkit.getPlayer(player.getUniqueId());  // Refresh the Player object to ensure
-                                                                // we hold latest Player object associated to
+            // we hold latest Player object associated to
             if (InventoryUtils.addItem(p, item)) {
                 return GiveStat.INVENTORY;
             }
@@ -99,5 +94,12 @@ public class MiscUtils {
             m = Material.matchMaterial(name);
         }
         return m;
+    }
+
+    @LangKey(type = LangKeyType.SUFFIX)
+    public enum GiveStat {
+        INVENTORY,
+        ENDER_CHEST,
+        TEMPORARY_STORAGE
     }
 }
