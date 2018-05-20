@@ -159,92 +159,17 @@ public class CommandHandler extends CommandReceiver {
     public void databaseDump(CommandSender sender, Arguments args) {
         String from = args.next();
         RelationalDB todb =  plugin.database.database;
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try (RelationalDB fromdb = DatabaseUtils.get(from).connect()) {
-                fromdb.beginTransaction();
-                todb.beginTransaction();
-                int r = 0;
-                List<ItemLog> itemLogs = fromdb.query(ItemLog.class).select();
-                r = itemLogs.size();
-                msg(sender, "admin.info.dump.ing", ItemLog.class.getName(), from, r);
-                for (ItemLog itemLog : itemLogs) {
-                    r--;
-                    todb.query(ItemLog.class).insert(itemLog);
-                    if(r %100 == 0){
-                        msg(sender, "admin.info.dump.ing", ItemLog.class.getName(), from, r);
-                    }
+        RelationalDB fromdb = DatabaseUtils.get(from).connect();
+        DatabaseUtils.dumpDatabaseAsync(plugin, fromdb, todb, (cls, r) -> {
+            if (cls != null) {
+                msg(sender, "internal.info.dump.ing", cls.getName(), from, r);
+            } else {
+                fromdb.close();
+                if(r == 0){
+                    msg(sender, "internal.info.dump.finished", from);
+                } else {
+                    msg(sender, "internal.error.command_exception");
                 }
-
-                List<LottoStorageLocation> lottoStorageLocations = fromdb.query(LottoStorageLocation.class).select();
-                r = lottoStorageLocations.size();
-                msg(sender, "admin.info.dump.ing", LottoStorageLocation.class.getName(), from, r);
-                for (LottoStorageLocation lottoStorageLocation : lottoStorageLocations) {
-                    r--;
-                    todb.query(LottoStorageLocation.class).insert(lottoStorageLocation);
-                    if(r %100 == 0){
-                        msg(sender, "admin.info.dump.ing", LottoStorageLocation.class.getName(), from, r);
-                    }
-                }
-
-                List<MarketItem> marketItems = fromdb.query(MarketItem.class).select();
-                r = marketItems.size();
-                msg(sender, "admin.info.dump.ing", MarketItem.class.getName(), from, r);
-                for (MarketItem marketItem : marketItems) {
-                    r--;
-                    todb.query(MarketItem.class).insert(marketItem);
-                    if(r %100 == 0){
-                        msg(sender, "admin.info.dump.ing", MarketItem.class.getName(), from, r);
-                    }
-                }
-
-                List<ShopStorageLocation> shopStorageLocations = fromdb.query(ShopStorageLocation.class).select();
-                r = shopStorageLocations.size();
-                msg(sender, "admin.info.dump.ing", ShopStorageLocation.class.getName(), from, r);
-                for (ShopStorageLocation shopStorageLocation : shopStorageLocations) {
-                    r--;
-                    todb.query(ShopStorageLocation.class).insert(shopStorageLocation);
-                    if(r %100 == 0){
-                        msg(sender, "admin.info.dump.ing", ShopStorageLocation.class.getName(), from, r);
-                    }
-                }
-
-                List<Sign> signs = fromdb.query(Sign.class).select();
-                r = signs.size();
-                msg(sender, "admin.info.dump.ing", Sign.class.getName(), from, r);
-                for (Sign sign : signs) {
-                    r--;
-                    todb.query(Sign.class).insert(sign);
-                    if(r %100 == 0){
-                        msg(sender, "admin.info.dump.ing", Sign.class.getName(), from, r);
-                    }
-                }
-
-
-                List<SignShop> signShops = fromdb.query(SignShop.class).select();
-                r = signShops.size();
-                msg(sender, "admin.info.dump.ing", SignShop.class.getName(), from, r);
-                for (SignShop signShop : signShops) {
-                    r--;
-                    todb.query(SignShop.class).insert(signShop);
-                    if(r %100 == 0){
-                        msg(sender, "admin.info.dump.ing", SignShop.class.getName(), from, r);
-                    }
-                }
-
-                List<TempStorageRepo> tempStorageRepos = fromdb.query(TempStorageRepo.class).select();
-                r = tempStorageRepos.size();
-                msg(sender, "admin.info.dump.ing", TempStorageRepo.class.getName(), from, r);
-                for (TempStorageRepo tempStorageRepo : tempStorageRepos) {
-                    r--;
-                    todb.query(TempStorageRepo.class).insert(tempStorageRepo);
-                    if(r %100 == 0){
-                        msg(sender, "admin.info.dump.ing", TempStorageRepo.class.getName(), from, r);
-                    }
-                }
-
-                fromdb.commitTransaction();
-                todb.commitTransaction();
-                msg(sender, "admin.info.dump.finished", from);
             }
         });
     }

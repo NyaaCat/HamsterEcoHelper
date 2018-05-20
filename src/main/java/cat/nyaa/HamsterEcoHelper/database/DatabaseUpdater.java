@@ -42,10 +42,10 @@ public class DatabaseUpdater {
                     System.out.println(String.format("Processing ItemLog %d/%d", counter, total));
                 String base64dItemNbt = convertYamlItemStackToNbtItemStack(record.item);
                 if (base64dItemNbt == null) {
-                    transaction.clear().whereEq("id", record.id).delete();
+                    transaction.reset().whereEq("id", record.id).delete();
                 } else {
                     record.item = base64dItemNbt;
-                    transaction.clear().whereEq("id", record.id).update(record, "item");
+                    transaction.reset().whereEq("id", record.id).update(record, "item");
                 }
             }
         }
@@ -58,10 +58,10 @@ public class DatabaseUpdater {
                     System.out.println(String.format("Processing MarketItem %d/%d", counter, total));
                 String base64dItemNbt = convertYamlItemStackToNbtItemStack(record.item);
                 if (base64dItemNbt == null) {
-                    transaction.clear().whereEq("id", record.id).delete();
+                    transaction.reset().whereEq("id", record.id).delete();
                 } else {
                     record.item = base64dItemNbt;
-                    transaction.clear().whereEq("id", record.id).update(record, "item");
+                    transaction.reset().whereEq("id", record.id).update(record, "item");
                 }
             }
         }
