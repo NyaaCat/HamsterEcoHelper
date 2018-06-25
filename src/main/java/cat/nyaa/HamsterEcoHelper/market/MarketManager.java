@@ -3,8 +3,8 @@ package cat.nyaa.HamsterEcoHelper.market;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.HamsterEcoHelper.database.MarketItem;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.Message;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
@@ -36,10 +36,26 @@ public class MarketManager extends BukkitRunnable {
 
     public static boolean isMarketItem(ItemStack item) {
         if (item != null && !item.getType().equals(Material.AIR) &&
-                item.hasItemMeta() && item.getItemMeta().hasLore()) {
+                    item.hasItemMeta() && item.getItemMeta().hasLore()) {
             for (String lore : item.getItemMeta().getLore()) {
                 if (lore.contains(market_lore_code)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean containsBook(ItemStack item) {
+        if (item.hasItemMeta() && item.getItemMeta() instanceof BlockStateMeta) {
+            BlockStateMeta blockStateMeta = (BlockStateMeta) item.getItemMeta();
+            if (blockStateMeta.hasBlockState() && blockStateMeta.getBlockState() instanceof InventoryHolder) {
+                InventoryHolder inventoryHolder = (InventoryHolder) blockStateMeta.getBlockState();
+                for (ItemStack itemStack : inventoryHolder.getInventory().getContents()) {
+                    if (itemStack != null && itemStack.getType() != Material.AIR &&
+                                itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof BookMeta) {
+                        return true;
+                    }
                 }
             }
         }
@@ -93,7 +109,7 @@ public class MarketManager extends BukkitRunnable {
     public void closeAllGUI() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null &&
-                    player.getOpenInventory().getTopInventory().getHolder() instanceof MarketGUI) {
+                        player.getOpenInventory().getTopInventory().getHolder() instanceof MarketGUI) {
                 player.closeInventory();
             }
         }
@@ -109,8 +125,8 @@ public class MarketManager extends BukkitRunnable {
     public void updateAllGUI() {
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             if (p.isOnline() && p.getOpenInventory() != null &&
-                    p.getOpenInventory().getTopInventory() != null &&
-                    p.getOpenInventory().getTopInventory().getHolder() instanceof MarketGUI) {
+                        p.getOpenInventory().getTopInventory() != null &&
+                        p.getOpenInventory().getTopInventory().getHolder() instanceof MarketGUI) {
                 MarketGUI marketGUI = ((MarketGUI) p.getOpenInventory().getTopInventory().getHolder());
                 openGUI(p, marketGUI.getCurrentPage(), marketGUI.seller);
             }
@@ -120,7 +136,7 @@ public class MarketManager extends BukkitRunnable {
     @Override
     public void run() {
         if (plugin.config.market_placement_fee > 0 &&
-                System.currentTimeMillis() - plugin.config.variablesConfig.market_placement_fee_timestamp >= 86400000) {
+                    System.currentTimeMillis() - plugin.config.variablesConfig.market_placement_fee_timestamp >= 86400000) {
             plugin.config.variablesConfig.market_placement_fee_timestamp = System.currentTimeMillis();
             int itemCount = plugin.database.getMarketItemCount();
             if (itemCount > 0) {
@@ -139,21 +155,5 @@ public class MarketManager extends BukkitRunnable {
                 plugin.logger.info(I18n.format("log.info.placement_fee", itemCount, fail));
             }
         }
-    }
-
-    public static boolean containsBook(ItemStack item) {
-        if (item.hasItemMeta() && item.getItemMeta() instanceof BlockStateMeta) {
-            BlockStateMeta blockStateMeta = (BlockStateMeta) item.getItemMeta();
-            if (blockStateMeta.hasBlockState() && blockStateMeta.getBlockState() instanceof InventoryHolder) {
-                InventoryHolder inventoryHolder = (InventoryHolder) blockStateMeta.getBlockState();
-                for (ItemStack itemStack : inventoryHolder.getInventory().getContents()) {
-                    if (itemStack != null && itemStack.getType() != Material.AIR &&
-                            itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof BookMeta) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

@@ -55,12 +55,12 @@ public class AuctionInstance {
         } else {
             if (owner == null) {
                 new Message(I18n.format("user.auc.new_auction_0")).append(itemToGive)
-                        .appendFormat(plugin.i18n, "user.auc.new_auction_1", startPrice, stepPrice, (int) Math.floor(timeout / 20D))
-                        .broadcast();
+                                                                  .appendFormat(plugin.i18n, "user.auc.new_auction_1", startPrice, stepPrice, (int) Math.floor(timeout / 20D))
+                                                                  .broadcast();
             } else {
                 new Message(I18n.format("user.auc.player_auction_0", owner.getName())).append(itemToGive)
-                        .appendFormat(plugin.i18n, "user.auc.player_auction_1", startPrice, stepPrice, (int) Math.floor(timeout / 20D))
-                        .broadcast();
+                                                                                      .appendFormat(plugin.i18n, "user.auc.player_auction_1", startPrice, stepPrice, (int) Math.floor(timeout / 20D))
+                                                                                      .broadcast();
             }
             itemName = realName;
         }

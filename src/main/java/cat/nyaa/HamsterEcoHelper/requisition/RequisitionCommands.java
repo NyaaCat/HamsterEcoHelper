@@ -1,8 +1,8 @@
 package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.HamsterEcoHelper.database.ItemLog;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.utils.ReflectionUtils;
@@ -109,11 +109,11 @@ public class RequisitionCommands extends CommandReceiver {
         }
         double price = req.purchase(p, amount);
         if (price < 0) {
-            if(price == -1) {
+            if (price == -1) {
                 msg(p, "user.req.not_enough");
-            } else if(price == -2) {
+            } else if (price == -2) {
                 msg(p, "user.req.not_match");
-            }else{
+            } else {
                 msg(p, "user.req.fail");
             }
         } else {
@@ -142,7 +142,7 @@ public class RequisitionCommands extends CommandReceiver {
         double unitPrice = args.nextDouble("#.##");
         int amount = args.nextInt();
         if (plugin.reqManager.cooldown.containsKey(player.getUniqueId())
-                && plugin.reqManager.cooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
+                    && plugin.reqManager.cooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
             msg(sender, "user.info.cooldown", (plugin.reqManager.cooldown.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000);
             return;
         }

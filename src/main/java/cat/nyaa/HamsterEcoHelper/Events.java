@@ -28,7 +28,7 @@ public class Events implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().getHolder() instanceof ShopGUI ||
-                event.getInventory().getHolder() instanceof MarketGUI) {
+                    event.getInventory().getHolder() instanceof MarketGUI) {
             return;
         }
         if (event.getCurrentItem() != null && MarketManager.isMarketItem(event.getCurrentItem())) {

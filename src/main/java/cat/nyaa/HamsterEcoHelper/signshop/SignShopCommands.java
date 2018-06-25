@@ -3,9 +3,9 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 import cat.nyaa.HamsterEcoHelper.CommandHandler;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.database.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.database.Sign;
+import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.Bukkit;
@@ -53,13 +53,12 @@ public class SignShopCommands extends CommandReceiver {
                     }
                     ShopStorageLocation chest = plugin.signShopManager.getChestLocation(player.getUniqueId());
                     if (chest == null || chest.getLocation() == null ||
-                            !SignShopManager.isChest(chest.getLocation().getBlock())) {
+                                !SignShopManager.isChest(chest.getLocation().getBlock())) {
                         player.sendMessage(I18n.format("user.signshop.storage.set"));
                         return;
                     }
                     ItemStack itemStack = getItemInHand(sender).clone();
-                    double unitPrice = 0.0;
-                    unitPrice = args.nextDouble("#.##");
+                    double unitPrice = args.nextDouble("#.##");
                     if (!(unitPrice >= 0.01)) {
                         msg(sender, "user.error.not_double");
                         return;
@@ -99,8 +98,8 @@ public class SignShopCommands extends CommandReceiver {
                         msg(sender, "user.error.not_double");
                         return;
                     }
-                    if(MarketManager.containsBook(itemStack)){
-                        msg(sender,"user.error.shulker_box_contains_book");
+                    if (MarketManager.containsBook(itemStack)) {
+                        msg(sender, "user.error.shulker_box_contains_book");
                         return;
                     }
                     if (itemStack.getAmount() > 0) {
@@ -117,6 +116,7 @@ public class SignShopCommands extends CommandReceiver {
         player.sendMessage(I18n.format("user.signshop.not_sign"));
     }
 
+    @SuppressWarnings("deprecation")
     @SubCommand(value = "remove", permission = "heh.removesignshop")
     public void remove(CommandSender sender, Arguments args) {
         String name = args.nextString();

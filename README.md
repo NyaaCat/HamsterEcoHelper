@@ -4,5 +4,5 @@
 
 Economy enhancer &amp; helper for hamsters
 
-This spigot plugin depends on [NyaaCore](https://github.com/NyaaCat/NyaaCore)
+This spigot plugin depends on [NyaaCore](https://github.com/NyaaCat/NyaaCore) with same major version.
 

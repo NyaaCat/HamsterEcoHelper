@@ -3,9 +3,9 @@ package cat.nyaa.HamsterEcoHelper.market;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
+import cat.nyaa.HamsterEcoHelper.database.MarketItem;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopInventoryHolder;
 import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
-import cat.nyaa.HamsterEcoHelper.database.MarketItem;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -135,7 +135,7 @@ public class MarketGUI extends ShopInventoryHolder {
             }
             if (plugin.eco.enoughMoney(player, price + tax) || player.getUniqueId().equals(item.playerId)) {
                 Optional<MiscUtils.GiveStat> stat = plugin.eco.transaction(player, item.getPlayer(), item.getItemStack(amount), price, tax);
-                if(!stat.isPresent()){
+                if (!stat.isPresent()) {
                     new Message("")
                             .append(I18n.format("user.market.buy_fail", item.getPlayer().getName(), price), item.getItemStack(amount))
                             .send(player);
@@ -187,12 +187,12 @@ public class MarketGUI extends ShopInventoryHolder {
         if (plugin.config.market_tax > 0) {
             double tax = (unitPrice / 100) * plugin.config.market_tax;
             lore.add(0, MarketManager.market_lore_code + ChatColor.RESET +
-                    I18n.format("user.market.unit_price_with_tax",
-                            unitPrice, tax, plugin.config.market_tax));
+                                I18n.format("user.market.unit_price_with_tax",
+                                        unitPrice, tax, plugin.config.market_tax));
         } else {
             lore.add(0, MarketManager.market_lore_code + ChatColor.RESET +
-                    I18n.format("user.market.unit_price",
-                            unitPrice));
+                                I18n.format("user.market.unit_price",
+                                        unitPrice));
         }
         lore.add(1, I18n.format("user.market.offered", player.getName()));
         if (this.player.getUniqueId().equals(player.getUniqueId())) {

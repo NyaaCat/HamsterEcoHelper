@@ -117,8 +117,8 @@ public class AuctionCommands extends CommandReceiver {
             msg(sender, "user.auc.step_price_error");
             return;
         }
-        if(MarketManager.containsBook(item)){
-            msg(sender,"user.error.shulker_box_contains_book");
+        if (MarketManager.containsBook(item)) {
+            msg(sender, "user.error.shulker_box_contains_book");
             return;
         }
         int reservePrice = 0;

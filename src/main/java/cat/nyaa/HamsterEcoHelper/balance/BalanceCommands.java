@@ -16,6 +16,7 @@ public class BalanceCommands extends CommandReceiver {
         this.plugin = (HamsterEcoHelper) plugin;
     }
 
+    @SuppressWarnings("deprecation")
     @CommandHandler.SubCommand(value = "pay", permission = "heh.balance.pay")
     public void pay(CommandSender sender, CommandHandler.Arguments args) {
         if (args.length() >= 5) {
@@ -64,6 +65,7 @@ public class BalanceCommands extends CommandReceiver {
         return "balance";
     }
 
+    @SuppressWarnings("deprecation")
     @CommandHandler.SubCommand(value = "take", permission = "heh.balance.take")
     public void take(CommandSender sender, CommandHandler.Arguments args) {
         if (args.length() != 4) {
@@ -71,8 +73,7 @@ public class BalanceCommands extends CommandReceiver {
             return;
         }
         String playerName = args.next();
-        double amount = 0.0D;
-        amount = args.nextDouble("#.##");
+        double amount = args.nextDouble("#.##");
         if (!(amount > 0.0D)) {
             msg(sender, "user.error.not_int");
             return;
@@ -88,7 +89,6 @@ public class BalanceCommands extends CommandReceiver {
             }
         } else {
             msg(sender, "user.info.player_not_found", playerName);
-            return;
         }
     }
 

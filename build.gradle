@@ -6,6 +6,12 @@ configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
+// Version strings used for CI
+// Note the spaces before and after the equals sign
+ext.majorVersion = 5
+ext.minorVersion = 0
+ext.minecraftVersion = "1.12"
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -48,11 +54,8 @@ repositories {
 }
 
 dependencies {
-    compile 'org.spigotmc:spigot-api:1.12-R0.1-SNAPSHOT'
     compile 'net.milkbowl.vault:VaultAPI:1.6'
-    compile('cat.nyaa:nyaacore:4.1-SNAPSHOT') {
-        transitive = false
-    }
+    compile 'cat.nyaa:nyaacore:5.0-SNAPSHOT'
     compile('net.ess3:Essentials:2.13-SNAPSHOT') {
         transitive = false
     }

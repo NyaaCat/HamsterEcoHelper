@@ -49,7 +49,7 @@ public class AuctionManager extends BukkitRunnable {
         if (item == null) return false;
         currentAuction = new AuctionInstance(null, item.getItemStack(),
                 item.baseAuctionPrice,
-                item.bidStepPrice, 
+                item.bidStepPrice,
                 0,
                 item.waitTimeTicks,
                 item.hideName,

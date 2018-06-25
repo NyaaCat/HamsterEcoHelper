@@ -43,13 +43,13 @@ public class RequisitionInstance {
         timeoutListener.runTaskLater(plugin, templateItem.timeoutTicks);
         ItemStack tmp = templateItem.itemTemplate;
         new Message(I18n.format("user.req.new_req_0")).append("{itemName}", tmp)
-                .appendFormat(plugin.i18n, "user.req.new_req_1", reqAmount, (double)unitPrice, (double) templateItem.timeoutTicks / 20D)
-                .broadcast();
+                                                      .appendFormat(plugin.i18n, "user.req.new_req_1", reqAmount, (double) unitPrice, (double) templateItem.timeoutTicks / 20D)
+                                                      .broadcast();
         String name = templateItem.itemTemplate.hasItemMeta() && templateItem.itemTemplate.getItemMeta().hasDisplayName() ?
-                templateItem.itemTemplate.getItemMeta().getDisplayName() :
-                templateItem.itemTemplate.getType().name() + ":" + templateItem.itemTemplate.getDurability();
+                              templateItem.itemTemplate.getItemMeta().getDisplayName() :
+                              templateItem.itemTemplate.getType().name() + ":" + templateItem.itemTemplate.getDurability();
         logger = plugin.getLogger();
-        plugin.getLogger().info(I18n.format("log.info.req_start", name, reqAmount, (double)unitPrice, templateItem.timeoutTicks, uid(this)));
+        plugin.getLogger().info(I18n.format("log.info.req_start", name, reqAmount, (double) unitPrice, templateItem.timeoutTicks, uid(this)));
     }
 
     public RequisitionInstance(Player player,
@@ -75,8 +75,8 @@ public class RequisitionInstance {
         timeoutListener = new TimeoutListener();
         timeoutListener.runTaskLater(plugin, plugin.config.playerRequisitionTimeoutTicks);
         new Message(I18n.format("user.req.player_req_0", player.getName())).append("{itemName}", item)
-                .appendFormat(plugin.i18n, "user.req.player_req_1", reqAmount, unitPrice, (double) templateItem.timeoutTicks / 20D)
-                .broadcast();
+                                                                           .appendFormat(plugin.i18n, "user.req.player_req_1", reqAmount, unitPrice, (double) templateItem.timeoutTicks / 20D)
+                                                                           .broadcast();
         String itemName = "";
         if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
             itemName = item.getItemMeta().getDisplayName();
@@ -184,8 +184,8 @@ public class RequisitionInstance {
         @Override
         public void run() {
             if (RequisitionInstance.this != manager.getCurrentRequisition()
-                    || amountRemains <= 0
-                    || endTime - System.currentTimeMillis() < 100) {
+                        || amountRemains <= 0
+                        || endTime - System.currentTimeMillis() < 100) {
                 cancel();
                 if (owner != null && amountRemains > 0) {
                     plugin.eco.deposit(owner, amountRemains * unitPrice);
@@ -194,8 +194,8 @@ public class RequisitionInstance {
                 }
             } else {
                 new Message(I18n.format("user.req.hint_req_0")).append("{itemName}", templateItem.itemTemplate)
-                        .appendFormat(plugin.i18n, "user.req.hint_req_1", amountRemains, unitPrice, ((double) (endTime - System.currentTimeMillis())) / 1000D)
-                        .broadcast();
+                                                               .appendFormat(plugin.i18n, "user.req.hint_req_1", amountRemains, unitPrice, ((double) (endTime - System.currentTimeMillis())) / 1000D)
+                                                               .broadcast();
             }
 
         }

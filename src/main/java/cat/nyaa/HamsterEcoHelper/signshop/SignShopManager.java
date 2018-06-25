@@ -3,11 +3,11 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
-import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.HamsterEcoHelper.database.LottoStorageLocation;
 import cat.nyaa.HamsterEcoHelper.database.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.database.Sign;
 import cat.nyaa.HamsterEcoHelper.database.SignShop;
+import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
@@ -36,7 +36,7 @@ public class SignShopManager {
 
     public static boolean isChest(Block block) {
         if (block != null &&
-                (block.getType().equals(Material.CHEST) || block.getType().equals(Material.TRAPPED_CHEST))) {
+                    (block.getType().equals(Material.CHEST) || block.getType().equals(Material.TRAPPED_CHEST))) {
             return true;
         }
         return false;
@@ -44,7 +44,7 @@ public class SignShopManager {
 
     public static boolean isSign(Block block) {
         if (block != null &&
-                (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN_POST))) {
+                    (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN_POST))) {
             return true;
         }
         return false;
@@ -96,7 +96,7 @@ public class SignShopManager {
 
     public int getItemCount(Player player) {
         return plugin.database.getSignShop(player.getUniqueId()).getItems(ShopMode.SELL).size() +
-                plugin.database.getSignShop(player.getUniqueId()).getItems(ShopMode.BUY).size();
+                       plugin.database.getSignShop(player.getUniqueId()).getItems(ShopMode.BUY).size();
     }
 
     public int getItemCount(UUID owner, ShopMode mode) {
@@ -258,7 +258,7 @@ public class SignShopManager {
                     if (isChest(block) && block.getState() instanceof InventoryHolder) {
                         Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
                         if (InventoryUtils.hasEnoughSpace(inventory, itemStack) &&
-                                InventoryUtils.addItem(inventory, itemStack)) {
+                                    InventoryUtils.addItem(inventory, itemStack)) {
                             plugin.eco.deposit(player, price - tax);
                             plugin.eco.withdraw(shopOwner, price);
                             if (tax > 0.0D) {
@@ -332,7 +332,7 @@ public class SignShopManager {
     public void closeAllGUI() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null &&
-                    player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
+                        player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
                 player.closeInventory();
             }
         }
@@ -341,7 +341,7 @@ public class SignShopManager {
     public void updateGUI(UUID owner, ShopMode mode) {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null &&
-                    player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
+                        player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
                 ShopGUI shopGUI = ((ShopGUI) player.getOpenInventory().getTopInventory().getHolder());
                 if (owner.equals(shopGUI.shopOwner) && mode.equals(shopGUI.mode)) {
                     plugin.signShopManager.openShopGUI(player, shopGUI.sign, shopGUI.currentPage);
