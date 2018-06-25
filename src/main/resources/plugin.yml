@@ -1,7 +1,7 @@
 name: HamsterEcoHelper
 main: cat.nyaa.HamsterEcoHelper.HamsterEcoHelper
 description: "Provides a offer/buy system and global market."
-version: 3.0
+version: 5.0
 depend: [Vault,NyaaCore,LangUtils]
 softdepend: [Essentials,LockettePro]
 authors: [cyilin, RecursiveG]

@@ -58,8 +58,7 @@ public class SignShopCommands extends CommandReceiver {
                         return;
                     }
                     ItemStack itemStack = getItemInHand(sender).clone();
-                    double unitPrice = 0.0;
-                    unitPrice = args.nextDouble("#.##");
+                    double unitPrice = args.nextDouble("#.##");
                     if (!(unitPrice >= 0.01)) {
                         msg(sender, "user.error.not_double");
                         return;
@@ -117,6 +116,7 @@ public class SignShopCommands extends CommandReceiver {
         player.sendMessage(I18n.format("user.signshop.not_sign"));
     }
 
+    @SuppressWarnings("deprecation")
     @SubCommand(value = "remove", permission = "heh.removesignshop")
     public void remove(CommandSender sender, Arguments args) {
         String name = args.nextString();
