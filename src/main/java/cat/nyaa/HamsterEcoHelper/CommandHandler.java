@@ -157,16 +157,16 @@ public class CommandHandler extends CommandReceiver {
 
     @SubCommand(value = "dump", permission = "heh.admin")
     public void databaseDump(CommandSender sender, Arguments args) {
-        String from = args.next();
-        RelationalDB todb =  plugin.database.database;
-        RelationalDB fromdb = DatabaseUtils.get(from).connect();
+        String to = args.next();
+        RelationalDB todb =  DatabaseUtils.get(to).connect();
+        RelationalDB fromdb = plugin.database.database;
         DatabaseUtils.dumpDatabaseAsync(plugin, fromdb, todb, (cls, r) -> {
             if (cls != null) {
-                msg(sender, "internal.info.dump.ing", cls.getName(), from, r);
+                msg(sender, "internal.info.dump.ing", cls.getName(), to, r);
             } else {
                 fromdb.close();
                 if(r == 0){
-                    msg(sender, "internal.info.dump.finished", from);
+                    msg(sender, "internal.info.dump.finished", to);
                 } else {
                     msg(sender, "internal.error.command_exception");
                 }
