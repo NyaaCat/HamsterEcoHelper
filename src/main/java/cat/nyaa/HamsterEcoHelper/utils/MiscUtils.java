@@ -85,15 +85,8 @@ public class MiscUtils {
         return itemName;
     }
 
-    @SuppressWarnings("deprecation")
     public static Material getMaterial(String name) {
-        Material m = null;
-        if (name.toLowerCase().contains("minecraft:")) {
-            m = Bukkit.getServer().getUnsafe().getMaterialFromInternalName(name);
-        } else {
-            m = Material.matchMaterial(name);
-        }
-        return m;
+        return Material.matchMaterial(name);
     }
 
     @LangKey(type = LangKeyType.SUFFIX)

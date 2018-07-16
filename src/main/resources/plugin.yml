@@ -6,7 +6,7 @@ depend: [Vault,NyaaCore,LangUtils]
 softdepend: [Essentials,LockettePro]
 authors: [cyilin, RecursiveG]
 website: "https://github.com/NyaaCat/HamsterEcoHelper"
-
+api-version: 1.13
 commands:
   hamsterecohelper:
     description: The command for HamsterEcoHelper
