@@ -96,6 +96,8 @@ public class MiscUtils {
         if (m == null) {
             m = Material.matchMaterial(name, true);
             if (m != null) {
+                //noinspection deprecation
+                m = Bukkit.getUnsafe().fromLegacy(m);
                 sender.sendMessage(I18n.instance.getFormatted("user.warn.legacy_name", name, m.toString()));
             }
         }

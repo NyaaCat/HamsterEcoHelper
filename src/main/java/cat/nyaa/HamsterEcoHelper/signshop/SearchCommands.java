@@ -157,15 +157,15 @@ public class SearchCommands extends CommandReceiver {
                             boolean enchMatch;
                             ItemStack stack = shopItem.getItemStack(shopItem.amount);
                             ItemMeta meta = stack.getItemMeta();
-                            if (materialLimit != null && !materialLimit.equals(stack.getType())) return false;
-                            if (matchLore) {
-                                if (meta.hasLore()) {
-                                    loreMatch = meta.getLore().stream()
-                                                    .map(ChatColor::stripColor)
-                                                    .map(String::toLowerCase)
-                                                    .anyMatch(lore -> keywords.stream().anyMatch(lore::contains) || "*".equals(keywords.get(0)));
-                                    if (loreMatch) return true;
-                                }
+                            if (materialLimit != null && !materialLimit.getKey().equals(stack.getType().getKey())) {
+                                return false;
+                            }
+                            if (matchLore && meta.hasLore()) {
+                                loreMatch = meta.getLore().stream()
+                                                .map(ChatColor::stripColor)
+                                                .map(String::toLowerCase)
+                                                .anyMatch(lore -> keywords.stream().anyMatch(lore::contains) || "*".equals(keywords.get(0)));
+                                if (loreMatch) return true;
                             }
                             if (matchLoreOnly) return false;
                             if (matchEnch) {
