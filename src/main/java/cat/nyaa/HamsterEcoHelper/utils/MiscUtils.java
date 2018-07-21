@@ -1,10 +1,12 @@
 package cat.nyaa.HamsterEcoHelper.utils;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
+import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.librazy.nyaautils_lang_checker.LangKey;
@@ -87,6 +89,15 @@ public class MiscUtils {
 
     public static Material getMaterial(String name) {
         return Material.matchMaterial(name);
+    }
+
+    public static Material getMaterial(String name, CommandSender sender) {
+        Material m = Material.matchMaterial(name, false);
+        if (m == null) {
+            m = Material.matchMaterial(name, true);
+            sender.sendMessage(I18n.instance.getFormatted("user.warn.legacy_name", name, m.toString()));
+        }
+        return m;
     }
 
     @LangKey(type = LangKeyType.SUFFIX)

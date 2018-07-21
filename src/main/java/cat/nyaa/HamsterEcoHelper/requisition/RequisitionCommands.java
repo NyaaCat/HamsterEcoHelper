@@ -155,7 +155,7 @@ public class RequisitionCommands extends CommandReceiver {
         if (itemName.equals("HAND")) {
             item = getItemInHand(sender).clone();
         } else {
-            Material material = MiscUtils.getMaterial(itemName);
+            Material material = MiscUtils.getMaterial(itemName, sender);
             if (material != null) {
                 item = new ItemStack(material);
             }

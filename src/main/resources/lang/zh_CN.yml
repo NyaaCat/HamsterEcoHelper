@@ -89,6 +89,7 @@ user:
   warn:
     no_enough_money: 你没有足够的现金
     not_high_enough: 无效的价格，至少应为 %.2f$
+    legacy_name: '%s 在 Minecraft 1.13 有一个新名字：%s'
   auc:
     new_auction_0: '新拍卖： '
     new_auction_1: ，起步价：%.2f$，步进价：%.2f$，请在 %d 秒内用 /heh bid [价格] 参与出价

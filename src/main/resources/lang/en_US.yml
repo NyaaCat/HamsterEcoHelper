@@ -94,6 +94,7 @@ user:
   warn:
     no_enough_money: You do not have that much money
     not_high_enough: Invalid price, at least %.2f$
+    legacy_name: '%s now have a new name in Minecraft 1.13: %s'
   auc:
     new_auction_0: 'NEW AUCTION: '
     new_auction_1: ; Starts from %.2f$ with step price %.2f$; Please response in %d

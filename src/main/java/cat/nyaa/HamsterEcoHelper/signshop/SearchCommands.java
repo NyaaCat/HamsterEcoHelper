@@ -108,7 +108,7 @@ public class SearchCommands extends CommandReceiver {
         final int rangeLimit = player == null ? -1 : args.argInt("r", args.argInt("range", -1));
         final Material materialLimit;
         if (itemLimit != null) {
-            materialLimit = MiscUtils.getMaterial(itemLimit);
+            materialLimit = MiscUtils.getMaterial(itemLimit, sender);
             if (materialLimit == null || materialLimit == Material.AIR || !ReflectionUtils.isValidItem(new ItemStack(materialLimit))) {
                 msg(sender, "user.error.unknown_item", itemLimit);
                 return;
