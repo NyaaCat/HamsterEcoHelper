@@ -142,7 +142,7 @@ public class SearchCommands extends CommandReceiver {
                                               .filter(sign -> sign.shopMode == ShopMode.SELL)
                                               .collect(Collectors.toSet());
                 if (signOwned.isEmpty()) continue;
-                if (ownerLimit != null && limitUuid != owner)
+                if (ownerLimit != null && !limitUuid.equals(owner))
                     continue;
                 if (rangeLimit != -1 &&
                             signOwned.stream().noneMatch(sign ->
