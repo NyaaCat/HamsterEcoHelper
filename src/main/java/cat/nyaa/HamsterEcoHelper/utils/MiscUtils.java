@@ -95,7 +95,9 @@ public class MiscUtils {
         Material m = Material.matchMaterial(name, false);
         if (m == null) {
             m = Material.matchMaterial(name, true);
-            sender.sendMessage(I18n.instance.getFormatted("user.warn.legacy_name", name, m.toString()));
+            if (m != null) {
+                sender.sendMessage(I18n.instance.getFormatted("user.warn.legacy_name", name, m.toString()));
+            }
         }
         return m;
     }
