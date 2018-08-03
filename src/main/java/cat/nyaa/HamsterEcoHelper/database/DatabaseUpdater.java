@@ -1,6 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
-import cat.nyaa.nyaacore.database.TransactionalQuery;
+import cat.nyaa.nyaacore.database.relational.SynchronizedQuery;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,7 +35,7 @@ public class DatabaseUpdater {
      */
     public static void updateVersion0To1(Database db) {
         int total, counter = 0;
-        try (TransactionalQuery<ItemLog> transaction = db.database.transaction(ItemLog.class)) {
+        try (SynchronizedQuery<ItemLog> transaction = db.database.queryTransactional(ItemLog.class)) {
             total = transaction.count();
             for (ItemLog record : transaction.select()) {
                 if (((++counter) % 100) == 0)
@@ -50,7 +50,7 @@ public class DatabaseUpdater {
             }
         }
 
-        try (TransactionalQuery<MarketItem> transaction = db.database.transaction(MarketItem.class)) {
+        try (SynchronizedQuery<MarketItem> transaction = db.database.queryTransactional(MarketItem.class)) {
             counter = 0;
             total = transaction.count();
             for (MarketItem record : transaction.select()) {

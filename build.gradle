@@ -9,7 +9,7 @@ configurations.all {
 // Version strings used for CI
 // Note the spaces before and after the equals sign
 ext.majorVersion = 6
-ext.minorVersion = 0
+ext.minorVersion = 1
 ext.minecraftVersion = "1.13"
 
 sourceCompatibility = 1.8
@@ -56,12 +56,12 @@ repositories {
 dependencies {
     compile 'org.spigotmc:spigot-api:1.13-R0.1-SNAPSHOT'
     compile 'net.milkbowl.vault:VaultAPI:1.6'
-    compile 'cat.nyaa:nyaacore:6.0-SNAPSHOT'
+    compile 'cat.nyaa:nyaacore:6.1-SNAPSHOT'
     compile('net.ess3:Essentials:2.13-SNAPSHOT') {
         transitive = false
     }
     compile files('lib/LocketteProAPI.jar')
-    compile ('org.librazy:NyaaUtilsLangChecker:1.0-SNAPSHOT') {
+    compile ('org.librazy:NyaaUtilsLangChecker:2.0-SNAPSHOT') {
         transitive = false
     }
     compile('com.meowj:LangUtils:1.9') {

@@ -3,7 +3,6 @@ package cat.nyaa.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.ads.AdsCommands;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceCommands;
-import cat.nyaa.HamsterEcoHelper.database.*;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
 import cat.nyaa.HamsterEcoHelper.signshop.SearchCommands;
@@ -12,18 +11,12 @@ import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.Message;
-import cat.nyaa.nyaacore.database.Database;
-import cat.nyaa.nyaacore.database.DatabaseUtils;
-import cat.nyaa.nyaacore.database.RelationalDB;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
-import org.librazy.nyaautils_lang_checker.LangKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,24 +146,5 @@ public class CommandHandler extends CommandReceiver {
             p.getWorld().dropItem(p.getEyeLocation(), s);
         }
         plugin.database.clearTemporaryStorage(p);
-    }
-
-    @SubCommand(value = "dump", permission = "heh.admin")
-    public void databaseDump(CommandSender sender, Arguments args) {
-        String to = args.next();
-        RelationalDB todb =  DatabaseUtils.get(to).connect();
-        RelationalDB fromdb = plugin.database.database;
-        DatabaseUtils.dumpDatabaseAsync(plugin, fromdb, todb, (cls, r) -> {
-            if (cls != null) {
-                msg(sender, "internal.info.dump.ing", cls.getName(), to, r);
-            } else {
-                fromdb.close();
-                if(r == 0){
-                    msg(sender, "internal.info.dump.finished", to);
-                } else {
-                    msg(sender, "internal.error.command_exception");
-                }
-            }
-        });
     }
 }
