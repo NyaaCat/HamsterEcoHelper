@@ -48,6 +48,7 @@ public class DatabaseUpdater {
                     transaction.reset().whereEq("id", record.id).update(record, "item");
                 }
             }
+            transaction.commit();
         }
 
         try (SynchronizedQuery<MarketItem> transaction = db.database.queryTransactional(MarketItem.class)) {
@@ -64,6 +65,7 @@ public class DatabaseUpdater {
                     transaction.reset().whereEq("id", record.id).update(record, "item");
                 }
             }
+            transaction.commit();
         }
     }
 }

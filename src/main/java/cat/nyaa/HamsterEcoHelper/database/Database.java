@@ -45,6 +45,7 @@ public class Database implements Cloneable {
             for (String key : cfg.getKeys(false)) {
                 ret.add(cfg.getItemStack(key));
             }
+            result.commit();
             return ret;
         }
     }
@@ -85,6 +86,7 @@ public class Database implements Cloneable {
             } else {
                 result.insert(bean);
             }
+            result.commit();
         }
     }
 
@@ -92,6 +94,7 @@ public class Database implements Cloneable {
         try (SynchronizedQuery<TempStorageRepo> query = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
             if (query.count() != 0) {
                 query.delete();
+                query.commit();
             }
         }
     }
@@ -114,6 +117,7 @@ public class Database implements Cloneable {
                     }
                 }
             }
+            result.commit();
             return list;
         }
     }
@@ -133,6 +137,7 @@ public class Database implements Cloneable {
             }
             item.id = id;
             query.insert(item);
+            query.commit();
         }
         return item.id;
     }
@@ -145,44 +150,27 @@ public class Database implements Cloneable {
                 mItem.id = itemId;
                 query.update(mItem);
             }
+            query.commit();
         }
     }
 
     public int getMarketPlayerItemCount(OfflinePlayer player) {
-        try (SynchronizedQuery<MarketItem> query = database.queryTransactional(MarketItem.class).whereEq("player_id", player.getUniqueId().toString()).where("amount", ">", 0)) {
-            if (query.count() > 0) {
-                return query.count();
-            }
-        }
-        return 0;
+        int count = database.query(MarketItem.class).whereEq("player_id", player.getUniqueId().toString()).where("amount", ">", 0).count();
+        return count > 0 ? count : 0;
     }
 
     public int getMarketItemCount() {
-        try (SynchronizedQuery<MarketItem> query = database.queryTransactional(MarketItem.class).where("amount", ">", 0)) {
-            if (query.count() != 0) {
-                return query.count();
-            }
-        }
-        return 0;
+        int count = database.query(MarketItem.class).where("amount", ">", 0).count();
+        return count > 0 ? count : 0;
     }
 
     public MarketItem getMarketItem(long id) {
-        try (SynchronizedQuery<MarketItem> query = database.queryTransactional(MarketItem.class).whereEq("id", id)) {
-            if (query.count() != 0) {
-                return query.selectUnique();
-            }
-        }
-        return null;
+        return database.query(MarketItem.class).whereEq("id", id).selectUniqueUnchecked();
     }
 
 
     public ItemLog getItemLog(long id) {
-        try (SynchronizedQuery<ItemLog> log = database.queryTransactional(ItemLog.class).whereEq("id", id)) {
-            if (log != null && log.count() != 0) {
-                return log.selectUnique();
-            }
-        }
-        return null;
+        return database.query(ItemLog.class).whereEq("id", id).selectUniqueUnchecked();
     }
 
     public long addItemLog(OfflinePlayer player, ItemStack item, double price, int amount) {
@@ -200,6 +188,7 @@ public class Database implements Cloneable {
             }
             i.id = id;
             query.insert(i);
+            query.commit();
             return i.id;
         }
     }
@@ -216,6 +205,7 @@ public class Database implements Cloneable {
         try (SynchronizedQuery<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
             sign.delete();
             sign.insert(shopLocation);
+            sign.commit();
         }
         return shopLocation;
     }
@@ -231,6 +221,7 @@ public class Database implements Cloneable {
                 sign.delete();
                 sign.insert(shopLocation);
             }
+            sign.commit();
         }
         return shopLocation;
     }
@@ -238,9 +229,10 @@ public class Database implements Cloneable {
     public boolean removeShopSign(Block block) {
         Sign shopLocation = new Sign();
         shopLocation.setLocation(block.getLocation());
-        try (SynchronizedQuery<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
+        try (SynchronizedQuery<Sign> sign = database.query(Sign.class).whereEq("id", shopLocation.id)) {
             if (sign != null) {
                 sign.delete();
+                sign.commit();
                 return true;
             }
         }
@@ -253,6 +245,7 @@ public class Database implements Cloneable {
         try (SynchronizedQuery<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
             if (sign != null) {
                 sign.delete();
+                sign.commit();
                 return true;
             }
         }
@@ -278,6 +271,7 @@ public class Database implements Cloneable {
         try (SynchronizedQuery<SignShop> s = database.queryTransactional(SignShop.class).whereEq("id", owner.toString())) {
             s.delete();
             s.insert(shop);
+            s.commit();
         }
     }
 
@@ -289,6 +283,7 @@ public class Database implements Cloneable {
         try (SynchronizedQuery<ShopStorageLocation> s = database.queryTransactional(ShopStorageLocation.class).whereEq("owner", owner.toString())) {
             s.delete();
             s.insert(location);
+            s.commit();
         }
 
     }
@@ -301,6 +296,7 @@ public class Database implements Cloneable {
         try (SynchronizedQuery<LottoStorageLocation> s = database.queryTransactional(LottoStorageLocation.class).whereEq("owner", owner.toString())) {
             s.delete();
             s.insert(location);
+            s.commit();
         }
     }
 }
