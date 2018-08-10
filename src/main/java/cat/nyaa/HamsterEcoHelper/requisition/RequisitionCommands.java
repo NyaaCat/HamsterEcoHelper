@@ -159,7 +159,7 @@ public class RequisitionCommands extends CommandReceiver {
             if (material != null) {
                 item = new ItemStack(material);
             }
-            if (item == null || !ReflectionUtils.isValidItem(item)) {
+            if (item == null || !material.isItem()) {
                 msg(sender, "user.error.unknown_item", itemName);
                 return;
             }

@@ -4,7 +4,7 @@ import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
 import cat.nyaa.nyaacore.database.DatabaseUtils;
 import cat.nyaa.nyaacore.database.relational.RelationalDB;
-import cat.nyaa.nyaacore.database.relational.SynchronizedQuery;
+import cat.nyaa.nyaacore.database.relational.Query;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -32,7 +32,7 @@ public class Database implements Cloneable {
     }
 
     public List<ItemStack> getTemporaryStorage(OfflinePlayer player) {
-        try (SynchronizedQuery<TempStorageRepo> result = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
+        try (Query<TempStorageRepo> result = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
             if (result.count() == 0) return Collections.emptyList();
             YamlConfiguration cfg = new YamlConfiguration();
             try {
@@ -51,7 +51,7 @@ public class Database implements Cloneable {
     }
 
     public void addTemporaryStorage(OfflinePlayer player, ItemStack item) {
-        try (SynchronizedQuery<TempStorageRepo> result = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
+        try (Query<TempStorageRepo> result = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
             YamlConfiguration cfg = new YamlConfiguration();
             boolean update;
             if (result.count() == 0) {
@@ -91,7 +91,7 @@ public class Database implements Cloneable {
     }
 
     public void clearTemporaryStorage(OfflinePlayer player) {
-        try (SynchronizedQuery<TempStorageRepo> query = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
+        try (Query<TempStorageRepo> query = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
             if (query.count() != 0) {
                 query.delete();
                 query.commit();
@@ -101,7 +101,7 @@ public class Database implements Cloneable {
 
     public List<MarketItem> getMarketItems(int offset, int limit, UUID seller) {
         ArrayList<MarketItem> list = new ArrayList<>();
-        try (SynchronizedQuery<MarketItem> result =
+        try (Query<MarketItem> result =
                      seller == null ?
                              database.queryTransactional(MarketItem.class).where("amount", ">", 0) :
                              database.queryTransactional(MarketItem.class).where("amount", ">", 0).whereEq("player_id", seller.toString())) {
@@ -129,7 +129,7 @@ public class Database implements Cloneable {
         item.playerId = player.getUniqueId();
         item.unitPrice = unit_price;
         long id = 1;
-        try (SynchronizedQuery<MarketItem> query = database.queryTransactional(MarketItem.class)) {
+        try (Query<MarketItem> query = database.queryTransactional(MarketItem.class)) {
             for (MarketItem marketItem : query.select()) {
                 if (marketItem.id >= id) {
                     id = marketItem.id + 1;
@@ -143,7 +143,7 @@ public class Database implements Cloneable {
     }
 
     public void marketBuy(Player player, long itemId, int amount) {
-        try (SynchronizedQuery<MarketItem> query = database.queryTransactional(MarketItem.class).whereEq("id", itemId)) {
+        try (Query<MarketItem> query = database.queryTransactional(MarketItem.class).whereEq("id", itemId)) {
             if (query.count() != 0) {
                 MarketItem mItem = query.selectUnique();
                 mItem.amount = mItem.amount - amount;
@@ -180,7 +180,7 @@ public class Database implements Cloneable {
         i.price = price;
         i.amount = amount;
         long id = 1;
-        try (SynchronizedQuery<ItemLog> query = database.queryTransactional(ItemLog.class)) {
+        try (Query<ItemLog> query = database.queryTransactional(ItemLog.class)) {
             for (ItemLog log : query.select()) {
                 if (log.id >= id) {
                     id = log.id + 1;
@@ -202,7 +202,7 @@ public class Database implements Cloneable {
         shopLocation.owner = player.getUniqueId();
         shopLocation.setLocation(block.getLocation());
         shopLocation.shopMode = mode;
-        try (SynchronizedQuery<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
+        try (Query<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
             sign.delete();
             sign.insert(shopLocation);
             sign.commit();
@@ -216,7 +216,7 @@ public class Database implements Cloneable {
         shopLocation.setLocation(block.getLocation());
         shopLocation.shopMode = mode;
         shopLocation.lotto_price = price;
-        try (SynchronizedQuery<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
+        try (Query<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
             if (sign != null) {
                 sign.delete();
                 sign.insert(shopLocation);
@@ -229,7 +229,7 @@ public class Database implements Cloneable {
     public boolean removeShopSign(Block block) {
         Sign shopLocation = new Sign();
         shopLocation.setLocation(block.getLocation());
-        try (SynchronizedQuery<Sign> sign = database.query(Sign.class).whereEq("id", shopLocation.id)) {
+        try (Query<Sign> sign = database.query(Sign.class).whereEq("id", shopLocation.id)) {
             if (sign != null) {
                 sign.delete();
                 sign.commit();
@@ -242,7 +242,7 @@ public class Database implements Cloneable {
     public boolean removeShopSign(String world, int x, int y, int z) {
         Sign shopLocation = new Sign();
         shopLocation.setLocation(world, x, y, z);
-        try (SynchronizedQuery<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
+        try (Query<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
             if (sign != null) {
                 sign.delete();
                 sign.commit();
@@ -257,7 +257,7 @@ public class Database implements Cloneable {
     }
 
     public SignShop getSignShop(UUID owner) {
-        try (SynchronizedQuery<SignShop> shop = database.queryTransactional(SignShop.class).whereEq("id", owner.toString())) {
+        try (Query<SignShop> shop = database.queryTransactional(SignShop.class).whereEq("id", owner.toString())) {
             if (shop != null && shop.count() == 1) {
                 return shop.selectUnique();
             }
@@ -268,7 +268,7 @@ public class Database implements Cloneable {
     }
 
     public void setSignShop(UUID owner, SignShop shop) {
-        try (SynchronizedQuery<SignShop> s = database.queryTransactional(SignShop.class).whereEq("id", owner.toString())) {
+        try (Query<SignShop> s = database.queryTransactional(SignShop.class).whereEq("id", owner.toString())) {
             s.delete();
             s.insert(shop);
             s.commit();
@@ -280,12 +280,11 @@ public class Database implements Cloneable {
     }
 
     public void setChestLocation(UUID owner, ShopStorageLocation location) {
-        try (SynchronizedQuery<ShopStorageLocation> s = database.queryTransactional(ShopStorageLocation.class).whereEq("owner", owner.toString())) {
+        try (Query<ShopStorageLocation> s = database.queryTransactional(ShopStorageLocation.class).whereEq("owner", owner.toString())) {
             s.delete();
             s.insert(location);
             s.commit();
         }
-
     }
 
     public LottoStorageLocation getLottoStorageLocation(UUID owner) {
@@ -293,7 +292,7 @@ public class Database implements Cloneable {
     }
 
     public void setLottoStorageLocation(UUID owner, LottoStorageLocation location) {
-        try (SynchronizedQuery<LottoStorageLocation> s = database.queryTransactional(LottoStorageLocation.class).whereEq("owner", owner.toString())) {
+        try (Query<LottoStorageLocation> s = database.queryTransactional(LottoStorageLocation.class).whereEq("owner", owner.toString())) {
             s.delete();
             s.insert(location);
             s.commit();
