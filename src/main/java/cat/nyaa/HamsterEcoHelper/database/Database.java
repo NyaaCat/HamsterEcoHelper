@@ -229,19 +229,16 @@ public class Database implements Cloneable {
     public boolean removeShopSign(Block block) {
         Sign shopLocation = new Sign();
         shopLocation.setLocation(block.getLocation());
-        try (Query<Sign> sign = database.query(Sign.class).whereEq("id", shopLocation.id)) {
-            if (sign != null) {
-                sign.delete();
-                sign.commit();
-                return true;
-            }
-        }
-        return false;
+        return removeShopSign(shopLocation);
     }
 
     public boolean removeShopSign(String world, int x, int y, int z) {
         Sign shopLocation = new Sign();
         shopLocation.setLocation(world, x, y, z);
+        return removeShopSign(shopLocation);
+    }
+
+    private boolean removeShopSign(Sign shopLocation) {
         try (Query<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
             if (sign != null) {
                 sign.delete();
