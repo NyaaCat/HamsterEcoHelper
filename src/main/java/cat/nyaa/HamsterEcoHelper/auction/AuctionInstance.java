@@ -42,12 +42,7 @@ public class AuctionInstance {
         this.owner = player;
         this.reservePrice = reservePrice;
 
-        String realName;
-        if (itemToGive.hasItemMeta() && itemToGive.getItemMeta().hasDisplayName()) {
-            realName = itemToGive.getItemMeta().getDisplayName();
-        } else {
-            realName = itemToGive.getType().name() + ":" + itemToGive.getDurability();
-        }
+        String realName = MiscUtils.getItemName(itemToGive);
 
         if (hideName) {
             new Message(I18n.format("user.auc.new_auction_unknown", startPrice, stepPrice, (int) Math.floor(timeout / 20D))).broadcast(new Permission("heh.bid"));
@@ -68,15 +63,7 @@ public class AuctionInstance {
             plugin.logger.info(I18n.format("log.info.auc_start", realName, itemToGive.getAmount(),
                     Boolean.toString(hideName), startPrice, stepPrice, uid(this)));
         } else {
-            realName = "";
-            if (itemToGive.hasItemMeta() && itemToGive.getItemMeta().hasDisplayName()) {
-                realName = itemToGive.getItemMeta().getDisplayName();
-            }
-            if (realName.length() == 0) {
-                realName = itemToGive.getType().name() + ":" + itemToGive.getDurability();
-            } else {
-                realName += "(" + itemToGive.getType().name() + ":" + itemToGive.getDurability() + ")";
-            }
+            realName = MiscUtils.getItemName(itemToGive);
             long id = plugin.database.addItemLog(player, itemStack, startPrice, itemStack.getAmount());
             plugin.logger.info(I18n.format("log.info.player_auc_start", id, player.getName(), realName, itemToGive.getAmount(),
                     Boolean.toString(hideName), startPrice, stepPrice, uid(this)));

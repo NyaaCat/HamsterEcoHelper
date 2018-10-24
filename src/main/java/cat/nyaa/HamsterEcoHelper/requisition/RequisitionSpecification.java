@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
 
 import java.util.Arrays;
@@ -97,14 +98,14 @@ public class RequisitionSpecification implements ISerializable {
                     return false;
                 }
             }
-
-            int baseDamage = base.getDurability();
-            int givenDamage = given.getDurability();
-            if (minDamageValue == -2 && givenDamage < baseDamage) return false;
-            if (minDamageValue >= 0 && givenDamage < minDamageValue) return false;
-            if (maxDamageValue == -2 && givenDamage > baseDamage) return false;
-            if (maxDamageValue >= 0 && givenDamage > maxDamageValue) return false;
-
+            if (base.getItemMeta() instanceof Damageable && ((Damageable) base.getItemMeta()).hasDamage()) {
+                int baseDamage = ((Damageable) base.getItemMeta()).getDamage();
+                int givenDamage = ((Damageable) given.getItemMeta()).getDamage();
+                if (minDamageValue == -2 && givenDamage < baseDamage) return false;
+                if (minDamageValue >= 0 && givenDamage < minDamageValue) return false;
+                if (maxDamageValue == -2 && givenDamage > baseDamage) return false;
+                if (maxDamageValue >= 0 && givenDamage > maxDamageValue) return false;
+            }
             String baseDisplay = getDisplayName(base);
             String givenDisplay = getDisplayName(given);
             if (nameMatch == MatchingMode.EXACT && !baseDisplay.equals(givenDisplay)) return false;

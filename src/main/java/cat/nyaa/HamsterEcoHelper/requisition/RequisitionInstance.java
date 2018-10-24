@@ -45,9 +45,7 @@ public class RequisitionInstance {
         new Message(I18n.format("user.req.new_req_0")).append("{itemName}", tmp)
                                                       .appendFormat(plugin.i18n, "user.req.new_req_1", reqAmount, (double) unitPrice, (double) templateItem.timeoutTicks / 20D)
                                                       .broadcast();
-        String name = templateItem.itemTemplate.hasItemMeta() && templateItem.itemTemplate.getItemMeta().hasDisplayName() ?
-                              templateItem.itemTemplate.getItemMeta().getDisplayName() :
-                              templateItem.itemTemplate.getType().name() + ":" + templateItem.itemTemplate.getDurability();
+        String name = MiscUtils.getItemName(templateItem.itemTemplate);
         logger = plugin.getLogger();
         plugin.getLogger().info(I18n.format("log.info.req_start", name, reqAmount, (double) unitPrice, templateItem.timeoutTicks, uid(this)));
     }
@@ -77,15 +75,7 @@ public class RequisitionInstance {
         new Message(I18n.format("user.req.player_req_0", player.getName())).append("{itemName}", item)
                                                                            .appendFormat(plugin.i18n, "user.req.player_req_1", reqAmount, unitPrice, (double) templateItem.timeoutTicks / 20D)
                                                                            .broadcast();
-        String itemName = "";
-        if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-            itemName = item.getItemMeta().getDisplayName();
-        }
-        if (itemName.length() == 0) {
-            itemName = item.getType().name() + ":" + item.getDurability();
-        } else {
-            itemName += "(" + item.getType().name() + ":" + item.getDurability() + ")";
-        }
+        String itemName = MiscUtils.getItemName(item);
         logger = plugin.getLogger();
         long id = plugin.database.addItemLog(player, item, unitPrice, amountRemains);
         plugin.getLogger().info(I18n.format("log.info.player_req_start", id, player.getName(), itemName,

@@ -10,7 +10,7 @@ configurations.all {
 // Note the spaces before and after the equals sign
 ext.majorVersion = 6
 ext.minorVersion = 2
-ext.minecraftVersion = "1.13.1"
+ext.minecraftVersion = "1.13.2"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -20,11 +20,6 @@ repositories {
     maven {
         name 'spigot-repo'
         url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-
-    maven {
-        name 'sonatype'
-        url 'https://oss.sonatype.org/content/groups/public'
     }
 
     maven {
@@ -49,8 +44,10 @@ repositories {
 }
 
 dependencies {
-    compile 'org.spigotmc:spigot-api:1.13.1-R0.1-SNAPSHOT'
-    compile 'net.milkbowl.vault:VaultAPI:1.6'
+    compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compile ('net.milkbowl.vault:VaultAPI:1.7') {
+        transitive = false
+    }
     compile 'cat.nyaa:nyaacore:6.2-SNAPSHOT'
     compile('net.ess3:Essentials:2.13-SNAPSHOT') {
         transitive = false

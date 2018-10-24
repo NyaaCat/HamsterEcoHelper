@@ -9,6 +9,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.librazy.nclangchecker.LangKey;
 import org.librazy.nclangchecker.LangKeyType;
 
@@ -79,10 +80,14 @@ public class MiscUtils {
         if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
             itemName = item.getItemMeta().getDisplayName();
         }
+        String materialAndDamage = item.getType().name();
+        if (item.getItemMeta() instanceof Damageable && ((Damageable) item.getItemMeta()).hasDamage()) {
+            materialAndDamage += ":" + ((Damageable) item.getItemMeta()).getDamage();
+        }
         if (itemName.length() == 0) {
-            itemName = item.getType().name() + ":" + item.getDurability();
+            itemName = materialAndDamage;
         } else {
-            itemName += "(" + item.getType().name() + ":" + item.getDurability() + ")";
+            itemName += "(" + materialAndDamage + ")";
         }
         return itemName;
     }
