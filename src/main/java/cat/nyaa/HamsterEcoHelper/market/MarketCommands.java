@@ -51,12 +51,11 @@ public class MarketCommands extends CommandReceiver {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @SubCommand(value = "view", permission = "heh.view")
     public void view(CommandSender sender, Arguments args) {
         Player player = asPlayer(sender);
         if (args.length() == 3) {
-            OfflinePlayer seller = Bukkit.getOfflinePlayer(args.next());
+            OfflinePlayer seller = args.nextOfflinePlayer();
             if (seller != null) {
                 plugin.marketManager.openGUI(player, 1, seller.getUniqueId());
             }

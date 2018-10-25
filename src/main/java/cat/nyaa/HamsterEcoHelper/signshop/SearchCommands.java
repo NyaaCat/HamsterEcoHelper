@@ -8,7 +8,6 @@ import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.Message;
-import cat.nyaa.nyaacore.utils.ReflectionUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;
@@ -109,7 +108,7 @@ public class SearchCommands extends CommandReceiver {
         final Material materialLimit;
         if (itemLimit != null) {
             materialLimit = MiscUtils.getMaterial(itemLimit, sender);
-            if (materialLimit == null || materialLimit == Material.AIR || !ReflectionUtils.isValidItem(new ItemStack(materialLimit))) {
+            if (materialLimit == null || materialLimit == Material.AIR || !materialLimit.isItem()) {
                 msg(sender, "user.error.unknown_item", itemLimit);
                 return;
             }

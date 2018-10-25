@@ -16,20 +16,19 @@ public class BalanceCommands extends CommandReceiver {
         this.plugin = (HamsterEcoHelper) plugin;
     }
 
-    @SuppressWarnings("deprecation")
     @CommandHandler.SubCommand(value = "pay", permission = "heh.balance.pay")
     public void pay(CommandSender sender, CommandHandler.Arguments args) {
         if (args.length() >= 5) {
             double amount = 0.0D;
-            String playerName = "";
+            Player player;
             String type = args.next().toLowerCase();
             if (type.equals("amount")) {
                 amount = args.nextDouble("#.##");
-                playerName = args.next();
+                player = args.nextPlayer();
             } else if (type.equals("percent")) {
                 double percent = args.nextDouble();
                 amount = (plugin.systemBalance.getBalance() / 100) * percent;
-                playerName = args.next();
+                player = args.nextPlayer();
                 double min = args.length() >= 6 ? args.nextDouble("#.##") : -1;
                 double max = args.length() == 7 ? args.nextDouble("#.##") : -1;
                 if (max != -1 && amount > max) {
@@ -46,15 +45,10 @@ public class BalanceCommands extends CommandReceiver {
                 msg(sender, "user.error.not_int");
                 return;
             }
-            Player player = Bukkit.getPlayer(playerName);
-            if (player != null) {
-                plugin.systemBalance.withdrawAllowDebt(amount, plugin);
-                plugin.eco.deposit(player, amount);
-                msg(sender, "user.balance.pay", amount, playerName);
-                msg(player, "user.balance.pay_notice", amount);
-            } else {
-                msg(sender, "user.info.player_not_found", playerName);
-            }
+            plugin.systemBalance.withdrawAllowDebt(amount, plugin);
+            plugin.eco.deposit(player, amount);
+            msg(sender, "user.balance.pay", amount, player.getName());
+            msg(player, "user.balance.pay_notice", amount);
             return;
         }
         msg(sender, "manual.balance.pay.usage");
@@ -65,7 +59,6 @@ public class BalanceCommands extends CommandReceiver {
         return "balance";
     }
 
-    @SuppressWarnings("deprecation")
     @CommandHandler.SubCommand(value = "take", permission = "heh.balance.take")
     public void take(CommandSender sender, CommandHandler.Arguments args) {
         if (args.length() != 4) {

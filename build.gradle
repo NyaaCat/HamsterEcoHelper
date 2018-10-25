@@ -23,6 +23,11 @@ repositories {
     }
 
     maven {
+        name 'sonatype'
+        url 'https://oss.sonatype.org/content/groups/public'
+    }
+
+    maven {
         name 'vault-repo'
         url 'http://nexus.hc.to/content/repositories/pub_releases'
     }
@@ -36,11 +41,6 @@ repositories {
         name 'NyaaCentral'
         url 'https://raw.githubusercontent.com/NyaaCat/NyaaCentral/maven-repo'
     }
-
-    maven {
-        name 'langutils-repo'
-        url 'https://raw.github.com/MascusJeoraly/LanguageUtils/mvn-repo/'
-    }
 }
 
 dependencies {
@@ -48,7 +48,7 @@ dependencies {
     compile ('net.milkbowl.vault:VaultAPI:1.7') {
         transitive = false
     }
-    compile 'cat.nyaa:nyaacore:6.2-SNAPSHOT'
+    compile 'cat.nyaa:nyaacore:6.3-SNAPSHOT'
     compile('net.ess3:Essentials:2.13-SNAPSHOT') {
         transitive = false
     }
@@ -56,8 +56,12 @@ dependencies {
     compile ('org.librazy:NyaaUtilsLangChecker:2.0-SNAPSHOT') {
         transitive = false
     }
-    compile('com.meowj:LangUtils:1.9') {
-        transitive = false
+    if (gradle.hasProperty("useLocalDependencies") && gradle.useLocalDependencies) {
+        compile project(":LanguageUtils")
+    } else {
+        compileOnly('cat.nyaa:LangUtils:2.1-SNAPSHOT') {
+            transitive = false
+        }
     }
 }
 
