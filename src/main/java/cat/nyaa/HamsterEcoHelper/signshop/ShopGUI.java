@@ -180,12 +180,10 @@ public class ShopGUI extends ShopInventoryHolder {
                     plugin.signShopManager.updateGUI(shopOwner, mode);
                     player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
                     if (!isEditMode()) {
-                        if (owner.isOnline()) {
-                            new Message("")
-                                    .append(I18n.format("user.signshop.buy.notice", player.getName(), price),
-                                            shopItem.getItemStack(amount))
-                                    .send(Bukkit.getPlayer(shopOwner));
-                        }
+                        new Message("")
+                                .append(I18n.format("user.signshop.buy.notice", player.getName(), price),
+                                        shopItem.getItemStack(amount))
+                                .send(Bukkit.getOfflinePlayer(shopOwner));
                         new Message("")
                                 .append(I18n.format("user.signshop.buy.success", owner.getName(), price + tax),
                                         shopItem.getItemStack(amount)).send(player);

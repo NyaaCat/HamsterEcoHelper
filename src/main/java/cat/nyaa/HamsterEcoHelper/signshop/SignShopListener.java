@@ -247,14 +247,12 @@ public class SignShopListener implements Listener {
                                         price, owner.getName()), item).send(player);
                                 plugin.logger.info(I18n.format("log.info.signshop_lotto", MiscUtils.getItemName(item),
                                         item.getAmount(), price, player.getName(), owner.getName()));
-                                if (owner.isOnline()) {
-                                    if (tax > 0.0D) {
-                                        new Message("").append(I18n.format("user.signshop.lotto.notice_with_tax",
-                                                player.getName(), price - tax, tax), item).send(Bukkit.getPlayer(sign.owner));
-                                    } else {
-                                        new Message("").append(I18n.format("user.signshop.lotto.notice",
-                                                player.getName(), price), item).send(Bukkit.getPlayer(sign.owner));
-                                    }
+                                if (tax > 0.0D) {
+                                    new Message("").append(I18n.format("user.signshop.lotto.notice_with_tax",
+                                            player.getName(), price - tax, tax), item).send(Bukkit.getOfflinePlayer(sign.owner));
+                                } else {
+                                    new Message("").append(I18n.format("user.signshop.lotto.notice",
+                                            player.getName(), price), item).send(Bukkit.getPlayer(sign.owner));
                                 }
                             }
                         } else {

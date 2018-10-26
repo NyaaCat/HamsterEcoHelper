@@ -266,10 +266,9 @@ public class SignShopManager {
                             }
                             new Message("").append(I18n.format("user.signshop.sell.success",
                                     shopOwner.getName(), price - tax), itemStack).send(player);
-                            if (shopOwner.isOnline()) {
-                                new Message("").append(I18n.format("user.signshop.sell.notice",
-                                        player.getName(), price), itemStack).send(Bukkit.getPlayer(shop.owner));
-                            }
+                            new Message("").append(I18n.format("user.signshop.sell.notice",
+                                    player.getName(), price), itemStack).send(Bukkit.getOfflinePlayer(shop.owner));
+
                             plugin.logger.info(I18n.format("log.info.signshop_sell", MiscUtils.getItemName(itemStack),
                                     itemStack.getAmount(), price, player.getName(), shopOwner.getName()));
                             return true;

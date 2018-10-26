@@ -147,12 +147,10 @@ public class MarketGUI extends ShopInventoryHolder {
                 plugin.logger.info(I18n.format("log.info.market_bought", itemId, MiscUtils.getItemName(item.getItemStack()),
                         amount, price, player.getName(), item.getPlayer().getName()));
                 if (!player.getUniqueId().equals(item.playerId)) {
-                    if (item.getPlayer().isOnline()) {
-                        new Message("")
-                                .append(I18n.format("user.market.someone_bought",
-                                        player.getName(), price + tax), item.getItemStack(amount))
-                                .send((Player) item.getPlayer());
-                    }
+                    new Message("")
+                            .append(I18n.format("user.market.someone_bought",
+                                    player.getName(), price + tax), item.getItemStack(amount))
+                            .send(item.getPlayer());
                     new Message("")
                             .append(I18n.format("user.market.buy_success", item.getPlayer().getName(), price), item.getItemStack(amount))
                             .send(player);
