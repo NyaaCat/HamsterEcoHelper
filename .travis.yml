@@ -7,6 +7,7 @@ before_install:
 - git clone --depth=1 https://github.com/NyaaCat/NyaaCore NyaaCat/NyaaCore
 - export NYAACORE_LANG_DIR=`readlink -f ./NyaaCat/NyaaCore/src/main/resources/lang/`
 - popd
+- wget -O NyaaCore-v4.1.72-mc1.12.jar "https://github.com/NyaaCat/NyaaCore/releases/download/v4.1.72-mc1.12/NyaaCore-v4.1.72-mc1.12.jar"
 after_success:
 - 'cp build/libs/HamsterEcoHelper.jar ./HamsterEcoHelper-$TRAVIS_BRANCH-v$main_version.$TRAVIS_BUILD_NUMBER.jar'
 before_deploy:
@@ -20,7 +21,6 @@ before_deploy:
 - git status
 - git push origin HEAD:$TRAVIS_BRANCH -q --follow-tags
 - gem install octokit -v 4.3.0
-- wget -O NyaaCore-v4.1.72-mc1.12.jar "https://github.com/NyaaCat/NyaaCore/releases/download/v4.1.72-mc1.12/NyaaCore-v4.1.72-mc1.12.jar"
 deploy:
   skip_cleanup: true
   provider: releases
