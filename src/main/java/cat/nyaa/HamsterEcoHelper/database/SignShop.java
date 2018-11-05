@@ -23,6 +23,7 @@ public class SignShop {
     public UUID owner;
 
     public String yaml = "";
+    private YamlConfiguration config = null;
 
     @Column(name = "id")
     @Id
@@ -36,7 +37,10 @@ public class SignShop {
 
     @Column(name = "yaml", columnDefinition = "MEDIUMTEXT")
     public String getYaml() {
-        return Base64.getEncoder().encodeToString(this.yaml.getBytes());
+        if (config == null) {
+            return Base64.getEncoder().encodeToString(this.yaml.getBytes());
+        }
+        return Base64.getEncoder().encodeToString(this.config.saveToString().getBytes());
     }
 
     public void setYaml(String yaml) {
@@ -58,15 +62,12 @@ public class SignShop {
     }
 
     public List<ShopItem> loadItems(String path) {
-        YamlConfiguration configuration = new YamlConfiguration();
-        try {
-            configuration.loadFromString(this.yaml);
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
+        if (config == null) {
+            load();
         }
         ArrayList<ShopItem> list = new ArrayList<>();
-        if (configuration.isConfigurationSection(path)) {
-            ConfigurationSection section = configuration.getConfigurationSection(path);
+        if (config.isConfigurationSection(path)) {
+            ConfigurationSection section = config.getConfigurationSection(path);
             for (String k : section.getKeys(false)) {
                 list.add(new ShopItem(section.getConfigurationSection(k)));
             }
@@ -75,20 +76,33 @@ public class SignShop {
     }
 
     public void saveItems(String path, List<ShopItem> list) {
-        YamlConfiguration configuration = new YamlConfiguration();
-        try {
-            configuration.loadFromString(this.yaml);
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
+        if (config == null) {
+            load();
         }
-        configuration.set(path, null);
-        ConfigurationSection section = configuration.createSection(path);
+        config.set(path, null);
+        ConfigurationSection section = config.createSection(path);
         for (int i = 0; i < list.size(); i++) {
             ShopItem item = list.get(i);
             if (item.amount > 0 && item.getItemStack(1).getType() != Material.AIR) {
                 list.get(i).save(section.createSection(String.valueOf(i)));
             }
         }
-        this.yaml = configuration.saveToString();
+    }
+
+    public void yamlToNBT() {
+        if (config == null) {
+            load();
+        }
+        setItems(getItems(ShopMode.BUY), ShopMode.BUY);
+        setItems(getItems(ShopMode.SELL), ShopMode.SELL);
+    }
+
+    private void load() {
+        config = new YamlConfiguration();
+        try {
+            config.loadFromString(this.yaml);
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
     }
 }

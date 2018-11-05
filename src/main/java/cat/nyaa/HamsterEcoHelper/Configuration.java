@@ -101,6 +101,8 @@ public class Configuration extends PluginConfigure {
     public long search_ench_cooldown_tick = 200;
     @Serializable
     public int database_version = 0;
+    @Serializable
+    public boolean signshop_yaml_to_nbt = true;
 
 
     public Map<String, Integer> signshop_sign_limit = new HashMap<>();

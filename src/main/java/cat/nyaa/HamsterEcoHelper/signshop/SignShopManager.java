@@ -31,6 +31,15 @@ public class SignShopManager {
     public SignShopManager(HamsterEcoHelper pl) {
         plugin = pl;
         signLocations = plugin.database.getShopSigns();
+        if (plugin.config.signshop_yaml_to_nbt) {
+            List<SignShop> shops = plugin.database.getSignShops();
+            for (SignShop s : shops) {
+                plugin.logger.info("[signshop] UUID: " + s.owner.toString());
+                s.yamlToNBT();
+                plugin.database.setSignShop(s.owner, s);
+            }
+            plugin.config.signshop_yaml_to_nbt = false;
+        }
         updateAttachedBlocks();
     }
 
