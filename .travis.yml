@@ -20,6 +20,7 @@ before_deploy:
 - git status
 - git push origin HEAD:$TRAVIS_BRANCH -q --follow-tags
 - gem install octokit -v 4.3.0
+- wget -O NyaaCore-v4.1.72-mc1.12.jar "https://github.com/NyaaCat/NyaaCore/releases/download/v4.1.72-mc1.12/NyaaCore-v4.1.72-mc1.12.jar"
 deploy:
   skip_cleanup: true
   provider: releases

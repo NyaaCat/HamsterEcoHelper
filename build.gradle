@@ -50,9 +50,10 @@ repositories {
 dependencies {
     compile 'org.spigotmc:spigot-api:1.12-R0.1-SNAPSHOT'
     compile 'net.milkbowl.vault:VaultAPI:1.6'
-    compile('cat.nyaa:nyaacore:4.1-SNAPSHOT') {
+    /*compile('cat.nyaa:nyaacore:4.1-SNAPSHOT') {
         transitive = false
-    }
+    }*/
+    compile files('NyaaCore-v4.1.72-mc1.12.jar')
     compile('net.ess3:Essentials:2.13-SNAPSHOT') {
         transitive = false
     }
