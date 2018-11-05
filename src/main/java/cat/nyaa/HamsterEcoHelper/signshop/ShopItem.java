@@ -1,5 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.signshop;
 
+import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -9,7 +10,11 @@ public class ShopItem {
     public Double unitPrice;
 
     public ShopItem(ConfigurationSection section) {
-        itemStack = section.getItemStack("item");
+        if (section.isString("item_nbt")) {
+            itemStack = ItemStackUtils.itemFromBase64(section.getString("item_nbt"));
+        } else {
+            itemStack = section.getItemStack("item");
+        }
         amount = section.getInt("amount");
         unitPrice = section.getDouble("unit_price");
     }
@@ -22,7 +27,8 @@ public class ShopItem {
     }
 
     public void save(ConfigurationSection section) {
-        section.set("item", itemStack);
+        //section.set("item", itemStack);
+        section.set("item_nbt", ItemStackUtils.itemToBase64(itemStack));
         section.set("amount", amount);
         section.set("unit_price", unitPrice);
     }
