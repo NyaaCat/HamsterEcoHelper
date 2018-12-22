@@ -58,15 +58,19 @@ public class EconomyUtil {
     }
 
     public synchronized Optional<MiscUtils.GiveStat> transaction(OfflinePlayer buyer, OfflinePlayer seller, ItemStack item, double price, double tax) {
+        return transaction(buyer, seller, buyer, item, price, tax);
+    }
+
+    public synchronized Optional<MiscUtils.GiveStat> transaction(OfflinePlayer buyer, OfflinePlayer seller, OfflinePlayer drawee, ItemStack item, double price, double tax) {
         int step = 0;
         try {
-            if (buyer.equals(seller)) {
+            if (drawee.equals(seller)) {
                 MiscUtils.GiveStat stat = MiscUtils.giveItem(buyer, item);
                 return Optional.of(stat);
             }
-            EconomyResponse withdraw = eco.withdrawPlayer(buyer, price + tax);
+            EconomyResponse withdraw = eco.withdrawPlayer(drawee, price + tax);
             if (!withdraw.transactionSuccess()) {
-                plugin.getLogger().info(I18n.format("log.info.withdraw_fail", buyer.getName(), seller.getName(), MiscUtils.getItemName(item), price, tax, withdraw.errorMessage));
+                plugin.getLogger().info(I18n.format("log.info.withdraw_fail", buyer.getName(), seller.getName(), drawee.getName(), MiscUtils.getItemName(item), price, tax, withdraw.errorMessage));
                 return Optional.empty();
             }
             step = 1;
@@ -82,7 +86,7 @@ public class EconomyUtil {
             MiscUtils.GiveStat stat = MiscUtils.giveItem(buyer, item);
             return Optional.of(stat);
         } catch (Exception e) {
-            plugin.getLogger().warning(I18n.format("log.error.transaction_fail", buyer.getName(), seller.getName(), MiscUtils.getItemName(item), price, tax));
+            plugin.getLogger().warning(I18n.format("log.error.transaction_fail", buyer.getName(), seller.getName(), drawee.getName(), MiscUtils.getItemName(item), price, tax));
             try {
                 plugin.getLogger().warning(I18n.format("log.error.transaction_fail_dump", ItemStackUtils.itemToJson(item)));
             } catch (Exception r) {
@@ -101,9 +105,9 @@ public class EconomyUtil {
                             seller.getName(), -price, status2Seller.transactionSuccess(), status2Seller.errorMessage));
                     //fallthrough
                 case 1:
-                    EconomyResponse status1Buyer = eco.depositPlayer(buyer, price + tax);
+                    EconomyResponse status1Drawee = eco.depositPlayer(drawee, price + tax);
                     plugin.getLogger().warning(I18n.format("log.error.transaction_fail_rollback_money",
-                            buyer.getName(), price + tax, status1Buyer.transactionSuccess(), status1Buyer.errorMessage));
+                            drawee.getName(), price + tax, status1Drawee.transactionSuccess(), status1Drawee.errorMessage));
                 case 0:
                     break;
                 default:

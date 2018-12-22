@@ -7,6 +7,7 @@ import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
 import cat.nyaa.HamsterEcoHelper.signshop.SearchCommands;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopCommands;
+import cat.nyaa.HamsterEcoHelper.transaction.TransactionCommands;
 import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
 import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
@@ -38,6 +39,8 @@ public class CommandHandler extends CommandReceiver {
     public AdsCommands adsCommands;
     @SubCommand("search")
     public SearchCommands searchCommands;
+    @SubCommand("transaction")
+    public TransactionCommands transactionCommands;
 
     public CommandHandler(HamsterEcoHelper plugin, LanguageRepository i18n) {
         super(plugin, i18n);
@@ -51,27 +54,51 @@ public class CommandHandler extends CommandReceiver {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length > 0) {
-            String cmd = args[0].toLowerCase();
-            String subCommand = "";
-            if (cmd.equals("view") || cmd.equals("offer")) {
-                subCommand = "market";
-            } else if (cmd.equals("sell") || cmd.equals("req")) {
-                subCommand = "requisition";
-            } else if (cmd.equals("auc") || cmd.equals("bid")) {
-                subCommand = "auction";
-            } else if (cmd.equals("search") || cmd.equals("searchpage")) {
-                subCommand = "search";
-            }
+            String subCommand = completeSubcommand(args);
             if (subCommand.length() > 0) {
-                String[] tmp = new String[args.length + 1];
-                tmp[0] = subCommand;
-                for (int i = 0; i < args.length; i++) {
-                    tmp[i + 1] = args[i];
-                }
+                String[] tmp = addSubcommand(args, subCommand);
                 return super.onCommand(sender, command, label, tmp);
             }
         }
         return super.onCommand(sender, command, label, args);
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length > 0) {
+            String subCommand = completeSubcommand(args);
+            if (subCommand.length() > 0) {
+                String[] tmp = addSubcommand(args, subCommand);
+                return super.onTabComplete(sender, command, alias, tmp);
+            }
+        }
+        return super.onTabComplete(sender, command, alias, args);
+    }
+
+    private String[] addSubcommand(String[] args, String subCommand) {
+        String[] tmp = new String[args.length + 1];
+        tmp[0] = subCommand;
+        for (int i = 0; i < args.length; i++) {
+            tmp[i + 1] = args[i];
+        }
+        return tmp;
+    }
+
+    private String completeSubcommand(String[] args) {
+        String cmd = args[0].toLowerCase();
+        String subCommand = "";
+        if (cmd.equals("view") || cmd.equals("offer")) {
+            subCommand = "market";
+        } else if (cmd.equals("sell") || cmd.equals("req")) {
+            subCommand = "requisition";
+        } else if (cmd.equals("auc") || cmd.equals("bid")) {
+            subCommand = "auction";
+        } else if (cmd.equals("search") || cmd.equals("searchpage")) {
+            subCommand = "search";
+        } else if (cmd.equals("sellto") || cmd.equals("cancel") || cmd.equals("pay")) {
+            subCommand = "transaction";
+        }
+        return subCommand;
     }
 
     @SubCommand(value = "save", permission = "heh.admin")

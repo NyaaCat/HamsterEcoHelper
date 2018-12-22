@@ -295,4 +295,62 @@ public class Database implements Cloneable {
             s.commit();
         }
     }
+
+    public Invoice draftInvoice(UUID buyer, UUID seller, ItemStack itemStack, double totalPrice, double tax) {
+        long id;
+        try (Query<Invoice> query = database.query(Invoice.class)) {
+            id = query.select().stream().parallel().mapToLong(Invoice::getId).max().orElse(0) + 1;
+        }
+        Invoice invoice = new Invoice(id, buyer, seller, itemStack, totalPrice, tax);
+        try (Query<Invoice> query = database.queryTransactional(Invoice.class)) {
+            query.insert(invoice);
+            query.commit();
+        }
+        return invoice;
+    }
+
+    public Invoice cancelInvoice(long id) {
+        try (Query<Invoice> query = database.queryTransactional(Invoice.class).whereEq("id", id)) {
+            Invoice invoice = query.selectUniqueUnchecked();
+            invoice.setCanceled();
+            query.update(invoice, "state", "updated_time");
+            query.commit();
+            return invoice;
+        }
+    }
+
+    public Invoice payInvoice(long id, OfflinePlayer drawee) {
+        try (Query<Invoice> query = database.queryTransactional(Invoice.class).whereEq("id", id)) {
+            Invoice invoice = query.selectUniqueUnchecked();
+            invoice.setDraweeId(drawee.getUniqueId());
+            invoice.setCompleted();
+            query.update(invoice, "state", "drawee_id", "updated_time");
+            query.commit();
+            return invoice;
+        }
+    }
+
+    public Invoice queryInvoice(long id) {
+        try (Query<Invoice> query = database.query(Invoice.class).whereEq("id", id)) {
+            return query.selectUniqueUnchecked();
+        }
+    }
+
+    public List<Invoice> queryBuyerInvoice(UUID buyerId) {
+        try (Query<Invoice> query = database.query(Invoice.class).whereEq("buyer_id", buyerId)) {
+            return query.select();
+        }
+    }
+
+    public List<Invoice> querySellerInvoice(UUID sellerId) {
+        try (Query<Invoice> query = database.query(Invoice.class).whereEq("seller_id", sellerId)) {
+            return query.select();
+        }
+    }
+
+    public List<Invoice> queryDraweeInvoice(UUID draweeId) {
+        try (Query<Invoice> query = database.query(Invoice.class).whereEq("drawee_id", draweeId)) {
+            return query.select();
+        }
+    }
 }

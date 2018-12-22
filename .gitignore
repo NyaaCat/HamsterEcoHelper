@@ -69,3 +69,5 @@ hs_err_pid*
 gradle
 build
 !/lib/LocketteProAPI.jar
+!/gradle/wrapper/gradle-wrapper.jar
+!/gradle/

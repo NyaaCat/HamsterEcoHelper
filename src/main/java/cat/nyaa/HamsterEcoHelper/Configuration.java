@@ -99,6 +99,14 @@ public class Configuration extends PluginConfigure {
     public long search_lore_cooldown_tick = 200;
     @Serializable(name = "search.ench_additional_tick")
     public long search_ench_cooldown_tick = 200;
+    @Serializable(name = "transaction.active_time_out_tick")
+    public long transaction_active_time_out_tick = 20 * 60 * 10;
+    @Serializable(name = "transaction.max_open_sellside")
+    public long transaction_max_open_sellside = 20;
+    @Serializable(name = "transaction.list_closed_per_page")
+    public long transaction_list_closed_per_page = 5;
+    @Serializable(name = "transaction.tax")
+    public int transaction_tax = 5;
     @Serializable
     public int database_version = 0;
     @Serializable

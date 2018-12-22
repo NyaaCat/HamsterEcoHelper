@@ -46,12 +46,15 @@ log:
     ads_remove: 'remove ads: {id: %d, text: "%s", player: "%s"}'
     system_balance: 'system balance {type: %s, amount: %s, current_balance: %s, plugin:
       %s}'
-    withdraw_fail: 'Withdraw failed: {buyer: "%s", seller: "%s", item: "%s",
+    withdraw_fail: 'Withdraw failed: {buyer: "%s", seller: "%s", drawee: "%s", item: "%s",
       price: %.2f, tax: %.2f, message: "%s"}'
+    invoice_drafted: 'Invoice drafted: {id: %d, item: "%s", amount: %d, price: %.2f, tax: %.2f, buyer:"%s", seller:"%s"}'
+    invoice_paid: 'Invoice paid: {id: %d, drawee:"%s"}'
+    invoice_cancelled: 'Invoice cancelled: {id: %d}'
   error:
     missing_sqlite_driver: SQLite Driver not found. Plugin disabled.
     enable_fail: Plugin failed to enable
-    transaction_fail: 'Transaction failed: {buyer: "%s", seller: "%s", item: "%s",
+    transaction_fail: 'Transaction failed: {buyer: "%s", seller: "%s", drawee: "%s", item: "%s",
       price: %.2f, tax: %.2f}'
     transaction_fail_dump: 'item json: "%s"'
     transaction_fail_rollback_tax: 'Rollback TransactionApiEvent: {tax: %.2f}'
@@ -91,6 +94,7 @@ user:
     unknown_item: 'unknown item: %s'
     shulker_box_contains_book: You can't sell shulker box contains book
     not_sign: You must look at a sign
+    no_self: Cannot target youself
   warn:
     no_enough_money: You do not have that much money
     not_high_enough: Invalid price, at least %.2f$
@@ -247,6 +251,42 @@ user:
     message: '[Ads by %s] &r%s&r'
     message_too_long: ad text max length is %d
     no_adid: "No such AdsID"
+  transaction:
+    drafted_seller: Invoice [%d] drafted. You offer {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f).
+    drafted_buyer: Invoice [%d] drafted. {seller} offer {itemName} *{amount} to you with total price $%.2f (tax $%.2f).
+    max_open_sellside_limit: Maximum open sellside invoices limit %d exceeded.
+    not_found: Invoice not found
+    no_active_buy: You have no active buyside invoice.
+    no_active: You have no active invoice.
+    multiple_active_buy: You have multiple active buyside invoices.
+    multiple_active: You have multiple active invoices.
+    pay_fail: You failed to pay invoice [%d] {itemName} *{amount} from %s for $%.2f (tax $%.2f). Internal server error.
+    paid: Invoice [%d] paid. {seller} sold {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f) paid by {drawee}.
+    paid_seller: Invoice [%d] paid. You sold {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f) paid by {drawee}.
+    paid_buyer: Invoice [%d] paid. {seller} sold {itemName} *{amount} to you with total price $%.2f (tax $%.2f) paid by {drawee}.
+    cancelled_seller: Invoice [%d] cancelled. You offered {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f).
+    cancelled_buyer: Invoice [%d] cancelled. {seller} offered {itemName} *{amount} to you with total price $%.2f (tax $%.2f).
+    no_permission: You have no permission to access this invoice.
+    was_cancelled: Invoice [%d] cancelled at {updatedTime}. {seller} offered {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f).
+    was_completed: Invoice [%d] completed at {updatedTime}. {seller} sold {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f) paid by {drawee}.
+    no_open_buy: No open buyside invoice.
+    no_open_sell: No open sellside invoice.
+    open_buy: 'Open buyside invoices:'
+    open_sell: 'Open sellside invoices:'
+    no_closed: No closed invoice.
+    closed_buy: 'Closed buyside invoices: Page %d/%d'
+    closed_sell: 'Closed sellside invoices: Page %d/%d'
+    closed_drawee: 'Closed drawee invoices: Page %d/%d'
+    open_invoice: |-
+      Invoice [%d] drafted at {createdTime}.
+      {seller} offer {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f).
+    cancelled_invoice: |-
+      Invoice [%d] drafted at {createdTime} cancelled at {updatedTime}.
+      {seller} offered {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f).
+    completed_invoice: |-
+      Invoice [%d] drafted at {createdTime} completed at {updatedTime}.
+      {seller} sold {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f) paid by {drawee}.
+
 manual:
   no_description: No description
   no_usage: No usage
@@ -371,6 +411,27 @@ manual:
   version:
     description: Display version and license
     usage: 'Usage: /heh version'
+  transaction:
+    description: Point to point transaction
+    sellto:
+      description: Sell item to someone
+      usage: 'Usage: /heh transaction sellto [player] [totalPrice]'
+    pay:
+      description: Pay a invoice
+      usage: 'Usage: /heh transaction pay [id]'
+    cancel:
+      description: Cancel a invoice
+      usage: 'Usage: /heh transaction cancel [id]'
+    sellside:
+      description: List all sellside invoices
+      usage: 'Usage: /heh transaction sellside'
+    buyside:
+      description: List all buyside invoices
+      usage: 'Usage: /heh transaction buyside'
+    drawee:
+      description: List all invoices as drawee
+      usage: 'Usage: /heh transaction drawee'
+
   license: 'Hamster Economy Helper version %s for Spigot 1.11.2
 
     Brings auction, requisition and world shop to Minecraft.

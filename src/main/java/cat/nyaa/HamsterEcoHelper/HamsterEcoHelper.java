@@ -9,6 +9,7 @@ import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopListener;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopManager;
+import cat.nyaa.HamsterEcoHelper.transaction.TransactionManager;
 import cat.nyaa.HamsterEcoHelper.utils.EconomyUtil;
 import cat.nyaa.nyaacore.component.ISystemBalance;
 import cat.nyaa.nyaacore.component.NyaaComponent;
@@ -28,6 +29,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public Events eventHandler;
     public CommandHandler commandHandler;
     public MarketManager marketManager;
+    public TransactionManager transactionManager;
     public I18n i18n;
     public SystemBalance systemBalance;
     public SignShopManager signShopManager;
@@ -53,6 +55,7 @@ public class HamsterEcoHelper extends JavaPlugin {
         auctionManager = new AuctionManager(this);
         reqManager = new RequisitionManager(this);
         marketManager = new MarketManager(this);
+        transactionManager = new TransactionManager(this);
         marketListener = new MarketListener(this);
         signShopManager = new SignShopManager(this);
         signShopListener = new SignShopListener(this);

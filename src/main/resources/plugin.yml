@@ -42,6 +42,12 @@ permissions:
       heh.signshop.lotto: true
       heh.signshop.search: true
       heh.ads: true
+      heh.transaction.sellto: true
+      heh.transaction.pay: true
+      heh.transaction.cancel: true
+      heh.transaction.buyside: true
+      heh.transaction.sellside: true
+      heh.transaction.drawee: true
   heh.admin:
     description: Permission node for operators
     default: op
