@@ -67,8 +67,8 @@ public class TransactionCommands extends CommandReceiver {
                     return;
                 }
                 double tax = 0.0;
-                if (plugin.config.market_tax > 0) {
-                    tax = (price / 100) * plugin.config.market_tax;
+                if (plugin.config.transaction_tax > 0) {
+                    tax = (price / 100) * plugin.config.transaction_tax;
                 }
                 Invoice invoice = plugin.transactionManager.sellTo(seller, buyer, item, price, tax);
                 seller.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
