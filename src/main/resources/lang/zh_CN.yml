@@ -238,23 +238,23 @@ user:
     message_too_long: 广告内容最长为 %d 个字符
     no_adid: 找不到指定的 AdsID
   transaction:
-    drafted_seller: 账单 [%d] 已起草。你计划以总价 $%.2f（税 $%.2f）向 {buyer} 出售 {itemName} *{amount}。
-    drafted_buyer: 账单 [%d] 已起草。{seller} 计划以总价 $%.2f（税 $%.2f）向你出售 {itemName} *{amount}。
+    drafted_seller: 账单 [%d] 已起草。你计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
+    drafted_buyer: 账单 [%d] 已起草。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount}。
     max_open_sellside_limit: 达到最大卖方开放账单 %d 限制。
     not_found: 未找到账单
     no_active_buy: 你没有活跃的买方账单。
     no_active: 你没有活跃的账单。
     multiple_active_buy: 你有多个活跃的买方账单。
     multiple_active: 你有多个活跃的账单。
-    pay_fail: 支付账单 [%d] {itemName} *{amount} 从 %s 价格 $%.2f（税 $%.2f）失败。服务器内部错误。
-    paid: 账单 [%d] 已支付。{seller} 以总价 $%.2f（税 $%.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
-    paid_seller: 账单 [%d] 已支付。你以总价 $%.2f（税 $%.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
-    paid_buyer: 账单 [%d] 已支付。{seller} 以总价 $%.2f（税 $%.2f）向你出售了 {itemName} *{amount}，由 {drawee} 支付。
-    cancelled_seller: 账单 [%d] 已取消。你计划以总价 $%.2f（税 $%.2f）向 {buyer} 出售 {itemName} *{amount}。
-    cancelled_buyer: 账单 [%d] 已取消。{seller} 计划以总价 $%.2f（税 $%.2f）向你出售 {itemName} *{amount} 。
+    pay_fail: 支付账单 [%d] {itemName} *{amount} 从 %s 价格 %.2f（税 %.2f）失败。服务器内部错误。
+    paid: 账单 [%d] 已支付。{seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
+    paid_seller: 账单 [%d] 已支付。你以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
+    paid_buyer: 账单 [%d] 已支付。{seller} 以总价 %.2f（税 %.2f）向你出售了 {itemName} *{amount}，由 {drawee} 支付。
+    cancelled_seller: 账单 [%d] 已取消。你计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
+    cancelled_buyer: 账单 [%d] 已取消。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount} 。
     no_permission: 你没有访问该账单的权限。
-    was_cancelled: 账单 [%d] 已经在 {updatedTime} 取消。{seller} 计划以总价 $%.2f（税 $%.2f）向 {buyer} 出售 {itemName} *{amount}。
-    was_completed: 账单 [%d] 已经在 {updatedTime} 完成。{seller} 以总价 $%.2f（税 $%.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
+    was_cancelled: 账单 [%d] 已经在 {updatedTime} 取消。{seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
+    was_completed: 账单 [%d] 已经在 {updatedTime} 完成。{seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
     no_open_buy: 没有未完成的买方账单。
     no_open_sell: 没有未完成的卖方账单。
     open_buy: 未完成的买方账单：
@@ -265,13 +265,13 @@ user:
     closed_drawee: 完成的支付账单：第 %d/%d 页
     open_invoice: |-
       账单 [%d] 于 {createdTime} 起草。
-      {seller} 计划以总价 $%.2f（税 $%.2f）向 {buyer} 出售 {itemName} *{amount}。
+      {seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
     cancelled_invoice: |-
       账单 [%d] 于 {createdTime} 起草并在 {updatedTime} 取消。
-      {seller} 计划以总价 $%.2f（税 $%.2f）向 {buyer} 出售 {itemName} *{amount}。
+      {seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
     completed_invoice: |-
       账单 [%d] 于 {createdTime} 起草并在 {updatedTime} 完成。
-      {seller} 以总价 $%.2f（税 $%.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
+      {seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
 
 manual:
   no_description: 无描述
