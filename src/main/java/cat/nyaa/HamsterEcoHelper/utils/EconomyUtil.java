@@ -64,7 +64,7 @@ public class EconomyUtil {
     public synchronized Optional<MiscUtils.GiveStat> transaction(OfflinePlayer buyer, OfflinePlayer seller, OfflinePlayer drawee, ItemStack item, double price, double tax) {
         int step = 0;
         try {
-            if (drawee.equals(seller)) {
+            if (buyer.equals(seller) && drawee.equals(seller)) {
                 MiscUtils.GiveStat stat = MiscUtils.giveItem(buyer, item);
                 return Optional.of(stat);
             }
