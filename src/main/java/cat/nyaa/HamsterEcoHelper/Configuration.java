@@ -107,6 +107,8 @@ public class Configuration extends PluginConfigure {
     public long transaction_list_closed_per_page = 5;
     @Serializable(name = "transaction.tax")
     public int transaction_tax = 5;
+    @Serializable(name = "transaction.require_confirm_seller")
+    public boolean transaction_require_confirm_seller = false;
     @Serializable
     public int database_version = 0;
     @Serializable

@@ -119,7 +119,7 @@ public class TransactionCommands extends CommandReceiver {
             if (invoice == null) return;
         }
         if (notDraft(sender, drawee, invoice)) return;
-        if (!drawee.getUniqueId().equals(invoice.getBuyerId())) {
+        if (!drawee.getUniqueId().equals(invoice.getBuyerId()) && plugin.config.transaction_require_confirm_seller) {
             if (args.top() == null) {
                 msg(sender, "user.transaction.pay_others");
                 return;
