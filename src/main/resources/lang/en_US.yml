@@ -252,8 +252,12 @@ user:
     message_too_long: ad text max length is %d
     no_adid: "No such AdsID"
   transaction:
-    drafted_seller: Invoice [%d] drafted. You offer {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f).
-    drafted_buyer: Invoice [%d] drafted. {seller} offer {itemName} *{amount} to you with total price $%.2f (tax $%.2f).
+    drafted_seller: |-
+      Invoice [%d] drafted. You offer {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f).
+      You can cancel the invoice by {cancelCommand}.
+    drafted_buyer:  |-
+      Invoice [%d] drafted. {seller} offer {itemName} *{amount} to you with total price $%.2f (tax $%.2f).
+      You can pay the invoice by {payCommand} or cancel the invoice by {cancelCommand}.
     max_open_sellside_limit: Maximum open sellside invoices limit %d exceeded.
     not_found: Invoice not found
     no_active_buy: You have no active buyside invoice.
@@ -286,7 +290,11 @@ user:
     completed_invoice: |-
       Invoice [%d] drafted at {createdTime} completed at {updatedTime}.
       {seller} sold {itemName} *{amount} to {buyer} with total price $%.2f (tax $%.2f) paid by {drawee}.
-
+    command_hover_text: Click to insert command to chatbox
+    pay_command: /heh transaction pay %d
+    cancel_command: /heh transaction cancel %d
+    pay_others: You are paying for others invoice, please add seller's name after invoice ID
+    wrong_seller: Wrong seller.
 manual:
   no_description: No description
   no_usage: No usage

@@ -238,8 +238,12 @@ user:
     message_too_long: 广告内容最长为 %d 个字符
     no_adid: 找不到指定的 AdsID
   transaction:
-    drafted_seller: 账单 [%d] 已起草。你计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
-    drafted_buyer: 账单 [%d] 已起草。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount}。
+    drafted_seller: |-
+      账单 [%d] 已起草。你计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
+      可使用 {cancelCommand} 取消该账单。
+    drafted_buyer: |-
+      账单 [%d] 已起草。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount}。
+      可使用 {payCommand} 支付该账单，{cancelCommand} 取消该账单。
     max_open_sellside_limit: 达到最大卖方开放账单 %d 限制。
     not_found: 未找到账单
     no_active_buy: 你没有活跃的买方账单。
@@ -272,7 +276,11 @@ user:
     completed_invoice: |-
       账单 [%d] 于 {createdTime} 起草并在 {updatedTime} 完成。
       {seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
-
+    command_hover_text: 点击输入命令
+    pay_command: /heh transaction pay %d
+    cancel_command: /heh transaction cancel %d
+    pay_others: 您正在为其他人支付订单，请在订单号后输入卖家 ID 以确认。
+    wrong_seller: 卖家 ID 不正确。
 manual:
   no_description: 无描述
   no_usage: 无用法说明
@@ -402,7 +410,7 @@ manual:
       usage: 用法： /heh transaction sellto [player] [totalPrice]
     pay:
       description: 支付账单
-      usage: 用法： /heh transaction pay [id]
+      usage: 用法： /heh transaction pay [id] [seller]
     cancel:
       description: 取消账单
       usage: 用法： /heh transaction cancel [id]

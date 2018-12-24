@@ -10,10 +10,7 @@ import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.LocaleUtils;
 import com.google.common.collect.Iterables;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -73,6 +70,19 @@ public class TransactionCommands extends CommandReceiver {
                 Invoice invoice = plugin.transactionManager.sellTo(seller, buyer, item, price, tax);
                 seller.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
                 Map<String, BaseComponent> componentMap = invoiceComponent(invoice);
+                String hoverText = I18n.format("user.transaction.command_hover_text", invoice.getId());
+                HoverEvent hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                        new BaseComponent[]{new TextComponent(hoverText)});
+                String payCmd = I18n.format("user.transaction.pay_command", invoice.getId());
+                BaseComponent payCommand = new TextComponent(payCmd);
+                payCommand.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, payCmd));
+                payCommand.setHoverEvent(hover);
+                String cancelCmd = I18n.format("user.transaction.cancel_command", invoice.getId());
+                BaseComponent cancelCommand = new TextComponent(cancelCmd);
+                cancelCommand.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, cancelCmd));
+                cancelCommand.setHoverEvent(hover);
+                componentMap.put("{payCommand}", payCommand);
+                componentMap.put("{cancelCommand}", cancelCommand);
                 invoiceMessage(componentMap, "user.transaction.drafted_seller", invoice.getId(), invoice.getTotalPrice(), invoice.getTax())
                         .send(seller);
                 invoiceMessage(componentMap, "user.transaction.drafted_buyer", invoice.getId(), invoice.getTotalPrice(), invoice.getTax())
@@ -109,6 +119,18 @@ public class TransactionCommands extends CommandReceiver {
             if (invoice == null) return;
         }
         if (notDraft(sender, drawee, invoice)) return;
+        if (!drawee.getUniqueId().equals(invoice.getBuyerId())) {
+            if (args.top() == null) {
+                msg(sender, "user.transaction.pay_others");
+                return;
+            } else {
+                OfflinePlayer expectedSeller = args.nextOfflinePlayer();
+                if (!expectedSeller.getUniqueId().equals(invoice.getSellerId())) {
+                    msg(sender, "user.transaction.wrong_seller");
+                    return;
+                }
+            }
+        }
         double totalPrice = invoice.getTotalPrice();
         double tax = invoice.getTax();
         if (plugin.eco.enoughMoney(drawee, totalPrice + tax)) {
