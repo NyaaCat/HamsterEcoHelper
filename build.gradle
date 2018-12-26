@@ -45,30 +45,33 @@ repositories {
 }
 
 dependencies {
-    compile 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
-    compile ('net.milkbowl.vault:VaultAPI:1.7') {
-        transitive = false
-    }
-    compile 'cat.nyaa:nyaacore:6.3-SNAPSHOT'
-    compile('net.ess3:Essentials:2.13-SNAPSHOT') {
-        transitive = false
-    }
-    compile files('lib/LocketteProAPI.jar')
-    compile ('org.librazy:NyaaUtilsLangChecker:2.0-SNAPSHOT') {
-        transitive = false
-    }
+    // spigot
+    compileOnly "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT"
+
+    // other nyaa plugins
     if (gradle.hasProperty("useLocalDependencies") && gradle.useLocalDependencies) {
-        compile project(":LanguageUtils")
+        compileOnly project(":NyaaCore")
+        compileOnly project(":LanguageUtils")
     } else {
-        compileOnly('cat.nyaa:LangUtils:2.1-SNAPSHOT') {
-            transitive = false
-        }
+        compileOnly('cat.nyaa:nyaacore:6.3-SNAPSHOT') { transitive = false }
+        compileOnly('cat.nyaa:LangUtils:2.1-SNAPSHOT') { transitive = false }
     }
+
+    // 3rd party plugins
+    compileOnly ('net.milkbowl.vault:VaultAPI:1.7') { transitive = false }
+    compileOnly('net.ess3:Essentials:2.13-SNAPSHOT') { transitive = false }
+    compileOnly files('lib/LocketteProAPI.jar')
+
+    // annotation processor
+    compileOnly 'org.librazy:NyaaUtilsLangChecker:2.0-SNAPSHOT'
+    annotationProcessor 'org.librazy:NyaaUtilsLangChecker:2.0-SNAPSHOT'
+    annotationProcessor "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT"
 }
 
-String nyaaCoreLangDir = System.getenv("NYAACORE_LANG_DIR")
-
 compileJava {
+    // extra config for NyaaCore Language string
+    String nyaaCoreLangDir = gradle.hasProperty("NyaaCoreLangDirs") ? gradle.NyaaCoreLangDirs : null
+    if (nyaaCoreLangDir == null) { nyaaCoreLangDir = System.getenv("NYAACORE_LANG_DIR") }
     options.compilerArgs += ["-Xplugin:NyaaUtilsLangAnnotationProcessor", "-Xlint:deprecation", "-Xlint:unchecked"]
     if (nyaaCoreLangDir != null) {
         options.compilerArgs += ["-ALANG_DIR_ADDITIONAL_PATH=" + nyaaCoreLangDir]
