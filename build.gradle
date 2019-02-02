@@ -35,8 +35,8 @@ repositories {
     }
 
     maven {
-        name 'ess-repo'
-        url 'http://repo.ess3.net/content/groups/essentials'
+        name 'EssentialsX'
+        url 'https://ci.ender.zone/plugin/repository/everything'
     }
 
     maven {
@@ -60,7 +60,7 @@ dependencies {
 
     // 3rd party plugins
     compileOnly ('net.milkbowl.vault:VaultAPI:1.7') { transitive = false }
-    compileOnly('net.ess3:Essentials:2.13-SNAPSHOT') { transitive = false }
+    compileOnly ('net.ess3:EssentialsX:2.16.0') { transitive = false }
     compileOnly files('lib/LocketteProAPI.jar')
 
     // annotation processor
