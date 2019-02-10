@@ -3,6 +3,7 @@ package cat.nyaa.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.ads.AdsCommands;
 import cat.nyaa.HamsterEcoHelper.auction.AuctionCommands;
 import cat.nyaa.HamsterEcoHelper.balance.BalanceCommands;
+import cat.nyaa.HamsterEcoHelper.kit.KitCommands;
 import cat.nyaa.HamsterEcoHelper.market.MarketCommands;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionCommands;
 import cat.nyaa.HamsterEcoHelper.signshop.SearchCommands;
@@ -41,6 +42,8 @@ public class CommandHandler extends CommandReceiver {
     public SearchCommands searchCommands;
     @SubCommand("transaction")
     public TransactionCommands transactionCommands;
+    @SubCommand("kit")
+    public KitCommands kitCommands;
 
     public CommandHandler(HamsterEcoHelper plugin, LanguageRepository i18n) {
         super(plugin, i18n);

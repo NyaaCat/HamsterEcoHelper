@@ -48,6 +48,7 @@ permissions:
       heh.transaction.buyside: true
       heh.transaction.sellside: true
       heh.transaction.drawee: true
+      heh.kit.user: true
   heh.admin:
     description: Permission node for operators
     default: op
@@ -62,3 +63,4 @@ permissions:
       heh.balance.take: true
       heh.balance.view: true
       heh.quest.admin: true
+      heh.kit.admin: true

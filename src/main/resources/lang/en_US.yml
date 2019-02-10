@@ -295,6 +295,30 @@ user:
     cancel_command: /heh transaction cancel %d
     pay_others: You are paying for others invoice, please add seller's name after invoice ID
     wrong_seller: Wrong seller.
+  kit:
+    create:
+      success: kit %s created
+      exist: kit %s already exist
+      empty: your inventory is empty
+    not_exist: kit %s does not exist
+    give:
+      success: "given %s to %s"
+      error: %s does not have enough inventory space
+      receive: You received %s
+    remove: kit % removed
+    not_enough_space: not enough inventory space
+    reset:
+      success: reset success
+    sign:
+      line_0:
+        BUY: '&1[&2kit&1]'
+        RESET: '&1[&2resetkit&1]'
+      buy:
+        success: you bought kit %s for %.2f
+        error: you can not buy this kit again
+      reset:
+        success: your kit record has been reset
+        not_exist: you do not need to reset it
 manual:
   no_description: No description
   no_usage: No usage
@@ -439,7 +463,19 @@ manual:
     drawee:
       description: List all invoices as drawee
       usage: 'Usage: /heh transaction drawee'
-
+  kit:
+    create:
+      description: create a kit
+      usage: 'Usage: /heh kit create [name]'
+    remove:
+      description: remove a kit
+      usage: 'Usage: /heh kit remove [name]'
+    view:
+      description: view a kit
+      usage: 'Usage: /heh kit view [name]'
+    give:
+      description: give kit to player
+      usage: 'Usage: /heh kit give [name] [player]'
   license: 'Hamster Economy Helper version %s for Spigot 1.11.2
 
     Brings auction, requisition and world shop to Minecraft.

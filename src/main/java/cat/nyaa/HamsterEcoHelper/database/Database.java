@@ -3,8 +3,8 @@ package cat.nyaa.HamsterEcoHelper.database;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
 import cat.nyaa.nyaacore.database.DatabaseUtils;
-import cat.nyaa.nyaacore.database.relational.RelationalDB;
 import cat.nyaa.nyaacore.database.relational.Query;
+import cat.nyaa.nyaacore.database.relational.RelationalDB;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -352,5 +352,94 @@ public class Database implements Cloneable {
         try (Query<Invoice> query = database.query(Invoice.class).whereEq("drawee_id", draweeId)) {
             return query.select();
         }
+    }
+
+    public List<KitSign> getAllKitSign() {
+        return database.query(KitSign.class).select();
+    }
+
+    public Kit getKit(String kitName) {
+        return database.query(Kit.class).whereEq("id", kitName).selectUniqueUnchecked();
+    }
+
+    public boolean createKit(Kit kit) {
+        try (Query<Kit> query = database.queryTransactional(Kit.class).whereEq("id", kit.id)) {
+            query.insert(kit);
+            query.commit();
+            return true;
+        }
+    }
+
+    public void createKitSign(KitSign kitSign) {
+        try (Query<KitSign> query = database.queryTransactional(KitSign.class).whereEq("id", kitSign.id)) {
+            query.delete();
+            query.insert(kitSign);
+            query.commit();
+        }
+    }
+
+    public boolean removeKitSign(KitSign kitSign) {
+        try (Query<KitSign> query = database.queryTransactional(KitSign.class).whereEq("id", kitSign.id)) {
+            if (query != null) {
+                query.delete();
+                query.commit();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean removeKit(String kitName) {
+        try (Query<Kit> query = database.queryTransactional(Kit.class).whereEq("id", kitName)) {
+            if (query != null) {
+                query.delete();
+                query.commit();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addKitRecord(String kitName, OfflinePlayer player) {
+        KitRecord r = new KitRecord();
+        r.kitName = kitName;
+        r.player = player.getUniqueId();
+        long id = 1;
+        try (Query<KitRecord> query = database.queryTransactional(KitRecord.class)) {
+            for (KitRecord record : query.select()) {
+                if (record.id >= id) {
+                    id = record.id + 1;
+                }
+            }
+            r.id = id;
+            query.insert(r);
+            query.commit();
+        }
+    }
+
+    public KitRecord getKitRecord(String kitName, OfflinePlayer player) {
+        return database.query(KitRecord.class).whereEq("kit_name", kitName).whereEq("player", player.getUniqueId().toString()).selectUniqueUnchecked();
+    }
+
+    public boolean removeKitRecord(String kitName) {
+        try (Query<KitRecord> query = database.queryTransactional(KitRecord.class).whereEq("kit_name", kitName)) {
+            if (query != null) {
+                query.delete();
+                query.commit();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean removeKitRecord(String kitName, OfflinePlayer player) {
+        try (Query<KitRecord> query = database.queryTransactional(KitRecord.class).whereEq("kit_name", kitName).whereEq("player", player.getUniqueId().toString())) {
+            if (query != null) {
+                query.delete();
+                query.commit();
+                return true;
+            }
+        }
+        return false;
     }
 }
