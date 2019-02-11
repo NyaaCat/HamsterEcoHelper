@@ -303,13 +303,14 @@ user:
     not_exist: kit %s does not exist
     give:
       success: "given %s to %s"
-      error: %s does not have enough inventory space
+      error: '%s does not have enough inventory space'
       receive: You received %s
-    remove: kit % removed
+    remove: kit %s removed
     not_enough_space: not enough inventory space
     reset:
       success: reset success
     sign:
+      remove: sign removed
       line_0:
         BUY: '&1[&2kit&1]'
         RESET: '&1[&2resetkit&1]'

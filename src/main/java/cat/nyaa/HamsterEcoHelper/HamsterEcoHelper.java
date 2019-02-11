@@ -68,8 +68,8 @@ public class HamsterEcoHelper extends JavaPlugin {
             this.ess = (Essentials) getServer().getPluginManager().getPlugin("Essentials");
         }
         eventHandler = new Events(this);
-        kitManager=new KitManager(this);
-        kitListener=new KitListener(this);
+        kitManager = new KitManager(this);
+        kitListener = new KitListener(this);
     }
 
     @Override
@@ -106,6 +106,7 @@ public class HamsterEcoHelper extends JavaPlugin {
             this.ess = (Essentials) getServer().getPluginManager().getPlugin("Essentials");
         }
         adsManager = new AdsManager(this);
+        kitManager = new KitManager(this);
     }
 }
 

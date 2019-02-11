@@ -14,9 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class KitListener implements Listener {
@@ -82,6 +81,8 @@ public class KitListener implements Listener {
                     player.sendMessage(I18n.format("user.kit.sign.remove", kitSign.kitName));
                 }
             }
+        } else if (plugin.kitManager.isAttachedBlock(block)) {
+            event.setCancelled(true);
         }
     }
 
@@ -137,6 +138,42 @@ public class KitListener implements Listener {
                     }
 
                 }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        event.blockList().removeIf(block -> plugin.kitManager.getKitSign(block) != null || plugin.kitManager.isAttachedBlock(block));
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockExplode(BlockExplodeEvent event) {
+        event.blockList().removeIf(block -> plugin.kitManager.getKitSign(block) != null || plugin.kitManager.isAttachedBlock(block));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockBurn(BlockBurnEvent event) {
+        if (plugin.kitManager.getKitSign(event.getBlock()) != null || plugin.signShopManager.isAttachedBlock(event.getBlock())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        for (Block block : event.getBlocks()) {
+            if (plugin.kitManager.isAttachedBlock(block)) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        for (Block block : event.getBlocks()) {
+            if (plugin.kitManager.isAttachedBlock(block)) {
+                event.setCancelled(true);
             }
         }
     }
