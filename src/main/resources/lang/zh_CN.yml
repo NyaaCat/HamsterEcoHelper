@@ -1,9 +1,9 @@
 log:
   warn:
-    bad_subcommand: 无效的子命令处理过程：%s
+    bad_subcommand: 无效的子命令处理器：%s
     lang_not_found: 未找到语言 %s。
   info:
-    using_language: 将使用语言 %s
+    using_language: 使用语言 %s
     installing_db: 正在安装数据库...
     auc_not_enough_player: 发起拍卖失败：没有足够的玩家，玩家人数：%d 人（需要 %d 人）
     req_not_enough_player: 发起征购失败：没有足够的玩家，玩家人数：%d 人（需要 %d 人）
@@ -42,16 +42,17 @@ log:
     ads_add: '新增广告：{id: %d, amount: %d, text: "%s", player: "%s"}'
     ads_remove: '移除广告：{id: %d, text: "%s", player: "%s"}'
     system_balance: '系统余额：{type: %s, amount: %s, current_balance: %s, plugin: %s}'
-    withdraw_fail: '付款失败：{buyer: "%s", seller: "%s", drawee: "%s", item: "%s", price: %.2f, tax:
-      %.2f, message: "%s"}'
-    invoice_drafted: '账单起草：{id: %d, item: "%s", amount: %d, price: %.2f, tax: %.2f, buyer:"%s", seller:"%s"}'
+    withdraw_fail: '付款失败：{buyer: "%s", seller: "%s", drawee: "%s", item: "%s", price:
+      %.2f, tax: %.2f, message: "%s"}'
+    invoice_drafted: '账单起草：{id: %d, item: "%s", amount: %d, price: %.2f, tax: %.2f,
+      buyer:"%s", seller:"%s"}'
     invoice_paid: '账单支付：{id: %d, drawee:"%s"}'
     invoice_cancelled: '账单取消：{id: %d}'
   error:
     missing_sqlite_driver: 未找到 SQLite 驱动程序，插件已禁用。
     enable_fail: 插件启用失败
-    transaction_fail: '交易失败：{buyer: "%s", seller: "%s", drawee: "%s", item: "%s", price: %.2f, tax:
-      %.2f}'
+    transaction_fail: '交易失败：{buyer: "%s", seller: "%s", drawee: "%s", item: "%s",
+      price: %.2f, tax: %.2f}'
     transaction_fail_dump: 物品JSON："%s"
     transaction_fail_rollback_tax: '回滚 TransactionApiEvent: {tax: %.2f}'
     transaction_fail_rollback_money: '回滚现金交易：{player: "%s", price: %.2f, status: "%s",
@@ -238,12 +239,12 @@ user:
     message_too_long: 广告内容最长为 %d 个字符
     no_adid: 找不到指定的 AdsID
   transaction:
-    drafted_seller: |-
-      账单 [%d] 已起草。你计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
-      可使用 {cancelCommand} 取消该账单。
-    drafted_buyer: |-
-      账单 [%d] 已起草。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount}。
-      可使用 {payCommand} 支付该账单，{cancelCommand} 取消该账单。
+    drafted_seller: '账单 [%d] 已起草。你计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
+
+      可使用 {cancelCommand} 取消该账单。'
+    drafted_buyer: '账单 [%d] 已起草。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount}。
+
+      可使用 {payCommand} 支付该账单，{cancelCommand} 取消该账单。'
     max_open_sellside_limit: 达到最大卖方开放账单 %d 限制。
     not_found: 未找到账单
     no_active_buy: 你没有活跃的买方账单。
@@ -251,14 +252,20 @@ user:
     multiple_active_buy: 你有多个活跃的买方账单。
     multiple_active: 你有多个活跃的账单。
     pay_fail: 支付账单 [%d] {itemName} *{amount} 从 %s 价格 %.2f（税 %.2f）失败。服务器内部错误。
-    paid: 账单 [%d] 已支付。{seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
-    paid_seller: 账单 [%d] 已支付。你以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
-    paid_buyer: 账单 [%d] 已支付。{seller} 以总价 %.2f（税 %.2f）向你出售了 {itemName} *{amount}，由 {drawee} 支付。
+    paid: 账单 [%d] 已支付。{seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由
+      {drawee} 支付。
+    paid_seller: 账单 [%d] 已支付。你以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由
+      {drawee} 支付。
+    paid_buyer: 账单 [%d] 已支付。{seller} 以总价 %.2f（税 %.2f）向你出售了 {itemName} *{amount}，由
+      {drawee} 支付。
     cancelled_seller: 账单 [%d] 已取消。你计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
-    cancelled_buyer: 账单 [%d] 已取消。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount} 。
+    cancelled_buyer: 账单 [%d] 已取消。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount}
+      。
     no_permission: 你没有访问该账单的权限。
-    was_cancelled: 账单 [%d] 已经在 {updatedTime} 取消。{seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
-    was_completed: 账单 [%d] 已经在 {updatedTime} 完成。{seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
+    was_cancelled: 账单 [%d] 已经在 {updatedTime} 取消。{seller} 计划以总价 %.2f（税 %.2f）向 {buyer}
+      出售 {itemName} *{amount}。
+    was_completed: 账单 [%d] 已经在 {updatedTime} 完成。{seller} 以总价 %.2f（税 %.2f）向 {buyer}
+      出售了 {itemName} *{amount}，由 {drawee} 支付。
     no_open_buy: 没有未完成的买方账单。
     no_open_sell: 没有未完成的卖方账单。
     open_buy: 未完成的买方账单：
@@ -267,15 +274,15 @@ user:
     closed_buy: 完成的买方账单：第 %d/%d 页
     closed_sell: 完成的卖方账单：第 %d/%d 页
     closed_drawee: 完成的支付账单：第 %d/%d 页
-    open_invoice: |-
-      账单 [%d] 于 {createdTime} 起草。
-      {seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
-    cancelled_invoice: |-
-      账单 [%d] 于 {createdTime} 起草并在 {updatedTime} 取消。
-      {seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
-    completed_invoice: |-
-      账单 [%d] 于 {createdTime} 起草并在 {updatedTime} 完成。
-      {seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。
+    open_invoice: '账单 [%d] 于 {createdTime} 起草。
+
+      {seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。'
+    cancelled_invoice: '账单 [%d] 于 {createdTime} 起草并在 {updatedTime} 取消。
+
+      {seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。'
+    completed_invoice: '账单 [%d] 于 {createdTime} 起草并在 {updatedTime} 完成。
+
+      {seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。'
     command_hover_text: 点击输入命令
     pay_command: /heh transaction pay %d
     cancel_command: /heh transaction cancel %d
@@ -423,7 +430,6 @@ manual:
     drawee:
       description: 列出所有支付订单
       usage: 用法： /heh transaction drawee [page]
-
   license: 'Hamster Economy Helper version %s for Spigot 1.11.2
 
     Brings auction, requisition and world shop to Minecraft.
