@@ -25,13 +25,13 @@ repositories {
     }
 
     maven {
-        name 'sonatype'
-        url 'https://oss.sonatype.org/content/groups/public'
+        name 'NyaaCentral'
+        url 'https://raw.githubusercontent.com/NyaaCat/NyaaCentral/maven-repo'
     }
 
     maven {
-        name 'vault-repo'
-        url 'http://nexus.hc.to/content/repositories/pub_releases'
+        name 'sonatype'
+        url 'https://oss.sonatype.org/content/groups/public'
     }
 
     maven {
@@ -40,8 +40,8 @@ repositories {
     }
 
     maven {
-        name 'NyaaCentral'
-        url 'https://raw.githubusercontent.com/NyaaCat/NyaaCentral/maven-repo'
+        name 'vault-repo'
+        url 'http://nexus.hc.to/content/repositories/pub_releases'
     }
 }
 
@@ -112,9 +112,6 @@ javadoc {
         windowTitle = "HamsterEcoHelper Javadoc"
         String fullVersion = System.getenv("FULL_VERSION_STRING")
         if (fullVersion != null) {
-            if (minecraftVersion != branch) {
-                fullVersion += " (" + branch + ")"
-            }
             docTitle = "<b>HamsterEcoHelper</b> " + fullVersion
         } else {
             docTitle = "<b>HamsterEcoHelper</b>"
