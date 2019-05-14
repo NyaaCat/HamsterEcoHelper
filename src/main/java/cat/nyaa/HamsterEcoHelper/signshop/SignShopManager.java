@@ -52,11 +52,8 @@ public class SignShopManager {
     }
 
     public static boolean isSign(Block block) {
-        if (block != null &&
-                    (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN))) {
-            return true;
-        }
-        return false;
+        if (block == null) return false;
+        return block.getType().name().endsWith("_SIGN"); // FIXME: suspicious comparison
     }
 
     public static Block getAttachedBlock(Block block) {
