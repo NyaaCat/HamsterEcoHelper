@@ -32,7 +32,7 @@ public class Database implements Cloneable {
     }
 
     public List<ItemStack> getTemporaryStorage(OfflinePlayer player) {
-        try (Query<TempStorageRepo> result = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
+        try (Query<TempStorageRepo> result = database.query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
             if (result.count() == 0) return Collections.emptyList();
             YamlConfiguration cfg = new YamlConfiguration();
             try {
@@ -51,7 +51,7 @@ public class Database implements Cloneable {
     }
 
     public void addTemporaryStorage(OfflinePlayer player, ItemStack item) {
-        try (Query<TempStorageRepo> result = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
+        try (Query<TempStorageRepo> result = database.query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
             YamlConfiguration cfg = new YamlConfiguration();
             boolean update;
             if (result.count() == 0) {
