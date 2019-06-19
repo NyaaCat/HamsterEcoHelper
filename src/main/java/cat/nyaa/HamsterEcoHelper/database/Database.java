@@ -45,7 +45,6 @@ public class Database implements Cloneable {
             for (String key : cfg.getKeys(false)) {
                 ret.add(cfg.getItemStack(key));
             }
-            result.commit();
             return ret;
         }
     }
@@ -81,12 +80,13 @@ public class Database implements Cloneable {
             TempStorageRepo bean = new TempStorageRepo();
             bean.playerId = player.getUniqueId();
             bean.yaml = cfg.saveToString();
-            if (update) {
-                result.update(bean);
-            } else {
-                result.insert(bean);
+            try (Query<TempStorageRepo> query = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
+                if (query.count() != 0) {
+                    query.delete();
+                }
+                query.insert(bean);
+                query.commit();
             }
-            result.commit();
         }
     }
 
