@@ -10,11 +10,11 @@ import cat.nyaa.HamsterEcoHelper.database.SignShop;
 import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -53,13 +53,19 @@ public class SignShopManager {
 
     public static boolean isSign(Block block) {
         if (block == null) return false;
-        return block.getType().name().endsWith("_SIGN"); // FIXME: suspicious comparison
+        return Tag.SIGNS.isTagged(block.getType());
     }
 
     public static Block getAttachedBlock(Block block) {
         if (isSign(block)) {
-            org.bukkit.material.Sign sign = (org.bukkit.material.Sign) block.getState().getData();
-            return block.getRelative(sign.getAttachedFace());
+            BlockData data = block.getBlockData();
+            if (Tag.WALL_SIGNS.isTagged(block.getType())) {
+                if (data instanceof Directional) {
+                    return block.getRelative(((Directional) data).getFacing().getOppositeFace());
+                }
+            } else {
+                return block.getRelative(BlockFace.DOWN);
+            }
         }
         return null;
     }
