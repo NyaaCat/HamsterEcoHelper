@@ -10,8 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
-import org.librazy.nclangchecker.LangKey;
-import org.librazy.nclangchecker.LangKeyType;
 
 import java.util.List;
 import java.util.Random;
@@ -109,7 +107,6 @@ public class MiscUtils {
         return m;
     }
 
-    @LangKey(type = LangKeyType.SUFFIX)
     public enum GiveStat {
         INVENTORY,
         ENDER_CHEST,

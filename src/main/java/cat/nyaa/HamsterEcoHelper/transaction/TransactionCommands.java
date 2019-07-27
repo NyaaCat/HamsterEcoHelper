@@ -18,7 +18,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.librazy.nclangchecker.LangKey;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -405,7 +404,7 @@ public class TransactionCommands extends CommandReceiver {
         return componentMap;
     }
 
-    private Message invoiceMessage(Map<String, BaseComponent> componentMap, @LangKey String key, Object... args) {
+    private Message invoiceMessage(Map<String, BaseComponent> componentMap, String key, Object... args) {
         return new Message("").append(I18n.format(key, args), componentMap);
     }
 }

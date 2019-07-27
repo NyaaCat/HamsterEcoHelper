@@ -49,22 +49,8 @@ dependencies {
     compileOnly 'javax.persistence:javax.persistence-api:2.2' // NyaaCore shadows this
 
     // annotation processor
-    compileOnly 'org.librazy:NyaaUtilsLangChecker:2.0-SNAPSHOT'
-    annotationProcessor 'org.librazy:NyaaUtilsLangChecker:2.0-SNAPSHOT'
     annotationProcessor "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT"
 }
-
-// TODO: langcheck temporarily disabled
-// compileJava {
-//     // extra config for NyaaCore Language string
-//     String nyaaCoreLangDir = gradle.hasProperty("NyaaCoreLangDirs") ? gradle.NyaaCoreLangDirs : null
-//     if (nyaaCoreLangDir == null) { nyaaCoreLangDir = System.getenv("NYAACORE_LANG_DIR") }
-//     options.compilerArgs += ["-Xplugin:NyaaUtilsLangAnnotationProcessor", "-Xlint:deprecation", "-Xlint:unchecked"]
-//     if (nyaaCoreLangDir != null) {
-//         options.compilerArgs += ["-ALANG_DIR_ADDITIONAL_PATH=" + nyaaCoreLangDir]
-//     }
-// }
-
 
 // publications
 task sourcesJar(type: Jar) {
