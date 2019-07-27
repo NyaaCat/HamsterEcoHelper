@@ -1,52 +1,29 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
-import cat.nyaa.nyaacore.utils.ItemStackUtils;
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
-@Table(name = "itemlog")
-@Access(AccessType.FIELD)
+@Table("itemlog")
 public class ItemLog {
-    @Column(name = "id")
-    @Id
+    @Column(primary = true)
     public Long id;
-
+    @Column
     public UUID owner;
-    @Column(name = "item", columnDefinition = "MEDIUMTEXT")
-    public String item;
+    @Column
+    public ItemStack item;
     public int amount;
-    @Column(name = "price")
+    @Column
     public Double price;
 
-    @Access(AccessType.PROPERTY)
-    @Column(name = "owner")
-    public String getOwner() {
-        return owner.toString();
-    }
-
-    public void setOwner(String owner) {
-        this.owner = UUID.fromString(owner);
-    }
-
     public ItemStack getItemStack() {
-        return getItemStack(amount);
-    }
-
-    public void setItemStack(ItemStack item) {
-        this.item = ItemStackUtils.itemToBase64(item);
-        amount = item.getAmount();
-    }
-
-    public ItemStack getItemStack(int amount) {
-        ItemStack item = ItemStackUtils.itemFromBase64(this.item);
+        ItemStack item = this.item.clone();
         item.setAmount(amount);
         return item;
     }
 
-    @Access(AccessType.PROPERTY)
     @Column(name = "amount")
     public Long getAmount() {
         return (long) amount;

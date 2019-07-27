@@ -1,13 +1,14 @@
 package cat.nyaa.HamsterEcoHelper.signshop;
 
-import cat.nyaa.HamsterEcoHelper.CommandHandler;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.database.ShopStorageLocation;
 import cat.nyaa.HamsterEcoHelper.database.Sign;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
-import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
+import cat.nyaa.nyaacore.cmdreceiver.Arguments;
+import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
+import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -52,7 +53,7 @@ public class SignShopCommands extends CommandReceiver {
                     }
                     ShopStorageLocation chest = plugin.signShopManager.getChestLocation(player.getUniqueId());
                     if (chest == null || chest.getLocation() == null ||
-                                !SignShopManager.isChest(chest.getLocation().getBlock())) {
+                            !SignShopManager.isChest(chest.getLocation().getBlock())) {
                         player.sendMessage(I18n.format("user.signshop.storage.set"));
                         return;
                     }
@@ -75,7 +76,7 @@ public class SignShopCommands extends CommandReceiver {
     }
 
     @SubCommand(value = "sell", permission = "heh.signshop.sell")
-    public void sell(CommandSender sender, CommandHandler.Arguments args) {
+    public void sell(CommandSender sender, Arguments args) {
         if (args.length() != 3) {
             msg(sender, "manual.shop.sell.usage");
             return;

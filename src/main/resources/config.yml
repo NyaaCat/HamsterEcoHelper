@@ -12,7 +12,8 @@ marketSlot:
     builder: 15
 database:
     provider: sqlite
-    connection:
-        autoscan: true
-        package: cat.nyaa.HamsterEcoHelper.database
-        file: HamsterEcoHelper.db
+    sqlite_file: HamsterEcoHelper.db
+    mysql_url: 
+    mysql_username: 
+    mysql_password: 
+    mysql_jdbc_driver: 

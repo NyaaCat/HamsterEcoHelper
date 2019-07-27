@@ -1,37 +1,24 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
-import cat.nyaa.nyaacore.utils.ItemStackUtils;
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
-@Access(AccessType.FIELD)
-@Table(name = "market")
+@Table("market")
 public class MarketItem {
-    @Column(name = "id")
-    @Id
+    @Column(primary = true)
     public Long id;
+    @Column(name = "player_id")
     public UUID playerId;
-    @Column(name = "item", columnDefinition = "MEDIUMTEXT")
-    public String item;
+    @Column
+    public ItemStack item;
     public int amount;
     @Column(name = "unit_price")
     public Double unitPrice;
-
-
-    @Access(AccessType.PROPERTY)
-    @Column(name = "player_id")
-    public String getPlayerId() {
-        return playerId.toString();
-    }
-
-    public void setPlayerId(String owner) {
-        this.playerId = UUID.fromString(owner);
-    }
 
     public OfflinePlayer getPlayer() {
         return Bukkit.getOfflinePlayer(playerId);
@@ -41,18 +28,12 @@ public class MarketItem {
         return getItemStack(amount);
     }
 
-    public void setItemStack(ItemStack item) {
-        this.item = ItemStackUtils.itemToBase64(item);
-        this.amount = item.getAmount();
-    }
-
     public ItemStack getItemStack(int amount) {
-        ItemStack item = ItemStackUtils.itemFromBase64(this.item);
+        ItemStack item = this.item.clone();
         item.setAmount(amount);
         return item;
     }
 
-    @Access(AccessType.PROPERTY)
     @Column(name = "amount")
     public Long getAmount() {
         return (long) amount;

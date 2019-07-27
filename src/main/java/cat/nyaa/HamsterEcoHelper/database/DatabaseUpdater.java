@@ -1,6 +1,5 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
-import cat.nyaa.nyaacore.database.relational.Query;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,7 +11,7 @@ public class DatabaseUpdater {
     public static int updateDatabase(Database db, int currentVersion) {
         if (currentVersion == 0) {
             System.out.println("Updating database, this may take some time");
-            updateVersion0To1(db);
+            //updateVersion0To1(db);
             currentVersion = 1;
         }
         return currentVersion;
@@ -33,7 +32,7 @@ public class DatabaseUpdater {
     /**
      * Convert all yaml based item to NBT based
      */
-    public static void updateVersion0To1(Database db) {
+    /*public static void updateVersion0To1(Database db) {
         int total, counter = 0;
         try (Query<ItemLog> transaction = db.database.queryTransactional(ItemLog.class)) {
             total = transaction.count();
@@ -67,5 +66,5 @@ public class DatabaseUpdater {
             }
             transaction.commit();
         }
-    }
+    }*/
 }

@@ -1,46 +1,35 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
-import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
-@Table(name = "signshop_location")
-@Access(AccessType.FIELD)
+@Table("signshop_location")
+
 public class Sign {
-    @Column(name = "id")
-    @Id
+    @Column(primary = true)
     public String id;
+    @Column
     public UUID owner;
-    @Enumerated(EnumType.STRING)
     @Column(name = "mode")
     public ShopMode shopMode;
-    @Column(name = "world")
+    @Column
     public String world = "";
-    @Column(name = "x")
+    @Column
     public Long x;
-    @Column(name = "y")
+    @Column
     public Long y;
-    @Column(name = "z")
+    @Column
     public Long z;
-    @Column(name = "lotto_price")
+    @Column
     public Double lotto_price = 0.0D;
 
     public Sign() {
-    }
-
-    @Access(AccessType.PROPERTY)
-    @Column(name = "owner")
-    public String getOwner() {
-        return owner.toString();
-    }
-
-    public void setOwner(String owner) {
-        this.owner = UUID.fromString(owner);
     }
 
     public Location getLocation() {

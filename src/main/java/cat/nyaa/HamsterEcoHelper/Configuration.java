@@ -6,6 +6,7 @@ import cat.nyaa.HamsterEcoHelper.balance.VariablesConfig;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionConfig;
 import cat.nyaa.nyaacore.configuration.ISerializable;
 import cat.nyaa.nyaacore.configuration.PluginConfigure;
+import cat.nyaa.nyaacore.orm.backends.BackendConfig;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -110,7 +111,7 @@ public class Configuration extends PluginConfigure {
     @Serializable(name = "transaction.require_confirm_seller")
     public boolean transaction_require_confirm_seller = false;
     @Serializable
-    public int database_version = 0;
+    public int database_version = 1;
     @Serializable
     public boolean signshop_yaml_to_nbt = true;
 
@@ -127,6 +128,7 @@ public class Configuration extends PluginConfigure {
     public VariablesConfig variablesConfig;
     @StandaloneConfig
     public AdsConfig adsConfig;
+    public BackendConfig backendConfig;
 
     public Configuration(HamsterEcoHelper plugin) {
         this.plugin = plugin;
@@ -144,6 +146,10 @@ public class Configuration extends PluginConfigure {
     @Override
     public void deserialize(ConfigurationSection config) {
         ISerializable.deserialize(config, this);
+        backendConfig = BackendConfig.sqliteBackend(HamsterEcoHelper.instance.getName() + ".db");
+        if (config.isConfigurationSection("database")) {
+            backendConfig.deserialize(config.getConfigurationSection("database"));
+        }
         marketSlot = new HashMap<>();
         ConfigurationSection slotNumMap = config.getConfigurationSection("marketSlot");
         if (slotNumMap != null) {

@@ -45,7 +45,7 @@ public class SignShopManager {
 
     public static boolean isChest(Block block) {
         if (block != null &&
-                    (block.getType().equals(Material.CHEST) || block.getType().equals(Material.TRAPPED_CHEST))) {
+                (block.getType().equals(Material.CHEST) || block.getType().equals(Material.TRAPPED_CHEST))) {
             return true;
         }
         return false;
@@ -108,7 +108,7 @@ public class SignShopManager {
 
     public int getItemCount(Player player) {
         return plugin.database.getSignShop(player.getUniqueId()).getItems(ShopMode.SELL).size() +
-                       plugin.database.getSignShop(player.getUniqueId()).getItems(ShopMode.BUY).size();
+                plugin.database.getSignShop(player.getUniqueId()).getItems(ShopMode.BUY).size();
     }
 
     public int getItemCount(UUID owner, ShopMode mode) {
@@ -162,7 +162,7 @@ public class SignShopManager {
         }
         plugin.logger.info(I18n.format("log.info.signshop_create", player.getName(), mode.name(),
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
-        Sign sign = plugin.database.createShopSign(player, block, mode);
+        Sign sign = plugin.database.createShopSign(player, block, mode,-1);
         signLocations.add(sign);
 
         return true;
@@ -174,7 +174,7 @@ public class SignShopManager {
         }
         plugin.logger.info(I18n.format("log.info.signshop_create_lotto", player.getName(), lottoPrice,
                 block.getWorld().getName(), block.getX(), block.getY(), block.getZ()));
-        Sign sign = plugin.database.createLottoSign(player, block, ShopMode.LOTTO, lottoPrice);
+        Sign sign = plugin.database.createShopSign(player, block, ShopMode.LOTTO, lottoPrice);
         signLocations.add(sign);
         Block attached = getAttachedBlock(block);
         if (attached != null) {
@@ -270,7 +270,7 @@ public class SignShopManager {
                     if (isChest(block) && block.getState() instanceof InventoryHolder) {
                         Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
                         if (InventoryUtils.hasEnoughSpace(inventory, itemStack) &&
-                                    InventoryUtils.addItem(inventory, itemStack)) {
+                                InventoryUtils.addItem(inventory, itemStack)) {
                             plugin.eco.deposit(player, price - tax);
                             plugin.eco.withdraw(shopOwner, price);
                             if (tax > 0.0D) {
@@ -343,7 +343,7 @@ public class SignShopManager {
     public void closeAllGUI() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null &&
-                        player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
+                    player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
                 player.closeInventory();
             }
         }
@@ -352,7 +352,7 @@ public class SignShopManager {
     public void updateGUI(UUID owner, ShopMode mode) {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null &&
-                        player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
+                    player.getOpenInventory().getTopInventory().getHolder() instanceof ShopGUI) {
                 ShopGUI shopGUI = ((ShopGUI) player.getOpenInventory().getTopInventory().getHolder());
                 if (owner.equals(shopGUI.shopOwner) && mode.equals(shopGUI.mode)) {
                     plugin.signShopManager.openShopGUI(player, shopGUI.sign, shopGUI.currentPage);

@@ -2,6 +2,8 @@ package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.HamsterEcoHelper.signshop.ShopItem;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -9,24 +11,19 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
-@Access(AccessType.PROPERTY)
-@Table(name = "signshop")
+@Table("signshop")
 public class SignShop {
-
+    @Column(name = "id", primary = true)
     public UUID owner;
 
     public String yaml = "";
     private YamlConfiguration config = null;
 
-    @Column(name = "id")
-    @Id
     public String getOwner() {
         return owner.toString();
     }
@@ -47,7 +44,6 @@ public class SignShop {
         this.yaml = new String(Base64.getDecoder().decode(yaml));
     }
 
-    @Transient
     public OfflinePlayer getPlayer() {
         return Bukkit.getOfflinePlayer(owner);
     }
@@ -56,7 +52,6 @@ public class SignShop {
         saveItems(mode.name(), list);
     }
 
-    @Transient
     public List<ShopItem> getItems(ShopMode mode) {
         return loadItems(mode.name());
     }

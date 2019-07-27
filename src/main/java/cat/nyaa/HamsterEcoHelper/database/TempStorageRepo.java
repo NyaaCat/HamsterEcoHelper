@@ -1,24 +1,14 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
-import javax.persistence.*;
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
+
 import java.util.UUID;
 
-@Entity
-@Table(name = "temporary_storage")
-@Access(AccessType.FIELD)
+@Table("temporary_storage")
 public class TempStorageRepo {
+    @Column(name = "player_id", primary = true)
     public UUID playerId;
     @Column(name = "yaml", columnDefinition = "MEDIUMTEXT")
     public String yaml = "";
-
-    @Access(AccessType.PROPERTY)
-    @Column(name = "player_id")
-    @Id
-    public String getPlayerId() {
-        return playerId.toString();
-    }
-
-    public void setPlayerId(String owner) {
-        this.playerId = UUID.fromString(owner);
-    }
 }

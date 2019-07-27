@@ -5,9 +5,11 @@ import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.database.Sign;
 import cat.nyaa.HamsterEcoHelper.database.SignShop;
 import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
-import cat.nyaa.nyaacore.CommandReceiver;
-import cat.nyaa.nyaacore.LanguageRepository;
+import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;
+import cat.nyaa.nyaacore.cmdreceiver.Arguments;
+import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
+import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;
@@ -41,7 +43,7 @@ public class SearchCommands extends CommandReceiver {
     private HashMap<UUID, Long> cooldown = new HashMap<>();
     private HamsterEcoHelper plugin;
 
-    public SearchCommands(Object plugin, LanguageRepository i18n) {
+    public SearchCommands(Object plugin, ILocalizer i18n) {
         super((HamsterEcoHelper) plugin, i18n);
         this.plugin = (HamsterEcoHelper) plugin;
     }
@@ -85,8 +87,7 @@ public class SearchCommands extends CommandReceiver {
     }
 
     @SuppressWarnings("deprecation")
-    @SubCommand(value = "search", permission = "heh.signshop.search")
-    @DefaultCommand(permission = "heh.signshop.search")
+    @SubCommand(permission = "heh.signshop.search", isDefaultCommand = true)
     public void search(CommandSender sender, Arguments args) {
         Player player = sender instanceof Player ? (Player) sender : null;
         UUID searcher = player == null ? new UUID(2333, 2333) : player.getUniqueId();

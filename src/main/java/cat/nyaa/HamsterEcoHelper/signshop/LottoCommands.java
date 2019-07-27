@@ -4,8 +4,10 @@ package cat.nyaa.HamsterEcoHelper.signshop;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.database.LottoStorageLocation;
-import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
+import cat.nyaa.nyaacore.cmdreceiver.Arguments;
+import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
+import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,7 +29,7 @@ public class LottoCommands extends CommandReceiver {
         Player player = asPlayer(sender);
         LottoStorageLocation loc = plugin.database.getLottoStorageLocation(player.getUniqueId());
         if (loc == null || loc.getLocation() == null ||
-                    !SignShopManager.isChest(loc.getLocation().getBlock())) {
+                !SignShopManager.isChest(loc.getLocation().getBlock())) {
             player.sendMessage(I18n.format("user.signshop.lotto.set_storage"));
             return;
         }

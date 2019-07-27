@@ -5,9 +5,11 @@ import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.database.Invoice;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
-import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.Message;
+import cat.nyaa.nyaacore.cmdreceiver.Arguments;
+import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
+import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import cat.nyaa.nyaacore.utils.LocaleUtils;
 import com.google.common.collect.Iterables;
 import net.md_5.bungee.api.chat.*;
@@ -191,7 +193,7 @@ public class TransactionCommands extends CommandReceiver {
         if (!(
                 sender.hasPermission("heh.admin") ||
                         (player != null &&
-                                 Arrays.asList(invoice.getBuyerId(), invoice.getSellerId(), invoice.getDraweeId()).contains(player.getUniqueId())
+                                Arrays.asList(invoice.getBuyerId(), invoice.getSellerId(), invoice.getDraweeId()).contains(player.getUniqueId())
                         )
         )) {
             msg(sender, "user.transaction.no_permission");

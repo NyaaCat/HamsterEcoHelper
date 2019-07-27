@@ -1,17 +1,16 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
-import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
-@Table(name = "signshop_lotto")
-@Access(AccessType.FIELD)
+@Table("signshop_lotto")
 public class LottoStorageLocation {
-
+    @Column(name = "owner", primary = true)
     public UUID owner;
     @Column(name = "world")
     public String world;
@@ -28,17 +27,6 @@ public class LottoStorageLocation {
     public LottoStorageLocation(UUID player, Location loc) {
         this.owner = player;
         setLocation(loc);
-    }
-
-    @Access(AccessType.PROPERTY)
-    @Column(name = "owner")
-    @Id
-    public String getOwner() {
-        return owner.toString();
-    }
-
-    public void setOwner(String owner) {
-        this.owner = UUID.fromString(owner);
     }
 
     public Location getLocation() {

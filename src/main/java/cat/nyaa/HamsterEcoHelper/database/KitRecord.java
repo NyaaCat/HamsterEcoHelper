@@ -1,19 +1,16 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 
-import javax.persistence.*;
 import java.util.UUID;
 
-
-@Entity
-@Table(name = "kitrecord")
-@Access(AccessType.FIELD)
+@Table("kitrecord")
 public class KitRecord {
-    @Column(name = "id")
-    @Id
+    @Column(primary = true)
     public Long id;
     @Column(name = "kit_name")
     public String kitName = "";
-    @Column(name = "player")
+    @Column
     public UUID player;
 }

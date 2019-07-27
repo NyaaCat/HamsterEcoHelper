@@ -1,17 +1,16 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
-@Access(AccessType.FIELD)
-@Table(name = "invoice")
+@Table("invoice")
 public class Invoice {
 
     public static final int DRAFT = 0;
@@ -19,7 +18,6 @@ public class Invoice {
     public static final int CANCELED = -1;
 
     @Column(name = "id")
-    @Id
     private long id;
 
     @Column(name = "created_time")

@@ -2,9 +2,10 @@ package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.signshop.ShopMode;
-import cat.nyaa.nyaacore.database.DatabaseUtils;
-import cat.nyaa.nyaacore.database.relational.Query;
-import cat.nyaa.nyaacore.database.relational.RelationalDB;
+import cat.nyaa.nyaacore.orm.DatabaseUtils;
+import cat.nyaa.nyaacore.orm.WhereClause;
+import cat.nyaa.nyaacore.orm.backends.IConnectedDatabase;
+import cat.nyaa.nyaacore.orm.backends.ITypedTable;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -12,17 +13,18 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 public class Database implements Cloneable {
-    public final RelationalDB database;
+    public final IConnectedDatabase database;
     private final HamsterEcoHelper plugin;
 
-    public Database(HamsterEcoHelper plugin) {
-        database = DatabaseUtils.get(RelationalDB.class);
+    public Database(HamsterEcoHelper plugin) throws SQLException, ClassNotFoundException {
+        database = DatabaseUtils.connect(plugin, plugin.config.backendConfig);
         this.plugin = plugin;
         int newDatabaseVersion = DatabaseUpdater.updateDatabase(Database.this, plugin.config.database_version);
         if (newDatabaseVersion != plugin.config.database_version) {
@@ -32,197 +34,167 @@ public class Database implements Cloneable {
     }
 
     public List<ItemStack> getTemporaryStorage(OfflinePlayer player) {
-        try (Query<TempStorageRepo> result = database.query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
-            if (result.count() == 0) return Collections.emptyList();
-            YamlConfiguration cfg = new YamlConfiguration();
-            try {
-                cfg.loadFromString(result.selectUnique().yaml);
-            } catch (InvalidConfigurationException ex) {
-                ex.printStackTrace();
-                return Collections.emptyList();
-            }
-            List<ItemStack> ret = new ArrayList<>();
-            for (String key : cfg.getKeys(false)) {
-                ret.add(cfg.getItemStack(key));
-            }
-            return ret;
+        ITypedTable<TempStorageRepo> table = database.getUnverifiedTable(TempStorageRepo.class);
+        WhereClause where = WhereClause.EQ("player_id", player.getUniqueId().toString());
+        TempStorageRepo repo = table.selectUniqueUnchecked(where);
+        if (repo == null) {
+            return Collections.emptyList();
         }
+        YamlConfiguration cfg = new YamlConfiguration();
+        try {
+            cfg.loadFromString(repo.yaml);
+        } catch (InvalidConfigurationException ex) {
+            ex.printStackTrace();
+            return Collections.emptyList();
+        }
+        List<ItemStack> ret = new ArrayList<>();
+        for (String key : cfg.getKeys(false)) {
+            ret.add(cfg.getItemStack(key));
+        }
+        return ret;
     }
 
     public void addTemporaryStorage(OfflinePlayer player, ItemStack item) {
-        try (Query<TempStorageRepo> result = database.query(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
-            YamlConfiguration cfg = new YamlConfiguration();
-            boolean update;
-            if (result.count() == 0) {
-                update = false;
-                cfg.set("0", item);
-            } else {
-                update = true;
-                YamlConfiguration tmp = new YamlConfiguration();
-                try {
-                    tmp.loadFromString(result.selectUnique().yaml);
-                } catch (InvalidConfigurationException ex) {
-                    ex.printStackTrace();
-                    throw new RuntimeException(ex);
-                }
-
-                List<ItemStack> items = new ArrayList<>();
-                for (String key : tmp.getKeys(false)) {
-                    items.add(tmp.getItemStack(key));
-                }
-                items.add(item);
-
-                for (int i = 0; i < items.size(); i++) {
-                    cfg.set(Integer.toString(i), items.get(i));
-                }
+        ITypedTable<TempStorageRepo> table = database.getUnverifiedTable(TempStorageRepo.class);
+        WhereClause where = WhereClause.EQ("player_id", player.getUniqueId().toString());
+        TempStorageRepo repo = table.selectUniqueUnchecked(where);
+        YamlConfiguration cfg = new YamlConfiguration();
+        if (repo == null) {
+            cfg.set("0", item);
+        } else {
+            YamlConfiguration tmp = new YamlConfiguration();
+            try {
+                tmp.loadFromString(repo.yaml);
+            } catch (InvalidConfigurationException ex) {
+                ex.printStackTrace();
+                throw new RuntimeException(ex);
             }
 
-            TempStorageRepo bean = new TempStorageRepo();
-            bean.playerId = player.getUniqueId();
-            bean.yaml = cfg.saveToString();
-            try (Query<TempStorageRepo> query = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
-                if (query.count() != 0) {
-                    query.delete();
-                }
-                query.insert(bean);
-                query.commit();
+            List<ItemStack> items = new ArrayList<>();
+            for (String key : tmp.getKeys(false)) {
+                items.add(tmp.getItemStack(key));
+            }
+            items.add(item);
+
+            for (int i = 0; i < items.size(); i++) {
+                cfg.set(Integer.toString(i), items.get(i));
             }
         }
+        if (repo == null) {
+            repo = new TempStorageRepo();
+            repo.playerId = player.getUniqueId();
+        } else {
+            table.delete(where);
+        }
+        repo.yaml = cfg.saveToString();
+        table.insert(repo);
     }
 
     public void clearTemporaryStorage(OfflinePlayer player) {
-        try (Query<TempStorageRepo> query = database.queryTransactional(TempStorageRepo.class).whereEq("player_id", player.getUniqueId().toString())) {
-            if (query.count() != 0) {
-                query.delete();
-                query.commit();
-            }
+        ITypedTable<TempStorageRepo> table = database.getUnverifiedTable(TempStorageRepo.class);
+        WhereClause playerRecord = WhereClause.EQ("player_id", player.getUniqueId().toString());
+        TempStorageRepo result = table.selectUniqueUnchecked(playerRecord);
+        if (result != null) {
+            table.delete(playerRecord);
         }
     }
 
     public List<MarketItem> getMarketItems(int offset, int limit, UUID seller) {
         ArrayList<MarketItem> list = new ArrayList<>();
-        try (Query<MarketItem> result =
-                     seller == null ?
-                             database.queryTransactional(MarketItem.class).where("amount", ">", 0) :
-                             database.queryTransactional(MarketItem.class).where("amount", ">", 0).whereEq("player_id", seller.toString())) {
-            if (result.count() > 0) {
-                List<MarketItem> tmp = result.select();
-                Collections.reverse(tmp);
-                for (int i = 0; i < tmp.size(); i++) {
-                    if (i + 1 > offset) {
-                        list.add(tmp.get(i));
-                        if (list.size() >= limit) {
-                            break;
-                        }
-                    }
+        ITypedTable<MarketItem> table = database.getUnverifiedTable(MarketItem.class);
+        WhereClause where = new WhereClause("amount", ">", 0);
+        List<MarketItem> tmp = table.select(seller == null ? where : where.whereEq("player_id", seller.toString()));
+        Collections.reverse(tmp);
+        for (int i = 0; i < tmp.size(); i++) {
+            if (i + 1 > offset) {
+                list.add(tmp.get(i));
+                if (list.size() >= limit) {
+                    break;
                 }
             }
-            result.commit();
-            return list;
         }
+        return list;
     }
 
     public long marketOffer(Player player, ItemStack itemStack, double unit_price) {
         MarketItem item = new MarketItem();
-        item.setItemStack(itemStack);
+        item.item = itemStack.clone();
         item.amount = itemStack.getAmount();
         item.playerId = player.getUniqueId();
         item.unitPrice = unit_price;
         long id = 1;
-        try (Query<MarketItem> query = database.queryTransactional(MarketItem.class)) {
-            for (MarketItem marketItem : query.select()) {
-                if (marketItem.id >= id) {
-                    id = marketItem.id + 1;
-                }
+        ITypedTable<MarketItem> table = database.getUnverifiedTable(MarketItem.class);
+        for (MarketItem marketItem : table.select(WhereClause.EMPTY)) {
+            if (marketItem.id >= id) {
+                id = marketItem.id + 1;
             }
-            item.id = id;
-            query.insert(item);
-            query.commit();
         }
+        item.id = id;
+        table.insert(item);
         return item.id;
     }
 
     public void marketBuy(Player player, long itemId, int amount) {
-        try (Query<MarketItem> query = database.queryTransactional(MarketItem.class).whereEq("id", itemId)) {
-            if (query.count() != 0) {
-                MarketItem mItem = query.selectUnique();
-                mItem.amount = mItem.amount - amount;
-                mItem.id = itemId;
-                query.update(mItem);
-            }
-            query.commit();
+        ITypedTable<MarketItem> table = database.getUnverifiedTable(MarketItem.class);
+        WhereClause where = WhereClause.EQ("id", itemId);
+        MarketItem marketItem = table.selectUniqueUnchecked(where);
+        if (marketItem != null) {
+            marketItem.amount = marketItem.amount - amount;
+            table.update(marketItem, where);
         }
     }
 
     public int getMarketPlayerItemCount(OfflinePlayer player) {
-        int count = database.query(MarketItem.class).whereEq("player_id", player.getUniqueId().toString()).where("amount", ">", 0).count();
-        return count > 0 ? count : 0;
+        ITypedTable<MarketItem> table = database.getUnverifiedTable(MarketItem.class);
+        WhereClause where = WhereClause.EQ("player_id", player.getUniqueId().toString()).where("amount", ">", 0);
+        return table.select(where).size();
     }
 
     public int getMarketItemCount() {
-        int count = database.query(MarketItem.class).where("amount", ">", 0).count();
-        return count > 0 ? count : 0;
+        return database.getUnverifiedTable(MarketItem.class).select(new WhereClause("amount", ">", 0)).size();
     }
 
     public MarketItem getMarketItem(long id) {
-        return database.query(MarketItem.class).whereEq("id", id).selectUniqueUnchecked();
+        return database.getUnverifiedTable(MarketItem.class).selectUniqueUnchecked(WhereClause.EQ("id", id));
     }
 
 
     public ItemLog getItemLog(long id) {
-        return database.query(ItemLog.class).whereEq("id", id).selectUniqueUnchecked();
+        return database.getUnverifiedTable(ItemLog.class).selectUniqueUnchecked(WhereClause.EQ("id", id));
     }
 
     public long addItemLog(OfflinePlayer player, ItemStack item, double price, int amount) {
         ItemLog i = new ItemLog();
         i.owner = player.getUniqueId();
-        i.setItemStack(item);
+        i.item = item.clone();
         i.price = price;
         i.amount = amount;
         long id = 1;
-        try (Query<ItemLog> query = database.queryTransactional(ItemLog.class)) {
-            for (ItemLog log : query.select()) {
-                if (log.id >= id) {
-                    id = log.id + 1;
-                }
+        ITypedTable<ItemLog> table = database.getUnverifiedTable(ItemLog.class);
+        for (ItemLog log : table.select(WhereClause.EMPTY)) {
+            if (log.id >= id) {
+                id = log.id + 1;
             }
-            i.id = id;
-            query.insert(i);
-            query.commit();
-            return i.id;
         }
+        i.id = id;
+        table.insert(i);
+        return i.id;
     }
 
     public List<Sign> getShopSigns() {
-        return database.query(Sign.class).select();
+        return database.getUnverifiedTable(Sign.class).select(WhereClause.EMPTY);
     }
 
-    public Sign createShopSign(OfflinePlayer player, Block block, ShopMode mode) {
+    public Sign createShopSign(OfflinePlayer player, Block block, ShopMode mode, double lottoPrice) {
         Sign shopLocation = new Sign();
         shopLocation.owner = player.getUniqueId();
         shopLocation.setLocation(block.getLocation());
         shopLocation.shopMode = mode;
-        try (Query<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
-            sign.delete();
-            sign.insert(shopLocation);
-            sign.commit();
+        if (mode == ShopMode.LOTTO) {
+            shopLocation.lotto_price = lottoPrice;
         }
-        return shopLocation;
-    }
-
-    public Sign createLottoSign(OfflinePlayer player, Block block, ShopMode mode, double price) {
-        Sign shopLocation = new Sign();
-        shopLocation.owner = player.getUniqueId();
-        shopLocation.setLocation(block.getLocation());
-        shopLocation.shopMode = mode;
-        shopLocation.lotto_price = price;
-        try (Query<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
-            if (sign != null) {
-                sign.delete();
-                sign.insert(shopLocation);
-            }
-            sign.commit();
-        }
+        database.getUnverifiedTable(Sign.class).delete(WhereClause.EQ("id", shopLocation.id));
+        database.getUnverifiedTable(Sign.class).insert(shopLocation);
         return shopLocation;
     }
 
@@ -239,163 +211,126 @@ public class Database implements Cloneable {
     }
 
     private boolean removeShopSign(Sign shopLocation) {
-        try (Query<Sign> sign = database.queryTransactional(Sign.class).whereEq("id", shopLocation.id)) {
-            if (sign != null) {
-                sign.delete();
-                sign.commit();
-                return true;
-            }
+        ITypedTable<Sign> table = database.getUnverifiedTable(Sign.class);
+        WhereClause where = WhereClause.EQ("id", shopLocation.id);
+        if (table.selectUniqueUnchecked(where) != null) {
+            table.delete(where);
+            return true;
         }
         return false;
     }
 
     public List<SignShop> getSignShops() {
-        return database.query(SignShop.class).select();
+        return database.getUnverifiedTable(SignShop.class).select(WhereClause.EMPTY);
     }
 
     public SignShop getSignShop(UUID owner) {
-        try (Query<SignShop> shop = database.queryTransactional(SignShop.class).whereEq("id", owner.toString())) {
-            if (shop != null && shop.count() == 1) {
-                return shop.selectUnique();
-            }
+        SignShop signShop = database.getUnverifiedTable(SignShop.class).selectUniqueUnchecked(WhereClause.EQ("id", owner.toString()));
+        if (signShop != null) {
+            return signShop;
         }
-        SignShop s = new SignShop();
-        s.owner = owner;
-        return s;
+        signShop = new SignShop();
+        signShop.owner = owner;
+        return signShop;
     }
 
     public void setSignShop(UUID owner, SignShop shop) {
-        try (Query<SignShop> s = database.queryTransactional(SignShop.class).whereEq("id", owner.toString())) {
-            s.delete();
-            s.insert(shop);
-            s.commit();
-        }
+        insertOrUpdate(owner.toString(), "id", SignShop.class, shop);
     }
 
     public ShopStorageLocation getChestLocation(UUID owner) {
-        return database.query(ShopStorageLocation.class).whereEq("owner", owner.toString()).selectUniqueUnchecked();
+        return database.getUnverifiedTable(ShopStorageLocation.class).selectUniqueUnchecked(WhereClause.EQ("owner", owner.toString()));
     }
 
     public void setChestLocation(UUID owner, ShopStorageLocation location) {
-        try (Query<ShopStorageLocation> s = database.queryTransactional(ShopStorageLocation.class).whereEq("owner", owner.toString())) {
-            s.delete();
-            s.insert(location);
-            s.commit();
-        }
+        insertOrUpdate(owner.toString(), "owner", ShopStorageLocation.class, location);
     }
 
     public LottoStorageLocation getLottoStorageLocation(UUID owner) {
-        return database.query(LottoStorageLocation.class).whereEq("owner", owner.toString()).selectUniqueUnchecked();
+        return database.getUnverifiedTable(LottoStorageLocation.class).selectUniqueUnchecked(WhereClause.EQ("owner", owner.toString()));
     }
 
     public void setLottoStorageLocation(UUID owner, LottoStorageLocation location) {
-        try (Query<LottoStorageLocation> s = database.queryTransactional(LottoStorageLocation.class).whereEq("owner", owner.toString())) {
-            s.delete();
-            s.insert(location);
-            s.commit();
-        }
+        insertOrUpdate(owner.toString(), "owner", LottoStorageLocation.class, location);
     }
 
     public Invoice draftInvoice(UUID buyer, UUID seller, ItemStack itemStack, double totalPrice, double tax) {
         long id;
-        try (Query<Invoice> query = database.query(Invoice.class)) {
-            id = query.select().stream().parallel().mapToLong(Invoice::getId).max().orElse(0) + 1;
-        }
+        ITypedTable<Invoice> table = database.getUnverifiedTable(Invoice.class);
+        id = table.select(WhereClause.EMPTY).stream().parallel().mapToLong(Invoice::getId).max().orElse(0) + 1;
         Invoice invoice = new Invoice(id, buyer, seller, itemStack, totalPrice, tax);
-        try (Query<Invoice> query = database.queryTransactional(Invoice.class)) {
-            query.insert(invoice);
-            query.commit();
-        }
+        table.insert(invoice);
         return invoice;
     }
 
     public Invoice cancelInvoice(long id) {
-        try (Query<Invoice> query = database.queryTransactional(Invoice.class).whereEq("id", id)) {
-            Invoice invoice = query.selectUniqueUnchecked();
-            invoice.setCanceled();
-            query.update(invoice, "state", "updated_time");
-            query.commit();
-            return invoice;
-        }
+        ITypedTable<Invoice> table = database.getUnverifiedTable(Invoice.class);
+        WhereClause where = WhereClause.EQ("id", id);
+        Invoice invoice = table.selectUniqueUnchecked(where);
+        invoice.setCanceled();
+        table.update(invoice, where, "state", "updated_time");
+        return invoice;
     }
 
     public Invoice payInvoice(long id, OfflinePlayer drawee) {
-        try (Query<Invoice> query = database.queryTransactional(Invoice.class).whereEq("id", id)) {
-            Invoice invoice = query.selectUniqueUnchecked();
-            invoice.setDraweeId(drawee.getUniqueId());
-            invoice.setCompleted();
-            query.update(invoice, "state", "drawee_id", "updated_time");
-            query.commit();
-            return invoice;
-        }
+        ITypedTable<Invoice> table = database.getUnverifiedTable(Invoice.class);
+        WhereClause where = WhereClause.EQ("id", id);
+        Invoice invoice = table.selectUniqueUnchecked(where);
+        invoice.setDraweeId(drawee.getUniqueId());
+        invoice.setCompleted();
+        table.update(invoice, where, "state", "drawee_id", "updated_time");
+        return invoice;
     }
 
     public Invoice queryInvoice(long id) {
-        try (Query<Invoice> query = database.query(Invoice.class).whereEq("id", id)) {
-            return query.selectUniqueUnchecked();
-        }
+        return database.getUnverifiedTable(Invoice.class).selectUniqueUnchecked(WhereClause.EQ("id", id));
     }
 
     public List<Invoice> queryBuyerInvoice(UUID buyerId) {
-        try (Query<Invoice> query = database.query(Invoice.class).whereEq("buyer_id", buyerId)) {
-            return query.select();
-        }
+        return database.getUnverifiedTable(Invoice.class).select(WhereClause.EQ("buyer_id", buyerId));
     }
 
     public List<Invoice> querySellerInvoice(UUID sellerId) {
-        try (Query<Invoice> query = database.query(Invoice.class).whereEq("seller_id", sellerId)) {
-            return query.select();
-        }
+        return database.getUnverifiedTable(Invoice.class).select(WhereClause.EQ("seller_id", sellerId));
     }
 
     public List<Invoice> queryDraweeInvoice(UUID draweeId) {
-        try (Query<Invoice> query = database.query(Invoice.class).whereEq("drawee_id", draweeId)) {
-            return query.select();
-        }
+        return database.getUnverifiedTable(Invoice.class).select(WhereClause.EQ("drawee_id", draweeId));
     }
 
     public List<KitSign> getAllKitSign() {
-        return database.query(KitSign.class).select();
+        return database.getUnverifiedTable(KitSign.class).select(WhereClause.EMPTY);
     }
 
     public Kit getKit(String kitName) {
-        return database.query(Kit.class).whereEq("id", kitName).selectUniqueUnchecked();
+        return database.getUnverifiedTable(Kit.class).selectUniqueUnchecked(WhereClause.EQ("id", kitName));
     }
 
     public boolean createKit(Kit kit) {
-        try (Query<Kit> query = database.queryTransactional(Kit.class).whereEq("id", kit.id)) {
-            query.insert(kit);
-            query.commit();
-            return true;
-        }
+        insertOrUpdate(kit.id, "id", Kit.class, kit);
+        return true;
     }
 
     public void createKitSign(KitSign kitSign) {
-        try (Query<KitSign> query = database.queryTransactional(KitSign.class).whereEq("id", kitSign.id)) {
-            query.delete();
-            query.insert(kitSign);
-            query.commit();
-        }
+        insertOrUpdate(kitSign.id, "id", KitSign.class, kitSign);
     }
 
     public boolean removeKitSign(KitSign kitSign) {
-        try (Query<KitSign> query = database.queryTransactional(KitSign.class).whereEq("id", kitSign.id)) {
-            if (query != null) {
-                query.delete();
-                query.commit();
-                return true;
-            }
+        WhereClause where = WhereClause.EQ("id", kitSign.id);
+        ITypedTable<KitSign> table = database.getUnverifiedTable(KitSign.class);
+        if (table.selectUniqueUnchecked(where) != null) {
+            table.delete(where);
+            return true;
         }
         return false;
     }
 
     public boolean removeKit(String kitName) {
-        try (Query<Kit> query = database.queryTransactional(Kit.class).whereEq("id", kitName)) {
-            if (query != null) {
-                query.delete();
-                query.commit();
-                return true;
-            }
+        WhereClause where = WhereClause.EQ("id", kitName);
+        ITypedTable<Kit> table = database.getUnverifiedTable(Kit.class);
+        if (table.selectUniqueUnchecked(where) != null) {
+            table.delete(where);
+            return true;
         }
         return false;
     }
@@ -405,41 +340,48 @@ public class Database implements Cloneable {
         r.kitName = kitName;
         r.player = player.getUniqueId();
         long id = 1;
-        try (Query<KitRecord> query = database.queryTransactional(KitRecord.class)) {
-            for (KitRecord record : query.select()) {
-                if (record.id >= id) {
-                    id = record.id + 1;
-                }
+        ITypedTable<KitRecord> table = database.getUnverifiedTable(KitRecord.class);
+        for (KitRecord record : table.select(WhereClause.EMPTY)) {
+            if (record.id >= id) {
+                id = record.id + 1;
             }
-            r.id = id;
-            query.insert(r);
-            query.commit();
         }
+        r.id = id;
+        table.insert(r);
     }
 
     public KitRecord getKitRecord(String kitName, OfflinePlayer player) {
-        return database.query(KitRecord.class).whereEq("kit_name", kitName).whereEq("player", player.getUniqueId().toString()).selectUniqueUnchecked();
+        return database.getUnverifiedTable(KitRecord.class).selectUniqueUnchecked(WhereClause.EQ("kit_name", kitName).whereEq("player", player.getUniqueId().toString()));
     }
 
     public boolean removeKitRecord(String kitName) {
-        try (Query<KitRecord> query = database.queryTransactional(KitRecord.class).whereEq("kit_name", kitName)) {
-            if (query != null) {
-                query.delete();
-                query.commit();
-                return true;
-            }
+        ITypedTable<KitRecord> table = database.getUnverifiedTable(KitRecord.class);
+        WhereClause where = WhereClause.EQ("kit_name", kitName);
+        if (table.selectUniqueUnchecked(where) != null) {
+            table.delete(where);
+            return true;
         }
         return false;
     }
 
     public boolean removeKitRecord(String kitName, OfflinePlayer player) {
-        try (Query<KitRecord> query = database.queryTransactional(KitRecord.class).whereEq("kit_name", kitName).whereEq("player", player.getUniqueId().toString())) {
-            if (query != null) {
-                query.delete();
-                query.commit();
-                return true;
-            }
+        ITypedTable<KitRecord> table = database.getUnverifiedTable(KitRecord.class);
+        WhereClause where = WhereClause.EQ("kit_name", kitName).whereEq("player", player.getUniqueId().toString());
+        if (table.selectUniqueUnchecked(where) != null) {
+            table.delete(where);
+            return true;
         }
         return false;
+    }
+
+    private <T> void insertOrUpdate(Object uid, String columnName, Class<T> tableClass, T newRecord) {
+        WhereClause where = WhereClause.EQ(columnName, uid);
+        ITypedTable<T> table = database.getUnverifiedTable(tableClass);
+        T oldRecord = table.selectUniqueUnchecked(where);
+        if (oldRecord == null) {
+            table.insert(newRecord);
+        } else {
+            table.update(newRecord, where);
+        }
     }
 }

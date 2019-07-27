@@ -1,22 +1,19 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
-
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-@Entity
-@Access(AccessType.PROPERTY)
-@Table(name = "kititems")
+@Table("kititems")
 public class Kit {
-    @Column(name = "id")
-    @Id
+    @Column(primary = true)
     public String id;
     public String yaml = "";
     private YamlConfiguration config = null;

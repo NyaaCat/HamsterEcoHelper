@@ -1,9 +1,10 @@
 package cat.nyaa.HamsterEcoHelper.balance;
 
-import cat.nyaa.HamsterEcoHelper.CommandHandler;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.nyaacore.CommandReceiver;
-import cat.nyaa.nyaacore.LanguageRepository;
+import cat.nyaa.nyaacore.ILocalizer;
+import cat.nyaa.nyaacore.cmdreceiver.Arguments;
+import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
+import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,13 +12,13 @@ import org.bukkit.entity.Player;
 public class BalanceCommands extends CommandReceiver {
     private HamsterEcoHelper plugin;
 
-    public BalanceCommands(Object plugin, LanguageRepository i18n) {
+    public BalanceCommands(Object plugin, ILocalizer i18n) {
         super((HamsterEcoHelper) plugin, i18n);
         this.plugin = (HamsterEcoHelper) plugin;
     }
 
-    @CommandHandler.SubCommand(value = "pay", permission = "heh.balance.pay")
-    public void pay(CommandSender sender, CommandHandler.Arguments args) {
+    @SubCommand(value = "pay", permission = "heh.balance.pay")
+    public void pay(CommandSender sender, Arguments args) {
         if (args.length() >= 5) {
             double amount = 0.0D;
             Player player;
@@ -59,8 +60,8 @@ public class BalanceCommands extends CommandReceiver {
         return "balance";
     }
 
-    @CommandHandler.SubCommand(value = "take", permission = "heh.balance.take")
-    public void take(CommandSender sender, CommandHandler.Arguments args) {
+    @SubCommand(value = "take", permission = "heh.balance.take")
+    public void take(CommandSender sender, Arguments args) {
         if (args.length() != 4) {
             msg(sender, "manual.balance.take.usage");
             return;
@@ -85,8 +86,8 @@ public class BalanceCommands extends CommandReceiver {
         }
     }
 
-    @CommandHandler.SubCommand(value = "view", permission = "heh.balance.view")
-    public void viewbalance(CommandSender sender, CommandHandler.Arguments args) {
+    @SubCommand(value = "view", permission = "heh.balance.view")
+    public void viewbalance(CommandSender sender, Arguments args) {
         msg(sender, "user.balance.current_balance", plugin.systemBalance.getBalance());
     }
 }

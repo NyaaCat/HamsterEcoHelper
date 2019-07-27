@@ -10,9 +10,11 @@ import cat.nyaa.HamsterEcoHelper.signshop.SearchCommands;
 import cat.nyaa.HamsterEcoHelper.signshop.SignShopCommands;
 import cat.nyaa.HamsterEcoHelper.transaction.TransactionCommands;
 import cat.nyaa.HamsterEcoHelper.utils.GlobalMuteList;
-import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.Message;
+import cat.nyaa.nyaacore.cmdreceiver.Arguments;
+import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
+import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -54,56 +56,6 @@ public class CommandHandler extends CommandReceiver {
         return "";
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length > 0) {
-            String subCommand = completeSubcommand(args);
-            if (subCommand.length() > 0) {
-                String[] tmp = addSubcommand(args, subCommand);
-                return super.onCommand(sender, command, label, tmp);
-            }
-        }
-        return super.onCommand(sender, command, label, args);
-    }
-
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length > 0) {
-            String subCommand = completeSubcommand(args);
-            if (subCommand.length() > 0) {
-                String[] tmp = addSubcommand(args, subCommand);
-                return super.onTabComplete(sender, command, alias, tmp);
-            }
-        }
-        return super.onTabComplete(sender, command, alias, args);
-    }
-
-    private String[] addSubcommand(String[] args, String subCommand) {
-        String[] tmp = new String[args.length + 1];
-        tmp[0] = subCommand;
-        for (int i = 0; i < args.length; i++) {
-            tmp[i + 1] = args[i];
-        }
-        return tmp;
-    }
-
-    private String completeSubcommand(String[] args) {
-        String cmd = args[0].toLowerCase();
-        String subCommand = "";
-        if (cmd.equals("view") || cmd.equals("offer")) {
-            subCommand = "market";
-        } else if (cmd.equals("sell") || cmd.equals("req")) {
-            subCommand = "requisition";
-        } else if (cmd.equals("auc") || cmd.equals("bid")) {
-            subCommand = "auction";
-        } else if (cmd.equals("search") || cmd.equals("searchpage")) {
-            subCommand = "search";
-        } else if (cmd.equals("sellto") || cmd.equals("cancel") || cmd.equals("pay")) {
-            subCommand = "transaction";
-        }
-        return subCommand;
-    }
-
     @SubCommand(value = "save", permission = "heh.admin")
     public void forceSave(CommandSender sender, Arguments args) {
         plugin.config.save();
@@ -113,7 +65,7 @@ public class CommandHandler extends CommandReceiver {
 
     @SubCommand(value = "debug", permission = "heh.debug")
     public void debug(CommandSender sender, Arguments args) {
-        String sub = args.next();
+        String sub = args.nextString();
         if ("showitem".equals(sub) && sender instanceof Player) {
             Player player = (Player) sender;
             new Message("Player has item: ").append(player.getInventory().getItemInMainHand()).send(player);

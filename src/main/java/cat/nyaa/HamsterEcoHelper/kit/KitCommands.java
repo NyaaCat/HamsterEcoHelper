@@ -3,8 +3,11 @@ package cat.nyaa.HamsterEcoHelper.kit;
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
 import cat.nyaa.HamsterEcoHelper.I18n;
 import cat.nyaa.HamsterEcoHelper.database.Kit;
-import cat.nyaa.nyaacore.CommandReceiver;
 import cat.nyaa.nyaacore.LanguageRepository;
+import cat.nyaa.nyaacore.cmdreceiver.Arguments;
+import cat.nyaa.nyaacore.cmdreceiver.BadCommandException;
+import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
+import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -132,6 +135,6 @@ public class KitCommands extends CommandReceiver {
         if (kit != null) {
             return kit;
         }
-        throw new CommandReceiver.BadCommandException("user.kit.not_exist", kitName);
+        throw new BadCommandException("user.kit.not_exist", kitName);
     }
 }

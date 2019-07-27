@@ -3,9 +3,9 @@ plugins {
     id 'maven-publish'
 }
 
-ext.majorVersion = 6
-ext.minorVersion = 4
-ext.minecraftVersion = "1.14.1"
+ext.majorVersion = 7
+ext.minorVersion = 0
+ext.minecraftVersion = "1.14.4"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -23,7 +23,7 @@ repositories {
     maven { name 'Spigot';      url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { name 'Sonatype';    url 'https://oss.sonatype.org/content/groups/public' }
     maven { name 'sk89q';       url 'http://maven.sk89q.com/artifactory/repo/' }
-    maven { name 'vault-repo';  url 'http://nexus.hc.to/content/repositories/pub_releases' }
+    maven { name 'vault-repo';  url 'https://jitpack.io' }
     maven { name 'NyaaCat';     url 'https://ci.nyaacat.com/maven/' }
     maven { name 'EssentialsX'; url 'https://ci.ender.zone/plugin/repository/everything' }
 }
@@ -38,14 +38,14 @@ dependencies {
         compileOnly project(":LanguageUtils")
         compileOnly project(":LockettePro")
     } else {
-        compileOnly('cat.nyaa:nyaacore:6.4-SNAPSHOT') { transitive = false }
+        compileOnly('cat.nyaa:nyaacore:7.0-SNAPSHOT') { transitive = false }
         compileOnly('com.meowj:LangUtils:2.2-SNAPSHOT') { transitive = false }
         compileOnly('me.crafter.mc:lockettepro:2.9-SNAPSHOT') { transitive = false }
     }
 
     // 3rd party plugins
     compileOnly ('net.milkbowl.vault:VaultAPI:1.7') { transitive = false }
-    compileOnly ('net.ess3:EssentialsX:2.16.0') { transitive = false }
+    compileOnly ('net.ess3:EssentialsX:2.17.0') { transitive = false }
     compileOnly 'javax.persistence:javax.persistence-api:2.2' // NyaaCore shadows this
 
     // annotation processor

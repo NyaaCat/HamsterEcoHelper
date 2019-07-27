@@ -1,18 +1,13 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
-
+import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import javax.persistence.*;
-
-
-@Entity
-@Table(name = "kitsign_location")
-@Access(AccessType.FIELD)
+@Table("kitsign_location")
 public class KitSign {
-    @Column(name = "id")
-    @Id
+    @Column(name = "id", primary = true)
     public String id;
     @Column(name = "world")
     public String world = "";

@@ -18,6 +18,7 @@ import cat.nyaa.nyaacore.component.NyaaComponent;
 import com.earth2me.essentials.Essentials;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public class HamsterEcoHelper extends JavaPlugin {
@@ -52,7 +53,13 @@ public class HamsterEcoHelper extends JavaPlugin {
         commandHandler = new CommandHandler(this, this.i18n);
         getCommand("hamsterecohelper").setExecutor(commandHandler);
         getCommand("hamsterecohelper").setTabCompleter(commandHandler);
-        database = new Database(this);
+        try {
+            database = new Database(this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         eco = new EconomyUtil(this);
         systemBalance = new SystemBalance(this);
         NyaaComponent.register(ISystemBalance.class, systemBalance);
@@ -80,7 +87,11 @@ public class HamsterEcoHelper extends JavaPlugin {
         reqManager.cancel();
         systemBalance.cancel();
         config.save();
-        database.database.close();
+        try {
+            database.database.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         ess = null;
     }
 
