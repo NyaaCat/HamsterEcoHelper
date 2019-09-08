@@ -62,9 +62,9 @@ public class MarketGUI extends ShopInventoryHolder {
             seller = null;
         }
         if (seller != null && page >= 1) {
-            pageCount = (plugin.database.getMarketPlayerItemCount(Bukkit.getOfflinePlayer(seller)) + 45 - 1) / 45;
+            pageCount = (MarketCache.playerItemCount.getUnchecked(seller) + 45 - 1) / 45;
         } else {
-            pageCount = (plugin.database.getMarketItemCount() + 45 - 1) / 45;
+            pageCount = (MarketCache.getMarketItemCount() + 45 - 1) / 45;
         }
         int offset = 0;
         if (page < 1 || page > pageCount) {
@@ -102,7 +102,7 @@ public class MarketGUI extends ShopInventoryHolder {
         if (seller == null || !player.getUniqueId().equals(seller)) {
             ItemStack myItem = new ItemStack(Material.PAPER);
             ItemMeta meta = myItem.getItemMeta();
-            meta.setDisplayName(I18n.format("user.market.my_items", plugin.database.getMarketPlayerItemCount(player),
+            meta.setDisplayName(I18n.format("user.market.my_items", MarketCache.playerItemCount.getUnchecked(player.getUniqueId()),
                     plugin.marketManager.getPlayerSlot(player)));
             lore = new ArrayList<>();
             lore.add(I18n.format("user.info.balance", plugin.eco.balance(player)));
@@ -142,6 +142,10 @@ public class MarketGUI extends ShopInventoryHolder {
                     return false;
                 }
                 plugin.database.marketBuy(player, itemId, amount);
+                if (item.amount - amount <= 0) {
+                    MarketCache.playerItemCount.invalidate(item.playerId);
+                    MarketCache.needUpdateItemCount = true;
+                }
                 plugin.marketManager.updateAllGUI();
                 player.sendMessage(I18n.format("user.auc.item_given_" + stat.get().name()));
                 plugin.logger.info(I18n.format("log.info.market_bought", itemId, MiscUtils.getItemName(item.getItemStack()),
@@ -192,7 +196,7 @@ public class MarketGUI extends ShopInventoryHolder {
                                 I18n.format("user.market.unit_price",
                                         unitPrice));
         }
-        lore.add(1, I18n.format("user.market.offered", player.getName()));
+        lore.add(1, I18n.format("user.market.offered", MarketCache.playerName.getUnchecked(player.getUniqueId())));
         if (this.player.getUniqueId().equals(player.getUniqueId())) {
             lore.add(2, I18n.format("user.signshop.edit"));
         }

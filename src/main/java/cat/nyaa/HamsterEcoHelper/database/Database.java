@@ -144,9 +144,9 @@ public class Database implements Cloneable {
         }
     }
 
-    public int getMarketPlayerItemCount(OfflinePlayer player) {
+    public int getMarketPlayerItemCount(UUID player) {
         ITypedTable<MarketItem> table = database.getUnverifiedTable(MarketItem.class);
-        WhereClause where = WhereClause.EQ("player_id", player.getUniqueId().toString()).where("amount", ">", 0);
+        WhereClause where = WhereClause.EQ("player_id", player.toString()).where("amount", ">", 0);
         return table.select(where).size();
     }
 

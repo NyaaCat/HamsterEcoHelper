@@ -30,7 +30,6 @@ public class MarketManager extends BukkitRunnable {
 
     public MarketManager(HamsterEcoHelper pl) {
         plugin = pl;
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         runTaskTimer(plugin, 1, 600 * 20);
     }
 
@@ -74,7 +73,8 @@ public class MarketManager extends BukkitRunnable {
     }
 
     public boolean offer(Player player, ItemStack item, double unit_price) {
-        if (getPlayerSlot(player) <= plugin.database.getMarketPlayerItemCount(player)) {
+        Integer count = MarketCache.playerItemCount.getUnchecked(player.getUniqueId());
+        if (getPlayerSlot(player) <= count) {
             player.sendMessage(I18n.format("user.market.not_enough_slot"));
             return false;
         }
@@ -88,6 +88,8 @@ public class MarketManager extends BukkitRunnable {
             }
         }
         long id = plugin.database.marketOffer(player, item, unit_price);
+        MarketCache.playerItemCount.put(player.getUniqueId(), count + 1);
+        MarketCache.needUpdateItemCount = true;
         plugin.logger.info(I18n.format("log.info.market_offer", id, MiscUtils.getItemName(item), item.getAmount(), unit_price, player.getName()));
         if (plugin.config.marketBroadcast && (System.currentTimeMillis() - lastBroadcast) > (plugin.config.marketBroadcastCooldown * 1000)) {
             lastBroadcast = System.currentTimeMillis();

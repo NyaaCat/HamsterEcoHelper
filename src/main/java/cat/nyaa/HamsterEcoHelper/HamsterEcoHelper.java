@@ -6,6 +6,7 @@ import cat.nyaa.HamsterEcoHelper.balance.SystemBalance;
 import cat.nyaa.HamsterEcoHelper.database.Database;
 import cat.nyaa.HamsterEcoHelper.kit.KitListener;
 import cat.nyaa.HamsterEcoHelper.kit.KitManager;
+import cat.nyaa.HamsterEcoHelper.market.MarketCache;
 import cat.nyaa.HamsterEcoHelper.market.MarketListener;
 import cat.nyaa.HamsterEcoHelper.market.MarketManager;
 import cat.nyaa.HamsterEcoHelper.requisition.RequisitionManager;
@@ -112,6 +113,9 @@ public class HamsterEcoHelper extends JavaPlugin {
         auctionManager = new AuctionManager(this);
         reqManager = new RequisitionManager(this);
         signShopManager = new SignShopManager(this);
+        MarketCache.needUpdateItemCount = true;
+        MarketCache.playerItemCount.invalidateAll();
+        MarketCache.playerName.invalidateAll();
         marketManager = new MarketManager(this);
         if (getServer().getPluginManager().getPlugin("Essentials") != null) {
             this.ess = (Essentials) getServer().getPluginManager().getPlugin("Essentials");
