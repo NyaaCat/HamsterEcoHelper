@@ -122,16 +122,9 @@ public class Database implements Cloneable {
         item.amount = itemStack.getAmount();
         item.playerId = player.getUniqueId();
         item.unitPrice = unit_price;
-        long id = 1;
         ITypedTable<MarketItem> table = database.getUnverifiedTable(MarketItem.class);
-        for (MarketItem marketItem : table.select(WhereClause.EMPTY)) {
-            if (marketItem.id >= id) {
-                id = marketItem.id + 1;
-            }
-        }
-        item.id = id;
         table.insert(item);
-        return item.id;
+        return getMarketItems(0, 1, player.getUniqueId()).get(0).id;
     }
 
     public void marketBuy(Player player, long itemId, int amount) {
