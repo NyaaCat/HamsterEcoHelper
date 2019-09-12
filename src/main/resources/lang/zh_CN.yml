@@ -11,12 +11,12 @@ log:
     req_scheduled: 已设置在 %d 刻后发起征购的计划任务
     auc_start: '拍卖开始：{item: "%s", amount: %d, hideName: %s, start: %.2f, step: %.2f,
       id: "%s"}'
-    player_auc_start: '拍卖开始：{itemid: %d, player: "%s", item: "%s", amount: %d, hideName:
+    player_auc_start: '拍卖开始：{player: "%s", item: "%s", amount: %d, hideName:
       %s, start: %.2f, step: %.2f, id: "%s"}'
     auc_bid: '玩家出价：{id: "%s", player: "%s", price: %.2f} '
     auc_finish: '拍卖结束：{id: "%s", price: %.2f, player: "%s", reason: "%s"}'
     req_start: '征购开始：{item: "%s", amount: %d, price: %.2f, timeout: %d, id: "%s"}'
-    player_req_start: '征购开始：{itemid: %d, player: "%s", item: "%s", amount: %d, price:
+    player_req_start: '征购开始：{player: "%s", item: "%s", amount: %d, price:
       %.2f, timeout: %d, id: "%s"}'
     req_sell: '玩家响应征购：{id: "%s", amount: %d, remain: %d, player: "%s"}'
     req_finish: '征购结束：{id: "%s", total_sold: %d, reason: "%s"}'

@@ -111,7 +111,7 @@ public class Configuration extends PluginConfigure {
     @Serializable(name = "transaction.require_confirm_seller")
     public boolean transaction_require_confirm_seller = false;
     @Serializable
-    public int database_version = 1;
+    public int database_version = 2;
     @Serializable
     public boolean signshop_yaml_to_nbt = true;
 

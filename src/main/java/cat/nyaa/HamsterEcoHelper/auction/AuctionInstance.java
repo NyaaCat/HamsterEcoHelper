@@ -64,8 +64,7 @@ public class AuctionInstance {
                     Boolean.toString(hideName), startPrice, stepPrice, uid(this)));
         } else {
             realName = MiscUtils.getItemName(itemToGive);
-            long id = plugin.database.addItemLog(player, itemStack, startPrice, itemStack.getAmount());
-            plugin.logger.info(I18n.format("log.info.player_auc_start", id, player.getName(), realName, itemToGive.getAmount(),
+            plugin.logger.info(I18n.format("log.info.player_auc_start", player.getName(), realName, itemToGive.getAmount(),
                     Boolean.toString(hideName), startPrice, stepPrice, uid(this)));
         }
         checkPointListener = new CheckPointListener();

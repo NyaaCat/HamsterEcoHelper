@@ -1,5 +1,6 @@
 package cat.nyaa.HamsterEcoHelper.database;
 
+import cat.nyaa.nyaacore.orm.WhereClause;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,6 +14,11 @@ public class DatabaseUpdater {
             System.out.println("Updating database, this may take some time");
             //updateVersion0To1(db);
             currentVersion = 1;
+        }
+        if (currentVersion == 1) {
+            db.database.getUnverifiedTable(MarketItem.class).delete(new WhereClause("amount","<",1));
+            db.database.getUnverifiedTable(ItemLog.class).delete(WhereClause.EMPTY);
+            currentVersion = 2;
         }
         return currentVersion;
     }

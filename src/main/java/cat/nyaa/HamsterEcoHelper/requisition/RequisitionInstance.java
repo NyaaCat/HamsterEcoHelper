@@ -77,8 +77,7 @@ public class RequisitionInstance {
                                                                            .broadcast();
         String itemName = MiscUtils.getItemName(item);
         logger = plugin.getLogger();
-        long id = plugin.database.addItemLog(player, item, unitPrice, amountRemains);
-        plugin.getLogger().info(I18n.format("log.info.player_req_start", id, player.getName(), itemName,
+        plugin.getLogger().info(I18n.format("log.info.player_req_start", player.getName(), itemName,
                 reqAmount, unitPrice, templateItem.timeoutTicks, uid(this)));
 
     }

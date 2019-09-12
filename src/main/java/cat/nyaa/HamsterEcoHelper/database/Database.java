@@ -118,8 +118,7 @@ public class Database implements Cloneable {
 
     public long marketOffer(Player player, ItemStack itemStack, double unit_price) {
         MarketItem item = new MarketItem();
-        item.item = itemStack.clone();
-        item.amount = itemStack.getAmount();
+        item.setItemStack(itemStack);
         item.playerId = player.getUniqueId();
         item.unitPrice = unit_price;
         ITypedTable<MarketItem> table = database.getUnverifiedTable(MarketItem.class);
@@ -133,45 +132,26 @@ public class Database implements Cloneable {
         MarketItem marketItem = table.selectUniqueUnchecked(where);
         if (marketItem != null) {
             marketItem.amount = marketItem.amount - amount;
-            table.update(marketItem, where);
+            if (marketItem.amount > 0) {
+                table.update(marketItem, where);
+            } else {
+                table.delete(where);
+            }
         }
     }
 
     public int getMarketPlayerItemCount(UUID player) {
         ITypedTable<MarketItem> table = database.getUnverifiedTable(MarketItem.class);
         WhereClause where = WhereClause.EQ("player_id", player.toString()).where("amount", ">", 0);
-        return table.select(where).size();
+        return table.count(where);
     }
 
     public int getMarketItemCount() {
-        return database.getUnverifiedTable(MarketItem.class).select(new WhereClause("amount", ">", 0)).size();
+        return database.getUnverifiedTable(MarketItem.class).count(new WhereClause("amount", ">", 0));
     }
 
     public MarketItem getMarketItem(long id) {
         return database.getUnverifiedTable(MarketItem.class).selectUniqueUnchecked(WhereClause.EQ("id", id));
-    }
-
-
-    public ItemLog getItemLog(long id) {
-        return database.getUnverifiedTable(ItemLog.class).selectUniqueUnchecked(WhereClause.EQ("id", id));
-    }
-
-    public long addItemLog(OfflinePlayer player, ItemStack item, double price, int amount) {
-        ItemLog i = new ItemLog();
-        i.owner = player.getUniqueId();
-        i.item = item.clone();
-        i.price = price;
-        i.amount = amount;
-        long id = 1;
-        ITypedTable<ItemLog> table = database.getUnverifiedTable(ItemLog.class);
-        for (ItemLog log : table.select(WhereClause.EMPTY)) {
-            if (log.id >= id) {
-                id = log.id + 1;
-            }
-        }
-        i.id = id;
-        table.insert(i);
-        return i.id;
     }
 
     public List<Sign> getShopSigns() {

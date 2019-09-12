@@ -2,6 +2,7 @@ package cat.nyaa.HamsterEcoHelper.database;
 
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
+import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -14,8 +15,8 @@ public class MarketItem {
     public Long id;
     @Column(name = "player_id")
     public UUID playerId;
-    @Column
-    public ItemStack item;
+    @Column(name = "item", columnDefinition = "MEDIUMTEXT")
+    private String item;
     public int amount;
     @Column(name = "unit_price")
     public Double unitPrice;
@@ -28,8 +29,13 @@ public class MarketItem {
         return getItemStack(amount);
     }
 
+    public void setItemStack(ItemStack item) {
+        this.item = ItemStackUtils.itemToBase64(item);
+        this.amount = item.getAmount();
+    }
+
     public ItemStack getItemStack(int amount) {
-        ItemStack item = this.item.clone();
+        ItemStack item = ItemStackUtils.itemFromBase64(this.item);
         item.setAmount(amount);
         return item;
     }

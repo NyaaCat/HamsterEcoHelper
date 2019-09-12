@@ -175,16 +175,4 @@ public class RequisitionCommands extends CommandReceiver {
             plugin.reqManager.cooldown.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
         }
     }
-
-    @SubCommand(value = "giveitem", permission = "heh.giveitem")
-    public void GiveItem(CommandSender sender, Arguments args) {
-        Player p = asPlayer(sender);
-        ItemLog item = plugin.database.getItemLog(args.nextInt());
-        if (item != null) {
-            MiscUtils.giveItem(p, item.getItemStack());
-            p.sendMessage("player: " + Bukkit.getPlayer(item.owner).getName());
-            p.sendMessage("price: " + item.price);
-        }
-
-    }
 }

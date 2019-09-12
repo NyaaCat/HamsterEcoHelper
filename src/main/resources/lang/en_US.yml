@@ -13,14 +13,14 @@ log:
     req_scheduled: a requisition is scheduled after %d ticks
     auc_start: 'Auction started: {item: "%s", amount: %d, hideName: %s, start: %.2f,
       step: %.2f, id: "%s"}'
-    player_auc_start: 'Auction started: {itemid: %d, player: "%s", item: "%s", amount:
+    player_auc_start: 'Auction started: {player: "%s", item: "%s", amount:
       %d, hideName: %s, start: %.2f, step: %.2f, id: "%s"}'
     auc_bid: 'Player gives price: {id: "%s", player: "%s", price: %.2f} '
     auc_finish: 'Auction finished: {id: "%s", price: %.2f, player: "%s", reason: "%s"}'
     req_start: 'Requisition started: {item: "%s", amount: %d, price: %.2f, timeout:
       %d, id: "%s"}'
-    player_req_start: 'Requisition started: {itemid: %d, player: "%s", item: "%s",
-      amount: %d, price: %.2f, timeout: %d, id: "%s"}'
+    player_req_start: 'Requisition started: {player: "%s", item: "%s",
+      amount: %d, price: %.2f, timeout: %d}'
     req_sell: 'Player sold item: {id: "%s", amount: %d, remain: %d, player: "%s"}'
     req_finish: 'Requisition finished: {id: "%s", total_sold: %d, reason: "%s"}'
     market_offer: 'offer: {id: %d, item: "%s", amount: %d, unit_price: %.2f, player:
