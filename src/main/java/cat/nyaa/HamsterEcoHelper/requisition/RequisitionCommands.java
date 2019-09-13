@@ -95,9 +95,9 @@ public class RequisitionCommands extends CommandReceiver {
         }
 
         int amount;
-        if (args.length() == 2) {
+        if (args.remains() == 0) {
             amount = Math.min(getItemInHand(sender).getAmount(), req.getAmountRemains());
-        } else if (args.length() == 3) {
+        } else if (args.remains() == 1) {
             amount = args.nextInt();
         } else {
             msg(p, "manual.requisition.sell.usage");
@@ -132,7 +132,7 @@ public class RequisitionCommands extends CommandReceiver {
         if (req != null) {
             return;
         }
-        if (args.length() != 5) {
+        if (args.remains() != 3) {
             msg(sender, "manual.requisition.req.usage");
             return;
         }

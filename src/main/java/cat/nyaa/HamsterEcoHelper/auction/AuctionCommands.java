@@ -72,13 +72,17 @@ public class AuctionCommands extends CommandReceiver {
 
     @SubCommand(value = "bid", permission = "heh.bid")
     public void userBid(CommandSender sender, Arguments args) {
+        userBid(sender, args, false);
+    }
+
+    public void userBid(CommandSender sender, Arguments args, boolean min) {
         Player p = asPlayer(sender);
         AuctionInstance auc = plugin.auctionManager.getCurrentAuction();
         if (auc == null) {
             msg(p, "user.info.no_current_auction");
             return;
         }
-        if (args.length() == 2) {
+        if (args.remains() == 0 && !min) {
             msg(sender, "manual.auction.bid.usage");
             return;
         }
@@ -88,7 +92,7 @@ public class AuctionCommands extends CommandReceiver {
         double minPrice = auc.currentHighPrice == -1 ? auc.startPr : auc.currentHighPrice + auc.stepPr;
         String tmp = args.top();
         double bid;
-        if ("min".equals(tmp)) {
+        if (min || "min".equals(tmp)) {
             bid = minPrice;
         } else {
             bid = args.nextDouble("#.##");
@@ -107,7 +111,7 @@ public class AuctionCommands extends CommandReceiver {
 
     @SubCommand(value = "auc", permission = "heh.userauc")
     public void Auc(CommandSender sender, Arguments args) {
-        if (args.length() < 4) {
+        if (args.remains() < 2) {
             msg(sender, "manual.auction.auc.usage");
             return;
         }
@@ -124,7 +128,7 @@ public class AuctionCommands extends CommandReceiver {
             return;
         }
         int reservePrice = 0;
-        if (args.length() == 5) {
+        if (args.remains() == 3) {
             reservePrice = args.nextInt();
             if (reservePrice <= basePrice) {
                 msg(sender, "user.auc.reserve_price_error");

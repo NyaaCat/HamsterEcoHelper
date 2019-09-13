@@ -54,6 +54,13 @@ public class HamsterEcoHelper extends JavaPlugin {
         commandHandler = new CommandHandler(this, this.i18n);
         getCommand("hamsterecohelper").setExecutor(commandHandler);
         getCommand("hamsterecohelper").setTabCompleter(commandHandler);
+        getCommand("hm").setExecutor(new HMCommand(this, i18n));
+        getCommand("hsellto").setExecutor(new HSellToCommand(this, i18n));
+        getCommand("hpay").setExecutor(new HPayCommand(this, i18n));
+        getCommand("hauc").setExecutor(new HAucCommand(this, i18n));
+        getCommand("hbid").setExecutor(new HBidCommand(this, i18n));
+        getCommand("hreq").setExecutor(new HReqCommand(this, i18n));
+        getCommand("hsell").setExecutor(new HSellCommand(this, i18n));
         try {
             database = new Database(this);
         } catch (SQLException e) {

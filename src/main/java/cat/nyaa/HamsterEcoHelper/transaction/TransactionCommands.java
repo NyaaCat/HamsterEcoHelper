@@ -41,7 +41,7 @@ public class TransactionCommands extends CommandReceiver {
 
     @SubCommand(value = "sellto", permission = "heh.transaction.sellto")
     public void sellTo(CommandSender sender, Arguments args) {
-        if (args.length() == 4) {
+        if (args.remains() == 2) {
             Player seller = asPlayer(sender);
             OfflinePlayer buyer = args.nextOfflinePlayer();
             if (seller.getUniqueId().equals(buyer.getUniqueId())) {
@@ -101,7 +101,7 @@ public class TransactionCommands extends CommandReceiver {
     public void pay(CommandSender sender, Arguments args) {
         Player drawee = asPlayer(sender);
         Invoice invoice;
-        if (args.length() == 2) {
+        if (args.remains() == 0) {
             Collection<Invoice> invoices = plugin.transactionManager.activeBuy.get(drawee.getUniqueId());
             Iterator<Invoice> invoiceIterator = invoices.iterator();
             if (!invoiceIterator.hasNext()) {

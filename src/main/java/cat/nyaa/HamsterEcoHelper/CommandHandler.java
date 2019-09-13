@@ -16,7 +16,6 @@ import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -128,5 +127,142 @@ public class CommandHandler extends CommandReceiver {
             p.getWorld().dropItem(p.getEyeLocation(), s);
         }
         plugin.database.clearTemporaryStorage(p);
+    }
+}
+
+class HMCommand extends CommandReceiver {
+
+    private final HamsterEcoHelper plugin;
+
+    public HMCommand(HamsterEcoHelper plugin, LanguageRepository i18n) {
+        super(plugin, i18n);
+        this.plugin = plugin;
+    }
+
+    public String getHelpPrefix() {
+        return "market.offer";
+    }
+
+    @SubCommand(value = "", permission = "heh.offer", isDefaultCommand = true)
+    public void offer(CommandSender sender, Arguments args) {
+        if (args.remains() == 0) {
+            plugin.commandHandler.marketCommands.view(sender, args);
+        } else {
+            plugin.commandHandler.marketCommands.offer(sender, args);
+        }
+    }
+}
+
+class HSellToCommand extends CommandReceiver {
+
+    private final HamsterEcoHelper plugin;
+
+    public HSellToCommand(HamsterEcoHelper plugin, LanguageRepository i18n) {
+        super(plugin, i18n);
+        this.plugin = plugin;
+    }
+
+    public String getHelpPrefix() {
+        return "transaction.sellto";
+    }
+
+    @SubCommand(value = "", permission = "heh.transaction.sellto", isDefaultCommand = true)
+    public void sellto(CommandSender sender, Arguments args) {
+        plugin.commandHandler.transactionCommands.sellTo(sender, args);
+    }
+}
+
+class HPayCommand extends CommandReceiver {
+
+    private final HamsterEcoHelper plugin;
+
+    public HPayCommand(HamsterEcoHelper plugin, LanguageRepository i18n) {
+        super(plugin, i18n);
+        this.plugin = plugin;
+    }
+
+    public String getHelpPrefix() {
+        return "transaction.pay";
+    }
+
+    @SubCommand(value = "", permission = "heh.transaction.pay", isDefaultCommand = true)
+    public void pay(CommandSender sender, Arguments args) {
+        plugin.commandHandler.transactionCommands.pay(sender, args);
+    }
+}
+
+class HAucCommand extends CommandReceiver {
+
+    private final HamsterEcoHelper plugin;
+
+    public HAucCommand(HamsterEcoHelper plugin, LanguageRepository i18n) {
+        super(plugin, i18n);
+        this.plugin = plugin;
+    }
+
+    public String getHelpPrefix() {
+        return "auction.auc";
+    }
+
+    @SubCommand(value = "", permission = "heh.userauc", isDefaultCommand = true)
+    public void auc(CommandSender sender, Arguments args) {
+        plugin.commandHandler.auctionCommands.Auc(sender, args);
+    }
+}
+
+class HBidCommand extends CommandReceiver {
+
+    private final HamsterEcoHelper plugin;
+
+    public HBidCommand(HamsterEcoHelper plugin, LanguageRepository i18n) {
+        super(plugin, i18n);
+        this.plugin = plugin;
+    }
+
+    public String getHelpPrefix() {
+        return "auction.bid";
+    }
+
+    @SubCommand(value = "", permission = "heh.bid", isDefaultCommand = true)
+    public void bid(CommandSender sender, Arguments args) {
+        plugin.commandHandler.auctionCommands.userBid(sender, args, true);
+    }
+}
+
+class HReqCommand extends CommandReceiver {
+
+    private final HamsterEcoHelper plugin;
+
+    public HReqCommand(HamsterEcoHelper plugin, LanguageRepository i18n) {
+        super(plugin, i18n);
+        this.plugin = plugin;
+    }
+
+    public String getHelpPrefix() {
+        return "requisition.req";
+    }
+
+    @SubCommand(value = "", permission = "heh.userreq", isDefaultCommand = true)
+    public void req(CommandSender sender, Arguments args) {
+        plugin.commandHandler.requisitionCommands.Requisition(sender, args);
+    }
+}
+
+class HSellCommand extends CommandReceiver {
+
+    private final HamsterEcoHelper plugin;
+
+    public HSellCommand(HamsterEcoHelper plugin, LanguageRepository i18n) {
+        super(plugin, i18n);
+        this.plugin = plugin;
+    }
+
+    public String getHelpPrefix() {
+        return "requisition.sell";
+    }
+
+    @SubCommand(value = "", permission = "heh.sell", isDefaultCommand = true)
+    public void sell(CommandSender sender, Arguments args) {
+        plugin.commandHandler.requisitionCommands.userSell(sender, args);
     }
 }

@@ -14,7 +14,13 @@ commands:
     permission: heh.command
     permission-message: "You do not have the required permission: <permission>"
     usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
-
+  hm:
+  hsellto:
+  hpay:
+  hauc:
+  hbid:
+  hreq:
+  hsell:
 permissions:
   heh.*:
     description: Base permission node for HamsterEcoHelper
