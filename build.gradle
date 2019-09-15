@@ -12,6 +12,7 @@ targetCompatibility = 1.8
 // Suppiled by Jenkins
 ext.buildNumber = System.env.BUILD_NUMBER == null ? "x"                : "$System.env.BUILD_NUMBER"
 ext.mavenDirectory = System.env.MAVEN_DIR == null ? "$projectDir/repo" : "$System.env.MAVEN_DIR"
+ext.jdDirectory = System.env.JAVADOCS_DIR == null ? null               : "$System.env.JAVADOCS_DIR"
 
 // Version used for distribution. Different from maven repo
 group = "cat.nyaa"
@@ -52,6 +53,9 @@ dependencies {
 }
 
 // publications
+if (ext.jdDirectory != null) {
+    javadoc.destinationDir = file("${jdDirectory}/hamsterecohelper-${version}")
+}
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     archiveClassifier = 'sources'
