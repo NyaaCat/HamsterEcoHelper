@@ -92,7 +92,7 @@ public class AuctionCommands extends CommandReceiver {
         double minPrice = auc.currentHighPrice == -1 ? auc.startPr : auc.currentHighPrice + auc.stepPr;
         String tmp = args.top();
         double bid;
-        if (min || "min".equals(tmp)) {
+        if ((args.remains() == 0 && min) || "min".equals(tmp)) {
             bid = minPrice;
         } else {
             bid = args.nextDouble("#.##");
