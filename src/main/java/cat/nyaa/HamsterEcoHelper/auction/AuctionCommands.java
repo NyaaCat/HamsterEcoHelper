@@ -128,7 +128,7 @@ public class AuctionCommands extends CommandReceiver {
             return;
         }
         int reservePrice = 0;
-        if (args.remains() == 3) {
+        if (args.remains() == 1) {
             reservePrice = args.nextInt();
             if (reservePrice <= basePrice) {
                 msg(sender, "user.auc.reserve_price_error");
