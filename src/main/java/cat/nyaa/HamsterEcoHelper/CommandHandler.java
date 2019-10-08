@@ -242,9 +242,17 @@ class HReqCommand extends CommandReceiver {
         return "requisition.req";
     }
 
-    @SubCommand(value = "", permission = "heh.userreq", isDefaultCommand = true)
+    @SubCommand(value = "", permission = "heh.userreq", isDefaultCommand = true, tabCompleter = "reqTabComplete")
     public void req(CommandSender sender, Arguments args) {
         plugin.commandHandler.requisitionCommands.Requisition(sender, args);
+    }
+
+    public List<String> reqTabComplete(CommandSender sender, Arguments args) {
+        List<String> list = new ArrayList<>();
+        if (args.remains() == 1) {
+            list.addAll(plugin.commandHandler.requisitionCommands.tabCompleteItemName(sender, args));
+        }
+        return list;
     }
 }
 

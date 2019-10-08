@@ -1,17 +1,19 @@
 package cat.nyaa.HamsterEcoHelper.requisition;
 
 import cat.nyaa.HamsterEcoHelper.HamsterEcoHelper;
-import cat.nyaa.HamsterEcoHelper.database.ItemLog;
 import cat.nyaa.HamsterEcoHelper.utils.MiscUtils;
 import cat.nyaa.nyaacore.LanguageRepository;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class RequisitionCommands extends CommandReceiver {
     private HamsterEcoHelper plugin;
@@ -126,7 +128,7 @@ public class RequisitionCommands extends CommandReceiver {
         }
     }
 
-    @SubCommand(value = "req", permission = "heh.userreq")
+    @SubCommand(value = "req", permission = "heh.userreq", tabCompleter = "reqTabComplete")
     public void Requisition(CommandSender sender, Arguments args) {
         RequisitionInstance req = plugin.reqManager.getCurrentRequisition();
         if (req != null) {
@@ -160,7 +162,7 @@ public class RequisitionCommands extends CommandReceiver {
             if (material != null) {
                 item = new ItemStack(material);
             }
-            if (item == null || !material.isItem()) {
+            if (item == null || !material.isItem() || material.isAir()) {
                 msg(sender, "user.error.unknown_item", itemName);
                 return;
             }
@@ -174,5 +176,31 @@ public class RequisitionCommands extends CommandReceiver {
             plugin.eco.withdraw(player, amount * unitPrice);
             plugin.reqManager.cooldown.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
         }
+    }
+
+    public List<String> reqTabComplete(CommandSender sender, Arguments args) {
+        List<String> list = new ArrayList<>();
+        if (args.remains() == 1) {
+            list.addAll(tabCompleteItemName(sender, args));
+        }
+        return list;
+    }
+
+    public List<String> tabCompleteItemName(CommandSender sender, Arguments args) {
+        List<String> list = new ArrayList<>();
+        if (args.remains() >= 1) {
+            String name = args.nextString().toUpperCase(Locale.ENGLISH);
+            if ("HAND".contains(name)) {
+                list.add("HAND");
+            }
+            if (name.length() > 0) {
+                    for (Material material : Material.values()) {
+                    if (!material.name().startsWith("LEGACY_") && !material.isAir() && material.isItem() && material.name().contains(name)) {
+                        list.add(material.name());
+                    }
+                }
+            }
+        }
+        return list;
     }
 }
