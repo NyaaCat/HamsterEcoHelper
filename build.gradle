@@ -1,11 +1,12 @@
-plugins {
-    id 'java-library'
-    id 'maven-publish'
-}
+apply plugin: "java-library"
+apply plugin: "maven-publish"
 
+// Plugin config
+ext.pluginNameUpper = "HamsterEcoHelper"
+ext.pluginNameLower = ext.pluginNameUpper.toLowerCase()
 ext.majorVersion = 7
-ext.minorVersion = 0
-ext.minecraftVersion = "1.15"
+ext.minorVersion = 1
+ext.minecraftVersion = "1.15.1"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -16,21 +17,20 @@ ext.jdDirectory = System.env.JAVADOCS_DIR == null ? null               : "$Syste
 
 // Version used for distribution. Different from maven repo
 group = "cat.nyaa"
-archivesBaseName = "HamsterEcoHelper-mc$minecraftVersion"
+archivesBaseName = "${pluginNameUpper}-mc$minecraftVersion"
 version = "$majorVersion.$minorVersion.$buildNumber"
 
+// Repositories and dependencies
 repositories {
     jcenter()
     maven { name 'Spigot';      url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { name 'Sonatype';    url 'https://oss.sonatype.org/content/groups/public' }
-    maven { name 'sk89q';       url 'http://maven.sk89q.com/artifactory/repo/' }
-    maven { name 'vault-repo';  url 'https://jitpack.io' }
     maven { name 'NyaaCat';     url 'https://ci.nyaacat.com/maven/' }
+    maven { name 'vault-repo';  url 'http://nexus.hc.to/content/repositories/pub_releases' }
     maven { name 'EssentialsX'; url 'https://ci.ender.zone/plugin/repository/everything' }
 }
 
 dependencies {
-    // spigot
     compileOnly "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT"
 
     // other nyaa plugins
@@ -39,80 +39,83 @@ dependencies {
         compileOnly project(":LanguageUtils")
         compileOnly project(":LockettePro")
     } else {
-        compileOnly('cat.nyaa:nyaacore:7.0-SNAPSHOT') { transitive = false }
-        compileOnly('com.meowj:LangUtils:2.2-SNAPSHOT') { transitive = false }
+        compileOnly('cat.nyaa:nyaacore:7.1-SNAPSHOT') { transitive = false }
+        compileOnly('com.meowj:LangUtils:2.3-SNAPSHOT') { transitive = false }
         compileOnly('me.crafter.mc:lockettepro:2.9-SNAPSHOT') { transitive = false }
     }
 
     // 3rd party plugins
     compileOnly ('net.milkbowl.vault:VaultAPI:1.7') { transitive = false }
-    compileOnly ('net.ess3:EssentialsX:2.17.0') { transitive = false }
-
-    // annotation processor
-    annotationProcessor "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT"
+    compileOnly ('net.ess3:EssentialsX:2.17.1') { transitive = false }
 }
 
-// publications
-if (ext.jdDirectory != null) {
-    javadoc.destinationDir = file("${jdDirectory}/hamsterecohelper-${version}")
-}
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier = 'sources'
-}
-
-task javadocJar(type: Jar) {
-    from javadoc
-    archiveClassifier = 'javadoc'
-}
-processResources { // modify version string
+// source file modification (modify version string)
+processResources {
     filesMatching("**/plugin.yml") {
         expand 'version': project.version
     }
 }
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact sourcesJar
-            artifact javadocJar
-            groupId "cat.nyaa"
-            artifactId "hamsterecohelper"
-            version "$majorVersion.$minorVersion-SNAPSHOT"
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "${mavenDirectory}"
-        }
-    }
+
+// source file jar
+task sourcesJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from sourceSets.main.allSource
 }
 
+// javadoc generation options
 javadoc {
-    (options as StandardJavadocDocletOptions).with {
+    // javadoc output folder
+    if (project.jdDirectory != null) destinationDir = file("${jdDirectory}/${pluginNameLower}-${version}")
+
+    options {
         links 'https://docs.oracle.com/javase/8/docs/api/'
         links 'https://hub.spigotmc.org/javadocs/spigot/'
         links 'https://google.github.io/guava/releases/21.0/api/docs/'
-        links 'https://nyaacat.github.io/NyaaCentral/NyaaCore/6.3-mc1.13.2/javadoc/'
         links 'https://ci.md-5.net/job/BungeeCord/ws/chat/target/apidocs/'
-        links 'https://netty.io/4.1/api/'
 
         locale 'en_US'
         encoding 'UTF-8'
         docEncoding 'UTF-8'
         addBooleanOption('keywords', true)
+        addStringOption('Xdoclint:none', '-quiet')
 
-        def currentJavaVersion = JavaVersion.current()
-        if (currentJavaVersion > JavaVersion.VERSION_1_9) {
-            options.addBooleanOption('html5', true)
+        if (JavaVersion.current() > JavaVersion.VERSION_1_9) {
+            addBooleanOption('html5', true)
         }
 
-        windowTitle = "HamsterEcoHelper Javadoc"
-        String fullVersion = System.getenv("FULL_VERSION_STRING")
-        if (fullVersion != null) {
-            docTitle = "<b>HamsterEcoHelper</b> " + fullVersion
-        } else {
-            docTitle = "<b>HamsterEcoHelper</b>"
+        windowTitle = "${pluginNameUpper} Javadoc"
+        docTitle = "${pluginNameUpper} (mc$minecraftVersion-${project.version})"
+    }
+}
+
+// javadoc jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set("javadoc")
+    from javadoc.destinationDir
+}
+
+// compile options
+compileJava {
+    options.compilerArgs += ["-Xlint:deprecation"]
+}
+
+// maven publish
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            group      project.group
+            artifactId pluginNameLower
+            version    "$majorVersion.$minorVersion-SNAPSHOT"
+
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+    repositories {
+        maven {
+            url mavenDirectory
         }
     }
 }
+
