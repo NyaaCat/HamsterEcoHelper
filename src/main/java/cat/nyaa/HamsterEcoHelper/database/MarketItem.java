@@ -11,8 +11,8 @@ import java.util.UUID;
 
 @Table("market")
 public class MarketItem {
-    @Column(primary = true)
-    public Long id;
+    @Column(primary = true, autoIncrement = true)
+    public Integer id;
     @Column(name = "player_id")
     public UUID playerId;
     @Column(name = "item", columnDefinition = "MEDIUMTEXT")

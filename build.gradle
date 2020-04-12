@@ -5,7 +5,7 @@ apply plugin: "maven-publish"
 ext.pluginNameUpper = "HamsterEcoHelper"
 ext.pluginNameLower = ext.pluginNameUpper.toLowerCase()
 ext.majorVersion = 7
-ext.minorVersion = 1
+ext.minorVersion = 2
 ext.minecraftVersion = "1.15.1"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -40,7 +40,7 @@ dependencies {
         compileOnly project(":LanguageUtils")
         compileOnly project(":LockettePro")
     } else {
-        compileOnly('cat.nyaa:nyaacore:7.1-SNAPSHOT') { transitive = false }
+        compileOnly('cat.nyaa:nyaacore:7.2-SNAPSHOT') { transitive = false }
         compileOnly('com.meowj:LangUtils:2.3-SNAPSHOT') { transitive = false }
         compileOnly('me.crafter.mc:lockettepro:2.9-SNAPSHOT') { transitive = false }
     }

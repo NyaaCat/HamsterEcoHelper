@@ -6,6 +6,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.bukkit.Bukkit;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class MarketCache {
@@ -13,7 +14,7 @@ public class MarketCache {
             .maximumSize(1024)
             .build(new CacheLoader<UUID, String>() {
                 public String load(UUID key) {
-                    return Bukkit.getOfflinePlayer(key).getName();
+                    return Optional.ofNullable(Bukkit.getOfflinePlayer(key).getName()).orElse(key.toString());
                 }
             });
 

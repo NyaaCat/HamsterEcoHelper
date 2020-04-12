@@ -19,7 +19,7 @@ import java.util.*;
 public class MarketGUI extends ShopInventoryHolder {
     public int currentPage = 1;
     public UUID seller = null;
-    public HashMap<Integer, Long> itemsID = new HashMap<>();
+    public HashMap<Integer, Integer> itemsID = new HashMap<>();
     private HamsterEcoHelper plugin;
     private Player player;
 
