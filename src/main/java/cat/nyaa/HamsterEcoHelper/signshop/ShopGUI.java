@@ -108,6 +108,7 @@ public class ShopGUI extends ShopInventoryHolder {
         if (shopItems != null) {
             for (int i = 0; i < shopItems.size(); i++) {
                 ShopItem item = shopItems.get(i);
+                if (item.itemStack == null) continue;
                 ItemStack stack = addLore(item.getItemStack(item.amount), item.unitPrice);
 
                 inventory.setItem(i, stack);

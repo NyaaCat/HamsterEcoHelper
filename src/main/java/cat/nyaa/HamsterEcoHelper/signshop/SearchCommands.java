@@ -200,7 +200,11 @@ public class SearchCommands extends CommandReceiver {
                 match.keySet().forEach(ss -> {
                     Stream<Sign> sis = plugin.signShopManager.signLocations.stream().filter(sign -> sign.owner.equals(ss.owner)).filter(sign -> sign.shopMode == ShopMode.SELL);
                     if (curLoc != null) {
-                        sis = sis.filter(sign -> curLoc.getWorld().equals(sign.getLocation().getWorld()))
+                        sis = sis.filter(sign -> {
+                            Location location = sign.getLocation();
+                            if (location == null)return false;
+                            return curLoc.getWorld().equals(location.getWorld());
+                        })
                                  .sorted(Comparator.comparingDouble(a -> a.getLocation().distance(curLoc)));
                         if (rangeLimit != -1)
                             sis = sis.filter(sign -> curLoc.distance(sign.getLocation()) < rangeLimit);
