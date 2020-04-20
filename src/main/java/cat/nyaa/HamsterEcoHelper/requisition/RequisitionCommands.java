@@ -133,7 +133,7 @@ public class RequisitionCommands extends CommandReceiver {
             return;
         }
         if (args.remains() != 3) {
-            if ((args.remains() != 4 || !args.getRawArgs()[3].equalsIgnoreCase("true")) && !args.getRawArgs()[3].equalsIgnoreCase("false")) {
+            if ((args.remains() != 4 || !args.getRawArgs()[3].equalsIgnoreCase("true") && !args.getRawArgs()[3].equalsIgnoreCase("false"))) {
                 msg(sender, "manual.requisition.req.usage");
                 return;
             }

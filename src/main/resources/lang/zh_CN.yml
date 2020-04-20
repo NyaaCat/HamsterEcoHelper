@@ -320,7 +320,7 @@ manual:
         [是否匹配Lore|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [是否匹配名称|string:EXACT:EXACT_TEXT:ARBITRARY]
     req:
       description: 发起征购。
-      usage: 用法：/heh requisition req [物品名称] [单价|int] [征购数量|int]
+      usage: 用法：/heh requisition req [物品名称] [单价|int] [征购数量|int] <是否开启严格模式|boolean>
     runreq:
       description: 启动系统征购。
       usage: 用法：/heh requisition runreq

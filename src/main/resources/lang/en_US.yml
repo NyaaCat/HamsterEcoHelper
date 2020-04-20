@@ -353,7 +353,7 @@ manual:
         [loreMatch|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [nameMatch|string:EXACT:EXACT_TEXT:ARBITRARY]'
     req:
       description: Start a requisition.
-      usage: 'Usage: /heh requisition req [itemName] [unitPrice|int] [Amount|int]'
+      usage: 'Usage: /heh requisition req [itemName] [unitPrice|int] [Amount|int] <StrictMode|boolean>'
     runreq:
       description: Start a system requisition.
       usage: 'Usage: /heh requisition runreq'
