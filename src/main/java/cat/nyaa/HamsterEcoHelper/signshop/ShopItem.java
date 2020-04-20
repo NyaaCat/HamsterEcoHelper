@@ -1,6 +1,7 @@
 package cat.nyaa.HamsterEcoHelper.signshop;
 
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,6 +37,9 @@ public class ShopItem {
     }
 
     public ItemStack getItemStack(int amount) {
+        if (itemStack == null){
+            return new ItemStack(Material.AIR);
+        }
         ItemStack item = itemStack.clone();
         item.setAmount(amount);
         return item;

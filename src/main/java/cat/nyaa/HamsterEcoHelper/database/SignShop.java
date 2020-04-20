@@ -64,7 +64,11 @@ public class SignShop {
         if (config.isConfigurationSection(path)) {
             ConfigurationSection section = config.getConfigurationSection(path);
             for (String k : section.getKeys(false)) {
-                list.add(new ShopItem(section.getConfigurationSection(k)));
+                try{
+                    list.add(new ShopItem(section.getConfigurationSection(k)));
+                }catch (Exception e){
+                    logCorruptedItem();
+                }
             }
         }
         return list;
@@ -81,19 +85,23 @@ public class SignShop {
             if (item.amount > 0 && item.getItemStack(1).getType() != Material.AIR) {
                 ShopItem shopItem = list.get(i);
                 if (shopItem.itemStack == null){
-                    OfflinePlayer player = getPlayer();
-                    String playerName = "";
-                    if (player == null){
-                        playerName = "null";
-                    }else {
-                        playerName = player.getName();
-                    }
-                    Bukkit.getLogger().severe("null item found saving shop for " + playerName + ", uid " + getOwner() +".");
+                    logCorruptedItem();
                     continue;
                 }
                 shopItem.save(section.createSection(String.valueOf(i)));
             }
         }
+    }
+
+    private void logCorruptedItem() {
+        OfflinePlayer player = getPlayer();
+        String playerName = "";
+        if (player == null){
+            playerName = "null";
+        }else {
+            playerName = player.getName();
+        }
+        Bukkit.getLogger().severe("null item found saving shop for " + playerName + ", uid " + getOwner() +".");
     }
 
     public void yamlToNBT() {
