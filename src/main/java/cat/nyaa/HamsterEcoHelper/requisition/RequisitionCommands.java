@@ -11,9 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class RequisitionCommands extends CommandReceiver {
     private HamsterEcoHelper plugin;
@@ -135,8 +133,10 @@ public class RequisitionCommands extends CommandReceiver {
             return;
         }
         if (args.remains() != 3) {
-            msg(sender, "manual.requisition.req.usage");
-            return;
+            if ((args.remains() != 4 || !args.getRawArgs()[3].equalsIgnoreCase("true")) && !args.getRawArgs()[3].equalsIgnoreCase("false")) {
+                msg(sender, "manual.requisition.req.usage");
+                return;
+            }
         }
 
         Player player = asPlayer(sender);
@@ -144,6 +144,9 @@ public class RequisitionCommands extends CommandReceiver {
         ItemStack item = null;
         double unitPrice = args.nextDouble("#.##");
         int amount = args.nextInt();
+        boolean hasStrictArg = args.top() != null;
+        boolean argStrict = hasStrictArg && args.nextBoolean();
+
         if (plugin.reqManager.cooldown.containsKey(player.getUniqueId())
                 && plugin.reqManager.cooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
             msg(sender, "user.info.cooldown", (plugin.reqManager.cooldown.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000);
@@ -167,15 +170,46 @@ public class RequisitionCommands extends CommandReceiver {
                 return;
             }
         }
+        boolean isStrict = (!hasStrictArg && isShulkerBox(item)) || argStrict;
+
         if (!plugin.eco.enoughMoney(player, unitPrice * amount)) {
             msg(sender, "user.warn.no_enough_money");
             return;
         }
-        boolean success = plugin.reqManager.newPlayerRequisition(player, item, unitPrice, amount);
+        boolean success = plugin.reqManager.newPlayerRequisition(player, item, unitPrice, amount, isStrict);
         if (success) {
             plugin.eco.withdraw(player, amount * unitPrice);
             plugin.reqManager.cooldown.put(player.getUniqueId(), System.currentTimeMillis() + (plugin.config.playerRequisitionCooldownTicks * 50));
         }
+    }
+
+
+    private static final Set<Material> SHULKER_BOXES = new HashSet<>();
+    static {
+        Collections.addAll(SHULKER_BOXES,
+            Material.SHULKER_BOX,
+                    Material.WHITE_SHULKER_BOX,
+                    Material.ORANGE_SHULKER_BOX,
+                    Material.MAGENTA_SHULKER_BOX,
+                    Material.YELLOW_SHULKER_BOX,
+                    Material.LIME_SHULKER_BOX,
+                    Material.PINK_SHULKER_BOX,
+                    Material.GRAY_SHULKER_BOX,
+                    Material.LIGHT_BLUE_SHULKER_BOX,
+                    Material.LIGHT_GRAY_SHULKER_BOX,
+                    Material.CYAN_SHULKER_BOX,
+                    Material.PURPLE_SHULKER_BOX,
+                    Material.BLUE_SHULKER_BOX,
+                    Material.BROWN_SHULKER_BOX,
+                    Material.GREEN_SHULKER_BOX,
+                    Material.RED_SHULKER_BOX,
+                    Material.BLACK_SHULKER_BOX
+        );
+    }
+
+    private boolean isShulkerBox(ItemStack item) {
+        if (item == null)return false;
+        return SHULKER_BOXES.contains(item.getType());
     }
 
     public List<String> reqTabComplete(CommandSender sender, Arguments args) {

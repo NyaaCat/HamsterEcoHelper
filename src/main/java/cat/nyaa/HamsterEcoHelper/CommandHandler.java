@@ -15,6 +15,7 @@ import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -124,7 +125,12 @@ public class CommandHandler extends CommandReceiver {
             return;
         }
         for (ItemStack s : items) {
-            p.getWorld().dropItem(p.getEyeLocation(), s);
+            try{
+                p.getWorld().dropItem(p.getEyeLocation(), s);
+            }catch (Exception e){
+                Bukkit.getLogger().warning("exception retrieving items.");
+                e.printStackTrace();
+            }
         }
         plugin.database.clearTemporaryStorage(p);
     }

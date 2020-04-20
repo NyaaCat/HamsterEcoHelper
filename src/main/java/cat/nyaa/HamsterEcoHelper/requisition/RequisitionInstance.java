@@ -53,7 +53,7 @@ public class RequisitionInstance {
     public RequisitionInstance(Player player,
                                ItemStack item,
                                double unitPrice, int reqAmount,
-                               HamsterEcoHelper plugin, Runnable finishCallback) {
+                               boolean isStrict, HamsterEcoHelper plugin, Runnable finishCallback) {
         this.owner = player;
         this.plugin = plugin;
         this.finishCallback = finishCallback;
@@ -61,6 +61,7 @@ public class RequisitionInstance {
         this.templateItem = new RequisitionSpecification();
         this.templateItem.itemTemplate = item;
         this.templateItem.timeoutTicks = plugin.config.playerRequisitionTimeoutTicks;
+        this.templateItem.matchRule.requireExact = isStrict;
         this.templateItem.matchRule.enchantMatch = RequisitionSpecification.MatchingMode.EXACT;
         this.templateItem.matchRule.nameMatch = RequisitionSpecification.MatchingMode.EXACT;
         this.templateItem.matchRule.loreMatch = RequisitionSpecification.MatchingMode.EXACT;
@@ -115,16 +116,17 @@ public class RequisitionInstance {
         if (!templateItem.matchRule.matches(itemHand)) return -2;
         if (amountRemains < amount && amountRemains >= 0) amount = amountRemains;
         int new_amount = itemHand.getAmount() - amount;
-        if (new_amount == 0) {
-            p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-        } else {
-            itemHand.setAmount(new_amount);
-        }
 
         if (owner != null) {
             ItemStack tmp = itemHand.clone();
             tmp.setAmount(amount);
             MiscUtils.giveItem(owner, tmp);
+        }
+
+        if (new_amount == 0) {
+            p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+        } else {
+            itemHand.setAmount(new_amount);
         }
 
         if (amountRemains >= 0) amountRemains -= amount;
