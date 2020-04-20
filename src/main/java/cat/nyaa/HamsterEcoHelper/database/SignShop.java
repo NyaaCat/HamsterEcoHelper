@@ -79,7 +79,19 @@ public class SignShop {
         for (int i = 0; i < list.size(); i++) {
             ShopItem item = list.get(i);
             if (item.amount > 0 && item.getItemStack(1).getType() != Material.AIR) {
-                list.get(i).save(section.createSection(String.valueOf(i)));
+                ShopItem shopItem = list.get(i);
+                if (shopItem.itemStack == null){
+                    OfflinePlayer player = getPlayer();
+                    String playerName = "";
+                    if (player == null){
+                        playerName = "null";
+                    }else {
+                        playerName = player.getName();
+                    }
+                    Bukkit.getLogger().severe("null item found saving shop for " + playerName + ", uid " + getOwner() +".");
+                    continue;
+                }
+                shopItem.save(section.createSection(String.valueOf(i)));
             }
         }
     }

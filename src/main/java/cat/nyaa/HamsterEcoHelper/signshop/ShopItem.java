@@ -28,7 +28,9 @@ public class ShopItem {
 
     public void save(ConfigurationSection section) {
         //section.set("item", itemStack);
-        section.set("item_nbt", ItemStackUtils.itemToBase64(itemStack));
+        String itemNbt = "";
+        itemNbt = ItemStackUtils.itemToBase64(itemStack);
+        section.set("item_nbt", itemNbt);
         section.set("amount", amount);
         section.set("unit_price", unitPrice);
     }
