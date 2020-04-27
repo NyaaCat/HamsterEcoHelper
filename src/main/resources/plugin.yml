@@ -10,63 +10,11 @@ api-version: 1.13
 commands:
   hamsterecohelper:
     description: The command for HamsterEcoHelper
-    aliases: heh
+    aliases: [heh, h]
     permission: heh.command
     permission-message: "You do not have the required permission: <permission>"
     usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
-  hm:
-  hsellto:
-  hpay:
-  hauc:
-  hbid:
-  hreq:
-  hsell:
 permissions:
-  heh.*:
-    description: Base permission node for HamsterEcoHelper
-    default: false
-    children:
-      heh.user: true
-      heh.admin: true
-  heh.user:
-    description: Base permission node for players
+  heh.command:
     default: true
-    children:
-      heh.offer: true
-      heh.offer.default: true
-      heh.view: true
-      heh.sell: true
-      heh.buy: true
-      heh.bid: true
-      heh.retrieve: true
-      heh.command: true
-      heh.mute: true
-      heh.userauc: true
-      heh.userreq: true
-      heh.signshop.sell: true
-      heh.signshop.buy: true
-      heh.signshop.lotto: true
-      heh.signshop.search: true
-      heh.ads: true
-      heh.transaction.sellto: true
-      heh.transaction.pay: true
-      heh.transaction.cancel: true
-      heh.transaction.buyside: true
-      heh.transaction.sellside: true
-      heh.transaction.drawee: true
-      heh.kit.user: true
-  heh.admin:
-    description: Permission node for operators
-    default: op
-    children:
-      heh.user: true
-      heh.removesignshop: true
-      heh.addauction: true
-      heh.addrequisition: true
-      heh.debug: true
-      heh.giveitem: true
-      heh.balance.pay: true
-      heh.balance.take: true
-      heh.balance.view: true
-      heh.quest.admin: true
-      heh.kit.admin: true
+    description: base permission for heh plugin
