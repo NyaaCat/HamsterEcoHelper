@@ -4,13 +4,13 @@ description: "Provides a offer/buy system and global market."
 version: ${version}
 depend: [Vault,NyaaCore,LangUtils]
 softdepend: [Essentials,LockettePro]
-authors: [cyilin, RecursiveG]
+authors: [cyilin, RecursiveG, ReinWD]
 website: "https://github.com/NyaaCat/HamsterEcoHelper"
 api-version: 1.13
 commands:
   hamsterecohelper:
     description: The command for HamsterEcoHelper
-    aliases: [heh, h]
+    aliases: [heh]
     permission: heh.command
     permission-message: "You do not have the required permission: <permission>"
     usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
@@ -18,3 +18,39 @@ permissions:
   heh.command:
     default: true
     description: base permission for heh plugin
+  heh.business.market:
+    default: op
+    description: market permission
+  heh.business.signshop:
+    default: op
+    description: signshop permission
+  heh.business.auction:
+    default: op
+    description: auction permission
+  heh.business.requisition:
+    default: op
+    description: requisition permission
+  heh.business.bid:
+    default: op
+    description: bid permission
+  heh.business.sell:
+    default: op
+    description: sell permission
+  heh.business.sellto:
+    default: op
+    description: sellto permission
+  heh.business.pay:
+    default: op
+    description: pay permission
+  heh.business.cancel:
+    default: op
+    description: cancel permission
+  heh.business.frame:
+    default: op
+    description: item frame shop permission
+  heh.admin.balance:
+    default: op
+    description: balance admin permission
+  heh.admin.remove:
+    default: op
+    description: remove

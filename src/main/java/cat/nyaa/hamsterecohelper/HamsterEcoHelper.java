@@ -1,4 +1,4 @@
-package cat.nyaa.HamsterEcoHelper;
+package cat.nyaa.hamsterecohelper;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

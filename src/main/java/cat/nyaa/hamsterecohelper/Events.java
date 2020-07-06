@@ -1,4 +1,4 @@
-package cat.nyaa.HamsterEcoHelper;
+package cat.nyaa.hamsterecohelper;
 
 import org.bukkit.event.Listener;
 
