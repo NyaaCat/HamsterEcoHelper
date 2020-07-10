@@ -4,11 +4,15 @@ import cat.nyaa.hamsterecohelper.enums.VaultType;
 import cat.nyaa.nyaacore.configuration.PluginConfigure;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class Configuration extends PluginConfigure {
 
     @Override
     protected JavaPlugin getPlugin() {
-        return HamsterEcoHelper.instance;
+        return HamsterEcoHelper.plugin;
     }
 
     @Serializable
@@ -21,16 +25,8 @@ public class Configuration extends PluginConfigure {
     @Serializable(name = "balance.player")
     public String vaultPlayer = "";
 
-    @Serializable(name = "tax.market")
-    public double marketTax = 10;
-    @Serializable(name = "tax.signshop")
-    public double signShopTax = 5;
-    @Serializable(name = "tax.direct")
-    public double directTax = 5;
-    @Serializable(name = "tax.auction")
-    public double auctionTax = 5;
-    @Serializable(name = "tax.requisition")
-    public double requisitionTax = 20;
+    @Serializable(name = "tax")
+    public Map<String, Double> taxRateMap = new LinkedHashMap<>();
 
     @Serializable(name = "fee.market.base")
     public double marketFeeBase = 100;

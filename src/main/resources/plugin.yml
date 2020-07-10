@@ -1,6 +1,6 @@
 name: HamsterEcoHelper
-main: cat.nyaa.HamsterEcoHelper.HamsterEcoHelper
-description: "Provides a offer/buy system and global market."
+main: cat.nyaa.hamsterecohelper.HamsterEcoHelper
+description: "Economy helper plugin for hamsters."
 version: ${version}
 depend: [Vault,NyaaCore,LangUtils]
 softdepend: [Essentials,LockettePro]
