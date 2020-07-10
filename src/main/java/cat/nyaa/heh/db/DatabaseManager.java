@@ -1,10 +1,10 @@
-package cat.nyaa.hamsterecohelper.db;
+package cat.nyaa.heh.db;
 
-import cat.nyaa.hamsterecohelper.HamsterEcoHelper;
-import cat.nyaa.hamsterecohelper.enums.ShopItemType;
-import cat.nyaa.hamsterecohelper.item.ShopItem;
-import cat.nyaa.hamsterecohelper.item.ShopItemDbModel;
-import cat.nyaa.hamsterecohelper.transaction.Transaction;
+import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.enums.ShopItemType;
+import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.item.ShopItemDbModel;
+import cat.nyaa.heh.transaction.Transaction;
 import cat.nyaa.nyaacore.orm.DatabaseUtils;
 import cat.nyaa.nyaacore.orm.WhereClause;
 import cat.nyaa.nyaacore.orm.backends.IConnectedDatabase;

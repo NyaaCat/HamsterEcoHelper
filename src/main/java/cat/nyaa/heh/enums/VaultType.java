@@ -1,4 +1,4 @@
-package cat.nyaa.hamsterecohelper.enums;
+package cat.nyaa.heh.enums;
 
 public enum VaultType {
     SYSTEM, PLAYER,

@@ -1,4 +1,4 @@
-package cat.nyaa.hamsterecohelper;
+package cat.nyaa.heh;
 
 import org.bukkit.event.Listener;
 

@@ -1,6 +1,6 @@
-package cat.nyaa.hamsterecohelper.item;
+package cat.nyaa.heh.item;
 
-import cat.nyaa.hamsterecohelper.db.DatabaseManager;
+import cat.nyaa.heh.db.DatabaseManager;
 import org.bukkit.Bukkit;
 
 import java.sql.SQLException;

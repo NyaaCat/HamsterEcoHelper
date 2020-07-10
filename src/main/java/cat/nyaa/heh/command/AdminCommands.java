@@ -1,4 +1,4 @@
-package cat.nyaa.hamsterecohelper.command;
+package cat.nyaa.heh.command;
 
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static cat.nyaa.hamsterecohelper.command.CommandUtils.filtered;
+import static cat.nyaa.heh.command.CommandUtils.filtered;
 
 public class AdminCommands extends CommandReceiver {
     /**

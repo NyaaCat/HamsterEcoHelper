@@ -1,8 +1,7 @@
-package cat.nyaa.hamsterecohelper.command;
+package cat.nyaa.heh.command;
 
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 
 import java.util.List;

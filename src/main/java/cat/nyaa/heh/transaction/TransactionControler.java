@@ -1,8 +1,8 @@
-package cat.nyaa.hamsterecohelper.transaction;
+package cat.nyaa.heh.transaction;
 
-import cat.nyaa.hamsterecohelper.db.DatabaseManager;
-import cat.nyaa.hamsterecohelper.item.ShopItem;
-import cat.nyaa.hamsterecohelper.utils.EcoUtils;
+import cat.nyaa.heh.db.DatabaseManager;
+import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.utils.EcoUtils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

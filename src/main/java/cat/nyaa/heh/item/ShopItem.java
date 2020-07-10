@@ -1,8 +1,8 @@
-package cat.nyaa.hamsterecohelper.item;
+package cat.nyaa.heh.item;
 
-import cat.nyaa.hamsterecohelper.I18n;
-import cat.nyaa.hamsterecohelper.enums.ShopItemType;
-import cat.nyaa.hamsterecohelper.transaction.Tax;
+import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.enums.ShopItemType;
+import cat.nyaa.heh.transaction.Tax;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import cat.nyaa.nyaacore.utils.ItemTagUtils;
 import org.apache.commons.lang.text.StrSubstitutor;

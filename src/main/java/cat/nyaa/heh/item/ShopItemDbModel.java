@@ -1,6 +1,6 @@
-package cat.nyaa.hamsterecohelper.item;
+package cat.nyaa.heh.item;
 
-import cat.nyaa.hamsterecohelper.enums.ShopItemType;
+import cat.nyaa.heh.enums.ShopItemType;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;

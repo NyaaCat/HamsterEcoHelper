@@ -1,6 +1,6 @@
-package cat.nyaa.hamsterecohelper.utils;
+package cat.nyaa.heh.utils;
 
-import cat.nyaa.hamsterecohelper.HamsterEcoHelper;
+import cat.nyaa.heh.HamsterEcoHelper;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 

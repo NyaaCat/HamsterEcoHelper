@@ -1,5 +1,5 @@
 name: HamsterEcoHelper
-main: cat.nyaa.hamsterecohelper.HamsterEcoHelper
+main: cat.nyaa.heh.HamsterEcoHelper
 description: "Economy helper plugin for hamsters."
 version: ${version}
 depend: [Vault,NyaaCore,LangUtils]

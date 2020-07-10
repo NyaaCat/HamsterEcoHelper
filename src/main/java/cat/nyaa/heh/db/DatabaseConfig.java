@@ -1,6 +1,6 @@
-package cat.nyaa.hamsterecohelper.db;
+package cat.nyaa.heh.db;
 
-import cat.nyaa.hamsterecohelper.HamsterEcoHelper;
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.nyaacore.configuration.FileConfigure;
 import cat.nyaa.nyaacore.orm.backends.BackendConfig;
 import org.bukkit.plugin.java.JavaPlugin;

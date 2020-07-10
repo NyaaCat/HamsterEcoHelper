@@ -1,11 +1,9 @@
-package cat.nyaa.hamsterecohelper.transaction;
+package cat.nyaa.heh.transaction;
 
-import cat.nyaa.hamsterecohelper.item.ShopItem;
-import cat.nyaa.hamsterecohelper.item.ShopItemManager;
+import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
-
-import java.util.UUID;
 
 @Table("transaction")
 public class Transaction {

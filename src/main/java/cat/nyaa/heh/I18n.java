@@ -1,4 +1,4 @@
-package cat.nyaa.hamsterecohelper;
+package cat.nyaa.heh;
 
 import cat.nyaa.nyaacore.LanguageRepository;
 import org.bukkit.plugin.java.JavaPlugin;

@@ -1,7 +1,7 @@
-package cat.nyaa.hamsterecohelper.transaction;
+package cat.nyaa.heh.transaction;
 
-import cat.nyaa.hamsterecohelper.HamsterEcoHelper;
-import cat.nyaa.hamsterecohelper.item.ShopItem;
+import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
 

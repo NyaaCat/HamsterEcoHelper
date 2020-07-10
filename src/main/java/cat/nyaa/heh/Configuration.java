@@ -1,10 +1,9 @@
-package cat.nyaa.hamsterecohelper;
+package cat.nyaa.heh;
 
-import cat.nyaa.hamsterecohelper.enums.VaultType;
+import cat.nyaa.heh.enums.VaultType;
 import cat.nyaa.nyaacore.configuration.PluginConfigure;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

@@ -1,8 +1,8 @@
-package cat.nyaa.hamsterecohelper;
+package cat.nyaa.heh;
 
-import cat.nyaa.hamsterecohelper.item.ShopItemManager;
-import cat.nyaa.hamsterecohelper.transaction.TransactionControler;
-import cat.nyaa.hamsterecohelper.utils.EcoUtils;
+import cat.nyaa.heh.item.ShopItemManager;
+import cat.nyaa.heh.transaction.TransactionControler;
+import cat.nyaa.heh.utils.EcoUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class HamsterEcoHelper extends JavaPlugin {
