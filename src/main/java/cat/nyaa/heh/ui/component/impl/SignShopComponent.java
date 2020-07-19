@@ -21,7 +21,27 @@ public class SignShopComponent extends BasePagedComponent {
     }
 
     @Override
-    public void onButtonClicked(GUIButton button, InventoryClickEvent event) {
+    public void onLeftClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    public void onRightClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    public void onShiftLeftClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    public void onMiddleClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    public void onDrag(InventoryClickEvent event) {
 
     }
 }

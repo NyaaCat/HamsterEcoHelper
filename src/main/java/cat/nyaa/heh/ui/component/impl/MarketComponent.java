@@ -5,6 +5,8 @@ import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.button.GUIButton;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -58,11 +60,6 @@ public class MarketComponent extends BasePagedComponent {
     }
 
     @Override
-    public void onButtonClicked(GUIButton button, InventoryClickEvent event) {
-
-    }
-
-    @Override
     public Map<String, String> getInfo() {
         Map<String, String> info = super.getInfo();
         return info;
@@ -80,5 +77,35 @@ public class MarketComponent extends BasePagedComponent {
 
     public boolean isFiltered() {
         return ownerFilter != null;
+    }
+
+    @Override
+    public void onLeftClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    public void onRightClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    public void onShiftLeftClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    public void onMiddleClick(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player){
+            Player player = (Player) event.getWhoClicked();
+            if(!player.isOp()){
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void onDrag(InventoryClickEvent event) {
+
     }
 }
