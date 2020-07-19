@@ -47,6 +47,7 @@ dependencies {
     // 3rd party plugins
     compileOnly ('net.milkbowl.vault:VaultAPI:1.7') { transitive = false }
     compileOnly ('net.ess3:EssentialsX:2.17.1') { transitive = false }
+    compileOnly 'co.aikar:taskchain-bukkit:3.7.2'
 }
 
 // source file modification (modify version string)

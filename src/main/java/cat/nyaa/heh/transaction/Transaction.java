@@ -24,6 +24,20 @@ public class Transaction {
     @Column(name = "time")
     long time;
 
+    public Transaction() {
+    }
+
+    public Transaction(long uid, long shopItem, int amount, double price, String buyer, String seller, long taxId, long time) {
+        this.uid = uid;
+        this.shopItem = shopItem;
+        this.amount = amount;
+        this.price = price;
+        this.buyer = buyer;
+        this.seller = seller;
+        this.taxId = taxId;
+        this.time = time;
+    }
+
     public long getUid() {
         return uid;
     }

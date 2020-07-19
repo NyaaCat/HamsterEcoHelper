@@ -2,6 +2,7 @@ package cat.nyaa.heh;
 
 import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.heh.transaction.TransactionControler;
+import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.utils.EcoUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +30,7 @@ public class HamsterEcoHelper extends JavaPlugin {
         ShopItemManager.getInstance().loadUid();
         TransactionControler.getInstance().updateUid();
         EcoUtils.getInstance();
+        ButtonRegister.getInstance();
     }
 }
 

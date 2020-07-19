@@ -4,6 +4,7 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.enums.ShopItemType;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.item.ShopItemDbModel;
+import cat.nyaa.heh.transaction.Tax;
 import cat.nyaa.heh.transaction.Transaction;
 import cat.nyaa.nyaacore.orm.DatabaseUtils;
 import cat.nyaa.nyaacore.orm.WhereClause;
@@ -24,6 +25,8 @@ public class DatabaseManager {
     IConnectedDatabase db;
 
     ITypedTable<ShopItemDbModel> shopItemTable;
+    ITypedTable<Tax> taxTable;
+    ITypedTable<Transaction> transactionTable;
 
     private DatabaseManager(){
         databaseConfig = new DatabaseConfig();
@@ -59,8 +62,16 @@ public class DatabaseManager {
         return collect;
     }
 
-    public void addTransaction(Transaction transaction){
+    public void updateShopItem(ShopItem item) {
+        shopItemTable.update(ShopItemDbModel.fromShopItem(item), WhereClause.EQ("uid",item.getUid()));
+    }
 
+    public void insertTransaction(Transaction transaction) {
+        transactionTable.insert(transaction);
+    }
+
+    public void insertTax(Tax taxRecord) {
+        taxTable.insert(taxRecord);
     }
 
     public int count(ShopItemType type, UUID owner){
@@ -76,5 +87,28 @@ public class DatabaseManager {
 
     public void insertShopItem(ShopItemDbModel shopItemDbModel){
         shopItemTable.insert(shopItemDbModel);
+    }
+
+    public List<ShopItem> getMarketItems() {
+        List<ShopItem> collect = shopItemTable.select(
+                    WhereClause.EQ("type", ShopItemType.MARKET.name())
+                            .where("amount", ">", "sold")
+                            .whereEq("available", true)
+                ).stream()
+                .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
+                .collect(Collectors.toList());
+        return collect;
+    }
+
+    public List<ShopItem> getMarketItems(UUID owner) {
+        List<ShopItem> collect = shopItemTable.select(
+                WhereClause.EQ("type", ShopItemType.MARKET.name())
+                        .whereEq("owner", owner.toString())
+                        .where("amount", ">", "sold")
+                        .whereEq("available", true)
+        ).stream()
+                .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
+                .collect(Collectors.toList());
+        return collect;
     }
 }

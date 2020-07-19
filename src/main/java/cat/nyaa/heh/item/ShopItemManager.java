@@ -4,7 +4,9 @@ import cat.nyaa.heh.db.DatabaseManager;
 import org.bukkit.Bukkit;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 
@@ -75,5 +77,15 @@ public class ShopItemManager {
 
     public void loadUid() {
         updateUid();
+    }
+
+    public List<ShopItem> getMarketItems() {
+        List<ShopItem> marketItems = DatabaseManager.getInstance().getMarketItems();
+        return marketItems;
+    }
+
+    public List<ShopItem> getMarketItems(UUID owner) {
+        List<ShopItem> marketItems = DatabaseManager.getInstance().getMarketItems(owner);
+        return marketItems;
     }
 }

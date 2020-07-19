@@ -19,8 +19,18 @@ public class Tax {
     @Column(name = "time")
     long time;
 
-    public static double calcTax(ShopItem shopItem, double price){
+    public Tax() {
+    }
+
+    public Tax(long uid, String from, double tax, long time) {
+        this.uid = uid;
+        this.from = from;
+        this.tax = tax;
+        this.time = time;
+    }
+
+    public static BigDecimal calcTax(ShopItem shopItem, BigDecimal price){
         Double taxRate = HamsterEcoHelper.plugin.config.taxRateMap.getOrDefault(shopItem.getShopItemType().name().toLowerCase(), 0d);
-        return new BigDecimal(price).multiply(BigDecimal.valueOf(taxRate)).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP).doubleValue();
+        return price.multiply(BigDecimal.valueOf(taxRate)).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
     }
 }

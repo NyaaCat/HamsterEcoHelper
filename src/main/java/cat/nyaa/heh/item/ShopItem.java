@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.*;
 
 public class ShopItem {
@@ -96,10 +97,6 @@ public class ShopItem {
         this.itemStack = itemStack;
     }
 
-    public void setModel(WeakReference<ItemStack> model) {
-        this.model = model;
-    }
-
     public void setAmount(int amount) {
         this.amount = amount;
     }
@@ -130,16 +127,23 @@ public class ShopItem {
             itemStack = buildModel(this.itemStack);
             model = new WeakReference<>(itemStack);
         }
+        itemStack.setAmount(amount - sold);
         return itemStack;
     }
 
     private ItemStack buildModel(ItemStack itemStack) {
-        ItemStack clone = itemStack.clone();
+        ItemStack clone = new ItemStack(itemStack.getType());
         clone.setAmount(Math.max(amount - sold, 1));
         addModelTag(clone);
         ItemMeta itemMeta = clone.getItemMeta();
-        if (itemMeta != null){
-            List<String> lore = new ArrayList<>(itemMeta.getLore());
+        ItemMeta originMeta = itemStack.getItemMeta();
+        if (originMeta != null){
+            List<String> lore;
+            if (originMeta.hasLore()){
+                lore = originMeta.getLore();
+            }else {
+                lore = new ArrayList<>();
+            }
             lore.add(buildPriceLore());
             lore.add(buildOwnerLore());
             itemMeta.setLore(lore);
@@ -161,7 +165,7 @@ public class ShopItem {
 
     public String buildPriceLore() {
         HashMap<String, String> placeHolderMap = new HashMap<>();
-        placeHolderMap.put("tax", String.format("%.2f", Tax.calcTax(this, getUnitPrice())));
+        placeHolderMap.put("tax", String.format("%.2f", Tax.calcTax(this, BigDecimal.valueOf(getUnitPrice())).doubleValue()));
         placeHolderMap.put("unitPrice", String.format("%.2f", getUnitPrice()));
         placeHolderMap.put("totalPrice", String.format("%.2f", getTotalPrice()));
         return newSubstitutor(placeHolderMap, I18n.format("shop_item.lore.price"));
