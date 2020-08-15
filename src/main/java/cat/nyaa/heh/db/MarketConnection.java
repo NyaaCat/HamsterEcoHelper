@@ -2,20 +2,17 @@ package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.item.ShopItem;
-import org.bukkit.Bukkit;
+import cat.nyaa.heh.item.ShopItemManager;
+import cat.nyaa.heh.utils.UidUtils;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 public class MarketConnection {
     private static MarketConnection INSTANCE;
-    public long itemUid = -1;
-    private static final String TABLE_NAME = "shop_item";
+    UidUtils uidManager = ShopItemManager.getInstance().getUidManager();
 
     private MarketConnection(){
-        loadUid();
     }
 
     public static MarketConnection getInstance(){
@@ -34,27 +31,17 @@ public class MarketConnection {
     }
 
     public void addItem(ShopItem shopItem) {
-        if (itemUid == -1){
-            updateUid();
+        if (uidManager.getCurrentUid() == -1) {
+            uidManager.loadUid();
         }
         if (!checkShopItem(shopItem)) {
             ShopItemDbModel shopItemDbModel = ShopItemDbModel.fromShopItem(shopItem);
             if (shopItemDbModel.getUid() == -1){
-                shopItemDbModel.setUid(getNextUid());
+                shopItemDbModel.setUid(uidManager.getNextUid());
             }
             DatabaseManager instance = DatabaseManager.getInstance();
             instance.insertShopItem(shopItemDbModel);
         }else throw new IllegalArgumentException();
-    }
-
-
-    private void updateUid() {
-        try {
-            itemUid = DatabaseManager.getInstance().getUidMax(TABLE_NAME);
-        } catch (SQLException throwables) {
-            Bukkit.getLogger().log(Level.SEVERE, String.format("failed to get max uid for table %s", TABLE_NAME));
-            itemUid = 0;
-        }
     }
 
 
@@ -71,14 +58,6 @@ public class MarketConnection {
         return DatabaseManager.getInstance().getItem(itemID);
     }
 
-
-    private long getNextUid() {
-        return ++itemUid;
-    }
-
-    public void loadUid() {
-        updateUid();
-    }
 
     public  ShopItem getItemAt(int slot){
         return null;

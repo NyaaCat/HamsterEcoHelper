@@ -1,9 +1,12 @@
 package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.heh.signshop.BaseSignShop;
 import cat.nyaa.heh.signshop.SignShopBuy;
+import cat.nyaa.heh.signshop.SignShopManager;
 import cat.nyaa.heh.signshop.SignShopSell;
+import cat.nyaa.heh.utils.UidUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +14,8 @@ import java.util.UUID;
 
 public class SignShopConnection {
     private static SignShopConnection INSTANCE;
+    private static final String TABLE_NAME_SIGN_SHOP = "shop";
+    private UidUtils signUidManager = UidUtils.create(TABLE_NAME_SIGN_SHOP);
 
     private SignShopConnection() {
     }
@@ -60,5 +65,16 @@ public class SignShopConnection {
 
     public void addSignShop(BaseSignShop signShopSell) {
         DatabaseManager.getInstance().addSignShop(signShopSell.toDbModel());
+    }
+
+    public long addItem(BaseSignShop baseSignShop, ShopItem shopItem) {
+        long uid = ShopItemManager.getInstance().getNextUid();
+        shopItem.setUid(uid);
+        DatabaseManager.getInstance().addShopItem(shopItem);
+        return uid;
+    }
+
+    public void updateItem(ShopItem item) {
+        DatabaseManager.getInstance().updateShopItem(item);
     }
 }

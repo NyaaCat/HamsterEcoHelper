@@ -2,6 +2,7 @@ package cat.nyaa.heh.signshop;
 
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.SignShopDbModel;
+import cat.nyaa.heh.enums.ShopItemType;
 import cat.nyaa.heh.enums.SignShopType;
 import cat.nyaa.heh.item.ShopItem;
 import org.bukkit.Location;
@@ -29,6 +30,15 @@ public abstract class BaseSignShop {
     }
 
     public abstract SignShopType getType();
+    public abstract void loadItems();
+
+    /**
+     * do business of this transaction
+     * @param related
+     * @param item
+     * @param amount
+     */
+    public abstract void doBusiness(Player related, ShopItem item, int amount);
 
     public Location getLocation() {
         return location;
@@ -46,15 +56,33 @@ public abstract class BaseSignShop {
         return new SignShopDbModel(this);
     }
 
-    public void offer(ItemStack itemStack, double unitPrice){
-        //todo
+    public long offer(Player player, ItemStack itemStack, double unitPrice){
+        ShopItem shopItem = new ShopItem(player.getUniqueId(), ShopItemType.SIGNSHOP_BUY, itemStack, unitPrice);
+        this.internalAddItemToList(shopItem);
+        long uid = SignShopConnection.getInstance().addItem(this, shopItem);
+        return uid;
     }
-
-    public abstract void doBusiness(Player related, ShopItem item, int amount);
 
     public void retrieve(ShopItem item, int amount){
+        if (item.getAmount() - item.getSoldAmount() - amount <= 0){
+            item.setSold(item.getAmount());
+        }else {
+            item.setSold(item.getSoldAmount() + amount);
+        }
+        SignShopConnection.getInstance().updateItem(item);
+        updateUi();
+    }
+
+    public void updateUi(){
         //todo
     }
 
-    public abstract void loadItems();
+
+    private void internalAddItemToList(ShopItem shopItem) {
+        items.add(shopItem);
+    }
+    private void internalRemoveItemFromList(ShopItem shopItem) {
+        items.remove(shopItem);
+    }
+
 }

@@ -5,10 +5,12 @@ import cat.nyaa.heh.signshop.BaseSignShop;
 import cat.nyaa.heh.signshop.SignShopBuy;
 import cat.nyaa.heh.signshop.SignShopSell;
 import cat.nyaa.nyaacore.orm.annotations.Column;
+import cat.nyaa.nyaacore.orm.annotations.Table;
 import org.bukkit.Location;
 
 import java.util.UUID;
 
+@Table("shop")
 public class SignShopDbModel {
     @Column(name = "uid", primary = true)
     long uid;

@@ -1,6 +1,7 @@
 package cat.nyaa.heh;
 
 import cat.nyaa.heh.db.MarketConnection;
+import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.transaction.TransactionController;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.utils.EcoUtils;
@@ -27,8 +28,9 @@ public class HamsterEcoHelper extends JavaPlugin {
         config.load();
         i18n = new I18n(plugin, config.language);
         i18n.load();
-        MarketConnection.getInstance().loadUid();
-        TransactionController.getInstance().updateUid();
+        MarketConnection.getInstance();
+        SignShopConnection.getInstance();
+        TransactionController.getInstance();
         EcoUtils.getInstance();
         ButtonRegister.getInstance();
     }

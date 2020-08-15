@@ -4,6 +4,7 @@ import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.SignShopDbModel;
 import cat.nyaa.heh.enums.SignShopType;
 import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.transaction.TransactionController;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -43,7 +44,9 @@ public class SignShopSell extends BaseSignShop{
 
     @Override
     public void doBusiness(Player related, ShopItem item, int amount) {
-        //todo
+        //todo configure sign shop storage space.
+        TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, item, amount);
+        updateUi();
     }
 
     @Override

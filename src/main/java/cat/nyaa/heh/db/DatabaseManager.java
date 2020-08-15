@@ -179,4 +179,8 @@ public class DatabaseManager {
     public void addSignShop(SignShopDbModel signShopSell) {
         signShopTable.insert(signShopSell);
     }
+
+    public void addShopItem(ShopItem shopItem) {
+        shopItemTable.insert(ShopItemDbModel.fromShopItem(shopItem));
+    }
 }
