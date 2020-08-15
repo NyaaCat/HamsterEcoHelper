@@ -1,8 +1,7 @@
 package cat.nyaa.heh.ui;
 
 import cat.nyaa.heh.ui.component.BaseComponent;
-import cat.nyaa.heh.ui.component.MatrixComponent;
-import cat.nyaa.heh.ui.component.button.ButtonHandler;
+import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.button.ButtonHolder;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.ui.component.button.GUIButton;
@@ -18,15 +17,17 @@ import java.util.List;
 
 public abstract class BaseUi implements InventoryHolder {
     protected Inventory uiInventory;
-    protected MarketComponent marketComponent;
+    protected BasePagedComponent pagedComponent;
     protected ButtonComponent buttonComponent;
 
     public BaseUi() {
         uiInventory = Bukkit.createInventory(this, 54, getTitle());
-        marketComponent = new MarketComponent(uiInventory);
-        buttonComponent = new ButtonComponent(5, 0, marketComponent);
+        pagedComponent = getPageComponent();
+        buttonComponent = new ButtonComponent(5, 0, pagedComponent);
         initButtons();
     }
+
+    protected abstract BasePagedComponent getPageComponent();
 
     private void initButtons() {
         ButtonRegister instance = ButtonRegister.getInstance();
@@ -41,7 +42,7 @@ public abstract class BaseUi implements InventoryHolder {
     public void onClickRawSlot(InventoryClickEvent event) {
         int slot = event.getSlot();
         event.setCancelled(true);
-        List<? extends BaseComponent> components = Arrays.asList(marketComponent, buttonComponent);
+        List<? extends BaseComponent> components = Arrays.asList(pagedComponent, buttonComponent);
         BaseComponent comp = components.stream().filter(com -> com.containsRawSlot(slot)).findFirst().orElse(null);
         if (comp instanceof ButtonHolder){
             GUIButton buttonAt = ((ButtonHolder) comp).getButtonAt(slot);

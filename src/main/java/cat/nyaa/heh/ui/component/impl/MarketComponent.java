@@ -2,6 +2,7 @@ package cat.nyaa.heh.ui.component.impl;
 
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.item.ShopItemManager;
+import cat.nyaa.heh.market.Market;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.button.GUIButton;
 import org.bukkit.Material;
@@ -27,9 +28,9 @@ public class MarketComponent extends BasePagedComponent {
     private List<ItemStack> loadItems() {
         List<ShopItem> marketItems;
         if (ownerFilter == null){
-            marketItems = ShopItemManager.getInstance().getMarketItems();
+            marketItems = Market.getInstance().getMarketItems();
         }else {
-            marketItems = ShopItemManager.getInstance().getMarketItems(ownerFilter);
+            marketItems = Market.getInstance().getMarketItems(ownerFilter);
         }
         List<ItemStack> collect = marketItems.stream()
                 .map(item -> {

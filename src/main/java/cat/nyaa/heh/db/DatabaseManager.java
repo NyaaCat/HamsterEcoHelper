@@ -3,7 +3,7 @@ package cat.nyaa.heh.db;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.enums.ShopItemType;
 import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.item.ShopItemDbModel;
+import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.transaction.Tax;
 import cat.nyaa.heh.transaction.Transaction;
 import cat.nyaa.nyaacore.orm.DatabaseUtils;

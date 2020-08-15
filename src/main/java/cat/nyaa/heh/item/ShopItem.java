@@ -1,6 +1,7 @@
 package cat.nyaa.heh.item;
 
 import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.enums.ShopItemType;
 import cat.nyaa.heh.transaction.Tax;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
@@ -31,15 +32,15 @@ public class ShopItem {
     private long time;
 
     public ShopItem(ShopItemDbModel shopItemDbModel) {
-        this.uid = shopItemDbModel.uid;
-        this.owner = UUID.fromString(shopItemDbModel.owner);
-        this.amount = shopItemDbModel.amount;
-        this.sold = shopItemDbModel.sold;
-        this.itemStack = ItemStackUtils.itemFromBase64(shopItemDbModel.nbt);
-        this.unitPrice = shopItemDbModel.price;
-        this.shopItemType = shopItemDbModel.type;
-        this.time = shopItemDbModel.time;
-        this.available = shopItemDbModel.available;
+        this.uid = shopItemDbModel.getUid();
+        this.owner = shopItemDbModel.getOwner();
+        this.amount = shopItemDbModel.getAmount();
+        this.sold = shopItemDbModel.getSold();
+        this.itemStack = ItemStackUtils.itemFromBase64(shopItemDbModel.getNbt());
+        this.unitPrice = shopItemDbModel.getPrice();
+        this.shopItemType = shopItemDbModel.getType();
+        this.time = shopItemDbModel.getTime();
+        this.available = shopItemDbModel.isAvailable();
     }
 
     public ShopItem(UUID from, ShopItemType type, ItemStack itemStack, double unitPrice){
