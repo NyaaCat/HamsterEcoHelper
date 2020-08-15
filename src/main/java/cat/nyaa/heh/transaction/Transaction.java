@@ -5,6 +5,8 @@ import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
 
+import java.util.UUID;
+
 @Table("transaction")
 public class Transaction {
     @Column(name = "uid", primary = true)
@@ -16,9 +18,9 @@ public class Transaction {
     @Column(name = "price")
     double price;
     @Column(name = "buyer")
-    String buyer;
+    UUID buyer;
     @Column(name = "seller")
-    String seller;
+    UUID seller;
     @Column(name = "tax_id")
     long taxId;
     @Column(name = "time")
@@ -27,7 +29,7 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(long uid, long shopItem, int amount, double price, String buyer, String seller, long taxId, long time) {
+    public Transaction(long uid, long shopItem, int amount, double price, UUID buyer, UUID seller, long taxId, long time) {
         this.uid = uid;
         this.shopItem = shopItem;
         this.amount = amount;
@@ -47,7 +49,7 @@ public class Transaction {
     }
 
     public ShopItem getShopItem() {
-        return ShopItemManager.getInstance().getShopItem(shopItem);
+        return ShopItemManager.getShopItem(shopItem);
     }
 
     public void setShopItem(long shopItem) {
@@ -70,19 +72,19 @@ public class Transaction {
         this.price = price;
     }
 
-    public String getBuyer() {
+    public UUID getBuyer() {
         return buyer;
     }
 
-    public void setBuyer(String buyer) {
+    public void setBuyer(UUID buyer) {
         this.buyer = buyer;
     }
 
-    public String getSeller() {
+    public UUID getSeller() {
         return seller;
     }
 
-    public void setSeller(String seller) {
+    public void setSeller(UUID seller) {
         this.seller = seller;
     }
 

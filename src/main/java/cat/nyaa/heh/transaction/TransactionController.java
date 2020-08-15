@@ -3,10 +3,11 @@ package cat.nyaa.heh.transaction;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.DatabaseManager;
+import cat.nyaa.heh.events.PreTransactionEvent;
+import cat.nyaa.heh.events.TransactionEvent;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.utils.EcoUtils;
 import cat.nyaa.nyaacore.Message;
-import cat.nyaa.nyaacore.orm.DatabaseUtils;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -23,23 +24,25 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class TransactionControler {
+public class TransactionController {
     private static final String TRANSACTION_TABLE_NAME = "transaction";
     private static final String TAX_TABLE_NAME = "tax";
     private long transactionUid = -1;
     private long taxUid = -1;
-    private static TransactionControler INSTANCE;
-    private TransactionControler(){}
-    public static TransactionControler getInstance(){
+
+    private static TransactionController INSTANCE;
+    private TransactionController(){}
+    public static TransactionController getInstance(){
         if (INSTANCE == null){
-            synchronized (TransactionControler.class){
+            synchronized (TransactionController.class){
                 if (INSTANCE == null) {
-                    INSTANCE = new TransactionControler();
+                    INSTANCE = new TransactionController();
                 }
             }
         }
         return INSTANCE;
     }
+
     public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount) {
         return makeTransaction(buyer, buyer, seller, item, amount);
     }
@@ -63,6 +66,13 @@ public class TransactionControler {
         double sellerBalBefore = eco.getBalance(pSeller);
         int soldAmountBefore = item.getSoldAmount();
         BukkitRunnable transactionRecorderTask = null;
+
+        PreTransactionEvent preTransactionEvent = new PreTransactionEvent(item, amount, toTake.doubleValue(), buyer, seller);
+        Bukkit.getPluginManager().callEvent(preTransactionEvent);
+        if (preTransactionEvent.isCanceled()){
+            return false;
+        }
+
         try{
             long time = System.currentTimeMillis();
 
@@ -76,18 +86,15 @@ public class TransactionControler {
             transactionRecorderTask = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    Tax taxRecord = new Tax(taxUid+1, pBuyer.getUniqueId().toString(), tax.doubleValue(), time);
-                    Transaction transaction = new Transaction(nextTransactionUid+1, item.getUid(), amount, itemPrice.doubleValue(), pBuyer.getUniqueId().toString(), pSeller.getUniqueId().toString(), taxUid, time);
-                    DatabaseManager.getInstance().insertTransaction(transaction);
-                    DatabaseManager.getInstance().insertTax(taxRecord);
-                    TransactionControler.this.taxUid++;
-                    TransactionControler.this.transactionUid++;
+                    addTaxRecord(taxUid, pBuyer, tax.doubleValue(), 0, time);
+                    addTransactionRecord(nextTransactionUid, item, amount, itemPrice, pBuyer, pSeller, taxUid, time);
                 }
             };
             transactionRecorderTask.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 0);
 
             giveItemTo(pBuyer,pPayer, item, amount);
-            onTransactionFinished();
+            TransactionEvent transactionEvent = new TransactionEvent(item, amount, toTake.doubleValue(), buyer, seller);
+            Bukkit.getPluginManager().callEvent(transactionEvent);
             return true;
         }catch (Exception e){
             double payerBalAfter = eco.getBalance(pPayer);
@@ -111,8 +118,16 @@ public class TransactionControler {
         }
     }
 
-    private void onTransactionFinished() {
+    private void addTransactionRecord(long nextTransactionUid, ShopItem item, int amount, BigDecimal itemPrice, OfflinePlayer pBuyer, OfflinePlayer pSeller, long taxUid, long time) {
+        Transaction transaction = new Transaction(nextTransactionUid+1, item.getUid(), amount, itemPrice.doubleValue(), pBuyer.getUniqueId(), pSeller.getUniqueId(), taxUid, time);
+        DatabaseManager.getInstance().insertTransaction(transaction);
+        TransactionController.this.transactionUid++;
+    }
 
+    private void addTaxRecord(long taxUid, OfflinePlayer taxPayer, double tax, double fee, long time) {
+        Tax taxRecord = new Tax(taxUid+1, taxPayer.getUniqueId().toString(), tax, time);
+        DatabaseManager.getInstance().insertTax(taxRecord);
+        TransactionController.this.taxUid++;
     }
 
     private void giveItemTo(OfflinePlayer pBuyer, OfflinePlayer pPayer, ShopItem item, int amount) {
@@ -171,5 +186,10 @@ public class TransactionControler {
             Bukkit.getLogger().log(Level.SEVERE, String.format("failed to get max uid for table %s", TAX_TABLE_NAME));
             taxUid = 0;
         }
+    }
+
+    public void retrieveTax(OfflinePlayer payer, double tax, double fee) {
+        long taxUid = getNextTaxUid();
+        addTaxRecord(taxUid, payer, tax, fee, System.currentTimeMillis());
     }
 }

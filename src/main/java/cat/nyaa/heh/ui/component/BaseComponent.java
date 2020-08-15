@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BaseComponent extends MatrixComponent implements InventoryHolder, InfoHolder, RefreshableUi, ClickEventHandler{
+public abstract class BaseComponent<T> extends MatrixComponent implements InventoryHolder, InfoHolder, RefreshableUi<T>, ClickEventHandler{
     protected Inventory uiInventory;
 
     public BaseComponent(int startRow, int startCol, int rows, int columns) {

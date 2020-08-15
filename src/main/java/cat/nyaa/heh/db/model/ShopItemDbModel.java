@@ -8,7 +8,7 @@ import cat.nyaa.nyaacore.utils.ItemStackUtils;
 
 import java.util.UUID;
 
-@Table("shop_item")
+@Table("items")
 public class ShopItemDbModel {
     @Column(name = "uid", primary = true)
     long uid;

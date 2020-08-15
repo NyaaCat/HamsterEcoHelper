@@ -1,9 +1,13 @@
 package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.HamsterEcoHelper;
-import cat.nyaa.heh.enums.ShopItemType;
-import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.db.model.ShopItemDbModel;
+import cat.nyaa.heh.db.model.SignShopDbModel;
+import cat.nyaa.heh.enums.ShopItemType;
+import cat.nyaa.heh.enums.SignShopType;
+import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.signshop.SignShopBuy;
+import cat.nyaa.heh.signshop.SignShopSell;
 import cat.nyaa.heh.transaction.Tax;
 import cat.nyaa.heh.transaction.Transaction;
 import cat.nyaa.nyaacore.orm.DatabaseUtils;
@@ -14,8 +18,7 @@ import org.bukkit.Bukkit;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DatabaseManager {
@@ -27,16 +30,25 @@ public class DatabaseManager {
     ITypedTable<ShopItemDbModel> shopItemTable;
     ITypedTable<Tax> taxTable;
     ITypedTable<Transaction> transactionTable;
+    ITypedTable<SignShopDbModel> signShopTable;
 
     private DatabaseManager(){
         databaseConfig = new DatabaseConfig();
         databaseConfig.load();
         try{
             db = DatabaseUtils.connect(HamsterEcoHelper.plugin, databaseConfig.backendConfig);
-            shopItemTable = db.getTable(ShopItemDbModel.class);
+            loadTables();
+
         }catch (Exception e){
             Bukkit.getPluginManager().disablePlugin(HamsterEcoHelper.plugin);
         }
+    }
+
+    private void loadTables() {
+        shopItemTable = db.getTable(ShopItemDbModel.class);
+        taxTable = db.getTable(Tax.class);
+        transactionTable = db.getTable(Transaction.class);
+        signShopTable = db.getTable(SignShopDbModel.class);
     }
 
     public static DatabaseManager getInstance(){
@@ -56,7 +68,7 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getPlayerItems(ShopItemType type, UUID owner){
-        List<ShopItem> collect = shopItemTable.select(WhereClause.EQ("owner", owner.toString()).whereEq("type", type.name())).stream()
+        List<ShopItem> collect = shopItemTable.select(WhereClause.EQ("type", type).whereEq("owner", owner.toString())).stream()
                 .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
                 .collect(Collectors.toList());
         return collect;
@@ -75,7 +87,7 @@ public class DatabaseManager {
     }
 
     public int count(ShopItemType type, UUID owner){
-        return shopItemTable.count(WhereClause.EQ("owner", owner.toString()).whereEq("type", type.name()));
+        return shopItemTable.count(WhereClause.EQ("type", type.name()).whereEq("owner", owner.toString()));
     }
 
     public int getUidMax(String tableName) throws SQLException {
@@ -110,5 +122,61 @@ public class DatabaseManager {
                 .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
                 .collect(Collectors.toList());
         return collect;
+    }
+
+    public boolean hasBuyShop(UUID owner) {
+        return signShopTable.count(WhereClause.EQ("type", SignShopType.BUY).whereEq("owner", owner)) > 0;
+    }
+
+    public boolean hasSellShop(UUID owner) {
+        return signShopTable.count(WhereClause.EQ("type", SignShopType.SELL).whereEq("owner", owner)) > 0;
+    }
+
+    public SignShopBuy getBuyShop(UUID owner) {
+        return new SignShopBuy(signShopTable.selectUniqueUnchecked(WhereClause.EQ("type", SignShopType.BUY).whereEq("owner", owner)));
+    }
+
+    public SignShopSell getSellShop(UUID owner) {
+        return new SignShopSell(signShopTable.selectUniqueUnchecked(WhereClause.EQ("type", SignShopType.SELL).whereEq("owner", owner)));
+    }
+
+    public List<ShopItem> getSellShopItems(UUID owner) {
+        return shopItemTable.select(WhereClause.EQ("type", SignShopType.SELL).whereEq("owner", owner)).stream()
+                .filter(ShopItemDbModel::isAvailable)
+                .filter(shopItemDbModel -> shopItemDbModel.getSold()>=shopItemDbModel.getAmount())
+                .map(ShopItem::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ShopItem> getBuyShopItems(UUID owner) {
+        return shopItemTable.select(WhereClause.EQ("type", SignShopType.BUY).whereEq("owner", owner)).stream()
+                .filter(ShopItemDbModel::isAvailable)
+                .filter(shopItemDbModel -> shopItemDbModel.getSold()>=shopItemDbModel.getAmount())
+                .map(ShopItem::new)
+                .collect(Collectors.toList());
+    }
+
+    public Map<UUID, List<SignShopBuy>> getBuyShops() {
+        Map<UUID, List<SignShopBuy>> result = new HashMap<>();
+        signShopTable.select(WhereClause.EQ("type", SignShopType.BUY)).stream()
+                .forEach(signShopDbModel -> {
+                    List<SignShopBuy> signShopSells = result.computeIfAbsent(signShopDbModel.getOwner(), uuid -> new ArrayList<>());
+                    signShopSells.add(new SignShopBuy(signShopDbModel));
+                });
+        return result;
+    }
+
+    public Map<UUID, List<SignShopSell>> getSellShops() {
+        Map<UUID, List<SignShopSell>> result = new HashMap<>();
+        signShopTable.select(WhereClause.EQ("type", SignShopType.BUY)).stream()
+                .forEach(signShopDbModel -> {
+                    List<SignShopSell> signShopSells = result.computeIfAbsent(signShopDbModel.getOwner(), uuid -> new ArrayList<>());
+                    signShopSells.add(new SignShopSell(signShopDbModel));
+                });
+        return result;
+    }
+
+    public void addSignShop(SignShopDbModel signShopSell) {
+        signShopTable.insert(signShopSell);
     }
 }

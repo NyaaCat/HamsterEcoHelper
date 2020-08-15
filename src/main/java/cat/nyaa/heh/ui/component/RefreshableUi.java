@@ -2,7 +2,9 @@ package cat.nyaa.heh.ui.component;
 
 import cat.nyaa.heh.utils.Utils;
 
-public interface RefreshableUi {
+import java.util.List;
+
+public interface RefreshableUi<T> {
     /**
      * refresh UI without updating data
      * @see this#updateAsynchronously()
@@ -15,6 +17,8 @@ public interface RefreshableUi {
      */
     void loadData();
 
+    void loadData(List<T> data);
+
     /**
      * Asynchronously load data and refresh UI
      * if there's thing to do before updating data(like initializing indicator),
@@ -25,7 +29,10 @@ public interface RefreshableUi {
     default void updateAsynchronously(){
         Utils.newChain()
                 .sync(this::preUpdate)
-                .async(this::loadData)
+                .async(input -> {
+                    this.loadData();
+                    return null;
+                })
                 .sync(this::postUpdate)
                 .execute();
     }

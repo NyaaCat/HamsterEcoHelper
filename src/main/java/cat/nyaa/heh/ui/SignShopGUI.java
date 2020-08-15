@@ -6,6 +6,10 @@ import cat.nyaa.heh.ui.component.impl.SignShopComponent;
 import org.bukkit.inventory.Inventory;
 
 public class SignShopGUI extends BaseUi{
+    SignShopGUI(){
+        super();
+    }
+
     @Override
     protected BasePagedComponent getPageComponent() {
         return new SignShopComponent(uiInventory);

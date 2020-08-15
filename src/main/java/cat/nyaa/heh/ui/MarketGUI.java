@@ -9,12 +9,20 @@ import org.bukkit.inventory.Inventory;
 import java.util.List;
 
 public class MarketGUI extends BaseUi {
-    public MarketGUI(){
+    MarketGUI(){
         super();
     }
 
     public void refreshGUI(){
-        this.getPageComponent().loadData();
+        BasePagedComponent pageComponent = this.getPageComponent();
+        pageComponent.loadData();
+        pageComponent.refreshUi();
+    }
+
+    public void refreshGUI(List<ShopItem> list){
+        BasePagedComponent pageComponent = this.getPageComponent();
+        pageComponent.loadData(list);
+        pageComponent.refreshUi();
     }
 
     @Override

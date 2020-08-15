@@ -14,8 +14,10 @@ import org.bukkit.inventory.InventoryHolder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class BaseUi implements InventoryHolder {
+    private UUID uiuid;
     protected Inventory uiInventory;
     protected BasePagedComponent pagedComponent;
     protected ButtonComponent buttonComponent;
@@ -25,6 +27,7 @@ public abstract class BaseUi implements InventoryHolder {
         pagedComponent = getPageComponent();
         buttonComponent = new ButtonComponent(5, 0, pagedComponent);
         initButtons();
+        this.uiuid = UUID.randomUUID();
     }
 
     protected abstract BasePagedComponent getPageComponent();
@@ -67,5 +70,9 @@ public abstract class BaseUi implements InventoryHolder {
             default:
                 break;
         }
+    }
+
+    public UUID getUid(){
+        return uiuid;
     }
 }

@@ -1,13 +1,19 @@
 package cat.nyaa.heh.ui.component.impl;
 
+import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.signshop.SignShopSell;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
-import cat.nyaa.heh.ui.component.button.GUIButton;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.util.List;
+
 public class SignShopComponent extends BasePagedComponent {
-    public SignShopComponent(Inventory inventory) {
+    SignShopSell signShop;
+
+    public SignShopComponent(Inventory inventory, SignShopSell signShop) {
         super(inventory);
+        this.signShop = signShop;
     }
 
     @Override
@@ -17,6 +23,21 @@ public class SignShopComponent extends BasePagedComponent {
 
     @Override
     public void loadData() {
+
+    }
+
+    @Override
+    public void loadData(List<ShopItem> data) {
+
+    }
+
+    @Override
+    public void updateAsynchronously() {
+
+    }
+
+    @Override
+    public void postUpdate() {
 
     }
 

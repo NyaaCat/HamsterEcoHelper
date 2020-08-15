@@ -1,12 +1,9 @@
 package cat.nyaa.heh.ui.component.impl;
 
 import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.heh.market.Market;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
-import cat.nyaa.heh.ui.component.button.GUIButton;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -23,27 +20,22 @@ public class MarketComponent extends BasePagedComponent {
         super(inventory);
     }
 
-    private List<ItemStack> items = new ArrayList<>();
+    private List<ShopItem> items = new ArrayList<>();
 
-    private List<ItemStack> loadItems() {
+    private List<ShopItem> loadItems() {
         List<ShopItem> marketItems;
         if (ownerFilter == null){
             marketItems = Market.getInstance().getMarketItems();
         }else {
             marketItems = Market.getInstance().getMarketItems(ownerFilter);
         }
-        List<ItemStack> collect = marketItems.stream()
-                .map(item -> {
-                    ItemStack model = item.getModel();
-                    return model;
-                }).collect(Collectors.toList());
-        return collect;
+        return marketItems;
     }
 
     @Override
     public void refreshUi() {
         List<ItemStack> collect = items.stream().skip(getPageSize() * getCurrentPage())
-                .limit(getPageSize()).collect(Collectors.toList());
+                .limit(getPageSize()).map(shopItem -> shopItem.getItemStack()).collect(Collectors.toList());
         int size = collect.size();
         ItemStack air = new ItemStack(Material.AIR);
         for (int i = 0; i < getPageSize(); i++) {
@@ -58,6 +50,11 @@ public class MarketComponent extends BasePagedComponent {
     @Override
     public void loadData() {
         items = loadItems();
+    }
+
+    @Override
+    public void loadData(List<ShopItem> data) {
+        this.items = data;
     }
 
     @Override
@@ -82,16 +79,19 @@ public class MarketComponent extends BasePagedComponent {
 
     @Override
     public void onLeftClick(InventoryClickEvent event) {
+        //todo
 
     }
 
     @Override
     public void onRightClick(InventoryClickEvent event) {
+        //todo
 
     }
 
     @Override
     public void onShiftLeftClick(InventoryClickEvent event) {
+        //todo
 
     }
 

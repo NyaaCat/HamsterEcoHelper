@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.logging.Level;
 
 public class ShopItem {
     ShopItemType shopItemType = ShopItemType.MARKET;
@@ -36,7 +37,11 @@ public class ShopItem {
         this.owner = shopItemDbModel.getOwner();
         this.amount = shopItemDbModel.getAmount();
         this.sold = shopItemDbModel.getSold();
-        this.itemStack = ItemStackUtils.itemFromBase64(shopItemDbModel.getNbt());
+        try {
+            this.itemStack = ItemStackUtils.itemFromBase64(shopItemDbModel.getNbt());
+        }catch (Exception e){
+            Bukkit.getLogger().log(Level.SEVERE, String.format("invalid shop item: uid: %d, nbt:%s", uid, shopItemDbModel.getNbt()));
+        }
         this.unitPrice = shopItemDbModel.getPrice();
         this.shopItemType = shopItemDbModel.getType();
         this.time = shopItemDbModel.getTime();

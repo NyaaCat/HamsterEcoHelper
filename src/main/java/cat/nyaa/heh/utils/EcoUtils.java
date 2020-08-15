@@ -1,8 +1,13 @@
 package cat.nyaa.heh.utils;
 
 import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.transaction.TransactionController;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import java.util.UUID;
 
 public class EcoUtils {
     private static EcoUtils INSTANCE;
@@ -30,5 +35,13 @@ public class EcoUtils {
 
     public Economy getEco() {
         return eco;
+    }
+
+    public void withdrawTax(OfflinePlayer payer, double tax, double fee){
+        eco.withdrawPlayer(payer, tax);
+        EconomyResponse economyResponse = eco.withdrawPlayer(payer, fee);
+        if (economyResponse.type.equals(EconomyResponse.ResponseType.SUCCESS)){
+            TransactionController.getInstance().retrieveTax(payer, tax, fee);
+        }else throw new RuntimeException("error withdrawing player: "+economyResponse.errorMessage);
     }
 }

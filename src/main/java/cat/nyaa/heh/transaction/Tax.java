@@ -16,6 +16,8 @@ public class Tax {
     String from;
     @Column(name = "tax")
     double tax;
+    @Column(name = "fee")
+    double fee;
     @Column(name = "time")
     long time;
 

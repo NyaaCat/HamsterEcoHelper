@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component;
 
+import cat.nyaa.heh.item.ShopItem;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BasePagedComponent extends BaseComponent implements IPagedUiAccess {
+public abstract class BasePagedComponent extends BaseComponent<ShopItem> implements IPagedUiAccess {
     public BasePagedComponent(Inventory inventory) {
         super(0, 0, 5, 9);
         this.uiInventory = inventory;

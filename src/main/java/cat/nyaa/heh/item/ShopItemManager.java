@@ -13,30 +13,10 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 
 public class ShopItemManager {
-    private static ShopItemManager INSTANCE;
-    public Map<Long, ShopItem> shopItemMap = new WeakHashMap<>();
+    public static Map<Long, ShopItem> shopItemMap = new WeakHashMap<>();
 
-    private ShopItemManager(){
-
-    }
-
-    public static ShopItemManager getInstance() {
-        if (INSTANCE == null){
-            synchronized (ShopItemManager.class){
-                if (INSTANCE == null) {
-                    INSTANCE = new ShopItemManager();
-                }
-            }
-        }
-        return INSTANCE;
-    }
-
-    public ShopItem getShopItem(long itemID) {
+    public static ShopItem getShopItem(long itemID) {
         MarketConnection instance = MarketConnection.getInstance();
         return shopItemMap.computeIfAbsent(itemID, (id) -> instance.loadItemFromDb(itemID));
-    }
-
-    public void addShopItem(ShopItem shopItem){
-
     }
 }

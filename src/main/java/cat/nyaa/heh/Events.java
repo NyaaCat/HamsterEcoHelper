@@ -35,5 +35,7 @@ public class Events implements Listener {
         if (!isHehUi(event.getInventory())){
             return;
         }
+        UiManager instance = UiManager.getInstance();
+        instance.removeUi(event.getInventory());
     }
 }
