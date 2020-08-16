@@ -12,10 +12,11 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class Auction {
     private static Auction currentAuction;
-    private static boolean auctionInProgress = false;
+    private static boolean aucting = false;
 
     private ShopItem item;
     private double basePrice;
@@ -46,13 +47,17 @@ public class Auction {
         return auction;
     }
 
-    public static boolean isInProgress(){
-        return auctionInProgress;
+    public static boolean hasAuction(){
+        return aucting;
     }
 
     public void start(){
-        auctionInProgress = true;
-        auctionTask = new AuctionTask();
+        if(aucting){
+            throw new IllegalStateException("an auction is running");
+        }
+        aucting = true;
+        currentAuction = this;
+        auctionTask = new AuctionTask(this);
         auctionTask.runTaskLater(HamsterEcoHelper.plugin, auctionStepInterval);
         if (item.isOwnedBySystem()){
             broadcast(new Message("").append(I18n.format("auction.start.system", basePrice, stepPrice), getItem()));
@@ -60,6 +65,7 @@ public class Auction {
             String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
             broadcast(new Message("").append(I18n.format("auction.start.player", name, basePrice, stepPrice), getItem()));
         }
+
     }
 
     public void onBid(UUID offerer, double offer){
@@ -78,7 +84,8 @@ public class Auction {
     }
 
     public void stop(){
-        auctionInProgress = false;
+        aucting = false;
+        currentAuction = null;
     }
 
     public static void broadcast(Message message){
@@ -113,9 +120,12 @@ public class Auction {
 
     private static AuctionTask auctionTask;
     public static class AuctionTask extends BukkitRunnable {
-        private static final int INTERVAL = 10;
-
         private Auction auctionInstance;
+
+        AuctionTask(Auction auctionInstance){
+            this.auctionInstance = auctionInstance;
+        }
+
         @Override
         public void run() {
             switch (auctionInstance.step){
@@ -130,18 +140,22 @@ public class Auction {
                     }else {
                         auctionInstance.onAucSuccess();
                     }
-                    break;
+                    return;
                 default:
+                    Bukkit.getLogger().log(Level.WARNING, "auction ended unexpectedly");
+                    auctionInstance.onAucFail();
                     auctionTask.cancel();
                     auctionTask = null;
-                    break;
+                    return;
             }
+            auctionTask = new AuctionTask(auctionInstance);
+            auctionTask.runTaskLater(HamsterEcoHelper.plugin, auctionInstance.auctionStepInterval);
         }
 
         void onBid(){
             auctionInstance.step = 0;
             cancel();
-            auctionTask = new AuctionTask();
+            auctionTask = new AuctionTask(auctionInstance);
             auctionTask.runTaskLater(HamsterEcoHelper.plugin, auctionInstance.auctionStepInterval);
         }
 
