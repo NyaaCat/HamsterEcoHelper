@@ -40,7 +40,7 @@ dependencies {
         compileOnly project(":LanguageUtils")
         compileOnly project(":LockettePro")
     } else {
-        compileOnly('cat.nyaa:nyaacore:7.2-SNAPSHOT') { transitive = false }
+        compileOnly('cat.nyaa:nyaacore:8.0-SNAPSHOT') { transitive = false }
         compileOnly('com.meowj:LangUtils:2.3-SNAPSHOT') { transitive = false }
     }
 
