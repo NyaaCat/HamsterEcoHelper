@@ -10,6 +10,7 @@ import java.util.Map;
 public class Configuration extends PluginConfigure {
 
 
+
     @Override
     protected JavaPlugin getPlugin() {
         return HamsterEcoHelper.plugin;
@@ -38,8 +39,8 @@ public class Configuration extends PluginConfigure {
     public double directFeeBase = 50;
     @Serializable(name = "fee.auction.base")
     public double auctionFeeBase = 100;
-    @Serializable(name = "fee.requsition.base")
-    public double requsiTionFeeBase = 50;
+    @Serializable(name = "fee.requisition.base")
+    public double requisitionFeeBase = 50;
 
     @Serializable(name = "limit.slots.market")
     public double limitSlotMarket = 5;
@@ -52,4 +53,6 @@ public class Configuration extends PluginConfigure {
 
     @Serializable(name = "auction.interval")
     public int auctionStepInterval = 200;
+    @Serializable(name = "requisition.duration")
+    public int requisitionDuration = 3600;
 }

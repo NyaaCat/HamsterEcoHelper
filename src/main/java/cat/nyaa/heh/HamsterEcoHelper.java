@@ -1,5 +1,6 @@
 package cat.nyaa.heh;
 
+import cat.nyaa.heh.auction.Auction;
 import cat.nyaa.heh.db.MarketConnection;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.transaction.TransactionController;
@@ -22,6 +23,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     @Override
     public void onDisable() {
         plugin = null;
+        Auction.abort();
     }
 
     public void reload() {

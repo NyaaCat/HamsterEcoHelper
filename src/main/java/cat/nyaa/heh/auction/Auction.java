@@ -5,8 +5,10 @@ import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.transaction.TransactionController;
 import cat.nyaa.nyaacore.Message;
+import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,7 +18,7 @@ import java.util.logging.Level;
 
 public class Auction {
     private static Auction currentAuction;
-    private static boolean aucting = false;
+    private static boolean hasAuction = false;
 
     private ShopItem item;
     private double basePrice;
@@ -38,8 +40,8 @@ public class Auction {
         this.auctionStepInterval = HamsterEcoHelper.plugin.config.auctionStepInterval;
     }
 
-    public static Auction startAuction(ShopItem item, double basePrice, double stepPrice, double reservePrice){
-        if (currentAuction != null){
+    public static Auction startAuction(ShopItem item, double basePrice, double stepPrice, double reservePrice) {
+        if (currentAuction != null) {
             return null;
         }
         Auction auction = new Auction(item, basePrice, stepPrice, reservePrice);
@@ -47,28 +49,28 @@ public class Auction {
         return auction;
     }
 
-    public static boolean hasAuction(){
-        return aucting;
+    public static boolean hasAuction() {
+        return hasAuction;
     }
 
-    public void start(){
-        if(aucting){
+    public void start() {
+        if (hasAuction) {
             throw new IllegalStateException("an auction is running");
         }
-        aucting = true;
+        hasAuction = true;
         currentAuction = this;
         auctionTask = new AuctionTask(this);
         auctionTask.runTaskLater(HamsterEcoHelper.plugin, auctionStepInterval);
-        if (item.isOwnedBySystem()){
+        if (item.isOwnedBySystem()) {
             broadcast(new Message("").append(I18n.format("auction.start.system", basePrice, stepPrice), getItem()));
-        }else {
+        } else {
             String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
             broadcast(new Message("").append(I18n.format("auction.start.player", name, basePrice, stepPrice), getItem()));
         }
 
     }
 
-    public void onBid(UUID offerer, double offer){
+    public void onBid(UUID offerer, double offer) {
         if (!isValidBid(offer)) {
             return;
         }
@@ -79,16 +81,16 @@ public class Auction {
         auctionTask.onBid();
     }
 
-    public boolean isValidBid(double offer){
+    public boolean isValidBid(double offer) {
         return this.highestOffer + stepPrice - offer <= 0.00001;
     }
 
-    public void stop(){
-        aucting = false;
+    public void stop() {
+        hasAuction = false;
         currentAuction = null;
     }
 
-    public static void broadcast(Message message){
+    public static void broadcast(Message message) {
         message.broadcast(new Permission("heh.bid"));
     }
 
@@ -98,16 +100,29 @@ public class Auction {
         if (hasOffer) {
             current = highestOffer;
         }
-        if (item.isOwnedBySystem()){
+        if (item.isOwnedBySystem()) {
             broadcast(new Message("").append(I18n.format("auction.info.system", current, stepPrice), itemStack));
-        }else {
+        } else {
             broadcast(new Message("").append(I18n.format("auction.info.player", current, stepPrice), itemStack));
         }
-        if (hasOffer){
+        if (hasOffer) {
             String name = Bukkit.getOfflinePlayer(offerer).getName();
-            broadcast(new Message("").append(I18n.format("auction.info.offer", name, highestOffer, step+1)));
-        }else {
+            broadcast(new Message("").append(I18n.format("auction.info.offer", name, highestOffer, step + 1)));
+        } else {
             broadcast(new Message("").append(I18n.format("auction.info.no_offer")));
+        }
+    }
+
+    /**
+     * only use for server shutting down.
+     * abort current auction and return item back.
+     */
+    public static void abort() {
+        if (currentAuction != null) {
+            currentAuction.offerer = null;
+            currentAuction.highestOffer = 0;
+            currentAuction.hasOffer = false;
+            currentAuction.onAucFail();
         }
     }
 
@@ -119,25 +134,26 @@ public class Auction {
     }
 
     private static AuctionTask auctionTask;
+
     public static class AuctionTask extends BukkitRunnable {
         private Auction auctionInstance;
 
-        AuctionTask(Auction auctionInstance){
+        AuctionTask(Auction auctionInstance) {
             this.auctionInstance = auctionInstance;
         }
 
         @Override
         public void run() {
-            switch (auctionInstance.step){
+            switch (auctionInstance.step) {
                 case 0:
                 case 1:
                     auctionInstance.broadcastInfo(auctionInstance.step);
                     auctionInstance.step++;
                     break;
                 case 2:
-                    if (!auctionInstance.hasOffer || auctionInstance.highestOffer < auctionInstance.reservePrice){
+                    if (!auctionInstance.hasOffer || auctionInstance.highestOffer < auctionInstance.reservePrice) {
                         auctionInstance.onAucFail();
-                    }else {
+                    } else {
                         auctionInstance.onAucSuccess();
                     }
                     return;
@@ -152,7 +168,7 @@ public class Auction {
             auctionTask.runTaskLater(HamsterEcoHelper.plugin, auctionInstance.auctionStepInterval);
         }
 
-        void onBid(){
+        void onBid() {
             auctionInstance.step = 0;
             cancel();
             auctionTask = new AuctionTask(auctionInstance);
@@ -173,5 +189,24 @@ public class Auction {
         ItemStack itemStack = getItem();
         stop();
         broadcast(new Message("").append(I18n.format("auction.failed"), itemStack));
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(item.getOwner());
+        Inventory targetInventory = null;
+        if (offlinePlayer.isOnline()) {
+            targetInventory = offlinePlayer.getPlayer().getInventory();
+        }else {
+            //todo store item in temp inventory
+        }
+        if(targetInventory != null){
+            giveTo(targetInventory, itemStack);
+        }
+    }
+
+    private boolean giveTo(Inventory inventory, ItemStack itemStack) {
+        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
+            if (InventoryUtils.addItem(inventory, itemStack)){
+                return true;
+            }
+        }
+        return false;
     }
 }
