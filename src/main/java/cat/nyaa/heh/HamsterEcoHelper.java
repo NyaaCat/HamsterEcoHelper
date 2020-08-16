@@ -5,6 +5,7 @@ import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.transaction.TransactionController;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.utils.EcoUtils;
+import cat.nyaa.heh.utils.SystemAccountUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class HamsterEcoHelper extends JavaPlugin {
@@ -31,6 +32,7 @@ public class HamsterEcoHelper extends JavaPlugin {
         MarketConnection.getInstance();
         SignShopConnection.getInstance();
         TransactionController.getInstance();
+        SystemAccountUtils.init();
         EcoUtils.getInstance();
         ButtonRegister.getInstance();
     }
