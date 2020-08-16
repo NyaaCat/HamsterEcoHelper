@@ -4,6 +4,7 @@ import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.enums.ShopItemType;
 import cat.nyaa.heh.transaction.Tax;
+import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import cat.nyaa.nyaacore.utils.ItemTagUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -197,5 +198,9 @@ public class ShopItem {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isOwnedBySystem() {
+        return SystemAccountUtils.isSystemAccount(owner);
     }
 }

@@ -49,7 +49,7 @@ public class Transaction {
     }
 
     public ShopItem getShopItem() {
-        return ShopItemManager.getShopItem(shopItem);
+        return ShopItemManager.getInstance().getShopItem(shopItem);
     }
 
     public void setShopItem(long shopItem) {

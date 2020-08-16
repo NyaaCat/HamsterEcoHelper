@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class Configuration extends PluginConfigure {
 
+
     @Override
     protected JavaPlugin getPlugin() {
         return HamsterEcoHelper.plugin;
@@ -48,4 +49,7 @@ public class Configuration extends PluginConfigure {
     public double limitSigns = 3;
     @Serializable(name = "limit.frames")
     public double limitFrames = 12;
+
+    @Serializable(name = "auction.interval")
+    public int auctionStepInterval = 200;
 }
