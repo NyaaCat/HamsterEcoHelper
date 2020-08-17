@@ -22,10 +22,29 @@ public abstract class ShopComponent extends BasePagedComponent{
         if (shopItem == null){
             return;
         }
+
         UUID buyer = event.getWhoClicked().getUniqueId();
+        if (buyer.equals(shopItem.getOwner())){
+            addOnCursor(event, shopItem);
+            return;
+        }
         TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
         loadData();
         refreshUi();
+    }
+
+    private void addOnCursor(InventoryClickEvent event, ShopItem shopItem) {
+        ItemStack itemStack = shopItem.getItemStack();
+        int amount = shopItem.getAmount();
+        ItemStack cursor = event.getCursor();
+        if (cursor == null || cursor.getType().isAir()){
+            shopItem.setAmount(amount - 1);
+            event.getView().setCursor(itemStack);
+        }else if (cursor.isSimilar(itemStack) && cursor.getAmount() < cursor.getMaxStackSize()){
+            shopItem.setAmount(amount - 1);
+            itemStack.setAmount(cursor.getAmount() + 1);
+            event.getView().setCursor(itemStack);
+        }
     }
 
     @Override
@@ -36,6 +55,10 @@ public abstract class ShopComponent extends BasePagedComponent{
             return;
         }
         UUID buyer = event.getWhoClicked().getUniqueId();
+        if (buyer.equals(shopItem.getOwner())){
+            addOnCursor(event, shopItem);
+            return;
+        }
         TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
         refreshUi();
     }
@@ -48,6 +71,10 @@ public abstract class ShopComponent extends BasePagedComponent{
             return;
         }
         UUID buyer = event.getWhoClicked().getUniqueId();
+        if (buyer.equals(shopItem.getOwner())){
+            addOnCursor(event, shopItem);
+            return;
+        }
         TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount());
         refreshUi();
     }
@@ -65,6 +92,9 @@ public abstract class ShopComponent extends BasePagedComponent{
         ItemStack cursor = event.getCursor();
         if (cursor == null || cursor.getType().equals(Material.AIR)){
             event.getView().setCursor(clone);
+        }else if (cursor.isSimilar(clone)){
+            cursor.setAmount(cursor.getMaxStackSize());
+            event.getView().setCursor(cursor);
         }
     }
 
