@@ -2,7 +2,9 @@ package cat.nyaa.heh.ui.component.impl;
 
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.market.Market;
+import cat.nyaa.heh.transaction.TransactionController;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
+import cat.nyaa.heh.ui.component.ShopComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -15,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class MarketComponent extends BasePagedComponent {
+public class MarketComponent extends ShopComponent {
     public MarketComponent(Inventory inventory) {
         super(inventory);
     }
@@ -75,38 +77,5 @@ public class MarketComponent extends BasePagedComponent {
 
     public boolean isFiltered() {
         return ownerFilter != null;
-    }
-
-    @Override
-    public void onLeftClick(InventoryClickEvent event) {
-        //todo
-
-    }
-
-    @Override
-    public void onRightClick(InventoryClickEvent event) {
-        //todo
-
-    }
-
-    @Override
-    public void onShiftLeftClick(InventoryClickEvent event) {
-        //todo
-
-    }
-
-    @Override
-    public void onMiddleClick(InventoryClickEvent event) {
-        if (event.getWhoClicked() instanceof Player){
-            Player player = (Player) event.getWhoClicked();
-            if(!player.isOp()){
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void onDrag(InventoryClickEvent event) {
-
     }
 }

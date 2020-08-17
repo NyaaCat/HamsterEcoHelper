@@ -77,6 +77,9 @@ public abstract class BaseSignShop {
         //todo
     }
 
+    public List<ShopItem> getItems() {
+        return items;
+    }
 
     private void internalAddItemToList(ShopItem shopItem) {
         items.add(shopItem);

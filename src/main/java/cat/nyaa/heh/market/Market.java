@@ -74,6 +74,10 @@ public class Market {
         return stream.collect(Collectors.toList());
     }
 
+    public void refreshItem(){
+
+    }
+
     public void openGUI(Player player) {
         UiManager.getInstance().newMarketGUI();
     }

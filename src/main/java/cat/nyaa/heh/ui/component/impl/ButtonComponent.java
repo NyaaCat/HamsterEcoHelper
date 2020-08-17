@@ -10,10 +10,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
-public class ButtonComponent extends BaseComponent implements ButtonHolder, ButtonHandler {
+public class ButtonComponent extends BaseComponent<Void> implements ButtonHolder, ButtonHandler {
     private Inventory uiInventory;
     private IPagedUiAccess pagedUiAccess;
     private Map<Integer, GUIButton> buttonMap = new HashMap<>();
@@ -38,6 +39,16 @@ public class ButtonComponent extends BaseComponent implements ButtonHolder, Butt
 
     @Override
     public void loadData() {
+
+    }
+
+    @Override
+    public void loadData(List<Void> data) {
+
+    }
+
+    @Override
+    public void updateAsynchronously() {
 
     }
 

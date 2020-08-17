@@ -34,6 +34,14 @@ public abstract class BasePagedComponent extends BaseComponent<ShopItem> impleme
 
     protected int currentPage = 0;
 
+    protected ShopItem getShopItem(InventoryClickEvent event) {
+        int i = indexOf(event.getSlot());
+        if (i == -1){
+            return null;
+        }
+        int index = getCurrentPage() * getPageSize() + i;
+        return items.stream().skip(index).findFirst().orElse(null);
+    }
 
     @Override
     public int getCurrentPage() {

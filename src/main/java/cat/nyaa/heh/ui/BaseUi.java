@@ -54,6 +54,7 @@ public abstract class BaseUi implements InventoryHolder {
             }
         }
         if (comp == null) return;
+        event.setCancelled(true);
         switch (event.getClick()) {
             case LEFT:
                 comp.onLeftClick(event);
