@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class TransactionController {
-    private static final String TRANSACTION_TABLE_NAME = "transaction";
+    private static final String TRANSACTION_TABLE_NAME = "table_transac";
     private static final String TAX_TABLE_NAME = "tax";
     private static UidUtils transactionUidManager = UidUtils.create(TRANSACTION_TABLE_NAME);
     private static UidUtils taxUidManager = UidUtils.create(TAX_TABLE_NAME);
@@ -138,7 +138,7 @@ public class TransactionController {
     }
 
     private void addTaxRecord(long taxUid, OfflinePlayer taxPayer, double tax, double fee, long time) {
-        Tax taxRecord = new Tax(taxUid+1, taxPayer.getUniqueId().toString(), tax, time);
+        Tax taxRecord = new Tax(taxUid+1, taxPayer.getUniqueId(), tax, time);
         DatabaseManager.getInstance().insertTax(taxRecord);
         TransactionController.transactionUidManager.getNextUid();
     }

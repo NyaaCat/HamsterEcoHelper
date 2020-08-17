@@ -7,13 +7,14 @@ import cat.nyaa.nyaacore.orm.annotations.Table;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.UUID;
 
 @Table("tax")
 public class Tax {
     @Column(name = "uid", primary = true)
     long uid;
-    @Column(name = "from")
-    String from;
+    @Column(name = "payer")
+    UUID payer;
     @Column(name = "tax")
     double tax;
     @Column(name = "fee")
@@ -24,9 +25,9 @@ public class Tax {
     public Tax() {
     }
 
-    public Tax(long uid, String from, double tax, long time) {
+    public Tax(long uid, UUID from, double tax, long time) {
         this.uid = uid;
-        this.from = from;
+        this.payer = from;
         this.tax = tax;
         this.time = time;
     }

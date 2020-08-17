@@ -49,6 +49,7 @@ public class DatabaseManager {
         taxTable = db.getTable(Tax.class);
         transactionTable = db.getTable(Transaction.class);
         signShopTable = db.getTable(SignShopDbModel.class);
+
     }
 
     public static DatabaseManager getInstance(){

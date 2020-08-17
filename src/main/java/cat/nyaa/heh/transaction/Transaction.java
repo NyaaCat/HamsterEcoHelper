@@ -7,7 +7,7 @@ import cat.nyaa.nyaacore.orm.annotations.Table;
 
 import java.util.UUID;
 
-@Table("transaction")
+@Table("table_transac")
 public class Transaction {
     @Column(name = "uid", primary = true)
     long uid;
