@@ -1,18 +1,22 @@
 package cat.nyaa.heh.ui;
 
 import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.signshop.BaseSignShop;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.impl.SignShopComponent;
 import org.bukkit.inventory.Inventory;
 
 public class SignShopGUI extends BaseUi{
-    SignShopGUI(){
+    private BaseSignShop signShop;
+
+    SignShopGUI(BaseSignShop signShop){
         super();
+        this.signShop = signShop;
     }
 
     @Override
     protected BasePagedComponent getPageComponent() {
-        return new SignShopComponent(uiInventory);
+        return new SignShopComponent(uiInventory, signShop);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component.button.impl;
 
+import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.IPagedUiAccess;
 import cat.nyaa.heh.ui.component.button.GUIButton;
 import cat.nyaa.heh.utils.Utils;
@@ -30,7 +31,7 @@ public class ButtonBack extends GUIButton {
     }
 
     @Override
-    public void doAction(InventoryInteractEvent event, IPagedUiAccess iQueryUiAccess) {
+    public void doAction(InventoryInteractEvent event, BasePagedComponent iQueryUiAccess) {
         HumanEntity whoClicked = event.getWhoClicked();
         whoClicked.closeInventory();
     }

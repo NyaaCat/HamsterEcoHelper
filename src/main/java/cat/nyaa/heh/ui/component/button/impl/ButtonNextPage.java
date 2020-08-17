@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component.button.impl;
 
+import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.IPagedUiAccess;
 import cat.nyaa.heh.ui.component.button.GUIButton;
 import org.bukkit.ChatColor;
@@ -32,7 +33,7 @@ public class ButtonNextPage extends GUIButton {
     }
 
     @Override
-    public void doAction(InventoryInteractEvent event, IPagedUiAccess iQueryUiAccess) {
+    public void doAction(InventoryInteractEvent event, BasePagedComponent iQueryUiAccess) {
         int currentPage = iQueryUiAccess.getCurrentPage();
         int totalPages = getTotalPages(iQueryUiAccess);
         int nextPage = currentPage+1;

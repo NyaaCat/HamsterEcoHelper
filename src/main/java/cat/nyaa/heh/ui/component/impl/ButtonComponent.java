@@ -16,18 +16,18 @@ import java.util.Map;
 
 public class ButtonComponent extends BaseComponent<Void> implements ButtonHolder, ButtonHandler {
     private Inventory uiInventory;
-    private IPagedUiAccess pagedUiAccess;
+    private BasePagedComponent basePagedComponent;
     private Map<Integer, GUIButton> buttonMap = new HashMap<>();
 
-    public ButtonComponent(int startRow, int startCol, IPagedUiAccess pagedUiAccess) {
+    public ButtonComponent(int startRow, int startCol, BasePagedComponent pagedUiAccess) {
         super(startRow, startCol, 1, 9);
         this.uiInventory = pagedUiAccess.getInventory();
-        this.pagedUiAccess = pagedUiAccess;
+        this.basePagedComponent = pagedUiAccess;
     }
 
     @Override
     public void onButtonClicked(GUIButton button, InventoryClickEvent event) {
-        button.doAction(event, pagedUiAccess);
+        button.doAction(event, basePagedComponent);
     }
 
     @Override
@@ -78,8 +78,8 @@ public class ButtonComponent extends BaseComponent<Void> implements ButtonHolder
     }
 
     @Override
-    public IPagedUiAccess getControlled() {
-        return pagedUiAccess;
+    public BasePagedComponent getControlled() {
+        return basePagedComponent;
     }
 
     @Override

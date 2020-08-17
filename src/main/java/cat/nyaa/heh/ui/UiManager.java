@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui;
 
+import cat.nyaa.heh.signshop.BaseSignShop;
 import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;
@@ -30,8 +31,8 @@ public class UiManager {
         return addGUI(new MarketGUI());
     }
 
-    public SignShopGUI newSignShopGUI(){
-        return addGUI(new SignShopGUI());
+    public SignShopGUI newSignShopGUI(BaseSignShop signShop){
+        return addGUI(new SignShopGUI(signShop));
     }
 
     private <T extends BaseUi> T addGUI(T marketGUI) {

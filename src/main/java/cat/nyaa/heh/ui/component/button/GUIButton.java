@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component.button;
 
+import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.IPagedUiAccess;
 import cat.nyaa.nyaacore.configuration.ISerializable;
 import org.bukkit.event.inventory.InventoryInteractEvent;
@@ -10,7 +11,7 @@ public abstract class GUIButton implements ISerializable, Cloneable{
 
     public abstract String getAction();
 
-    public abstract void doAction(InventoryInteractEvent event, IPagedUiAccess iQueryUiAccess);
+    public abstract void doAction(InventoryInteractEvent event, BasePagedComponent iQueryUiAccess);
 
     protected int getTotalPages(IPagedUiAccess iQueryUiAccess){
         int size = iQueryUiAccess.getSize();

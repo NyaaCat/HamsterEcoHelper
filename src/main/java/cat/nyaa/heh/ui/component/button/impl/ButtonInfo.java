@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component.button.impl;
 
+import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.IPagedUiAccess;
 import cat.nyaa.heh.ui.component.InfoHolder;
 import cat.nyaa.heh.ui.component.button.GUIButton;
@@ -42,7 +43,7 @@ public class ButtonInfo extends GUIButton {
     }
 
     @Override
-    public void doAction(InventoryInteractEvent event, IPagedUiAccess iQueryUiAccess) {
+    public void doAction(InventoryInteractEvent event, BasePagedComponent iQueryUiAccess) {
 
     }
 
