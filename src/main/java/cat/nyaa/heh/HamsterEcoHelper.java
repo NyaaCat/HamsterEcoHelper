@@ -17,6 +17,7 @@ public class HamsterEcoHelper extends JavaPlugin {
     public Configuration config;
     I18n i18n;
     MainCommand mainCommand;
+    Events events ;
 
     @Override
     public void onEnable() {
@@ -24,6 +25,8 @@ public class HamsterEcoHelper extends JavaPlugin {
         reload();
         mainCommand = new MainCommand(this, i18n);
         Bukkit.getPluginCommand("hamsterecohelper").setExecutor(mainCommand);
+        events = new Events(this);
+        Bukkit.getPluginManager().registerEvents(events, this);
     }
 
     @Override

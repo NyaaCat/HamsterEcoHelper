@@ -47,4 +47,8 @@ public class ShopItemManager {
     public long getNextUid() {
         return this.uidManager.getNextUid();
     }
+
+    public void updateShopItem(ShopItem shopItem) {
+        DatabaseManager.getInstance().updateShopItem(shopItem);
+    }
 }

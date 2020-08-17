@@ -1,6 +1,7 @@
 package cat.nyaa.heh.ui.component;
 
 import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.heh.transaction.TransactionController;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -45,6 +46,9 @@ public abstract class ShopComponent extends BasePagedComponent{
             itemStack.setAmount(cursor.getAmount() + 1);
             event.getView().setCursor(itemStack);
         }
+        ShopItemManager.getInstance().updateShopItem(shopItem);
+        loadData();
+        refreshUi();
     }
 
     @Override

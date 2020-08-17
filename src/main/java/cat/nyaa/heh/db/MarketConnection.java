@@ -35,13 +35,14 @@ public class MarketConnection {
             uidManager.loadUid();
         }
         if (!checkShopItem(shopItem)) {
-            ShopItemDbModel shopItemDbModel = ShopItemDbModel.fromShopItem(shopItem);
-            if (shopItemDbModel.getUid() == -1){
-                shopItemDbModel.setUid(uidManager.getNextUid());
-            }
-            DatabaseManager instance = DatabaseManager.getInstance();
-            instance.insertShopItem(shopItemDbModel);
-        }else throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
+        }
+        ShopItemDbModel shopItemDbModel = ShopItemDbModel.fromShopItem(shopItem);
+        if (shopItemDbModel.getUid() == -1){
+            shopItemDbModel.setUid(uidManager.getNextUid());
+        }
+        DatabaseManager instance = DatabaseManager.getInstance();
+        instance.insertShopItem(shopItemDbModel);
     }
 
 
@@ -64,7 +65,7 @@ public class MarketConnection {
     }
 
     public List<ShopItem> getItems(){
-        List<ShopItem> items = new ArrayList<>();
+        List<ShopItem> items = DatabaseManager.getInstance().getMarketItems();
         return items;
     }
 }

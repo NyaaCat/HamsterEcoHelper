@@ -85,6 +85,9 @@ public class ButtonComponent extends BaseComponent<Void> implements ButtonHolder
     @Override
     public void onLeftClick(InventoryClickEvent event) {
         GUIButton buttonAt = getButtonAt(event.getSlot());
+        if (buttonAt == null){
+            return;
+        }
         onButtonClicked(buttonAt, event);
     }
 

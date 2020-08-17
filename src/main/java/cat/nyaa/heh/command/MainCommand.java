@@ -10,6 +10,7 @@ import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -65,6 +66,7 @@ public class MainCommand extends CommandReceiver {
 
         Market.getInstance().offer(player, itemInMainHand, unitPrice);
         new Message("").append(I18n.format("market.offer.success", unitPrice), itemInMainHand).send(sender);
+        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
     }
 
     private List<String> marketCompleter(CommandSender sender, Arguments arguments){

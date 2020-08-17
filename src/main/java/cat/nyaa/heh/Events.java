@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 
 public class Events implements Listener {
@@ -24,6 +25,16 @@ public class Events implements Listener {
         UiManager instance = UiManager.getInstance();
         BaseUi ui = instance.getUi(event.getInventory());
         ui.onClickRawSlot(event);
+    }
+
+    @EventHandler
+    public void onUiClicked(InventoryDragEvent event){
+        if (!isHehUi(event.getInventory())){
+            return;
+        }
+        UiManager instance = UiManager.getInstance();
+        BaseUi ui = instance.getUi(event.getInventory());
+        ui.onDragRawSlot(event);
     }
 
     private boolean isHehUi(Inventory inventory) {

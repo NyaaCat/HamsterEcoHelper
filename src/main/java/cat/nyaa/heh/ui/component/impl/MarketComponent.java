@@ -3,6 +3,7 @@ package cat.nyaa.heh.ui.component.impl;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.market.Market;
 import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.ui.component.BaseComponent;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.ShopComponent;
 import org.bukkit.Material;
@@ -22,10 +23,9 @@ public class MarketComponent extends ShopComponent {
         super(inventory);
     }
 
-    private List<ShopItem> items = new ArrayList<>();
-
     private List<ShopItem> loadItems() {
         List<ShopItem> marketItems;
+        Market.getInstance().loadItem();
         if (ownerFilter == null){
             marketItems = Market.getInstance().getMarketItems();
         }else {
@@ -37,7 +37,11 @@ public class MarketComponent extends ShopComponent {
     @Override
     public void refreshUi() {
         List<ItemStack> collect = items.stream().skip(getPageSize() * getCurrentPage())
-                .limit(getPageSize()).map(shopItem -> shopItem.getItemStack()).collect(Collectors.toList());
+                .limit(getPageSize())
+                .map(shopItem -> {
+                    return BaseComponent.getFakeItem(shopItem);
+                })
+                .collect(Collectors.toList());
         int size = collect.size();
         ItemStack air = new ItemStack(Material.AIR);
         for (int i = 0; i < getPageSize(); i++) {

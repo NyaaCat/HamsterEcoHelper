@@ -8,13 +8,11 @@ import cat.nyaa.heh.ui.component.button.GUIButton;
 import cat.nyaa.heh.ui.component.impl.ButtonComponent;
 import cat.nyaa.heh.ui.component.impl.MarketComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class BaseUi implements InventoryHolder {
     private UUID uiuid;
@@ -44,15 +42,18 @@ public abstract class BaseUi implements InventoryHolder {
 
     public void onClickRawSlot(InventoryClickEvent event) {
         int slot = event.getSlot();
+        if (event.getClickedInventory() == null || !event.getClickedInventory().equals(event.getView().getTopInventory())){
+            return;
+        }
         event.setCancelled(true);
         List<? extends BaseComponent> components = Arrays.asList(pagedComponent, buttonComponent);
         BaseComponent comp = components.stream().filter(com -> com.containsRawSlot(slot)).findFirst().orElse(null);
-        if (comp instanceof ButtonHolder){
-            GUIButton buttonAt = ((ButtonHolder) comp).getButtonAt(slot);
-            if(buttonAt != null){
-                buttonAt.doAction(event, ((ButtonHolder) comp).getControlled());
-            }
-        }
+//        if (comp instanceof ButtonHolder){
+//            GUIButton buttonAt = ((ButtonHolder) comp).getButtonAt(slot);
+//            if(buttonAt != null){
+//                buttonAt.doAction(event, ((ButtonHolder) comp).getControlled());
+//            }
+//        }
         if (comp == null) return;
         event.setCancelled(true);
         switch (event.getClick()) {
@@ -75,5 +76,36 @@ public abstract class BaseUi implements InventoryHolder {
 
     public UUID getUid(){
         return uiuid;
+    }
+
+    public void onDragRawSlot(InventoryDragEvent event){
+        Inventory clickedInventory = event.getInventory();
+
+            event.setCancelled(true);
+            if (event.getRawSlots().size() == 1){
+                if (event.getRawSlots().iterator().next() == 9){
+                    InventoryClickEvent event1 = new InventoryClickEvent(event.getView(), InventoryType.SlotType.CONTAINER, 9, ClickType.LEFT, InventoryAction.PLACE_ALL);
+                    this.onClickRawSlot(event1);
+                    event.setCancelled(event1.isCancelled());
+                    return;
+                }
+            }
+
+            Set<Integer> inventorySlots = ((InventoryDragEvent) event).getRawSlots();
+            boolean invalid = inventorySlots.stream()
+                    .mapToInt(Integer::intValue)
+                    .anyMatch(integer -> !isContentClicked(integer));
+            int size = event.getView().getTopInventory().getSize();
+            boolean related = event.getRawSlots().stream().mapToInt(Integer::intValue)
+                    .anyMatch(integer -> integer < size);
+            event.setCancelled(invalid && related);
+            if (!invalid){
+                //todo check this
+//                onContentInteract(event);
+            }
+    }
+
+    protected boolean isContentClicked(int integer){
+        return pagedComponent.containsRawSlot(integer) || buttonComponent.containsRawSlot(integer);
     }
 }

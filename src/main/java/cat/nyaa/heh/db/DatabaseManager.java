@@ -49,7 +49,6 @@ public class DatabaseManager {
         taxTable = db.getTable(Tax.class);
         transactionTable = db.getTable(Transaction.class);
         signShopTable = db.getTable(SignShopDbModel.class);
-
     }
 
     public static DatabaseManager getInstance(){
@@ -91,10 +90,10 @@ public class DatabaseManager {
         return shopItemTable.count(WhereClause.EQ("type", type.name()).whereEq("owner", owner.toString()));
     }
 
-    public int getUidMax(String tableName) throws SQLException {
+    public long getUidMax(String tableName) throws SQLException {
         ResultSet resultSet = db.getConnection().createStatement().executeQuery(String.format("select max(uid) from %s", tableName));
         if (resultSet.first()) {
-            return resultSet.getInt(0);
+            return resultSet.getLong(0);
         }return 0;
     }
 
@@ -104,10 +103,11 @@ public class DatabaseManager {
 
     public List<ShopItem> getMarketItems() {
         List<ShopItem> collect = shopItemTable.select(
-                    WhereClause.EQ("type", ShopItemType.MARKET.name())
-                            .where("amount", ">", "sold")
+                    WhereClause.EQ("type", ShopItemType.MARKET)
+//                            .where("amount", ">", "sold")
                             .whereEq("available", true)
                 ).stream()
+                .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
                 .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
                 .collect(Collectors.toList());
         return collect;
@@ -115,11 +115,12 @@ public class DatabaseManager {
 
     public List<ShopItem> getMarketItems(UUID owner) {
         List<ShopItem> collect = shopItemTable.select(
-                WhereClause.EQ("type", ShopItemType.MARKET.name())
+                WhereClause.EQ("type", ShopItemType.MARKET)
                         .whereEq("owner", owner.toString())
-                        .where("amount", ">", "sold")
+//                        .where("amount", ">", "sold")
                         .whereEq("available", true)
         ).stream()
+                .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
                 .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
                 .collect(Collectors.toList());
         return collect;

@@ -37,7 +37,6 @@ public class Market {
     public void loadItem(){
         List<ShopItem> items = MarketConnection.getInstance().getItems();
         marketItems = items;
-        refreshGUI();
     }
 
     private void refreshGUI() {
@@ -79,6 +78,8 @@ public class Market {
     }
 
     public void openGUI(Player player) {
-        UiManager.getInstance().newMarketGUI();
+        MarketGUI marketGUI = UiManager.getInstance().newMarketGUI();
+        marketGUI.refreshGUI();
+        player.openInventory(marketGUI.getInventory());
     }
 }

@@ -14,6 +14,7 @@ import java.util.Map;
 public abstract class BasePagedComponent extends BaseComponent<ShopItem> implements IPagedUiAccess {
     public BasePagedComponent(Inventory inventory) {
         super(0, 0, 5, 9);
+        int initialCapacity = rows() * columns();
         this.uiInventory = inventory;
     }
 
