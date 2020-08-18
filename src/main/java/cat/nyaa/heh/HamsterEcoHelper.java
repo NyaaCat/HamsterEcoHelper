@@ -6,6 +6,7 @@ import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.MarketConnection;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.utils.EcoUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -33,6 +34,8 @@ public class HamsterEcoHelper extends JavaPlugin {
     public void onDisable() {
         plugin = null;
         Auction.abort();
+        DatabaseManager.getInstance().close();
+        UiManager.getInstance().getMarketUis().forEach(marketGUI -> marketGUI.close());
     }
 
     public void reload() {

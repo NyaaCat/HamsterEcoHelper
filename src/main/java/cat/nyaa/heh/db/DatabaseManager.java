@@ -92,9 +92,7 @@ public class DatabaseManager {
 
     public long getUidMax(String tableName) throws SQLException {
         ResultSet resultSet = db.getConnection().createStatement().executeQuery(String.format("select max(uid) from %s", tableName));
-        if (resultSet.first()) {
-            return resultSet.getLong(0);
-        }return 0;
+        return resultSet.getLong(1);
     }
 
     public void insertShopItem(ShopItemDbModel shopItemDbModel){
@@ -184,5 +182,13 @@ public class DatabaseManager {
 
     public void addShopItem(ShopItem shopItem) {
         shopItemTable.insert(ShopItemDbModel.fromShopItem(shopItem));
+    }
+
+    public void close() {
+        try {
+            db.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

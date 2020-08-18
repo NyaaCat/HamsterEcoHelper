@@ -15,7 +15,7 @@ import java.util.logging.Level;
 
 public class ShopItemManager {
     private static ShopItemManager INSTANCE;
-    private static final String TABLE_NAME = "item";
+    private static final String TABLE_NAME = "items";
     private UidUtils uidManager = UidUtils.create(TABLE_NAME);
 
     private ShopItemManager() {

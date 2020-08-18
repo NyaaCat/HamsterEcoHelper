@@ -14,7 +14,6 @@ public class Events implements Listener {
 
     public Events(HamsterEcoHelper plugin) {
         this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler

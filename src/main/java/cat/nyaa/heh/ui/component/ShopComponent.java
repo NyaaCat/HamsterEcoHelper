@@ -1,8 +1,10 @@
 package cat.nyaa.heh.ui.component;
 
+import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -26,29 +28,27 @@ public abstract class ShopComponent extends BasePagedComponent{
 
         UUID buyer = event.getWhoClicked().getUniqueId();
         if (buyer.equals(shopItem.getOwner())){
-            addOnCursor(event, shopItem);
-            return;
+            addOnCursor(event, shopItem, shopItem.getAmount() - shopItem.getSoldAmount());
+        }else{
+            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
         }
-        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
         loadData();
         refreshUi();
     }
 
-    private void addOnCursor(InventoryClickEvent event, ShopItem shopItem) {
+    private void addOnCursor(InventoryClickEvent event, ShopItem shopItem, int amount) {
         ItemStack itemStack = shopItem.getItemStack();
-        int amount = shopItem.getAmount();
+        itemStack.setAmount(amount);
         ItemStack cursor = event.getCursor();
         if (cursor == null || cursor.getType().isAir()){
-            shopItem.setAmount(amount - 1);
+            shopItem.setAmount(shopItem.getAmount() - amount);
             event.getView().setCursor(itemStack);
         }else if (cursor.isSimilar(itemStack) && cursor.getAmount() < cursor.getMaxStackSize()){
-            shopItem.setAmount(amount - 1);
-            itemStack.setAmount(cursor.getAmount() + 1);
+            shopItem.setAmount(shopItem.getAmount() - amount);
+            itemStack.setAmount(Math.min(cursor.getAmount() + amount, cursor.getMaxStackSize()));
             event.getView().setCursor(itemStack);
         }
         ShopItemManager.getInstance().updateShopItem(shopItem);
-        loadData();
-        refreshUi();
     }
 
     @Override
@@ -60,10 +60,11 @@ public abstract class ShopComponent extends BasePagedComponent{
         }
         UUID buyer = event.getWhoClicked().getUniqueId();
         if (buyer.equals(shopItem.getOwner())){
-            addOnCursor(event, shopItem);
-            return;
+            addOnCursor(event, shopItem, 1);
+        }else {
+            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
         }
-        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
+        loadData();
         refreshUi();
     }
 
@@ -76,10 +77,16 @@ public abstract class ShopComponent extends BasePagedComponent{
         }
         UUID buyer = event.getWhoClicked().getUniqueId();
         if (buyer.equals(shopItem.getOwner())){
-            addOnCursor(event, shopItem);
-            return;
+            ItemStack itemStack = shopItem.getItemStack();
+            int amount = shopItem.getAmount() - shopItem.getSoldAmount();
+            itemStack.setAmount(amount);
+            shopItem.setAmount(shopItem.getAmount() - amount);
+            giveTo(event.getWhoClicked().getInventory(), itemStack);
+            DatabaseManager.getInstance().updateShopItem(shopItem);
+        }else {
+            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount());
         }
-        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount());
+        loadData();
         refreshUi();
     }
 
@@ -100,6 +107,15 @@ public abstract class ShopComponent extends BasePagedComponent{
             cursor.setAmount(cursor.getMaxStackSize());
             event.getView().setCursor(cursor);
         }
+    }
+
+    private boolean giveTo(Inventory inventory, ItemStack itemStack) {
+        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
+            if (InventoryUtils.addItem(inventory, itemStack)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

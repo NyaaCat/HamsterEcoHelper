@@ -8,6 +8,7 @@ import cat.nyaa.heh.ui.component.button.GUIButton;
 import cat.nyaa.heh.ui.component.impl.ButtonComponent;
 import cat.nyaa.heh.ui.component.impl.MarketComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -107,5 +108,24 @@ public abstract class BaseUi implements InventoryHolder {
 
     protected boolean isContentClicked(int integer){
         return pagedComponent.containsRawSlot(integer) || buttonComponent.containsRawSlot(integer);
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return uiInventory;
+    }
+
+    private Player opened;
+    public void open(Player player){
+        this.opened = player;
+        player.openInventory(uiInventory);
+    }
+
+    public void close() {
+        if (opened != null) {
+            if (opened.getOpenInventory().getTopInventory().equals(uiInventory)) {
+                opened.closeInventory();
+            }
+        }
     }
 }

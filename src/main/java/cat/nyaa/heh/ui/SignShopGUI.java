@@ -23,9 +23,4 @@ public class SignShopGUI extends BaseUi{
     protected String getTitle() {
         return I18n.format("ui.title.sign_shop");
     }
-
-    @Override
-    public Inventory getInventory() {
-        return uiInventory;
-    }
 }

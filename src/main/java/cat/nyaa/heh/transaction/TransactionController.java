@@ -82,6 +82,10 @@ public class TransactionController {
 
             EconomyResponse rspBuyer = eco.withdrawPlayer(pPayer, toTake.doubleValue());
             EconomyResponse rspSeller = eco.depositPlayer(pSeller, itemPrice.doubleValue());
+            ItemStack itemStack = item.getItemStack();
+            itemStack.setAmount(amount);
+            new Message("").append(I18n.format("transaction.withdraw", pSeller.getName(), itemPrice.doubleValue()), itemStack).send(pPayer);
+            new Message("").append(I18n.format("transaction.deposit", pPayer.getName(), itemPrice.doubleValue()), itemStack).send(pSeller);
             if(!rspBuyer.type.equals(EconomyResponse.ResponseType.SUCCESS) || !rspSeller.type.equals(EconomyResponse.ResponseType.SUCCESS) ){
                 throw new IllegalStateException("");
             }
@@ -97,8 +101,6 @@ public class TransactionController {
             transactionRecorderTask.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 0);
 
             if (receiveInv != null){
-                ItemStack itemStack = item.getItemStack();
-                itemStack.setAmount(amount);
                 if (!giveTo(receiveInv, itemStack)) {
                     //todo give to temp storage
                 }

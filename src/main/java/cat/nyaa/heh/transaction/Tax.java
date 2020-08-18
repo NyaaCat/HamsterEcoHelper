@@ -33,7 +33,7 @@ public class Tax {
     }
 
     public static BigDecimal calcTax(ShopItem shopItem, BigDecimal price){
-        Double taxRate = HamsterEcoHelper.plugin.config.taxRateMap.getOrDefault(shopItem.getShopItemType().name().toLowerCase(), 0d);
+        double taxRate = HamsterEcoHelper.plugin.config.taxRateMap.getOrDefault(shopItem.getShopItemType().name().toLowerCase(), 0d).doubleValue();
         return price.multiply(BigDecimal.valueOf(taxRate)).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
     }
 }

@@ -8,9 +8,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Configuration extends PluginConfigure {
-
-
-
     @Override
     protected JavaPlugin getPlugin() {
         return HamsterEcoHelper.plugin;
@@ -27,7 +24,14 @@ public class Configuration extends PluginConfigure {
     public String vaultPlayer = "";
 
     @Serializable(name = "tax")
-    public Map<String, Double> taxRateMap = new LinkedHashMap<>();
+    public Map<String, Number> taxRateMap = new LinkedHashMap<>();
+    {
+        taxRateMap.put("market", 10d);
+        taxRateMap.put("signshop", 5d);
+        taxRateMap.put("direct", 5d);
+        taxRateMap.put("auction", 20d);
+        taxRateMap.put("requisition", 5d);
+    }
 
     @Serializable(name = "fee.market.base")
     public double marketFeeBase = 100;

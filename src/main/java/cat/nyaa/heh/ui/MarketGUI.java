@@ -35,8 +35,4 @@ public class MarketGUI extends BaseUi {
         return I18n.format("ui.title.market");
     }
 
-    @Override
-    public Inventory getInventory() {
-        return uiInventory;
-    }
 }
