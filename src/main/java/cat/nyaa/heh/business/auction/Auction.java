@@ -54,6 +54,10 @@ public class Auction {
         return hasAuction;
     }
 
+    public static Auction currentAuction() {
+        return currentAuction;
+    }
+
     public void start() {
         if (hasAuction) {
             throw new IllegalStateException("an auction is running");
@@ -133,6 +137,22 @@ public class Auction {
     }
 
     private static AuctionTask auctionTask;
+
+    public boolean hasOffer() {
+        return hasOffer;
+    }
+
+    public double getCurrentOffer() {
+        return highestOffer;
+    }
+
+    public double getStepPrice() {
+        return stepPrice;
+    }
+
+    public double getBasePrice() {
+        return basePrice;
+    }
 
     public static class AuctionTask extends BukkitRunnable {
         private Auction auctionInstance;

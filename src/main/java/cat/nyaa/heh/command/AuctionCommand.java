@@ -56,7 +56,7 @@ public class AuctionCommand extends CommandReceiver {
              reservePrice = arguments.nextDouble();
         }
         boolean isSystemAuc = false;
-        if (player.isOp() && arguments.top() != null){
+        if (sender.hasPermission(PERMISSION_ADMIN) && arguments.top() != null){
             isSystemAuc = arguments.nextBoolean();
         }
 
@@ -79,7 +79,7 @@ public class AuctionCommand extends CommandReceiver {
                 completeStr.add("<reserve price>");
                 break;
             case 4:
-                if (sender.isOp()) {
+                if (sender.hasPermission(PERMISSION_ADMIN)) {
                     completeStr.add("<is system auc?>");
                 }
                 break;

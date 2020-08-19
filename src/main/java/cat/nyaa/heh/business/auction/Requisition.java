@@ -21,11 +21,19 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ListIterator;
 
 public class Requisition {
-    public static Requisition currentRequisition;
+    private static Requisition currentRequisition;
     private static Permission permission = new Permission("heh.req");
-    private boolean hasRequisition = false;
+    private static boolean hasRequisition = false;
 
-    public boolean isHasRequisition() {
+    public static void startRequisition(ShopItem item) {
+        Requisition requisition = new Requisition(item);
+    }
+
+    public static Requisition currentRequisition() {
+        return currentRequisition;
+    }
+
+    public static boolean hasRequisition() {
         return hasRequisition;
     }
 
@@ -109,6 +117,10 @@ public class Requisition {
 
     public static void broadcast(Message message){
         message.broadcast(permission);
+    }
+
+    public int remains() {
+        return item.getAmount() - item.getSoldAmount();
     }
 
     private class RequisitionTask extends BukkitRunnable {
