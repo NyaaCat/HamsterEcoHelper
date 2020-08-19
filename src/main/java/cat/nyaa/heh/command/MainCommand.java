@@ -2,7 +2,7 @@ package cat.nyaa.heh.command;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.market.Market;
+import cat.nyaa.heh.business.market.Market;
 import cat.nyaa.heh.utils.EcoUtils;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;

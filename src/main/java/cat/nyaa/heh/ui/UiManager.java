@@ -1,6 +1,6 @@
 package cat.nyaa.heh.ui;
 
-import cat.nyaa.heh.signshop.BaseSignShop;
+import cat.nyaa.heh.business.signshop.BaseSignShop;
 import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;

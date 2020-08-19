@@ -1,8 +1,7 @@
-package cat.nyaa.heh.signshop;
+package cat.nyaa.heh.business.signshop;
 
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.SignShopDbModel;
-import cat.nyaa.heh.enums.SignShopType;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.transaction.TransactionController;
 import org.bukkit.Bukkit;
@@ -12,12 +11,16 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-public class SignShopBuy extends BaseSignShop{
+import java.util.UUID;
+
+public class SignShopSell extends BaseSignShop{
     private final SignShopType type = SignShopType.SELL;
 
-    public SignShopBuy(){}
+    public SignShopSell(UUID owner){
+        this.owner = owner;
+    }
 
-    public SignShopBuy(SignShopDbModel model){
+    public SignShopSell(SignShopDbModel model){
         this.owner = model.getOwner();
         String worldName = model.getWorld();
         World world = Bukkit.getWorld(worldName);
@@ -35,13 +38,13 @@ public class SignShopBuy extends BaseSignShop{
 
     @Override
     public void loadItems() {
-        SignShopConnection.getInstance().getBuyShopItems(owner);
+        this.items = SignShopConnection.getInstance().getSellShopItems(owner);
     }
 
     @Override
-    public void doBusiness(Player buyer, ShopItem item, int amount){
+    public void doBusiness(Player related, ShopItem item, int amount) {
         //todo configure sign shop storage space.
-        TransactionController.getInstance().makeTransaction(owner, buyer.getUniqueId(), item, amount);
+        TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, item, amount);
         updateUi();
     }
 

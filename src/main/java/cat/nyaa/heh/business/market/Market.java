@@ -1,7 +1,7 @@
-package cat.nyaa.heh.market;
+package cat.nyaa.heh.business.market;
 
 import cat.nyaa.heh.db.MarketConnection;
-import cat.nyaa.heh.enums.ShopItemType;
+import cat.nyaa.heh.item.ShopItemType;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.transaction.TransactionController;
 import cat.nyaa.heh.ui.MarketGUI;

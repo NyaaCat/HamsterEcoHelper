@@ -1,5 +1,6 @@
-package cat.nyaa.heh;
+package cat.nyaa.heh.events;
 
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.ui.BaseUi;
 import cat.nyaa.heh.ui.UiManager;
 import org.bukkit.event.EventHandler;

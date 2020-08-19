@@ -1,8 +1,8 @@
 package cat.nyaa.heh.command;
 
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.auction.Auction;
-import cat.nyaa.heh.enums.ShopItemType;
+import cat.nyaa.heh.business.auction.Auction;
+import cat.nyaa.heh.item.ShopItemType;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -11,7 +11,6 @@ import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

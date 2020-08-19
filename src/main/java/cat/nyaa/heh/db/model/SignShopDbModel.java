@@ -1,9 +1,7 @@
 package cat.nyaa.heh.db.model;
 
-import cat.nyaa.heh.enums.SignShopType;
-import cat.nyaa.heh.signshop.BaseSignShop;
-import cat.nyaa.heh.signshop.SignShopBuy;
-import cat.nyaa.heh.signshop.SignShopSell;
+import cat.nyaa.heh.business.signshop.SignShopType;
+import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
 import org.bukkit.Location;

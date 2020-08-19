@@ -2,10 +2,9 @@ package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.item.ShopItemManager;
-import cat.nyaa.heh.signshop.BaseSignShop;
-import cat.nyaa.heh.signshop.SignShopBuy;
-import cat.nyaa.heh.signshop.SignShopManager;
-import cat.nyaa.heh.signshop.SignShopSell;
+import cat.nyaa.heh.business.signshop.BaseSignShop;
+import cat.nyaa.heh.business.signshop.SignShopBuy;
+import cat.nyaa.heh.business.signshop.SignShopSell;
 import cat.nyaa.heh.utils.UidUtils;
 
 import java.util.List;

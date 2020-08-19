@@ -1,22 +1,13 @@
 package cat.nyaa.heh.ui.component.impl;
 
 import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.market.Market;
-import cat.nyaa.heh.transaction.TransactionController;
-import cat.nyaa.heh.ui.component.BaseComponent;
-import cat.nyaa.heh.ui.component.BasePagedComponent;
+import cat.nyaa.heh.business.market.Market;
 import cat.nyaa.heh.ui.component.ShopComponent;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class MarketComponent extends ShopComponent {
     public MarketComponent(Inventory inventory) {

@@ -2,7 +2,6 @@ package cat.nyaa.heh.item;
 
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.MarketConnection;
-import cat.nyaa.heh.enums.ShopItemType;
 import cat.nyaa.heh.utils.UidUtils;
 import org.bukkit.inventory.ItemStack;
 

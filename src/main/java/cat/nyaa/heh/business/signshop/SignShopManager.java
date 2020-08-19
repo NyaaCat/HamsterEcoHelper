@@ -1,4 +1,4 @@
-package cat.nyaa.heh.signshop;
+package cat.nyaa.heh.business.signshop;
 
 import cat.nyaa.heh.db.SignShopConnection;
 import org.bukkit.block.Sign;

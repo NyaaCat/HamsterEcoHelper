@@ -1,4 +1,4 @@
-package cat.nyaa.heh.auction;
+package cat.nyaa.heh.business.auction;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;

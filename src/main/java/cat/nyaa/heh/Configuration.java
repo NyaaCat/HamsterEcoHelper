@@ -1,6 +1,5 @@
 package cat.nyaa.heh;
 
-import cat.nyaa.heh.enums.VaultType;
 import cat.nyaa.nyaacore.configuration.PluginConfigure;
 import org.bukkit.plugin.java.JavaPlugin;
 

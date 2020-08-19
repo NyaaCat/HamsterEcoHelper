@@ -1,14 +1,10 @@
 package cat.nyaa.heh.db.model;
 
-import cat.nyaa.heh.enums.ShopItemType;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.Instant;
-import java.time.temporal.TemporalField;
 import java.util.UUID;
 
 @Table("storage")

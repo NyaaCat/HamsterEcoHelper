@@ -1,6 +1,6 @@
 package cat.nyaa.heh.db.model;
 
-import cat.nyaa.heh.enums.ShopItemType;
+import cat.nyaa.heh.item.ShopItemType;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
