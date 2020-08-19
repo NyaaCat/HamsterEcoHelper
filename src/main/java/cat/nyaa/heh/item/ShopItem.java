@@ -1,5 +1,6 @@
 package cat.nyaa.heh.item;
 
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.enums.ShopItemType;
@@ -8,10 +9,12 @@ import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import cat.nyaa.nyaacore.utils.ItemTagUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
@@ -19,6 +22,9 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class ShopItem {
+    private static final String KEY_MODEL = "heh_model";
+    private static final NamespacedKey NAMESPACED_KEY_MODEL = new NamespacedKey(HamsterEcoHelper.plugin, KEY_MODEL);
+
     ShopItemType shopItemType = ShopItemType.MARKET;
     private long uid = -1;
     private UUID owner;
@@ -141,32 +147,56 @@ public class ShopItem {
     private ItemStack buildModel(ItemStack itemStack) {
         ItemStack clone = new ItemStack(itemStack.getType());
         clone.setAmount(Math.max(amount - sold, 1));
-        addModelTag(clone);
+
         ItemMeta itemMeta = clone.getItemMeta();
         ItemMeta originMeta = itemStack.getItemMeta();
-        if (originMeta != null){
-            List<String> lore;
-            if (originMeta.hasLore()){
-                lore = originMeta.getLore();
-            }else {
-                lore = new ArrayList<>();
-            }
-            lore.add(buildPriceLore());
-            lore.add(buildOwnerLore());
-            itemMeta.setLore(lore);
-            clone.setItemMeta(itemMeta);
+        if (originMeta == null) {
+            return clone;
         }
+        List<String> lore;
+        if (originMeta.hasLore()){
+            lore = originMeta.getLore();
+        }else {
+            lore = new ArrayList<>();
+        }
+        lore.add(buildPriceLore());
+        lore.add(buildOwnerLore());
+        itemMeta.setLore(lore);
+
+        if (originMeta.hasCustomModelData()){
+            itemMeta.setCustomModelData(itemMeta.getCustomModelData());
+        }
+
+        Map<Enchantment, Integer> enchants = originMeta.getEnchants();
+        if (!enchants.isEmpty()) {
+            enchants.forEach((enchantment, integer) -> {
+                itemMeta.addEnchant(enchantment, integer, true);
+            });
+        }
+
+        if (originMeta instanceof LeatherArmorMeta && itemMeta instanceof LeatherArmorMeta){
+            ((LeatherArmorMeta) itemMeta).setColor(((LeatherArmorMeta) itemMeta).getColor());
+        }
+
+        String displayName = originMeta.getDisplayName();
+        if (!displayName.equals("")){
+            itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r"+ displayName));
+        }
+        itemMeta.setLore(lore);
+
+        markSample(itemMeta);
+        clone.setItemMeta(itemMeta);
         return clone;
     }
 
+    public static void markSample(ItemMeta fakeMeta) {
+        fakeMeta.getPersistentDataContainer().set(NAMESPACED_KEY_MODEL, PersistentDataType.INTEGER, 1);
+    }
+
     private String buildOwnerLore() {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(owner);
-        String name = offlinePlayer.getName();
-        if (name == null){
-            name = owner.toString();
-        }
+        String owner = isOwnedBySystem() ? I18n.format("system.name") : Bukkit.getOfflinePlayer(getOwner()).getName();
         HashMap<String, String> placeHolderMap = new HashMap<>();
-        placeHolderMap.put("{name}", name);
+        placeHolderMap.put("{name}", owner);
         return newSubstitutor(placeHolderMap, I18n.format("shop_item.lore.owner"));
     }
 
@@ -188,16 +218,6 @@ public class ShopItem {
 
     public double getUnitPrice() {
         return unitPrice;
-    }
-
-    private static void addModelTag(ItemStack clone) {
-        try {
-            ItemTagUtils.setBoolean(clone, "isModel", true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean isOwnedBySystem() {

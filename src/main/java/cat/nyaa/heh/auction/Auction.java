@@ -4,6 +4,7 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
@@ -61,13 +62,11 @@ public class Auction {
         currentAuction = this;
         auctionTask = new AuctionTask(this);
         auctionTask.runTaskLater(HamsterEcoHelper.plugin, auctionStepInterval);
+        String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
         if (item.isOwnedBySystem()) {
-            broadcast(new Message("").append(I18n.format("auction.start.system", basePrice, stepPrice), getItem()));
-        } else {
-            String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
-            broadcast(new Message("").append(I18n.format("auction.start.player", name, basePrice, stepPrice), getItem()));
+            name = SystemAccountUtils.getSystemName();
         }
-
+        broadcast(new Message("").append(I18n.format("auction.start", name, basePrice, stepPrice), getItem()));
     }
 
     public void onBid(UUID offerer, double offer) {

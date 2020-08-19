@@ -4,6 +4,7 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.BasicItemMatcher;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
@@ -65,12 +66,11 @@ public class Requisition {
         state = 0;
         requisitionTask = new RequisitionTask(this);
         requisitionTask.runTaskLater(HamsterEcoHelper.plugin, duration/4);
+        String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
         if (item.isOwnedBySystem()){
-            broadcast(new Message("").append(I18n.format("requisition.start.system", duration/20), getItem()));
-        }else {
-            String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
-            broadcast(new Message("").append(I18n.format("requisition.start.player", name, duration/20), getItem()  ));
+            name = SystemAccountUtils.getSystemName();
         }
+        broadcast(new Message("").append(I18n.format("requisition.start.player", name, duration/20), getItem()));
     }
 
     private ItemStack getItem() {
@@ -123,12 +123,11 @@ public class Requisition {
             requisition.state++;
             if (requisition.state < 4){
                 int remain = item.getAmount() - item.getSoldAmount();
+                String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
                 if (item.isOwnedBySystem()){
-                    broadcast(new Message("").append(I18n.format("requisition.info.system", remain, (duration - state*(duration/4))/20), getItem()));
-                }else {
-                    String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
-                    broadcast(new Message("").append(I18n.format("requisition.info.player", name, remain, (duration - state*(duration/4))/20), getItem()));
+                    name = SystemAccountUtils.getSystemName();
                 }
+                broadcast(new Message("").append(I18n.format("requisition.info.player", name, remain, (duration - state*(duration/4))/20), getItem()));
 
                 requisitionTask = new RequisitionTask(requisition);
                 requisitionTask.runTaskLater(HamsterEcoHelper.plugin, duration/4);

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class BasePagedComponent extends BaseComponent<ShopItem> implements IPagedUiAccess {
     public BasePagedComponent(Inventory inventory) {
@@ -42,6 +43,23 @@ public abstract class BasePagedComponent extends BaseComponent<ShopItem> impleme
         }
         int index = getCurrentPage() * getPageSize() + i;
         return items.stream().skip(index).findFirst().orElse(null);
+    }
+
+    @Override
+    public void refreshUi() {
+        List<ItemStack> collect = items.stream().skip(getPageSize() * getCurrentPage())
+                .limit(getPageSize())
+                .map(ShopItem::getModel)
+                .collect(Collectors.toList());
+        int size = collect.size();
+        ItemStack air = new ItemStack(Material.AIR);
+        for (int i = 0; i < getPageSize(); i++) {
+            if (i >= size) {
+                setItemAt(i, air);
+                continue;
+            }
+            setItemAt(i, collect.get(i));
+        }
     }
 
     @Override

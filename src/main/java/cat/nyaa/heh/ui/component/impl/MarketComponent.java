@@ -35,25 +35,6 @@ public class MarketComponent extends ShopComponent {
     }
 
     @Override
-    public void refreshUi() {
-        List<ItemStack> collect = items.stream().skip(getPageSize() * getCurrentPage())
-                .limit(getPageSize())
-                .map(shopItem -> {
-                    return BaseComponent.getFakeItem(shopItem);
-                })
-                .collect(Collectors.toList());
-        int size = collect.size();
-        ItemStack air = new ItemStack(Material.AIR);
-        for (int i = 0; i < getPageSize(); i++) {
-            if (i >= size) {
-                setItemAt(i, air);
-                continue;
-            }
-            setItemAt(i, collect.get(i));
-        }
-    }
-
-    @Override
     public void loadData() {
         items = loadItems();
     }

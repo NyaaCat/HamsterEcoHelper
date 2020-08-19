@@ -1,6 +1,7 @@
 package cat.nyaa.heh.utils;
 
 import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.I18n;
 import cat.nyaa.nyaacore.configuration.FileConfigure;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -27,6 +28,17 @@ public class SystemAccountUtils {
 
     private static OfflinePlayer getFakePlayer() {
         return Bukkit.getOfflinePlayer(account.getUUID());
+    }
+
+    public static String getSystemName(){
+        if (account.isPlayer){
+            return getFakePlayer().getName();
+        }
+        return I18n.format("system.name");
+    }
+
+    public static UUID getSystemUuid() {
+        return account.uuid;
     }
 
     public static class SystemAccount extends FileConfigure{

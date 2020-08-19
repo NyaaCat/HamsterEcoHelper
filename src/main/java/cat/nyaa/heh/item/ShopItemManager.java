@@ -2,16 +2,13 @@ package cat.nyaa.heh.item;
 
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.MarketConnection;
-import cat.nyaa.heh.db.model.ShopItemDbModel;
+import cat.nyaa.heh.enums.ShopItemType;
 import cat.nyaa.heh.utils.UidUtils;
-import org.bukkit.Bukkit;
+import org.bukkit.inventory.ItemStack;
 
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import java.util.logging.Level;
 
 public class ShopItemManager {
     private static ShopItemManager INSTANCE;
@@ -50,5 +47,11 @@ public class ShopItemManager {
 
     public void updateShopItem(ShopItem shopItem) {
         DatabaseManager.getInstance().updateShopItem(shopItem);
+    }
+
+    public static ShopItem newShopItem(UUID from, ShopItemType type, ItemStack itemInMainHand, double unitPrice) {
+        ShopItem item = new ShopItem(from, type, itemInMainHand, unitPrice);
+        item.setUid(getInstance().getNextUid());
+        return item;
     }
 }
