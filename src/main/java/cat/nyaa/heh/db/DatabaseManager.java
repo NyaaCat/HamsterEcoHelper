@@ -191,4 +191,11 @@ public class DatabaseManager {
             throwables.printStackTrace();
         }
     }
+
+    public List<ShopItem> getAvailableInvoices() {
+        WhereClause clause = WhereClause.EQ("type", ShopItemType.DIRECT)
+                .where("sold", "<", "amount")
+                .whereEq("available", true);
+        return shopItemTable.select(clause).stream().map(shopItemDbModel -> shopItemDbModel.toShopItem()).collect(Collectors.toList());
+    }
 }
