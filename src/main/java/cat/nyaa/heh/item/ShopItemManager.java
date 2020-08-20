@@ -53,4 +53,8 @@ public class ShopItemManager {
         item.setUid(getInstance().getNextUid());
         return item;
     }
+
+    public static void insertShopItem(ShopItem item){
+        MarketConnection.getInstance().addItem(item);
+    }
 }

@@ -27,6 +27,7 @@ public class Requisition {
 
     public static void startRequisition(ShopItem item) {
         Requisition requisition = new Requisition(item);
+        requisition.start();
     }
 
     public static Requisition currentRequisition() {

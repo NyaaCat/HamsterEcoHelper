@@ -1,5 +1,6 @@
 package cat.nyaa.heh.business.signshop;
 
+import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.SignShopDbModel;
 import cat.nyaa.heh.item.ShopItem;
@@ -39,6 +40,11 @@ public class SignShopSell extends BaseSignShop{
     @Override
     public void loadItems() {
         this.items = SignShopConnection.getInstance().getSellShopItems(owner);
+    }
+
+    @Override
+    public String getTitle() {
+        return I18n.format("shop.title.sell");
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cat.nyaa.heh.business.signshop;
 
+import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.SignShopDbModel;
 import cat.nyaa.heh.item.ShopItem;
@@ -11,10 +12,10 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 public class SignShopBuy extends BaseSignShop{
     private final SignShopType type = SignShopType.SELL;
-
-    public SignShopBuy(){}
 
     public SignShopBuy(SignShopDbModel model){
         this.owner = model.getOwner();
@@ -32,9 +33,18 @@ public class SignShopBuy extends BaseSignShop{
         loadItems();
     }
 
+    public SignShopBuy(UUID owner) {
+        this.owner = owner;
+    }
+
     @Override
     public void loadItems() {
         SignShopConnection.getInstance().getBuyShopItems(owner);
+    }
+
+    @Override
+    public String getTitle() {
+        return I18n.format("shop.title.buy");
     }
 
     @Override

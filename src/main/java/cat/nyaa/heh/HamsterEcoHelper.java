@@ -1,7 +1,7 @@
 package cat.nyaa.heh;
 
 import cat.nyaa.heh.business.auction.Auction;
-import cat.nyaa.heh.command.MainCommand;
+import cat.nyaa.heh.command.*;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.MarketConnection;
 import cat.nyaa.heh.db.SignShopConnection;
@@ -18,17 +18,28 @@ public class HamsterEcoHelper extends JavaPlugin {
     public static HamsterEcoHelper plugin;
     public Configuration config;
     I18n i18n;
+    AdminCommands adminCommands;
+    AuctionCommand auctionCommand;
+    BidCommand bidCommand;
+    BusinessCommands businessCommands;
     MainCommand mainCommand;
+    RequisitionCommand requisitionCommand;
+    SellCommand sellCommand;
+    ShopCommands shopCommands;
     Events events ;
 
     @Override
     public void onEnable() {
         plugin = this;
         reload();
-        mainCommand = new MainCommand(this, i18n);
-        Bukkit.getPluginCommand("hamsterecohelper").setExecutor(mainCommand);
+        registerCommands();
         events = new Events(this);
         Bukkit.getPluginManager().registerEvents(events, this);
+    }
+
+    private void registerCommands() {
+        mainCommand = new MainCommand(this, i18n);
+        Bukkit.getPluginCommand("hamsterecohelper").setExecutor(mainCommand);
     }
 
     @Override

@@ -30,6 +30,7 @@ public abstract class BaseSignShop {
 
     public abstract SignShopType getType();
     public abstract void loadItems();
+    public abstract String getTitle();
 
     /**
      * do business of this transaction

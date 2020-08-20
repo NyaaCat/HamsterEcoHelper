@@ -10,7 +10,6 @@ import java.util.List;
 
 public class MarketConnection {
     private static MarketConnection INSTANCE;
-    UidUtils uidManager = ShopItemManager.getInstance().getUidManager();
 
     private MarketConnection(){
     }
@@ -31,15 +30,12 @@ public class MarketConnection {
     }
 
     public void addItem(ShopItem shopItem) {
-        if (uidManager.getCurrentUid() == -1) {
-            uidManager.loadUid();
-        }
         if (!checkShopItem(shopItem)) {
             throw new IllegalArgumentException();
         }
         ShopItemDbModel shopItemDbModel = ShopItemDbModel.fromShopItem(shopItem);
         if (shopItemDbModel.getUid() == -1){
-            shopItemDbModel.setUid(uidManager.getNextUid());
+            shopItemDbModel.setUid(ShopItemManager.getInstance().getNextUid());
         }
         DatabaseManager instance = DatabaseManager.getInstance();
         instance.insertShopItem(shopItemDbModel);

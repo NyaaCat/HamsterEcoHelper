@@ -51,6 +51,7 @@ public class RequisitionCommand extends CommandReceiver {
         UUID from = isSystemAuc? SystemAccountUtils.getSystemUuid() : player.getUniqueId();
 
         ShopItem shopItem = ShopItemManager.newShopItem(from, ShopItemType.REQUISITION, itemInMainHand, unitPrice);
+        ShopItemManager.insertShopItem(shopItem);
         Requisition.startRequisition(shopItem);
     }
 

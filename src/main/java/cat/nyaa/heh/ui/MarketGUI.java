@@ -13,12 +13,14 @@ public class MarketGUI extends BaseUi {
         super();
     }
 
+    @Override
     public void refreshGUI(){
         BasePagedComponent pageComponent = this.getPageComponent();
         pageComponent.loadData();
         pageComponent.refreshUi();
     }
 
+    @Override
     public void refreshGUI(List<ShopItem> list){
         BasePagedComponent pageComponent = this.getPageComponent();
         pageComponent.loadData(list);

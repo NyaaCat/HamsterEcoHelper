@@ -61,4 +61,12 @@ public class UiManager {
             uiByUuid.remove(remove.getUid());
         }
     }
+
+    public List<SignShopGUI> getSignShopUis(UUID uniqueId) {
+        return uiByUuid.values().stream()
+                .filter(baseUi -> baseUi instanceof SignShopGUI)
+                .map(baseUi -> ((SignShopGUI) baseUi))
+                .filter(signShopGUI -> signShopGUI.getOwner().equals(uniqueId))
+                .collect(Collectors.toList());
+    }
 }

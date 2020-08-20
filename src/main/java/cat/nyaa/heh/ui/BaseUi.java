@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui;
 
+import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.ui.component.BaseComponent;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.button.ButtonHolder;
@@ -128,4 +129,8 @@ public abstract class BaseUi implements InventoryHolder {
             }
         }
     }
+
+    public abstract void refreshGUI();
+    public abstract void refreshGUI(List<ShopItem> items);
+
 }

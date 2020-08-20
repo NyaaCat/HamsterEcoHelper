@@ -63,6 +63,7 @@ public class AuctionCommand extends CommandReceiver {
         UUID from = isSystemAuc? SystemAccountUtils.getSystemUuid() : player.getUniqueId();
 
         ShopItem item = ShopItemManager.newShopItem(from, ShopItemType.AUCTION, itemInMainHand, basePrice);
+        ShopItemManager.insertShopItem(item);
         Auction.startAuction(item, basePrice, stepPrice, reservePrice);
     }
 

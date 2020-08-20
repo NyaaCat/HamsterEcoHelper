@@ -74,15 +74,6 @@ public class SellCommand extends CommandReceiver {
         }
     }
 
-    private boolean giveTo(Inventory inventory, ItemStack itemStack) {
-        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
-            if (InventoryUtils.addItem(inventory, itemStack)){
-                return true;
-            }
-        }
-        return false;
-    }
-
     public List<String> sellCompleter(CommandSender sender, Arguments arguments) {
         List<String> completeStr = new ArrayList<>();
         switch (arguments.remains()) {
