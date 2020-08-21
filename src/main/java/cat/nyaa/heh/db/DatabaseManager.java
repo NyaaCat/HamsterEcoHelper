@@ -1,6 +1,7 @@
 package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.db.model.InvoiceDbModel;
 import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.db.model.SignShopDbModel;
 import cat.nyaa.heh.item.ShopItemType;
@@ -31,6 +32,7 @@ public class DatabaseManager {
     ITypedTable<Tax> taxTable;
     ITypedTable<Transaction> transactionTable;
     ITypedTable<SignShopDbModel> signShopTable;
+    ITypedTable<InvoiceDbModel> invoiceTable;
 
     private DatabaseManager(){
         databaseConfig = new DatabaseConfig();
@@ -49,6 +51,7 @@ public class DatabaseManager {
         taxTable = db.getTable(Tax.class);
         transactionTable = db.getTable(Transaction.class);
         signShopTable = db.getTable(SignShopDbModel.class);
+        invoiceTable = db.getTable(InvoiceDbModel.class);
     }
 
     public static DatabaseManager getInstance(){
@@ -197,5 +200,19 @@ public class DatabaseManager {
                 .where("sold", "<", "amount")
                 .whereEq("available", true);
         return shopItemTable.select(clause).stream().map(shopItemDbModel -> shopItemDbModel.toShopItem()).collect(Collectors.toList());
+    }
+
+    public UUID getInvoiceCustomer(long uid) {
+        InvoiceDbModel model = invoiceTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
+        return model == null ? null : model.getCustomer();
+    }
+
+    public UUID getInvoicePayer(long uid) {
+        InvoiceDbModel model = invoiceTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
+        return model == null ? null : model.getPayer();
+    }
+
+    public void insertInvoice(InvoiceDbModel invoiceDbModel) {
+        invoiceTable.insert(invoiceDbModel);
     }
 }

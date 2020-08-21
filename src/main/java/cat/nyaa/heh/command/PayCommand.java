@@ -13,6 +13,7 @@ import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -66,12 +67,19 @@ public class PayCommand extends CommandReceiver {
             new Message("").append(I18n.format("command.pay.invalid_invoice", uid)).send(sender);
             return;
         }
+        UUID customer = DirectInvoice.getInstance().getCustomer(item.getUid());
+        OfflinePlayer customerOPlayer = Bukkit.getOfflinePlayer(customer);
+        if (!customerOPlayer.isOnline()){
+            new Message(I18n.format("command.pay.customer_offline", customerOPlayer.getName())).send(sender);
+            return;
+        }
 
         double realPrice = item.getUnitPrice() * (item.getAmount() - item.getSoldAmount());
-        String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
+        String sellerName = Bukkit.getOfflinePlayer(item.getOwner()).getName();
         if (item.isOwnedBySystem()){
-            name = SystemAccountUtils.getSystemName();
+            sellerName = SystemAccountUtils.getSystemName();
         }
+        String customerName = Bukkit.getOfflinePlayer(customer).getName();
 
         ConfirmTask cancelTask = confirmMap.getOrDefault(uniqueId, null);
 
@@ -79,7 +87,7 @@ public class PayCommand extends CommandReceiver {
             ConfirmTask runnable = new ConfirmTask(uniqueId, uid);
             confirmMap.put(uniqueId, runnable);
             runnable.runTaskLater(HamsterEcoHelper.plugin, 200);
-            new Message("").append(I18n.format("command.pay.confirm_msg", name, realPrice), item.getItemStack()).send(sender);
+            new Message("").append(I18n.format("command.pay.confirm_msg", sellerName, customerName, realPrice), item.getItemStack()).send(sender);
             return;
         }
 
@@ -89,8 +97,7 @@ public class PayCommand extends CommandReceiver {
             new Message("").append(I18n.format("command.pay.uid_mismatch", cancelTask.uid, uid)).send(sender);
             return;
         }
-        //todo check command sender
-        TransactionController.getInstance().makeTransaction(player.getUniqueId(), item.getOwner(), item, item.getAmount() - item.getSoldAmount());
+        DirectInvoice.getInstance().payInvoice(player, item);
     }
 
     public List<String> payCompleter(CommandSender sender, Arguments arguments) {

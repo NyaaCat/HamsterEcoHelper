@@ -1,6 +1,7 @@
 package cat.nyaa.heh.command;
 
 import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.business.direct.DirectInvoice;
 import cat.nyaa.heh.item.ShopItem;
 import cat.nyaa.heh.item.ShopItemManager;
 import cat.nyaa.heh.item.ShopItemType;
@@ -11,6 +12,7 @@ import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -50,13 +52,14 @@ public class SellToCommand extends CommandReceiver {
             return;
         }
 
-        Player sellToPlayer = arguments.nextPlayer();
+        OfflinePlayer sellToPlayer = arguments.nextOfflinePlayer();
         double price = arguments.nextDouble();
 
         int amount = itemInMainHand.getAmount();
         double unitPrice = price / amount;
         ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.DIRECT, itemInMainHand, unitPrice);
         ShopItemManager.insertShopItem(shopItem);
+        DirectInvoice.getInstance().newInvoice(sellToPlayer, shopItem);
         player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         double realPrice = shopItem.getUnitPrice() * amount;
         new Message("").append(I18n.format("command.sellto.incoming_invoice", player.getName(), realPrice, shopItem.getUid()), shopItem.getItemStack())

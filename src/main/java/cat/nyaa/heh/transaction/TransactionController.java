@@ -164,8 +164,8 @@ public class TransactionController {
             }else if (giveTo(enderChest, itemStack)) {
                new Message(I18n.format("item.give.ender_chest")).send(pBuyer);
             }else {
-                player.getWorld().dropItem(player.getLocation(), itemStack);
                 new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
+                player.getWorld().dropItem(player.getLocation(), itemStack);
                 //todo put to temp storage
             }
         }
