@@ -46,4 +46,9 @@ public class DirectInvoiceConnection {
         InvoiceDbModel invoiceDbModel = new InvoiceDbModel(player, shopItem);
         DatabaseManager.getInstance().insertInvoice(invoiceDbModel);
     }
+
+    public void cancelInvoice(ShopItem item) {
+        item.setAvailable(false);
+        DatabaseManager.getInstance().updateShopItem(item);
+    }
 }

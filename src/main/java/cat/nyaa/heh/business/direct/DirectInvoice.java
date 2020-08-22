@@ -49,4 +49,8 @@ public class DirectInvoice {
     public void newInvoice(OfflinePlayer player, ShopItem shopItem) {
         DirectInvoiceConnection.getInstance().newInvoice(player, shopItem);
     }
+
+    public void cancelInvoice(ShopItem item) {
+        DirectInvoiceConnection.getInstance().cancelInvoice(item);
+    }
 }
