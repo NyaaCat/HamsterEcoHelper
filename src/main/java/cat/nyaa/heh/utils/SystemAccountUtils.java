@@ -3,11 +3,13 @@ package cat.nyaa.heh.utils;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.nyaacore.configuration.FileConfigure;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class SystemAccountUtils {
     private static SystemAccount account;
@@ -39,6 +41,34 @@ public class SystemAccountUtils {
 
     public static UUID getSystemUuid() {
         return account.uuid;
+    }
+
+    public static boolean deposit(OfflinePlayer offlinePlayer, double amount) {
+        OfflinePlayer system = getFakePlayer();
+        return makeTransaction(offlinePlayer, system, amount);
+    }
+
+    public static boolean take(OfflinePlayer offlinePlayer, double amount) {
+        OfflinePlayer system = getFakePlayer();
+        return makeTransaction(system, offlinePlayer, amount);
+    }
+
+    private static boolean makeTransaction(OfflinePlayer toDeposit, OfflinePlayer toWithdraw, double amount) {
+        Economy eco = EcoUtils.getInstance().getEco();
+        double balanceToWithdraw = eco.getBalance(toWithdraw);
+        double balanceToDeposit = eco.getBalance(toDeposit);
+        try{
+            eco.withdrawPlayer(toWithdraw, amount);
+            eco.depositPlayer(toDeposit, amount);
+        } catch (Exception e){
+            double balanceToDepositAft = eco.getBalance(toWithdraw);
+            double balanceToWithdrawAft = eco.getBalance(toDeposit);
+            eco.depositPlayer(toWithdraw, balanceToWithdraw - balanceToWithdrawAft);
+            eco.withdrawPlayer(toDeposit, balanceToDepositAft - balanceToDeposit);
+            Bukkit.getLogger().log(Level.SEVERE, "error depositing player, rolling back: ", e);
+            return false;
+        }
+        return true;
     }
 
     public static class SystemAccount extends FileConfigure{

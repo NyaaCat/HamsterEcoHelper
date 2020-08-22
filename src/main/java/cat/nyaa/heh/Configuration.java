@@ -58,4 +58,7 @@ public class Configuration extends PluginConfigure {
     public int auctionStepInterval = 200;
     @Serializable(name = "requisition.duration")
     public int requisitionDuration = 3600;
+
+    @Serializable(name = "command.shortcut.enabled")
+    public boolean commandShortcutEnabled = true;
 }
