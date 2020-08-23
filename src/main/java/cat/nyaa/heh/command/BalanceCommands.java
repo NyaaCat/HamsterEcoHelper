@@ -49,10 +49,25 @@ public class BalanceCommands extends CommandReceiver {
         new Message(I18n.format("command.balance.view", name, balance)).send(sender);
     }
 
-    @SubCommand(value = "pay", permission = PERMISSION_BALANCE, tabCompleter = "playerCompleter")
+    @SubCommand(value = "pay", permission = PERMISSION_BALANCE, tabCompleter = "operationCompleter")
     public void onPay(CommandSender sender, Arguments arguments) {
+        String action = arguments.nextString().toLowerCase();
         OfflinePlayer offlinePlayer = arguments.nextOfflinePlayer();
         double amount = arguments.nextDouble();
+        String maxCapStr = arguments.top();
+        double systemBalance = SystemAccountUtils.getSystemBalance();
+
+        switch (action){
+            case "percentile":
+                double maxCap = systemBalance;
+                if (maxCapStr != null){
+                    maxCap = Double.parseDouble(maxCapStr);
+                }
+                amount = Math.min(systemBalance, Math.min(systemBalance * amount / 100d, maxCap));
+                break;
+            case "amount":
+                break;
+        }
         if (SystemAccountUtils.deposit(offlinePlayer, amount)) {
             new Message(I18n.format("command.balance.pay.success", offlinePlayer.getName(), amount)).send(sender);
         }else {
@@ -60,15 +75,44 @@ public class BalanceCommands extends CommandReceiver {
         }
     }
 
-    @SubCommand(value = "take", permission = PERMISSION_BALANCE, tabCompleter = "playerCompleter")
+    @SubCommand(value = "take", permission = PERMISSION_BALANCE, tabCompleter = "operationCompleter")
     public void onTake(CommandSender sender, Arguments arguments) {
+        String action = arguments.nextString().toLowerCase();
         OfflinePlayer offlinePlayer = arguments.nextOfflinePlayer();
         double amount = arguments.nextDouble();
+        String maxCapStr = arguments.top();
+        double systemBalance = SystemAccountUtils.getSystemBalance();
+
+        switch (action){
+            case "percentile":
+                double maxCap = systemBalance;
+                if (maxCapStr != null){
+                    maxCap = Double.parseDouble(maxCapStr);
+                }
+                amount = Math.min(systemBalance, Math.min(systemBalance * amount / 100d, maxCap));
+                break;
+            case "amount":
+                break;
+        }
         if (SystemAccountUtils.take(offlinePlayer, amount)) {
             new Message(I18n.format("command.balance.pay.success", offlinePlayer.getName(), amount)).send(sender);
         }else {
             new Message(I18n.format("command.balance.pay.failed", offlinePlayer.getName(), amount)).send(sender);
         }
+    }
+
+    public List<String> operationCompleter(CommandSender sender, Arguments arguments) {
+        List<String> completeStr = new ArrayList<>();
+        switch (arguments.remains()) {
+            case 1:
+                completeStr.add("percentile");
+                completeStr.add("amount");
+                break;
+            case 2:
+                completeStr.addAll(CommandUtils.getOnlinePlayers());
+                break;
+        }
+        return filtered(arguments, completeStr);
     }
 
     public List<String> playerCompleter(CommandSender sender, Arguments arguments) {
