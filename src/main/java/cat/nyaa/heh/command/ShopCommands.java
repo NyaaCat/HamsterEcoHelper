@@ -3,6 +3,7 @@ package cat.nyaa.heh.command;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.business.signshop.SignShopBuy;
+import cat.nyaa.heh.business.signshop.SignShopManager;
 import cat.nyaa.heh.business.signshop.SignShopSell;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
@@ -27,9 +28,10 @@ import java.util.List;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class ShopCommands extends CommandReceiver {
+public class ShopCommands extends CommandReceiver implements ShortcutCommand{
 
     private static final String PERMISSION_SHOP = "heh.business.signshop";
+    private static final String PERMISSION_ADMIN = "heh.admin.remove";
 
     /**
      * @param plugin for logging purpose only
@@ -53,7 +55,7 @@ public class ShopCommands extends CommandReceiver {
             return;
         }
         double unitPrice = arguments.nextDouble();
-        ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.SIGNSHOP_SELL, itemInMainHand, unitPrice);
+        ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.SIGN_SHOP_SELL, itemInMainHand, unitPrice);
         ShopItemManager.insertShopItem(shopItem);
         new Message("").append(I18n.format("command.shop.sell.success", unitPrice), shopItem.getItemStack())
                 .send(sender);
@@ -70,7 +72,7 @@ public class ShopCommands extends CommandReceiver {
             return;
         }
         double unitPrice = arguments.nextDouble();
-        ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.SIGNSHOP_BUY, itemInMainHand, unitPrice);
+        ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.SIGN_SHOP_BUY, itemInMainHand, unitPrice);
         ShopItemManager.insertShopItem(shopItem);
         new Message("").append(I18n.format("command.shop.buy.success", unitPrice), shopItem.getItemStack())
                 .send(sender);
@@ -81,7 +83,7 @@ public class ShopCommands extends CommandReceiver {
     @SubCommand(value = "create", permission = PERMISSION_SHOP, tabCompleter = "createCompleter")
     public void onCreate(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
-        Block targetBlock = player.getTargetBlock(null, 10);
+        Block targetBlock = player.getTargetBlockExact(10);
         if (!(targetBlock.getState() instanceof Sign)){
             new Message(I18n.format("command.sign.create.not_sign")).send(sender);
             return;
@@ -96,25 +98,38 @@ public class ShopCommands extends CommandReceiver {
         switch (type){
             case "SELL":
                 shop = new SignShopSell(player.getUniqueId());
+                shop.setLores(msgs);
                 shop.setSign(sign);
                 break;
             case "BUY":
                 shop = new SignShopBuy(player.getUniqueId());
+                shop.setLores(msgs);
                 shop.setSign(sign);
                 break;
             default:
                 new Message(I18n.format("command.sign.create.bad_type", type)).send(sender);
                 return;
         }
-        sign.setLine(0, shop.getTitle());
-
-        int msgSize = msgs.size();
-        for (int i = 0; i < 3; i++) {
-            String line = i < msgSize ? "" : msgs.get(i);
-            sign.setLine(i+1, line);
-        }
-        sign.update();
+        SignShopManager.getInstance().addShop(shop);
+        shop.updateSign();
         new Message(I18n.format("command.sign.create.success")).send(sender);
+    }
+
+    @SubCommand(value = "remove", permission = PERMISSION_SHOP)
+    public void onRemove(CommandSender sender, Arguments arguments){
+        Player player = asPlayer(sender);
+        Block targetBlock = player.getTargetBlockExact(10);
+        BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlock.getLocation());
+        if (shopAt == null){
+            new Message(I18n.format("shop.remove.not_sign_shop")).send(sender);
+            return;
+        }
+        if (!sender.hasPermission(PERMISSION_ADMIN) && !shopAt.getOwner().equals(player.getUniqueId())) {
+            new Message(I18n.format("shop.remove.not_owner")).send(sender);
+            return;
+        }
+        SignShopManager.getInstance().removeShopAt(shopAt);
+        new Message(I18n.format("shop.remove.success")).send(sender);
     }
 
     public List<String> createCompleter(CommandSender sender, Arguments arguments) {
@@ -145,5 +160,10 @@ public class ShopCommands extends CommandReceiver {
                 break;
         }
         return filtered(arguments, completeStr);
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hshop";
     }
 }

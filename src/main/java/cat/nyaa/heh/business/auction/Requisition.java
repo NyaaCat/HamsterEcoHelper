@@ -79,7 +79,7 @@ public class Requisition {
         if (item.isOwnedBySystem()){
             name = SystemAccountUtils.getSystemName();
         }
-        broadcast(new Message("").append(I18n.format("requisition.start.player", name, duration/20), getItem()));
+        broadcast(new Message("").append(I18n.format("requisition.start.player", name, item.getAmount(), item.getUnitPrice(), duration/20), getItem()));
     }
 
     private ItemStack getItem() {
@@ -106,6 +106,9 @@ public class Requisition {
         boolean result = TransactionController.getInstance().makeTransaction(item.getOwner(), seller.getUniqueId(), item, sellItem.getAmount());
         if (result){
             broadcast(new Message("").append(I18n.format("requisition.sell", seller.getName(), item.getAmount() - item.getSoldAmount()), sellItem));
+        }
+        if (item.getAmount() - item.getSoldAmount() <= 0){
+            onStop();
         }
         return result;
     }

@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class SignShopConnection {
     private static SignShopConnection INSTANCE;
-    private static final String TABLE_NAME_SIGN_SHOP = "shop";
+    private static final String TABLE_NAME_SIGN_SHOP = "location";
     private UidUtils signUidManager = UidUtils.create(TABLE_NAME_SIGN_SHOP);
 
     private SignShopConnection() {
@@ -28,22 +28,6 @@ public class SignShopConnection {
             }
         }
         return INSTANCE;
-    }
-
-    public SignShopBuy getBuyShop(UUID owner){
-        return DatabaseManager.getInstance().getBuyShop(owner);
-    }
-
-    public boolean hasBuyShop(UUID owner){
-        return DatabaseManager.getInstance().hasBuyShop(owner);
-    }
-
-    public SignShopSell getSellShop(UUID owner){
-        return DatabaseManager.getInstance().getSellShop(owner);
-    }
-
-    public boolean hasSellShop(UUID owner){
-        return DatabaseManager.getInstance().hasSellShop(owner);
     }
 
     public List<ShopItem> getSellShopItems(UUID owner) {
@@ -63,6 +47,7 @@ public class SignShopConnection {
     }
 
     public void addSignShop(BaseSignShop signShopSell) {
+        signShopSell.setUid(signUidManager.getNextUid());
         DatabaseManager.getInstance().addSignShop(signShopSell.toDbModel());
     }
 
@@ -75,5 +60,9 @@ public class SignShopConnection {
 
     public void updateItem(ShopItem item) {
         DatabaseManager.getInstance().updateShopItem(item);
+    }
+
+    public void removeShop(BaseSignShop shopAt) {
+        DatabaseManager.getInstance().removeShop(shopAt);
     }
 }

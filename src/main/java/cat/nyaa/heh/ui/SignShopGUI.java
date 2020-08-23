@@ -31,12 +31,14 @@ public class SignShopGUI extends BaseUi{
 
     @Override
     public void refreshGUI() {
-        //todo
+        pagedComponent.loadData();
+        pagedComponent.refreshUi();
     }
 
     @Override
     public void refreshGUI(List<ShopItem> items) {
-        //todo
+        pagedComponent.loadData(items);
+        pagedComponent.refreshUi();
     }
 
     public UUID getOwner() {

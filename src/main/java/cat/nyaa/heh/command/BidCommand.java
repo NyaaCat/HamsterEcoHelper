@@ -19,7 +19,7 @@ import java.util.List;
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 import static cat.nyaa.heh.command.CommandUtils.getOnlinePlayers;
 
-public class BidCommand extends CommandReceiver {
+public class BidCommand extends CommandReceiver implements ShortcutCommand{
     /**
      * @param plugin for logging purpose only
      * @param _i18n
@@ -80,5 +80,10 @@ public class BidCommand extends CommandReceiver {
     @Override
     public String getHelpPrefix() {
         return "bid";
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hbid";
     }
 }

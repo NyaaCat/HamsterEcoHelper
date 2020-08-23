@@ -1,11 +1,17 @@
 package cat.nyaa.heh.business.signshop;
 
 import cat.nyaa.heh.db.SignShopConnection;
-import cat.nyaa.heh.db.model.SignShopDbModel;
+import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.db.model.LocationType;
+import cat.nyaa.heh.ui.UiManager;
+import com.google.gson.Gson;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,13 +19,45 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public abstract class BaseSignShop {
     protected List<ShopItem> items = new ArrayList<>();
+    protected long uid;
     protected Location location;
     protected Sign sign;
     protected UUID owner;
     protected boolean signExist = false;
+    protected List<String> lores = new ArrayList<>();
+    private final Gson gson = new Gson();
+
+    public BaseSignShop(UUID owner) {
+        this.owner = owner;
+    }
+
+    public BaseSignShop(LocationDbModel model){
+        this.uid = model.getUid();
+        this.owner = model.getOwner();
+        String worldName = model.getWorld();
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) {
+            throw new NullPointerException("world " + worldName +" don't exist");
+        }
+        Block blockAt = new Location(world, model.getX(), model.getY(), model.getZ()).getBlock();
+        BlockState state = blockAt.getState();
+        if (!(state instanceof Sign)){
+            throw new IllegalStateException(String.format("block at world:%s, x:%d, y:%d, z:%d is not a sign.", worldName, model.getX(), model.getY(), model.getZ()));
+        }
+        this.sign = (Sign) state;
+        try{
+            SignShopData signShopData = gson.fromJson(model.getData(), SignShopData.class);
+            setData(signShopData);
+        } catch (Exception e){
+            Bukkit.getLogger().log(Level.WARNING, String.format("error loading data for locationDbModel %d", uid), e);
+            lores = new ArrayList<>();
+        }
+        loadItems();
+    }
 
     public void setSign(Sign sign) {
         this.sign = sign;
@@ -28,7 +66,15 @@ public abstract class BaseSignShop {
         signExist = true;
     }
 
-    public abstract SignShopType getType();
+    public void setLores(List<String> lores){
+        this.lores = lores;
+    }
+
+    public List<String> getLores() {
+        return lores;
+    }
+
+    public abstract LocationType getType();
     public abstract void loadItems();
     public abstract String getTitle();
 
@@ -52,12 +98,12 @@ public abstract class BaseSignShop {
         return signExist;
     }
 
-    public SignShopDbModel toDbModel(){
-        return new SignShopDbModel(this);
+    public LocationDbModel toDbModel(){
+        return new LocationDbModel(this);
     }
 
     public long offer(Player player, ItemStack itemStack, double unitPrice){
-        ShopItem shopItem = new ShopItem(player.getUniqueId(), ShopItemType.SIGNSHOP_BUY, itemStack, unitPrice);
+        ShopItem shopItem = new ShopItem(player.getUniqueId(), ShopItemType.SIGN_SHOP_BUY, itemStack, unitPrice);
         this.internalAddItemToList(shopItem);
         long uid = SignShopConnection.getInstance().addItem(this, shopItem);
         return uid;
@@ -74,11 +120,23 @@ public abstract class BaseSignShop {
     }
 
     public void updateUi(){
-        //todo
+        UiManager.getInstance().getSignShopUis(getOwner()).stream()
+                .forEach(signShopGUI -> signShopGUI.refreshGUI());
     }
 
     public List<ShopItem> getItems() {
         return items;
+    }
+
+    public void updateSign(){
+        sign.setLine(0, getTitle());
+
+        int msgSize = lores.size();
+        for (int i = 0; i < 3; i++) {
+            String line = i >= msgSize ? "" : lores.get(i);
+            sign.setLine(i+1, line);
+        }
+        sign.update();
     }
 
     private void internalAddItemToList(ShopItem shopItem) {
@@ -88,4 +146,23 @@ public abstract class BaseSignShop {
         items.remove(shopItem);
     }
 
+    public String getLoreString(){
+        return gson.toJson(lores);
+    }
+
+    public SignShopData getData() {
+        return new SignShopData(lores);
+    }
+
+    public void setData(SignShopData data){
+        this.lores = data.lores;
+    }
+
+    public long getUid() {
+        return uid;
+    }
+
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
 }

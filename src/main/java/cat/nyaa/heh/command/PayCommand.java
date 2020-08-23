@@ -22,7 +22,7 @@ import java.util.*;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class PayCommand extends CommandReceiver {
+public class PayCommand extends CommandReceiver implements ShortcutCommand{
 
     /**
      * @param plugin for logging purpose only
@@ -40,6 +40,11 @@ public class PayCommand extends CommandReceiver {
     private static final String PERMISSION_PAY = "heh.business.pay";
 
     private static Map<UUID, ConfirmTask> confirmMap = new HashMap<>();
+
+    @Override
+    public String getShortcutName() {
+        return "hpay";
+    }
 
     class ConfirmTask extends BukkitRunnable{
         private UUID payer;

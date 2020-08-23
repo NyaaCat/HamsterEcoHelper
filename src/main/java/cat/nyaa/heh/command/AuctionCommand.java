@@ -11,6 +11,7 @@ import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +23,7 @@ import java.util.UUID;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class AuctionCommand extends CommandReceiver {
+public class AuctionCommand extends CommandReceiver implements ShortcutCommand {
 
     /**
      * @param plugin for logging purpose only
@@ -64,6 +65,7 @@ public class AuctionCommand extends CommandReceiver {
 
         ShopItem item = ShopItemManager.newShopItem(from, ShopItemType.AUCTION, itemInMainHand, basePrice);
         ShopItemManager.insertShopItem(item);
+        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         Auction.startAuction(item, basePrice, stepPrice, reservePrice);
     }
 
@@ -95,5 +97,10 @@ public class AuctionCommand extends CommandReceiver {
                 break;
         }
         return filtered(arguments, completeStr);
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hauc";
     }
 }

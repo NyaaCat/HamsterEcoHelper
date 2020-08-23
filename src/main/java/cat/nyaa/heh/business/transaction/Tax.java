@@ -25,10 +25,11 @@ public class Tax {
     public Tax() {
     }
 
-    public Tax(long uid, UUID from, double tax, long time) {
+    public Tax(long uid, UUID from, double tax, double fee, long time) {
         this.uid = uid;
         this.payer = from;
         this.tax = tax;
+        this.fee = fee;
         this.time = time;
     }
 

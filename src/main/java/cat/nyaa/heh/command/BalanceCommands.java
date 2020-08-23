@@ -17,7 +17,7 @@ import java.util.List;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class BalanceCommands extends CommandReceiver {
+public class BalanceCommands extends CommandReceiver implements ShortcutCommand {
 
     /**
      * @param plugin for logging purpose only
@@ -132,5 +132,10 @@ public class BalanceCommands extends CommandReceiver {
                 break;
         }
         return filtered(arguments, completeStr);
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hbal";
     }
 }

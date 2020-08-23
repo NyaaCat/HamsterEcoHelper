@@ -16,6 +16,9 @@ public class InvoiceDbModel {
     @Column(name = "payer", nullable = true)
     private UUID payer;
 
+    public InvoiceDbModel() {
+    }
+
     public InvoiceDbModel(OfflinePlayer player, ShopItem shopItem) {
         this.uid = shopItem.getUid();
         this.payer = player.getUniqueId();

@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class RequisitionCommand extends CommandReceiver {
+public class RequisitionCommand extends CommandReceiver implements ShortcutCommand{
     /**
      * @param plugin for logging purpose only
      * @param _i18n
@@ -50,12 +50,14 @@ public class RequisitionCommand extends CommandReceiver {
 
         UUID from = isSystemAuc? SystemAccountUtils.getSystemUuid() : player.getUniqueId();
 
+        itemInMainHand = itemInMainHand.clone();
         ShopItem shopItem = ShopItemManager.newShopItem(from, ShopItemType.REQUISITION, itemInMainHand, unitPrice);
+        shopItem.setAmount(amount);
         ShopItemManager.insertShopItem(shopItem);
         Requisition.startRequisition(shopItem);
     }
 
-    public List<String> auctionCompleter(CommandSender sender, Arguments arguments) {
+    public List<String> reqCompleter(CommandSender sender, Arguments arguments) {
         List<String> completeStr = new ArrayList<>();
         switch (arguments.remains()) {
             case 1:
@@ -75,5 +77,10 @@ public class RequisitionCommand extends CommandReceiver {
     @Override
     public String getHelpPrefix() {
         return "requisition";
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hreq";
     }
 }

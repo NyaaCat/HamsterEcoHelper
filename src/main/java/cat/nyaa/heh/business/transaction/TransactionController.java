@@ -64,7 +64,6 @@ public class TransactionController {
             return false;
         }
         BigDecimal toTake = itemPrice.add(tax);
-        long taxUid = taxUidManager.getCurrentUid();
         long nextTransactionUid = transactionUidManager.getCurrentUid();
         double payerBalBefore = eco.getBalance(pPayer);
         double sellerBalBefore = eco.getBalance(pSeller);
@@ -84,7 +83,7 @@ public class TransactionController {
             EconomyResponse rspSeller = eco.depositPlayer(pSeller, itemPrice.doubleValue());
             ItemStack itemStack = item.getItemStack();
             itemStack.setAmount(amount);
-            new Message("").append(I18n.format("transaction.withdraw", pSeller.getName(), itemPrice.doubleValue()), itemStack).send(pPayer);
+            new Message("").append(I18n.format("transaction.withdraw", pSeller.getName(), toTake.doubleValue()), itemStack).send(pPayer);
             new Message("").append(I18n.format("transaction.deposit", pPayer.getName(), itemPrice.doubleValue()), itemStack).send(pSeller);
             if(!rspBuyer.type.equals(EconomyResponse.ResponseType.SUCCESS) || !rspSeller.type.equals(EconomyResponse.ResponseType.SUCCESS) ){
                 throw new IllegalStateException("");
@@ -94,6 +93,7 @@ public class TransactionController {
             transactionRecorderTask = new BukkitRunnable() {
                 @Override
                 public void run() {
+                    long taxUid = taxUidManager.getNextUid();
                     addTaxRecord(taxUid, pBuyer, tax.doubleValue(), 0, time);
                     addTransactionRecord(nextTransactionUid, item, amount, itemPrice, pBuyer, pSeller, taxUid, time);
                 }
@@ -140,7 +140,7 @@ public class TransactionController {
     }
 
     private void addTaxRecord(long taxUid, OfflinePlayer taxPayer, double tax, double fee, long time) {
-        Tax taxRecord = new Tax(taxUid+1, taxPayer.getUniqueId(), tax, time);
+        Tax taxRecord = new Tax(taxUid, taxPayer.getUniqueId(), tax, fee, time);
         DatabaseManager.getInstance().insertTax(taxRecord);
         TransactionController.transactionUidManager.getNextUid();
     }

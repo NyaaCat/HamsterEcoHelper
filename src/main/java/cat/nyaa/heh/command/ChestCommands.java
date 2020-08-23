@@ -19,7 +19,7 @@ import java.util.List;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class ChestCommands extends CommandReceiver {
+public class ChestCommands extends CommandReceiver implements ShortcutCommand{
 
     /**
      * @param plugin for logging purpose only
@@ -40,7 +40,7 @@ public class ChestCommands extends CommandReceiver {
     @SubCommand(value = "lotto", permission = PERMISSION_CHEST_LOTTO)
     public void onLotto(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
-        Block targetBlock = player.getTargetBlock(null, 10);
+        Block targetBlock = player.getTargetBlockExact(10);
         if (!(targetBlock.getState() instanceof Chest)) {
            new Message(I18n.format("command.chest.error.not_chest")).send(sender);
         }
@@ -51,7 +51,7 @@ public class ChestCommands extends CommandReceiver {
     @SubCommand(value = "req", permission = PERMISSION_CHEST_REQ)
     public void onReq(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
-        Block targetBlock = player.getTargetBlock(null, 10);
+        Block targetBlock = player.getTargetBlockExact(10);
         if (!(targetBlock.getState() instanceof Chest)) {
             new Message(I18n.format("command.chest.error.not_chest")).send(sender);
         }
@@ -67,5 +67,10 @@ public class ChestCommands extends CommandReceiver {
                 break;
         }
         return filtered(arguments, completeStr);
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hchest";
     }
 }

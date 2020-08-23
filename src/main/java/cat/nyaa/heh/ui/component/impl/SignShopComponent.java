@@ -16,11 +16,6 @@ public class SignShopComponent extends ShopComponent {
     }
 
     @Override
-    public void refreshUi() {
-
-    }
-
-    @Override
     public void loadData() {
         signShop.loadItems();
         this.items = signShop.getItems();

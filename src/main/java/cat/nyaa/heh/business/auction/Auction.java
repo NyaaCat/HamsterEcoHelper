@@ -79,6 +79,7 @@ public class Auction {
         }
         this.highestOffer = offer;
         this.offerer = offerer;
+        hasOffer = true;
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(offerer);
         broadcast(new Message("").append(I18n.format("auction.bid.message", offlinePlayer.getName(), offer)));
         auctionTask.onBid();

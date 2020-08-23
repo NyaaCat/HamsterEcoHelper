@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class CancelCommand extends CommandReceiver {
+public class CancelCommand extends CommandReceiver implements ShortcutCommand{
 
     /**
      * @param plugin for logging purpose only
@@ -81,5 +81,10 @@ public class CancelCommand extends CommandReceiver {
                 break;
         }
         return filtered(arguments, completeStr);
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hc";
     }
 }

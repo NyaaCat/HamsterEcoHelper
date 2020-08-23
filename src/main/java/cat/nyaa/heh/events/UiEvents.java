@@ -13,10 +13,10 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 
-public class Events implements Listener {
+public class UiEvents implements Listener {
     private final HamsterEcoHelper plugin;
 
-    public Events(HamsterEcoHelper plugin) {
+    public UiEvents(HamsterEcoHelper plugin) {
         this.plugin = plugin;
     }
 
@@ -51,14 +51,5 @@ public class Events implements Listener {
         }
         UiManager instance = UiManager.getInstance();
         instance.removeUi(event.getInventory());
-    }
-
-    @EventHandler
-    public void onClickSign(PlayerInteractEvent event){
-        Block clickedBlock = event.getClickedBlock();
-        if (clickedBlock == null || !(clickedBlock.getState() instanceof Sign)){
-            return;
-        }
-
     }
 }

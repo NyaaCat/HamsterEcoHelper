@@ -23,7 +23,7 @@ import java.util.List;
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 import static cat.nyaa.heh.command.CommandUtils.getOnlinePlayers;
 
-public class SellToCommand extends CommandReceiver {
+public class SellToCommand extends CommandReceiver implements ShortcutCommand{
 
     /**
      * @param plugin for logging purpose only
@@ -84,5 +84,10 @@ public class SellToCommand extends CommandReceiver {
                 break;
         }
         return filtered(arguments, completeStr);
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hsellto";
     }
 }

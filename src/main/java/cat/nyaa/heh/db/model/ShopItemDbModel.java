@@ -29,6 +29,9 @@ public class ShopItemDbModel {
     @Column(name = "time")
     long time;
 
+    public ShopItemDbModel() {
+    }
+
     public static ShopItem toShopItem(ShopItemDbModel shopItemDbModel) {
         if (shopItemDbModel == null)return null;
         else return shopItemDbModel.toShopItem();

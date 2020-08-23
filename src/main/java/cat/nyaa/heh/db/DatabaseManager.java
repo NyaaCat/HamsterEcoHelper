@@ -1,9 +1,9 @@
 package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.db.model.*;
 import cat.nyaa.heh.business.item.ShopItemType;
-import cat.nyaa.heh.business.signshop.SignShopType;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.signshop.SignShopBuy;
 import cat.nyaa.heh.business.signshop.SignShopSell;
@@ -20,6 +20,7 @@ import org.bukkit.entity.Entity;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class DatabaseManager {
@@ -31,7 +32,6 @@ public class DatabaseManager {
     ITypedTable<ShopItemDbModel> shopItemTable;
     ITypedTable<Tax> taxTable;
     ITypedTable<Transaction> transactionTable;
-    ITypedTable<SignShopDbModel> signShopTable;
     ITypedTable<InvoiceDbModel> invoiceTable;
     ITypedTable<LocationDbModel> locationTable;
 
@@ -41,8 +41,13 @@ public class DatabaseManager {
         try{
             db = DatabaseUtils.connect(HamsterEcoHelper.plugin, databaseConfig.backendConfig);
             loadTables();
-
         }catch (Exception e){
+            Bukkit.getLogger().log(Level.SEVERE, "error loading database", e);
+            try {
+                db.close();
+            } catch (SQLException throwables) {
+                Bukkit.getLogger().log(Level.SEVERE, "error closing database", e);
+            }
             Bukkit.getPluginManager().disablePlugin(HamsterEcoHelper.plugin);
         }
     }
@@ -51,7 +56,6 @@ public class DatabaseManager {
         shopItemTable = db.getTable(ShopItemDbModel.class);
         taxTable = db.getTable(Tax.class);
         transactionTable = db.getTable(Transaction.class);
-        signShopTable = db.getTable(SignShopDbModel.class);
         invoiceTable = db.getTable(InvoiceDbModel.class);
         locationTable = db.getTable(LocationDbModel.class);
     }
@@ -130,23 +134,15 @@ public class DatabaseManager {
     }
 
     public boolean hasBuyShop(UUID owner) {
-        return signShopTable.count(WhereClause.EQ("type", SignShopType.BUY).whereEq("owner", owner)) > 0;
+        return locationTable.count(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY).whereEq("owner", owner)) > 0;
     }
 
     public boolean hasSellShop(UUID owner) {
-        return signShopTable.count(WhereClause.EQ("type", SignShopType.SELL).whereEq("owner", owner)) > 0;
-    }
-
-    public SignShopBuy getBuyShop(UUID owner) {
-        return new SignShopBuy(signShopTable.selectUniqueUnchecked(WhereClause.EQ("type", SignShopType.BUY).whereEq("owner", owner)));
-    }
-
-    public SignShopSell getSellShop(UUID owner) {
-        return new SignShopSell(signShopTable.selectUniqueUnchecked(WhereClause.EQ("type", SignShopType.SELL).whereEq("owner", owner)));
+        return locationTable.count(WhereClause.EQ("type", LocationType.SIGN_SHOP_SELL).whereEq("owner", owner)) > 0;
     }
 
     public List<ShopItem> getSellShopItems(UUID owner) {
-        return shopItemTable.select(WhereClause.EQ("type", SignShopType.SELL).whereEq("owner", owner)).stream()
+        return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_SELL).whereEq("owner", owner)).stream()
                 .filter(ShopItemDbModel::isAvailable)
                 .filter(shopItemDbModel -> shopItemDbModel.getSold()>=shopItemDbModel.getAmount())
                 .map(ShopItem::new)
@@ -154,7 +150,7 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getBuyShopItems(UUID owner) {
-        return shopItemTable.select(WhereClause.EQ("type", SignShopType.BUY).whereEq("owner", owner)).stream()
+        return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_BUY).whereEq("owner", owner)).stream()
                 .filter(ShopItemDbModel::isAvailable)
                 .filter(shopItemDbModel -> shopItemDbModel.getSold()>=shopItemDbModel.getAmount())
                 .map(ShopItem::new)
@@ -163,7 +159,7 @@ public class DatabaseManager {
 
     public Map<UUID, List<SignShopBuy>> getBuyShops() {
         Map<UUID, List<SignShopBuy>> result = new HashMap<>();
-        signShopTable.select(WhereClause.EQ("type", SignShopType.BUY)).stream()
+        locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY)).stream()
                 .forEach(signShopDbModel -> {
                     List<SignShopBuy> signShopSells = result.computeIfAbsent(signShopDbModel.getOwner(), uuid -> new ArrayList<>());
                     signShopSells.add(new SignShopBuy(signShopDbModel));
@@ -173,7 +169,7 @@ public class DatabaseManager {
 
     public Map<UUID, List<SignShopSell>> getSellShops() {
         Map<UUID, List<SignShopSell>> result = new HashMap<>();
-        signShopTable.select(WhereClause.EQ("type", SignShopType.BUY)).stream()
+        locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY)).stream()
                 .forEach(signShopDbModel -> {
                     List<SignShopSell> signShopSells = result.computeIfAbsent(signShopDbModel.getOwner(), uuid -> new ArrayList<>());
                     signShopSells.add(new SignShopSell(signShopDbModel));
@@ -181,8 +177,8 @@ public class DatabaseManager {
         return result;
     }
 
-    public void addSignShop(SignShopDbModel signShopSell) {
-        signShopTable.insert(signShopSell);
+    public void addSignShop(LocationDbModel signShopSell) {
+        locationTable.insert(signShopSell);
     }
 
     public void addShopItem(ShopItem shopItem) {
@@ -234,5 +230,9 @@ public class DatabaseManager {
 
     public void updateLocationModel(LocationDbModel locationModel) {
         locationTable.update(locationModel, WhereClause.EQ("uid", locationModel.getUid()));
+    }
+
+    public void removeShop(BaseSignShop shopAt) {
+        locationTable.delete(WhereClause.EQ("uid", shopAt.getUid()));
     }
 }

@@ -1,5 +1,5 @@
 package cat.nyaa.heh.business.item;
 
 public enum ShopItemType {
-    MARKET, SIGNSHOP_SELL, SIGNSHOP_BUY, AUCTION, REQUISITION, DIRECT
+    MARKET, SIGN_SHOP_SELL, SIGN_SHOP_BUY, AUCTION, REQUISITION, DIRECT
 }

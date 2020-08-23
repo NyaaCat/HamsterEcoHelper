@@ -1,7 +1,9 @@
 package cat.nyaa.heh.db.model;
 
+import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
+import com.google.gson.Gson;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -28,6 +30,21 @@ public class LocationDbModel {
     private UUID entityUUID;
     @Column(name = "owner")
     private UUID owner;
+    @Column(name = "data", nullable = true)
+    private String data;
+
+    private static final Gson gson = new Gson();
+
+    public LocationDbModel(){}
+
+    public LocationDbModel(BaseSignShop baseSignShop) {
+        this.uid = baseSignShop.getUid();
+        this.setLocationType(baseSignShop.getType());
+        this.setLocation(baseSignShop.getLocation());
+        this.setWorld(baseSignShop.getLocation().getWorld().getName());
+        this.setOwner(baseSignShop.getOwner());
+        this.data = gson.toJson(baseSignShop.getData());
+    }
 
     public long getUid() {
         return uid;
@@ -104,5 +121,13 @@ public class LocationDbModel {
 
     public void setLocation(Location location) {
         location.getBlock();
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class MarketCommands extends CommandReceiver {
+public class MarketCommands extends CommandReceiver implements ShortcutCommand{
     private static final String PERMISSION_MARKET = "heh.business.market";
 
     /**
@@ -32,7 +32,7 @@ public class MarketCommands extends CommandReceiver {
         super(plugin, _i18n);
     }
 
-    @SubCommand(value = "market", permission = PERMISSION_MARKET, tabCompleter = "marketCompleter")
+    @SubCommand(isDefaultCommand = true, permission = PERMISSION_MARKET, tabCompleter = "marketCompleter")
     public void onMarket(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
         if (arguments.top()==null){
@@ -90,5 +90,10 @@ public class MarketCommands extends CommandReceiver {
     @Override
     public String getHelpPrefix() {
         return "market";
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hm";
     }
 }

@@ -22,7 +22,7 @@ import java.util.logging.Level;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class SellCommand extends CommandReceiver {
+public class SellCommand extends CommandReceiver implements ShortcutCommand{
     /**
      * @param plugin for logging purpose only
      * @param _i18n
@@ -37,6 +37,7 @@ public class SellCommand extends CommandReceiver {
     public void onSell(CommandSender sender, Arguments arguments){
         if (!Requisition.hasRequisition()) {
             new Message(I18n.format("command.sell.no_requisition")).send(sender);
+            return;
         }
         Player player = asPlayer(sender);
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
@@ -45,10 +46,13 @@ public class SellCommand extends CommandReceiver {
             new Message(I18n.format("command.sell.invalid_item")).send(sender);
             return;
         }
-        String input = arguments.nextString();
+        String input = arguments.top();
         int amountToSell = 0;
         if (input.equals("all")){
+            arguments.next();
             amountToSell = itemInMainHand.getAmount();
+        }else {
+            amountToSell = arguments.nextInt();
         }
         if (itemInMainHand.getAmount() < amountToSell){
             new Message(I18n.format("command.sell.insufficient_amount")).send(sender);
@@ -56,6 +60,7 @@ public class SellCommand extends CommandReceiver {
         }
         if (amountToSell<=0){
             new Message(I18n.format("command.sell.invalid_amount"));
+            return;
         }
         int remains = requisition.remains();
         if (amountToSell > remains){
@@ -67,7 +72,9 @@ public class SellCommand extends CommandReceiver {
         itemInMainHand.setAmount(Math.max(itemInMainHand.getAmount() - amountToSell, 0));
         inventory.setItemInMainHand(itemInMainHand);
         try{
-            requisition.onSell(player, itemInMainHand);
+            ItemStack clone1 = clone.clone();
+            clone1.setAmount(amountToSell);
+            requisition.onSell(player, clone1);
         }catch (Exception e){
             Bukkit.getLogger().log(Level.SEVERE, "error selling item: ", e);
             inventory.setItemInMainHand(clone);
@@ -87,5 +94,10 @@ public class SellCommand extends CommandReceiver {
     @Override
     public String getHelpPrefix() {
         return "sell";
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hsell";
     }
 }
