@@ -46,7 +46,7 @@ public abstract class BaseSignShop {
         Block blockAt = new Location(world, model.getX(), model.getY(), model.getZ()).getBlock();
         BlockState state = blockAt.getState();
         if (!(state instanceof Sign)){
-            throw new IllegalStateException(String.format("block at world:%s, x:%d, y:%d, z:%d is not a sign.", worldName, model.getX(), model.getY(), model.getZ()));
+            throw new IllegalStateException(String.format("block at world:%s, x:%f, y:%f, z:%f is not a sign.", worldName, model.getX(), model.getY(), model.getZ()));
         }
         this.sign = (Sign) state;
         try{

@@ -162,7 +162,11 @@ public class DatabaseManager {
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY)).stream()
                 .forEach(signShopDbModel -> {
                     List<SignShopBuy> signShopSells = result.computeIfAbsent(signShopDbModel.getOwner(), uuid -> new ArrayList<>());
-                    signShopSells.add(new SignShopBuy(signShopDbModel));
+                    try {
+                        signShopSells.add(new SignShopBuy(signShopDbModel));
+                    }catch (Exception e){
+                        Bukkit.getLogger().log(Level.WARNING, "", e);
+                    }
                 });
         return result;
     }
@@ -172,7 +176,11 @@ public class DatabaseManager {
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY)).stream()
                 .forEach(signShopDbModel -> {
                     List<SignShopSell> signShopSells = result.computeIfAbsent(signShopDbModel.getOwner(), uuid -> new ArrayList<>());
-                    signShopSells.add(new SignShopSell(signShopDbModel));
+                    try {
+                        signShopSells.add(new SignShopSell(signShopDbModel));
+                    }catch (Exception e){
+                        Bukkit.getLogger().log(Level.WARNING, "", e);
+                    }
                 });
         return result;
     }

@@ -41,7 +41,6 @@ public class LocationDbModel {
         this.uid = baseSignShop.getUid();
         this.setLocationType(baseSignShop.getType());
         this.setLocation(baseSignShop.getLocation());
-        this.setWorld(baseSignShop.getLocation().getWorld().getName());
         this.setOwner(baseSignShop.getOwner());
         this.data = gson.toJson(baseSignShop.getData());
     }
@@ -120,7 +119,10 @@ public class LocationDbModel {
     }
 
     public void setLocation(Location location) {
-        location.getBlock();
+        this.x = location.getBlock().getX();
+        this.y = location.getBlock().getY();
+        this.z = location.getBlock().getZ();
+        this.setWorld(location.getWorld().getName());
     }
 
     public String getData() {
