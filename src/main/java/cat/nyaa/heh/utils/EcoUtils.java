@@ -1,13 +1,11 @@
 package cat.nyaa.heh.utils;
 
 import cat.nyaa.heh.HamsterEcoHelper;
-import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.business.transaction.TransactionController;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
-
-import java.util.UUID;
 
 public class EcoUtils {
     private static EcoUtils INSTANCE;

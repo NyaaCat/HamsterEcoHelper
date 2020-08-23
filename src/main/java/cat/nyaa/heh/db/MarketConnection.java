@@ -1,11 +1,9 @@
 package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.db.model.ShopItemDbModel;
-import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.item.ShopItemManager;
-import cat.nyaa.heh.utils.UidUtils;
+import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItemManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MarketConnection {

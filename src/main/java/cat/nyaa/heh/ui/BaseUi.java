@@ -1,13 +1,11 @@
 package cat.nyaa.heh.ui;
 
-import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.ui.component.BaseComponent;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
-import cat.nyaa.heh.ui.component.button.ButtonHolder;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.ui.component.button.GUIButton;
 import cat.nyaa.heh.ui.component.impl.ButtonComponent;
-import cat.nyaa.heh.ui.component.impl.MarketComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;

@@ -1,6 +1,6 @@
 package cat.nyaa.heh.events;
 
-import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItem;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

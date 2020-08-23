@@ -2,8 +2,8 @@ package cat.nyaa.heh.business.signshop;
 
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.SignShopDbModel;
-import cat.nyaa.heh.item.ShopItemType;
-import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.item.ShopItem;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;

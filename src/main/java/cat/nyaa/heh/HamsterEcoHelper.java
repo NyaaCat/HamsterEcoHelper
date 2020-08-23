@@ -6,7 +6,7 @@ import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.MarketConnection;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.events.Events;
-import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.utils.EcoUtils;

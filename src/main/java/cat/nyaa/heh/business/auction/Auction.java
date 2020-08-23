@@ -2,8 +2,8 @@ package cat.nyaa.heh.business.auction;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;

@@ -1,9 +1,9 @@
-package cat.nyaa.heh.item;
+package cat.nyaa.heh.business.item;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.model.ShopItemDbModel;
-import cat.nyaa.heh.transaction.Tax;
+import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.apache.commons.lang.text.StrSubstitutor;

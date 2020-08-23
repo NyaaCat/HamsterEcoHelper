@@ -1,4 +1,4 @@
-package cat.nyaa.heh.item;
+package cat.nyaa.heh.business.item;
 
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.MarketConnection;

@@ -2,7 +2,7 @@ package cat.nyaa.heh.ui;
 
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
-import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.impl.SignShopComponent;
 

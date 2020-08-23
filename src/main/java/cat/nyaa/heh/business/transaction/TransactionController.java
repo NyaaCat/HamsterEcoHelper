@@ -1,11 +1,11 @@
-package cat.nyaa.heh.transaction;
+package cat.nyaa.heh.business.transaction;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.events.PreTransactionEvent;
 import cat.nyaa.heh.events.TransactionEvent;
-import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.utils.EcoUtils;
 import cat.nyaa.heh.utils.UidUtils;
 import cat.nyaa.nyaacore.Message;

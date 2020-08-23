@@ -1,8 +1,8 @@
 package cat.nyaa.heh.business.direct;
 
 import cat.nyaa.heh.db.DirectInvoiceConnection;
-import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.transaction.TransactionController;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 

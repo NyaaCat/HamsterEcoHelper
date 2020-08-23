@@ -1,10 +1,8 @@
 package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.db.model.InvoiceDbModel;
-import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.business.item.ShopItem;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;

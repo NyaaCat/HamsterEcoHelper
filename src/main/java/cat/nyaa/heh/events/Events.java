@@ -3,11 +3,14 @@ package cat.nyaa.heh.events;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.ui.BaseUi;
 import cat.nyaa.heh.ui.UiManager;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 
 public class Events implements Listener {
@@ -48,5 +51,14 @@ public class Events implements Listener {
         }
         UiManager instance = UiManager.getInstance();
         instance.removeUi(event.getInventory());
+    }
+
+    @EventHandler
+    public void onClickSign(PlayerInteractEvent event){
+        Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock == null || !(clickedBlock.getState() instanceof Sign)){
+            return;
+        }
+
     }
 }

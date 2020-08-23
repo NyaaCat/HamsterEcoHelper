@@ -1,21 +1,21 @@
 package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.HamsterEcoHelper;
-import cat.nyaa.heh.db.model.InvoiceDbModel;
-import cat.nyaa.heh.db.model.ShopItemDbModel;
-import cat.nyaa.heh.db.model.SignShopDbModel;
-import cat.nyaa.heh.item.ShopItemType;
+import cat.nyaa.heh.db.model.*;
+import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.signshop.SignShopType;
-import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.signshop.SignShopBuy;
 import cat.nyaa.heh.business.signshop.SignShopSell;
-import cat.nyaa.heh.transaction.Tax;
-import cat.nyaa.heh.transaction.Transaction;
+import cat.nyaa.heh.business.transaction.Tax;
+import cat.nyaa.heh.business.transaction.Transaction;
 import cat.nyaa.nyaacore.orm.DatabaseUtils;
 import cat.nyaa.nyaacore.orm.WhereClause;
 import cat.nyaa.nyaacore.orm.backends.IConnectedDatabase;
 import cat.nyaa.nyaacore.orm.backends.ITypedTable;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,6 +33,7 @@ public class DatabaseManager {
     ITypedTable<Transaction> transactionTable;
     ITypedTable<SignShopDbModel> signShopTable;
     ITypedTable<InvoiceDbModel> invoiceTable;
+    ITypedTable<LocationDbModel> locationTable;
 
     private DatabaseManager(){
         databaseConfig = new DatabaseConfig();
@@ -52,6 +53,7 @@ public class DatabaseManager {
         transactionTable = db.getTable(Transaction.class);
         signShopTable = db.getTable(SignShopDbModel.class);
         invoiceTable = db.getTable(InvoiceDbModel.class);
+        locationTable = db.getTable(LocationDbModel.class);
     }
 
     public static DatabaseManager getInstance(){
@@ -214,5 +216,23 @@ public class DatabaseManager {
 
     public void insertInvoice(InvoiceDbModel invoiceDbModel) {
         invoiceTable.insert(invoiceDbModel);
+    }
+
+    public Block getBlock(long uid) {
+        LocationDbModel locationDbModel = locationTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
+        return locationDbModel.getBlock();
+    }
+
+    public Entity getEntity(long uid){
+        LocationDbModel locationDbModel = locationTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
+        return locationDbModel.getEntity();
+    }
+
+    public LocationDbModel getLocationModel(UUID uniqueId, LocationType chestLotto) {
+        return locationTable.selectUniqueUnchecked(WhereClause.EQ("owner", uniqueId).whereEq("type", chestLotto));
+    }
+
+    public void updateLocationModel(LocationDbModel locationModel) {
+        locationTable.update(locationModel, WhereClause.EQ("uid", locationModel.getUid()));
     }
 }

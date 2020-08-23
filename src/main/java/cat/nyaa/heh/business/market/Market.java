@@ -1,9 +1,9 @@
 package cat.nyaa.heh.business.market;
 
 import cat.nyaa.heh.db.MarketConnection;
-import cat.nyaa.heh.item.ShopItemType;
-import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.ui.MarketGUI;
 import cat.nyaa.heh.ui.UiManager;
 import org.bukkit.entity.Player;

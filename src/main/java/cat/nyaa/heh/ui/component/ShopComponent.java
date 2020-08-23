@@ -1,9 +1,9 @@
 package cat.nyaa.heh.ui.component;
 
 import cat.nyaa.heh.db.DatabaseManager;
-import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.item.ShopItemManager;
-import cat.nyaa.heh.transaction.TransactionController;
+import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItemManager;
+import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

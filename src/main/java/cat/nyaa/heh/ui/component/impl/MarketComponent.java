@@ -1,6 +1,6 @@
 package cat.nyaa.heh.ui.component.impl;
 
-import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.market.Market;
 import cat.nyaa.heh.ui.component.ShopComponent;
 import org.bukkit.inventory.Inventory;

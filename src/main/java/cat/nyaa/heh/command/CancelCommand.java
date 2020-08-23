@@ -2,8 +2,8 @@ package cat.nyaa.heh.command;
 
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.direct.DirectInvoice;
-import cat.nyaa.heh.item.ShopItem;
-import cat.nyaa.heh.item.ShopItemType;
+import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;

@@ -1,7 +1,7 @@
 package cat.nyaa.heh.db.model;
 
-import cat.nyaa.heh.item.ShopItemType;
-import cat.nyaa.heh.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
