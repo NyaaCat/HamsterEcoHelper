@@ -144,7 +144,7 @@ public class DatabaseManager {
     public List<ShopItem> getSellShopItems(UUID owner) {
         return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_SELL).whereEq("owner", owner)).stream()
                 .filter(ShopItemDbModel::isAvailable)
-                .filter(shopItemDbModel -> shopItemDbModel.getSold()>=shopItemDbModel.getAmount())
+                .filter(shopItemDbModel -> shopItemDbModel.getAmount()>shopItemDbModel.getSold())
                 .map(ShopItem::new)
                 .collect(Collectors.toList());
     }
@@ -152,7 +152,7 @@ public class DatabaseManager {
     public List<ShopItem> getBuyShopItems(UUID owner) {
         return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_BUY).whereEq("owner", owner)).stream()
                 .filter(ShopItemDbModel::isAvailable)
-                .filter(shopItemDbModel -> shopItemDbModel.getSold()>=shopItemDbModel.getAmount())
+                .filter(shopItemDbModel -> shopItemDbModel.getAmount()>shopItemDbModel.getSold())
                 .map(ShopItem::new)
                 .collect(Collectors.toList());
     }
@@ -185,7 +185,7 @@ public class DatabaseManager {
         return result;
     }
 
-    public void addSignShop(LocationDbModel signShopSell) {
+    public void insertLocation(LocationDbModel signShopSell) {
         locationTable.insert(signShopSell);
     }
 

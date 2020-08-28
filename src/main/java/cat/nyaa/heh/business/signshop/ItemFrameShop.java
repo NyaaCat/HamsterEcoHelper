@@ -43,17 +43,32 @@ public class ItemFrameShop {
     private BaseShop baseShop;
 
     private static Map<UUID, ItemFrameShop> frameMap = new HashMap<>();
-    private static Listener frameListener = new FrameListener();
+    private static FrameListener frameListener = new FrameListener();
     private ItemFrameShopData data;
+
+    static {
+        Bukkit.getPluginManager().registerEvents(frameListener, HamsterEcoHelper.plugin);
+    }
 
     public ItemFrameShop(UUID owner, ItemFrame frame){
         LocationDbModel locationDbModel = LocationConnection.getInstance().newLocationModel(LocationType.FRAME, owner, frame.getLocation());
         locationDbModel.setEntityUUID(frame.getUniqueId());
         data = new ItemFrameShopData();
         locationDbModel.setData(data);
-        setBaseShop(data);
         this.from(locationDbModel);
+        setBaseShop(data);
     }
+
+    public ItemFrameShop(OfflinePlayer owner, ItemFrame frame){
+       this(owner.getUniqueId(), frame);
+    }
+
+    public static void addFrame(ItemFrameShop itemFrameShop) {
+        LocationConnection.getInstance().insertLocationModel(new LocationDbModel(itemFrameShop));
+        frameMap.put(itemFrameShop.getFrame().getUniqueId(), itemFrameShop);
+        refreshItemFrameNow(itemFrameShop.getFrame());
+    }
+
 
     private void setBaseShop(ItemFrameShopData data) {
         switch (data.backendType){
@@ -96,8 +111,8 @@ public class ItemFrameShop {
     }
 
     static class FrameListener implements Listener{
-        private static Map<UUID, BuyTask> buyTaskMap = new HashMap<>();
-        private static Map<UUID, RefreshTask> refreshTaskMap = new HashMap<>();
+        private static Map<UUID, FrameListener.BuyTask> buyTaskMap = new HashMap<>();
+        private static Map<UUID, FrameListener.RefreshTask> refreshTaskMap = new HashMap<>();
 
         final class BuyTask extends BukkitRunnable{
             private UUID uuid;
@@ -154,11 +169,16 @@ public class ItemFrameShop {
             void update(){
                 try {
                     cancel();
-                }catch (IllegalStateException e){}
+                }catch (IllegalStateException e){
+                }
 
                 RefreshTask task = new RefreshTask(frameUuid);
                 refreshTaskMap.put(frameUuid, task);
-                task.runLater();
+                task.runNow();
+            }
+
+            void runNow(){
+                runTask(HamsterEcoHelper.plugin);
             }
 
             private void runLater() {
@@ -167,8 +187,18 @@ public class ItemFrameShop {
 
             @Override
             public void run() {
-                update();
-                refreshItemFrame(frameUuid);
+                ItemFrameShop.refreshItemFrame(frameUuid);
+            }
+
+            public void updateLater() {
+                try {
+                    cancel();
+                }catch (IllegalStateException e){
+                }
+
+                RefreshTask task = new RefreshTask(frameUuid);
+                refreshTaskMap.put(frameUuid, task);
+                task.runLater();
             }
         }
 
@@ -202,6 +232,10 @@ public class ItemFrameShop {
 
             BuyTask buyTask = buyTaskMap.get(player.getUniqueId());
             ItemStack item = f.getItem();
+            if (item.getType().isAir()){
+                new Message(I18n.format("shop.frame.info.empty")).send(ev.getPlayer());
+                return;
+            }
             if (buyTask == null) {
                 new Message(I18n.format("shop.frame.info")).append(item).send(ev.getPlayer());
                 UUID playerUuid = player.getUniqueId();
@@ -212,35 +246,23 @@ public class ItemFrameShop {
             ShopItem content = ShopItem.getFromSample(item);
             if (content == null){
                 new Message("").append(I18n.format("shop.frame.err_not_shop_item"), item).send(player);
+                return;
             }
             buyTask.resubmit();
+
             baseSignShop.doBusiness(player, content, 1);
             itemFrameShop.updateFrameWith(content);
         }
 
-        private void resetRefreshTask(ItemFrame f) {
-            RefreshTask refreshTask = refreshTaskMap.computeIfAbsent(f.getUniqueId(), RefreshTask::new);
+        void resetRefreshTask(ItemFrame f) {
+            FrameListener.RefreshTask refreshTask = FrameListener.refreshTaskMap.computeIfAbsent(f.getUniqueId(), RefreshTask::new);
+            refreshTask.updateLater();
+        }
+
+        void resetRefreshTaskNow(ItemFrame f) {
+            FrameListener.RefreshTask refreshTask = FrameListener.refreshTaskMap.computeIfAbsent(f.getUniqueId(), RefreshTask::new);
             refreshTask.update();
         }
-
-
-        private void refreshItemFrame(UUID frameUuid) {
-            ItemFrameShop ifs = frameMap.get(frameUuid);
-            if (ifs == null){
-                Bukkit.getLogger().log(Level.WARNING, "uuid " + frameUuid.toString() + " is not a shop frame");
-                return;
-            }
-
-            BaseShop signShop = ifs.getBaseShop();
-            List<ShopItem> items = signShop.getItems();
-            ShopItem shopItem = Utils.randomSelect(items);
-            if (shopItem == null) {
-                return;
-            }
-            ifs.updateFrameWith(shopItem);
-            resetRefreshTask(ifs.frame);
-        }
-
 
         @EventHandler(priority = HIGHEST, ignoreCancelled = true)
         public void onPlayerHitItemFrame(EntityDamageByEntityEvent ev) {
@@ -263,16 +285,44 @@ public class ItemFrameShop {
             if (!(ev.getEntity() instanceof ItemFrame)) return;
             ItemFrame f = (ItemFrame) ev.getEntity();
             if (!isShopFrame(f))return;
+            ev.setCancelled(true);
 
             if (ev.getCause() == HangingBreakEvent.RemoveCause.EXPLOSION) { // Explosion protect
                 ev.setCancelled(true);
-            } else {
-                HamsterEcoHelper.plugin.getLogger().warning(String.format("Exhibition broken: Location: %s, item: %s", f.getLocation().toString(),
-                        f.getItem().toString()));
-                f.setItem(new ItemStack(Material.AIR));
-                frameMap.remove(f.getUniqueId());
             }
         }
+    }
+
+    private static void resetRefreshTask(ItemFrame f) {
+        frameListener.resetRefreshTask(f);
+    }
+
+
+    private static void refreshItemFrameNow(ItemFrame f) {
+        frameListener.resetRefreshTaskNow(f);
+    }
+
+    private static void refreshItemFrame(UUID frameUuid) {
+        ItemFrameShop ifs = frameMap.get(frameUuid);
+        if (ifs == null){
+            Bukkit.getLogger().log(Level.WARNING, "uuid " + frameUuid.toString() + " is not a shop frame");
+            return;
+        }
+
+        BaseShop signShop = ifs.getBaseShop();
+        signShop.loadItems();
+        List<ShopItem> items = signShop.getItems();
+        ShopItem shopItem = Utils.randomSelect(items);
+        if (shopItem == null) {
+            ifs.makeEmpty();
+            return;
+        }
+        ifs.updateFrameWith(shopItem);
+        resetRefreshTask(ifs.frame);
+    }
+
+    private void makeEmpty() {
+        frame.setItem(new ItemStack(Material.AIR));
     }
 
     private static boolean isShopFrame(UUID uniqueId) {
@@ -285,11 +335,6 @@ public class ItemFrameShop {
 
     private BaseShop getBaseShop() {
         return baseShop;
-    }
-
-    public ItemFrameShop(OfflinePlayer owner, ItemFrame frame){
-        this.frame = frame;
-        this.owner = owner;
     }
 
     public static int getmUserClickInterval() {
@@ -346,6 +391,10 @@ public class ItemFrameShop {
 
     public void updateFrameWith(ShopItem item){
         ItemStack model = item.getModel().clone();
+        if (model.getAmount() <= 0 || model.getType().isAir()){
+            refreshItemFrameNow(frame);
+            return;
+        }
         frame.setItem(model);
     }
 }

@@ -49,7 +49,7 @@ public class SignShopConnection {
 
     public void addSignShop(BaseSignShop signShopSell) {
         signShopSell.setUid(signUidManager.getNextUid());
-        DatabaseManager.getInstance().addSignShop(signShopSell.toDbModel());
+        DatabaseManager.getInstance().insertLocation(signShopSell.toDbModel());
     }
 
     public long addItem(BaseSignShop baseSignShop, ShopItem shopItem) {

@@ -50,6 +50,10 @@ public class LocationConnection {
         DatabaseManager.getInstance().updateLocationModel(locationModel);
     }
 
+    public void insertLocationModel(LocationDbModel locationDbModel){
+        DatabaseManager.getInstance().insertLocation(locationDbModel);
+    }
+
     public LocationDbModel newLocationModel(LocationType type, UUID owner, Location location) {
         LocationDbModel locationModel = new LocationDbModel();
         locationModel.setLocationType(type);

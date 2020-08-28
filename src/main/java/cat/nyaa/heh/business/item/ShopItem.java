@@ -182,22 +182,22 @@ public class ShopItem {
             itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r"+ displayName));
         }
         itemMeta.setLore(lore);
+        markSample(itemMeta, this);
 
         clone.setItemMeta(itemMeta);
-        try {
-            markSample(clone, this);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "error marking item as sample, may cause bug on frame shop.:", e);
-        }
         return clone;
     }
 
-    public static void markSample(ItemStack stack, ShopItem shopItem) throws NoSuchFieldException, IllegalAccessException {
-        ItemTagUtils.setLong(stack, KEY_MODEL, shopItem.getUid());
+    public static void markSample(ItemMeta stack, ShopItem shopItem) {
+        stack.getPersistentDataContainer().set(NAMESPACED_KEY_MODEL, PersistentDataType.LONG, shopItem.getUid());
     }
 
-    public static boolean isSample(ItemStack stack){
-        return ItemTagUtils.getLong(stack, KEY_MODEL).isPresent();
+    public static boolean isSample(ItemStack itemStack){
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null){
+            return false;
+        }
+        return itemMeta.getPersistentDataContainer().get(NAMESPACED_KEY_MODEL, PersistentDataType.LONG)!=null;
     }
 
     public static ShopItem getFromSample(ItemStack itemStack){
@@ -205,7 +205,7 @@ public class ShopItem {
         if (itemMeta == null){
             return null;
         }
-        Long uid =  ItemTagUtils.getLong(itemStack, KEY_MODEL).orElse(null);
+        Long uid = itemMeta.getPersistentDataContainer().get(NAMESPACED_KEY_MODEL, PersistentDataType.LONG);
         if (uid == null){
             return null;
         }

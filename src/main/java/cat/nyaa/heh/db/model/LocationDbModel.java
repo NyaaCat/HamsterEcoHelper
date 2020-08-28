@@ -49,6 +49,8 @@ public class LocationDbModel {
             this.setLocation(itemFrameShop.getFrame().getLocation());
         }
         this.data = itemFrameShop.getData().toJson();
+        this.owner = itemFrameShop.getOwner().getUniqueId();
+        this.locationType = LocationType.FRAME;
     }
 
     public long getUid() {
