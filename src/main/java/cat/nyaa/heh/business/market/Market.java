@@ -1,9 +1,12 @@
 package cat.nyaa.heh.business.market;
 
+import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.business.signshop.BaseShop;
 import cat.nyaa.heh.db.MarketConnection;
 import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.transaction.TransactionController;
+import cat.nyaa.heh.db.model.LocationType;
 import cat.nyaa.heh.ui.MarketGUI;
 import cat.nyaa.heh.ui.UiManager;
 import org.bukkit.entity.Player;
@@ -15,7 +18,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Market {
+public class Market extends BaseShop {
     private static Market INSTANCE;
 
     private Market() {
@@ -34,7 +37,8 @@ public class Market {
 
     private List<ShopItem> marketItems = new ArrayList<>();
 
-    public void loadItem(){
+    @Override
+    public void loadItems(){
         List<ShopItem> items = MarketConnection.getInstance().getItems();
         marketItems = items;
     }
@@ -82,4 +86,15 @@ public class Market {
         marketGUI.refreshGUI();
         player.openInventory(marketGUI.getInventory());
     }
+
+    @Override
+    public void doBusiness(Player related, ShopItem item, int amount) {
+        buy(related, item, amount);
+    }
+
+    @Override
+    public LocationType getType() {
+        return LocationType.MARKET;
+    }
+
 }

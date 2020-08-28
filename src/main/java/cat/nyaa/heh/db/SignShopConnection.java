@@ -3,6 +3,7 @@ package cat.nyaa.heh.db;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
+import cat.nyaa.heh.business.signshop.ItemFrameShop;
 import cat.nyaa.heh.business.signshop.SignShopBuy;
 import cat.nyaa.heh.business.signshop.SignShopSell;
 import cat.nyaa.heh.utils.UidUtils;
@@ -64,5 +65,9 @@ public class SignShopConnection {
 
     public void removeShop(BaseSignShop shopAt) {
         DatabaseManager.getInstance().removeShop(shopAt);
+    }
+
+    public ItemFrameShop getShopFrame(UUID uniqueId) {
+        return new ItemFrameShop(DatabaseManager.getInstance().getShopFrame(uniqueId));
     }
 }

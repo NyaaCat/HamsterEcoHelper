@@ -1,12 +1,11 @@
 package cat.nyaa.heh.business.signshop;
 
-import cat.nyaa.heh.db.SignShopConnection;
-import cat.nyaa.heh.db.model.LocationDbModel;
-import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.item.ShopItem;
-import cat.nyaa.heh.db.model.LocationType;
+import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.db.SignShopConnection;
+import cat.nyaa.heh.db.model.DataModel;
+import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.ui.UiManager;
-import com.google.gson.Gson;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -21,15 +20,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public abstract class BaseSignShop {
-    protected List<ShopItem> items = new ArrayList<>();
+public abstract class BaseSignShop extends BaseShop{
     protected long uid;
     protected Location location;
     protected Sign sign;
     protected UUID owner;
     protected boolean signExist = false;
     protected List<String> lores = new ArrayList<>();
-    private final Gson gson = new Gson();
 
     public BaseSignShop(UUID owner) {
         this.owner = owner;
@@ -50,7 +47,7 @@ public abstract class BaseSignShop {
         }
         this.sign = (Sign) state;
         try{
-            SignShopData signShopData = gson.fromJson(model.getData(), SignShopData.class);
+            SignShopData signShopData = DataModel.getGson().fromJson(model.getData(), SignShopData.class);
             setData(signShopData);
         } catch (Exception e){
             Bukkit.getLogger().log(Level.WARNING, String.format("error loading data for locationDbModel %d", uid), e);
@@ -58,6 +55,8 @@ public abstract class BaseSignShop {
         }
         loadItems();
     }
+
+    public abstract String getTitle();
 
     public void setSign(Sign sign) {
         this.sign = sign;
@@ -73,18 +72,6 @@ public abstract class BaseSignShop {
     public List<String> getLores() {
         return lores;
     }
-
-    public abstract LocationType getType();
-    public abstract void loadItems();
-    public abstract String getTitle();
-
-    /**
-     * do business of this transaction
-     * @param related
-     * @param item
-     * @param amount
-     */
-    public abstract void doBusiness(Player related, ShopItem item, int amount);
 
     public Location getLocation() {
         return location;
@@ -104,7 +91,7 @@ public abstract class BaseSignShop {
 
     public long offer(Player player, ItemStack itemStack, double unitPrice){
         ShopItem shopItem = new ShopItem(player.getUniqueId(), ShopItemType.SIGN_SHOP_BUY, itemStack, unitPrice);
-        this.internalAddItemToList(shopItem);
+        this.add(shopItem);
         long uid = SignShopConnection.getInstance().addItem(this, shopItem);
         return uid;
     }
@@ -124,10 +111,6 @@ public abstract class BaseSignShop {
                 .forEach(signShopGUI -> signShopGUI.refreshGUI());
     }
 
-    public List<ShopItem> getItems() {
-        return items;
-    }
-
     public void updateSign(){
         sign.setLine(0, getTitle());
 
@@ -139,15 +122,8 @@ public abstract class BaseSignShop {
         sign.update();
     }
 
-    private void internalAddItemToList(ShopItem shopItem) {
-        items.add(shopItem);
-    }
-    private void internalRemoveItemFromList(ShopItem shopItem) {
-        items.remove(shopItem);
-    }
-
     public String getLoreString(){
-        return gson.toJson(lores);
+        return DataModel.getGson().toJson(lores);
     }
 
     public SignShopData getData() {

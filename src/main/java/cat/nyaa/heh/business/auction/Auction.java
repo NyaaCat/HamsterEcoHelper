@@ -62,6 +62,7 @@ public class Auction {
         if (hasAuction) {
             throw new IllegalStateException("an auction is running");
         }
+        HamsterEcoHelper.plugin.setAuction(this);
         hasAuction = true;
         currentAuction = this;
         auctionTask = new AuctionTask(this);
@@ -121,7 +122,7 @@ public class Auction {
      * only use for server shutting down.
      * abort current auction and return item back.
      */
-    public static void abort() {
+    public void abort() {
         if (currentAuction != null) {
             currentAuction.offerer = null;
             currentAuction.highestOffer = 0;

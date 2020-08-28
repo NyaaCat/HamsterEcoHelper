@@ -243,4 +243,8 @@ public class DatabaseManager {
     public void removeShop(BaseSignShop shopAt) {
         locationTable.delete(WhereClause.EQ("uid", shopAt.getUid()));
     }
+
+    public LocationDbModel getShopFrame(UUID uniqueId) {
+        return locationTable.selectUniqueUnchecked(WhereClause.EQ("type", LocationType.FRAME).whereEq("entityuuid", uniqueId));
+    }
 }

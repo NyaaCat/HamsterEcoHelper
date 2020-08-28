@@ -6,6 +6,7 @@ import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
+import cat.nyaa.nyaacore.utils.ItemTagUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -182,13 +183,33 @@ public class ShopItem {
         }
         itemMeta.setLore(lore);
 
-        markSample(itemMeta);
         clone.setItemMeta(itemMeta);
+        try {
+            markSample(clone, this);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "error marking item as sample, may cause bug on frame shop.:", e);
+        }
         return clone;
     }
 
-    public static void markSample(ItemMeta fakeMeta) {
-        fakeMeta.getPersistentDataContainer().set(NAMESPACED_KEY_MODEL, PersistentDataType.INTEGER, 1);
+    public static void markSample(ItemStack stack, ShopItem shopItem) throws NoSuchFieldException, IllegalAccessException {
+        ItemTagUtils.setLong(stack, KEY_MODEL, shopItem.getUid());
+    }
+
+    public static boolean isSample(ItemStack stack){
+        return ItemTagUtils.getLong(stack, KEY_MODEL).isPresent();
+    }
+
+    public static ShopItem getFromSample(ItemStack itemStack){
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null){
+            return null;
+        }
+        Long uid =  ItemTagUtils.getLong(itemStack, KEY_MODEL).orElse(null);
+        if (uid == null){
+            return null;
+        }
+        return ShopItemManager.getInstance().getShopItem(uid);
     }
 
     private String buildOwnerLore() {

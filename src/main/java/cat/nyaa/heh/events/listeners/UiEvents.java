@@ -1,4 +1,4 @@
-package cat.nyaa.heh.events;
+package cat.nyaa.heh.events.listeners;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.ui.BaseUi;

@@ -6,8 +6,8 @@ import cat.nyaa.heh.command.*;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.MarketConnection;
 import cat.nyaa.heh.db.SignShopConnection;
-import cat.nyaa.heh.events.SignEvents;
-import cat.nyaa.heh.events.UiEvents;
+import cat.nyaa.heh.events.listeners.SignEvents;
+import cat.nyaa.heh.events.listeners.UiEvents;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
@@ -48,7 +48,9 @@ public class HamsterEcoHelper extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Auction.abort();
+        if (auction != null){
+            auction.abort();
+        }
         databaseManager.close();
         uiManager.getMarketUis().forEach(marketGUI -> marketGUI.close());
         plugin = null;
@@ -75,7 +77,10 @@ public class HamsterEcoHelper extends JavaPlugin {
                 ssm.updateSigns();
             }
         }.runTaskAsynchronously(this);
+    }
 
+    public void setAuction(Auction auction) {
+        this.auction = auction;
     }
 }
 

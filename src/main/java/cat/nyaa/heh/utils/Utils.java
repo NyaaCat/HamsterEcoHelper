@@ -7,7 +7,9 @@ import co.aikar.taskchain.TaskChainFactory;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.ChatColor;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Utils {
     private static TaskChainFactory factory;
@@ -25,5 +27,14 @@ public class Utils {
 
     public static String replacePlaceHolder(Map<String, String> placeHolderMap, String format) {
         return new StrSubstitutor(placeHolderMap, "{", "}", '\\').replace(format);
+    }
+
+    public static <T> T randomSelect(Collection<T> collection){
+        if (collection == null || collection.isEmpty()) {
+            return null;
+        }
+        int size = collection.size();
+        int rnd = ThreadLocalRandom.current().nextInt(size);
+        return collection.stream().skip(rnd).findFirst().orElse(null);
     }
 }

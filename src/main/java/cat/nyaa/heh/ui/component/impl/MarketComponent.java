@@ -16,7 +16,7 @@ public class MarketComponent extends ShopComponent {
 
     private List<ShopItem> loadItems() {
         List<ShopItem> marketItems;
-        Market.getInstance().loadItem();
+        Market.getInstance().loadItems();
         if (ownerFilter == null){
             marketItems = Market.getInstance().getMarketItems();
         }else {

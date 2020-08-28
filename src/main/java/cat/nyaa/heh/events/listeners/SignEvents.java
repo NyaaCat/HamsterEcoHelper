@@ -1,7 +1,8 @@
-package cat.nyaa.heh.events;
+package cat.nyaa.heh.events.listeners;
 
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
+import cat.nyaa.heh.business.signshop.ItemFrameShop;
 import cat.nyaa.heh.business.signshop.SignShopBuy;
 import cat.nyaa.heh.business.signshop.SignShopManager;
 import cat.nyaa.heh.ui.SignShopGUI;
@@ -10,11 +11,15 @@ import cat.nyaa.nyaacore.Message;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+
+import java.util.Arrays;
 
 public class SignEvents implements Listener {
     @EventHandler
