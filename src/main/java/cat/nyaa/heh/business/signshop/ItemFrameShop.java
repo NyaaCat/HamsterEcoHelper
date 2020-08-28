@@ -238,6 +238,7 @@ public class ItemFrameShop {
                 return;
             }
             ifs.updateFrameWith(shopItem);
+            resetRefreshTask(ifs.frame);
         }
 
 
