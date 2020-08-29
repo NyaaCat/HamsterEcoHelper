@@ -59,7 +59,7 @@ public class TransactionController {
         double balance = eco.getBalance(pBuyer);
         BigDecimal itemPrice = BigDecimal.valueOf(item.getUnitPrice())
                 .multiply(BigDecimal.valueOf(amount));
-        BigDecimal tax = Tax.calcTax(item, itemPrice);
+        BigDecimal tax = Tax.calcTax(item.getShopItemType(), itemPrice);
         if (balance < itemPrice.add(tax).doubleValue()){
             return false;
         }

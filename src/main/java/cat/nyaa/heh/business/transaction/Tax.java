@@ -2,6 +2,7 @@ package cat.nyaa.heh.business.transaction;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
 
@@ -33,8 +34,8 @@ public class Tax {
         this.time = time;
     }
 
-    public static BigDecimal calcTax(ShopItem shopItem, BigDecimal price){
-        double taxRate = HamsterEcoHelper.plugin.config.taxRateMap.getOrDefault(shopItem.getShopItemType().name().toLowerCase(), 0d).doubleValue();
+    public static BigDecimal calcTax(ShopItemType shopItemType, BigDecimal price){
+        double taxRate = HamsterEcoHelper.plugin.config.taxRateMap.getOrDefault(shopItemType.name().toLowerCase(), 0d).doubleValue();
         return price.multiply(BigDecimal.valueOf(taxRate)).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
     }
 }

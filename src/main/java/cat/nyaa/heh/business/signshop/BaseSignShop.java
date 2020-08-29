@@ -5,6 +5,7 @@ import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.DataModel;
 import cat.nyaa.heh.db.model.LocationDbModel;
+import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -141,4 +142,6 @@ public abstract class BaseSignShop extends BaseShop{
     public void setUid(long uid) {
         this.uid = uid;
     }
+
+    public abstract SignShopGUI newGUI();
 }

@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
 
-public class ShopItem {
+public class ShopItem implements ModelableItem<ShopItem>{
     private static final String KEY_MODEL = "heh_model";
     private static final NamespacedKey NAMESPACED_KEY_MODEL = new NamespacedKey(HamsterEcoHelper.plugin, KEY_MODEL);
 
@@ -143,49 +143,20 @@ public class ShopItem {
         return itemStack;
     }
 
-    private ItemStack buildModel(ItemStack itemStack) {
-        ItemStack clone = new ItemStack(itemStack.getType());
-        clone.setAmount(Math.max(amount - sold, 1));
+    @Override
+    public Collection<? extends String> buildLore() {
+        return Arrays.asList(buildPriceLore(),
+                buildOwnerLore());
+    }
 
-        ItemMeta itemMeta = clone.getItemMeta();
-        ItemMeta originMeta = itemStack.getItemMeta();
-        if (originMeta == null) {
-            return clone;
-        }
-        List<String> lore;
-        if (originMeta.hasLore()){
-            lore = originMeta.getLore();
-        }else {
-            lore = new ArrayList<>();
-        }
-        lore.add(buildPriceLore());
-        lore.add(buildOwnerLore());
-        itemMeta.setLore(lore);
+    @Override
+    public void markSample(ItemMeta itemMeta, ModelableItem<ShopItem> shopItemModelableItem) {
+        markSample(itemMeta, shopItemModelableItem.getImpl());
+    }
 
-        if (originMeta.hasCustomModelData()){
-            itemMeta.setCustomModelData(originMeta.getCustomModelData());
-        }
-
-        Map<Enchantment, Integer> enchants = originMeta.getEnchants();
-        if (!enchants.isEmpty()) {
-            enchants.forEach((enchantment, integer) -> {
-                itemMeta.addEnchant(enchantment, integer, true);
-            });
-        }
-
-        if (originMeta instanceof LeatherArmorMeta && itemMeta instanceof LeatherArmorMeta){
-            ((LeatherArmorMeta) itemMeta).setColor(((LeatherArmorMeta) itemMeta).getColor());
-        }
-
-        String displayName = originMeta.getDisplayName();
-        if (!displayName.equals("")){
-            itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&r"+ displayName));
-        }
-        itemMeta.setLore(lore);
-        markSample(itemMeta, this);
-
-        clone.setItemMeta(itemMeta);
-        return clone;
+    @Override
+    public ShopItem getImpl() {
+        return this;
     }
 
     public static void markSample(ItemMeta stack, ShopItem shopItem) {
@@ -221,7 +192,7 @@ public class ShopItem {
 
     public String buildPriceLore() {
         HashMap<String, String> placeHolderMap = new HashMap<>();
-        placeHolderMap.put("tax", String.format("%.2f", Tax.calcTax(this, BigDecimal.valueOf(getUnitPrice())).doubleValue()));
+        placeHolderMap.put("tax", String.format("%.2f", Tax.calcTax(this.getShopItemType(), BigDecimal.valueOf(getUnitPrice())).doubleValue()));
         placeHolderMap.put("unitPrice", String.format("%.2f", getUnitPrice()));
         placeHolderMap.put("totalPrice", String.format("%.2f", getTotalPrice()));
         return newSubstitutor(placeHolderMap, I18n.format("shop_item.lore.price"));

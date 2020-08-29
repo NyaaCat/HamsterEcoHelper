@@ -1,6 +1,6 @@
 package cat.nyaa.heh.ui.component;
 
-import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.item.ModelableItem;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BaseComponent<T> extends MatrixComponent implements InventoryHolder, InfoHolder, RefreshableUi<T>, ClickEventHandler{
+public abstract class BaseComponent<T extends ModelableItem> extends MatrixComponent implements InventoryHolder, InfoHolder, RefreshableUi<T>, ClickEventHandler{
     protected Inventory uiInventory;
 
-    protected List<ShopItem> items = new ArrayList<>();
+    protected List<T> items = new ArrayList<>();
 
     public BaseComponent(int startRow, int startCol, int rows, int columns) {
         super(startRow, startCol, rows, columns);

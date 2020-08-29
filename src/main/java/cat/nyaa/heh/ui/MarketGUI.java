@@ -7,33 +7,33 @@ import cat.nyaa.heh.ui.component.impl.MarketComponent;
 
 import java.util.List;
 
-public class MarketGUI extends BaseUi {
+public class MarketGUI extends BaseUi<ShopItem> {
     MarketGUI(){
         super();
     }
 
     @Override
     public void refreshGUI(){
-        BasePagedComponent pageComponent = this.getPageComponent();
+        BasePagedComponent<ShopItem> pageComponent = this.getPageComponent();
         pageComponent.loadData();
         pageComponent.refreshUi();
     }
 
     @Override
     public void refreshGUI(List<ShopItem> list){
-        BasePagedComponent pageComponent = this.getPageComponent();
+        BasePagedComponent<ShopItem> pageComponent = this.getPageComponent();
         pageComponent.loadData(list);
         pageComponent.refreshUi();
     }
 
     @Override
-    protected BasePagedComponent getPageComponent() {
+    protected BasePagedComponent<ShopItem> getPageComponent() {
         return new MarketComponent(uiInventory);
     }
 
     @Override
     protected String getTitle() {
-        return I18n.format("ui.title.market");
+        return I18n.format("ui.title.market", pagedComponent.getCurrentPage()+1, pagedComponent.getSize()/pagedComponent.getPageSize()+2);
     }
 
 }

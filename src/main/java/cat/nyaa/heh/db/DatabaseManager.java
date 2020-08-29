@@ -34,6 +34,7 @@ public class DatabaseManager {
     ITypedTable<Transaction> transactionTable;
     ITypedTable<InvoiceDbModel> invoiceTable;
     ITypedTable<LocationDbModel> locationTable;
+    ITypedTable<StorageDbModel> storageTable;
 
     private DatabaseManager(){
         databaseConfig = new DatabaseConfig();
@@ -58,6 +59,7 @@ public class DatabaseManager {
         transactionTable = db.getTable(Transaction.class);
         invoiceTable = db.getTable(InvoiceDbModel.class);
         locationTable = db.getTable(LocationDbModel.class);
+        storageTable = db.getTable(StorageDbModel.class);
     }
 
     public static DatabaseManager getInstance(){
@@ -246,5 +248,9 @@ public class DatabaseManager {
 
     public LocationDbModel getShopFrame(UUID uniqueId) {
         return locationTable.selectUniqueUnchecked(WhereClause.EQ("type", LocationType.FRAME).whereEq("entityuuid", uniqueId));
+    }
+
+    public List<StorageDbModel> getStorage(UUID owner) {
+        return storageTable.select(WhereClause.EQ("owner", owner));
     }
 }

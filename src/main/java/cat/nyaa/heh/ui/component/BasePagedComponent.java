@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component;
 
+import cat.nyaa.heh.business.item.ModelableItem;
 import cat.nyaa.heh.business.item.ShopItem;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -9,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class BasePagedComponent extends BaseComponent<ShopItem> implements IPagedUiAccess {
+public abstract class BasePagedComponent<E extends ModelableItem> extends BaseComponent<E> implements IPagedUiAccess {
     public BasePagedComponent(Inventory inventory) {
         super(0, 0, 5, 9);
         int initialCapacity = rows() * columns();
@@ -33,7 +34,7 @@ public abstract class BasePagedComponent extends BaseComponent<ShopItem> impleme
 
     protected int currentPage = 0;
 
-    protected ShopItem getShopItem(InventoryClickEvent event) {
+    protected E getShopItem(InventoryClickEvent event) {
         int i = indexOf(event.getSlot());
         if (i == -1){
             return null;
@@ -46,7 +47,7 @@ public abstract class BasePagedComponent extends BaseComponent<ShopItem> impleme
     public void refreshUi() {
         List<ItemStack> collect = items.stream().skip(getPageSize() * getCurrentPage())
                 .limit(getPageSize())
-                .map(ShopItem::getModel)
+                .map(itemstack -> itemstack.getModel())
                 .collect(Collectors.toList());
         int size = collect.size();
         ItemStack air = new ItemStack(Material.AIR);

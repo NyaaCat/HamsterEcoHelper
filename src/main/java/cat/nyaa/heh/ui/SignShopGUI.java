@@ -9,24 +9,24 @@ import cat.nyaa.heh.ui.component.impl.SignShopComponent;
 import java.util.List;
 import java.util.UUID;
 
-public class SignShopGUI extends BaseUi{
+public class SignShopGUI extends BaseUi<ShopItem>{
     protected UUID owner;
     private BaseSignShop signShop;
 
-    SignShopGUI(BaseSignShop signShop){
+    public SignShopGUI(BaseSignShop signShop){
         super();
         this.signShop = signShop;
         this.owner = signShop.getOwner();
     }
 
     @Override
-    protected BasePagedComponent getPageComponent() {
+    protected BasePagedComponent<ShopItem> getPageComponent() {
         return new SignShopComponent(uiInventory, signShop);
     }
 
     @Override
     protected String getTitle() {
-        return I18n.format("ui.title.sign_shop");
+        return I18n.format("ui.title.sign_shop", pagedComponent.getCurrentPage()+1, pagedComponent.getSize()/ pagedComponent.getPageSize()+2);
     }
 
     @Override

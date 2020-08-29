@@ -62,4 +62,12 @@ public class LocationConnection {
         locationModel.setLocation(location);
         return locationModel;
     }
+
+    public LocationDbModel getLottoChestForPlayer(Player player) {
+        return DatabaseManager.getInstance().getLocationModel(player.getUniqueId(), LocationType.CHEST_LOTTO);
+    }
+
+    public LocationDbModel getReqLocationModel(Player player) {
+        return DatabaseManager.getInstance().getLocationModel(player.getUniqueId(), LocationType.CHEST_BUY);
+    }
 }

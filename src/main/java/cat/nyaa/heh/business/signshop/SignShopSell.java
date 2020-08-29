@@ -6,6 +6,7 @@ import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
+import cat.nyaa.heh.ui.SignShopGUI;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -41,5 +42,10 @@ public class SignShopSell extends BaseSignShop{
     @Override
     public LocationType getType() {
         return type;
+    }
+
+    @Override
+    public SignShopGUI newGUI() {
+        return new SignShopGUI(this);
     }
 }

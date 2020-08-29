@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui;
 
+import cat.nyaa.heh.business.item.ModelableItem;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.ui.component.BaseComponent;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
@@ -14,10 +15,10 @@ import org.bukkit.inventory.InventoryHolder;
 
 import java.util.*;
 
-public abstract class BaseUi implements InventoryHolder {
+public abstract class BaseUi<E extends ModelableItem> implements InventoryHolder {
     private UUID uiuid;
     protected Inventory uiInventory;
-    protected BasePagedComponent pagedComponent;
+    protected BasePagedComponent<E> pagedComponent;
     protected ButtonComponent buttonComponent;
 
     public BaseUi() {
@@ -28,7 +29,7 @@ public abstract class BaseUi implements InventoryHolder {
         this.uiuid = UUID.randomUUID();
     }
 
-    protected abstract BasePagedComponent getPageComponent();
+    protected abstract BasePagedComponent<E> getPageComponent();
 
     private void initButtons() {
         ButtonRegister instance = ButtonRegister.getInstance();
@@ -129,6 +130,6 @@ public abstract class BaseUi implements InventoryHolder {
     }
 
     public abstract void refreshGUI();
-    public abstract void refreshGUI(List<ShopItem> items);
+    public abstract void refreshGUI(List<E> items);
 
 }

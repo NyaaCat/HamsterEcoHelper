@@ -13,14 +13,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-public abstract class ShopComponent extends BasePagedComponent{
+public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
     public ShopComponent(Inventory inventory) {
         super(inventory);
     }
 
     @Override
     public void onLeftClick(InventoryClickEvent event) {
-        //todo
         ShopItem shopItem = getShopItem(event);
         if (shopItem == null){
             return;
@@ -30,13 +29,17 @@ public abstract class ShopComponent extends BasePagedComponent{
         if (buyer.equals(shopItem.getOwner())){
             addOnCursor(event, shopItem, shopItem.getAmount() - shopItem.getSoldAmount());
         }else{
-            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
+            makeTransaction(event, buyer, shopItem);
         }
         loadData();
         refreshUi();
     }
 
-    private void addOnCursor(InventoryClickEvent event, ShopItem shopItem, int amount) {
+    protected void makeTransaction(InventoryClickEvent event, UUID buyer, ShopItem shopItem) {
+        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
+    }
+
+    protected void addOnCursor(InventoryClickEvent event, ShopItem shopItem, int amount) {
         ItemStack itemStack = shopItem.getItemStack();
         itemStack.setAmount(amount);
         ItemStack cursor = event.getCursor();

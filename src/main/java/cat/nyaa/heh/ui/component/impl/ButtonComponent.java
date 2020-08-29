@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component.impl;
 
+import cat.nyaa.heh.business.item.ModelableItem;
 import cat.nyaa.heh.ui.component.*;
 import cat.nyaa.heh.ui.component.button.ButtonHandler;
 import cat.nyaa.heh.ui.component.button.ButtonHolder;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ButtonComponent extends BaseComponent<Void> implements ButtonHolder, ButtonHandler {
+public class ButtonComponent extends BaseComponent<ModelableItem> implements ButtonHolder, ButtonHandler {
     private Inventory uiInventory;
     private BasePagedComponent basePagedComponent;
     private Map<Integer, GUIButton> buttonMap = new HashMap<>();
@@ -43,7 +44,7 @@ public class ButtonComponent extends BaseComponent<Void> implements ButtonHolder
     }
 
     @Override
-    public void loadData(List<Void> data) {
+    public void loadData(List<ModelableItem> data) {
 
     }
 
