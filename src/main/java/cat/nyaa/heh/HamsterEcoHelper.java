@@ -1,6 +1,7 @@
 package cat.nyaa.heh;
 
 import cat.nyaa.heh.business.auction.Auction;
+import cat.nyaa.heh.business.signshop.ItemFrameShop;
 import cat.nyaa.heh.business.signshop.SignShopManager;
 import cat.nyaa.heh.command.*;
 import cat.nyaa.heh.db.DatabaseManager;
@@ -77,6 +78,7 @@ public class HamsterEcoHelper extends JavaPlugin {
                 ssm.updateSigns();
             }
         }.runTaskAsynchronously(this);
+        ItemFrameShop.reloadFrames();
     }
 
     public void setAuction(Auction auction) {

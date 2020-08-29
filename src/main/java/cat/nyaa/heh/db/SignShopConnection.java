@@ -31,6 +31,10 @@ public class SignShopConnection {
         return INSTANCE;
     }
 
+    public static boolean isShopFrame(UUID uniqueId) {
+        return DatabaseManager.getInstance().getShopFrame(uniqueId) != null;
+    }
+
     public List<ShopItem> getSellShopItems(UUID owner) {
         return DatabaseManager.getInstance().getSellShopItems(owner);
     }

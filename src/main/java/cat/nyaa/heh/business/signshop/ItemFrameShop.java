@@ -45,6 +45,7 @@ public class ItemFrameShop {
     private static Map<UUID, ItemFrameShop> frameMap = new HashMap<>();
     private static FrameListener frameListener = new FrameListener();
     private ItemFrameShopData data;
+    private ShopItem displayingItem;
 
     static {
         Bukkit.getPluginManager().registerEvents(frameListener, HamsterEcoHelper.plugin);
@@ -57,16 +58,31 @@ public class ItemFrameShop {
         locationDbModel.setData(data);
         this.from(locationDbModel);
         setBaseShop(data);
+        popItem(frame);
     }
 
     public ItemFrameShop(OfflinePlayer owner, ItemFrame frame){
        this(owner.getUniqueId(), frame);
     }
 
+    public ItemFrameShop(LocationDbModel shopFrame) {
+        this.from(shopFrame);
+        popItem(frame);
+    }
+
     public static void addFrame(ItemFrameShop itemFrameShop) {
         LocationConnection.getInstance().insertLocationModel(new LocationDbModel(itemFrameShop));
         frameMap.put(itemFrameShop.getFrame().getUniqueId(), itemFrameShop);
         refreshItemFrameNow(itemFrameShop.getFrame());
+    }
+
+    public static void reloadFrames() {
+        frameMap.clear();
+        Bukkit.getWorlds().stream()
+                .flatMap(world -> world.getEntities().stream())
+                .filter(entity -> entity instanceof ItemFrame)
+                .filter(entity -> SignShopConnection.isShopFrame(entity.getUniqueId()))
+                .forEach(entity -> frameMap.put(entity.getUniqueId(), SignShopConnection.getInstance().getShopFrame(entity.getUniqueId())));
     }
 
 
@@ -96,14 +112,11 @@ public class ItemFrameShop {
         this.uid = shopFrame.getUid();
         this.owner = Bukkit.getOfflinePlayer(shopFrame.getOwner());
         this.data = DataModel.getGson().fromJson(shopFrame.getData(), ItemFrameShopData.class);
+        setBaseShop(data);
     }
 
     private LocationDbModel toModel(){
         return new LocationDbModel(this);
-    }
-
-    public ItemFrameShop(LocationDbModel shopFrame) {
-        this.from(shopFrame);
     }
 
     public ItemFrameShopData getData() {
@@ -224,28 +237,33 @@ public class ItemFrameShop {
                 return;
             ev.setCancelled(true);
 
-            resetRefreshTask(f);
-
             Player player = ev.getPlayer();
             ItemFrameShop itemFrameShop = frameMap.get(f.getUniqueId());
             BaseShop baseSignShop = itemFrameShop.getBaseShop();
 
             BuyTask buyTask = buyTaskMap.get(player.getUniqueId());
-            ItemStack item = f.getItem();
-            if (item.getType().isAir()){
-                new Message(I18n.format("shop.frame.info.empty")).send(ev.getPlayer());
+            ItemStack item = f.getItem().clone();
+            ShopItem content = ShopItem.getFromSample(item);
+
+            if (!item.getType().isAir() && content == null) {
+                new Message("").append(I18n.format("shop.frame.err_not_shop_item"), item).send(player);
+                popItem(f);
+                refreshItemFrameNow(f);
                 return;
+            }
+            if (item.getType().isAir() || content == null || content.getAmount() - content.getSoldAmount() <= 0) {
+                new Message(I18n.format("shop.frame.info.empty")).send(ev.getPlayer());
+                refreshItemFrameNow(f);
+                return;
+            }
+            if (content != null) {
+                item.setAmount(content.getAmount() - content.getSoldAmount());
             }
             if (buyTask == null) {
                 new Message(I18n.format("shop.frame.info")).append(item).send(ev.getPlayer());
                 UUID playerUuid = player.getUniqueId();
                 buyTask = new BuyTask(playerUuid);
                 buyTaskMap.put(playerUuid, buyTask);
-                return;
-            }
-            ShopItem content = ShopItem.getFromSample(item);
-            if (content == null){
-                new Message("").append(I18n.format("shop.frame.err_not_shop_item"), item).send(player);
                 return;
             }
             buyTask.resubmit();
@@ -318,7 +336,15 @@ public class ItemFrameShop {
             return;
         }
         ifs.updateFrameWith(shopItem);
-        resetRefreshTask(ifs.frame);
+    }
+
+    private static void popItem(ItemFrame f) {
+        ItemStack item1 = f.getItem().clone();
+        if (item1.getType().isAir()){
+            return;
+        }
+        f.setItem(new ItemStack(Material.AIR));
+        f.getWorld().dropItemNaturally(f.getLocation(), item1);
     }
 
     private void makeEmpty() {
@@ -390,11 +416,21 @@ public class ItemFrameShop {
     }
 
     public void updateFrameWith(ShopItem item){
+        resetRefreshTask(frame);
+        if (item == null){
+            frame.setItem(new ItemStack(Material.AIR));
+            refreshItemFrameNow(frame);
+            displayingItem = null;
+            return;
+        }
         ItemStack model = item.getModel().clone();
         if (model.getAmount() <= 0 || model.getType().isAir()){
             refreshItemFrameNow(frame);
+            displayingItem = null;
             return;
         }
+        displayingItem = item;
+        model.setAmount(item.getAmount() - item.getSoldAmount());
         frame.setItem(model);
     }
 }

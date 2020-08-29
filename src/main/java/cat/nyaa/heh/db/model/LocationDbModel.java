@@ -47,6 +47,7 @@ public class LocationDbModel {
         this.uid = itemFrameShop.getUid();
         if (itemFrameShop.getFrame() !=null){
             this.setLocation(itemFrameShop.getFrame().getLocation());
+            this.setEntityUUID(itemFrameShop.getFrame().getUniqueId());
         }
         this.data = itemFrameShop.getData().toJson();
         this.owner = itemFrameShop.getOwner().getUniqueId();

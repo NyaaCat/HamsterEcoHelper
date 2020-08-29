@@ -16,6 +16,7 @@ import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
+import static cat.nyaa.heh.command.CommandUtils.getOnlinePlayers;
 
 public class ShopCommands extends CommandReceiver implements ShortcutCommand{
 
@@ -59,6 +61,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         ShopItemManager.insertShopItem(shopItem);
         new Message("").append(I18n.format("command.shop.sell.success", unitPrice), shopItem.getItemStack())
                 .send(sender);
+        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         UiManager.getInstance().getSignShopUis(player.getUniqueId()).stream()
                 .forEach(SignShopGUI::refreshGUI);
     }

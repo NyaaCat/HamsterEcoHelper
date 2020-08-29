@@ -163,7 +163,7 @@ public class ShopItem {
         itemMeta.setLore(lore);
 
         if (originMeta.hasCustomModelData()){
-            itemMeta.setCustomModelData(itemMeta.getCustomModelData());
+            itemMeta.setCustomModelData(originMeta.getCustomModelData());
         }
 
         Map<Enchantment, Integer> enchants = originMeta.getEnchants();
