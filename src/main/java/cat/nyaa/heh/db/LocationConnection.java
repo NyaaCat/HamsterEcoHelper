@@ -67,7 +67,7 @@ public class LocationConnection {
         return DatabaseManager.getInstance().getLocationModel(player.getUniqueId(), LocationType.CHEST_LOTTO);
     }
 
-    public LocationDbModel getReqLocationModel(Player player) {
-        return DatabaseManager.getInstance().getLocationModel(player.getUniqueId(), LocationType.CHEST_BUY);
+    public LocationDbModel getReqLocationModel(UUID player) {
+        return DatabaseManager.getInstance().getLocationModel(player, LocationType.CHEST_BUY);
     }
 }

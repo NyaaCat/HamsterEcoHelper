@@ -2,7 +2,9 @@ package cat.nyaa.heh.business.transaction;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.heh.db.DatabaseManager;
+import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.events.PreTransactionEvent;
 import cat.nyaa.heh.events.TransactionEvent;
 import cat.nyaa.heh.business.item.ShopItem;
@@ -42,16 +44,16 @@ public class TransactionController {
         return INSTANCE;
     }
 
-    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount) {
-        return makeTransaction(buyer, buyer, seller, item, amount, null, null);
+    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee) {
+        return makeTransaction(buyer, buyer, seller, item, amount, fee, null, null);
     }
 
-    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, Inventory receiveInv, Inventory returnInv) {
-        return makeTransaction(buyer, buyer, seller, item, amount, receiveInv, returnInv);
+    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv) {
+        return makeTransaction(buyer, buyer, seller, item, amount, fee, receiveInv, returnInv);
     }
 
 
-    public boolean makeTransaction(UUID buyer, UUID payer, UUID seller, ShopItem item, int amount, Inventory receiveInv, Inventory returnInv){
+    public boolean makeTransaction(UUID buyer, UUID payer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv){
         OfflinePlayer pBuyer = Bukkit.getOfflinePlayer(buyer);
         OfflinePlayer pPayer = Bukkit.getOfflinePlayer(payer);
         OfflinePlayer pSeller = Bukkit.getOfflinePlayer(seller);
@@ -102,7 +104,9 @@ public class TransactionController {
 
             if (receiveInv != null){
                 if (!giveTo(receiveInv, itemStack)) {
-                    //todo give to temp storage
+                    double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
+                    StorageItem storageItem = StorageConnection.getInstance().newStorageItem(buyer, itemStack, storageFeeUnit * itemStack.getAmount());
+                    StorageConnection.getInstance().addStorageItem(storageItem);
                 }
             }else {
                 giveItemTo(pBuyer,pPayer, item, amount);
@@ -153,7 +157,9 @@ public class TransactionController {
                 throw new IllegalStateException("buyer is not online");
             }
             giveItemTo(pPayer, pPayer, item, amount);
-            //todo put to temp storage
+            double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
+            StorageItem storageItem = StorageConnection.getInstance().newStorageItem(pBuyer.getUniqueId(), itemStack, storageFeeUnit * itemStack.getAmount());
+            StorageConnection.getInstance().addStorageItem(storageItem);
         }else {
             Player player = pBuyer.getPlayer();
             PlayerInventory inventory = player.getInventory();
@@ -165,8 +171,9 @@ public class TransactionController {
                new Message(I18n.format("item.give.ender_chest")).send(pBuyer);
             }else {
                 new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
-                player.getWorld().dropItem(player.getLocation(), itemStack);
-                //todo put to temp storage
+                double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
+                StorageItem storageItem = StorageConnection.getInstance().newStorageItem(player.getUniqueId(), itemStack, storageFeeUnit * itemStack.getAmount());
+                StorageConnection.getInstance().addStorageItem(storageItem);
             }
         }
     }

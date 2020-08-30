@@ -68,7 +68,7 @@ public class ChestCommands extends CommandReceiver implements ShortcutCommand{
         }
         Chest state = (Chest) targetBlock.getState();
         LocationConnection instance = LocationConnection.getInstance();
-        LocationDbModel lottoChestForPlayer = instance.getReqLocationModel(player);
+        LocationDbModel lottoChestForPlayer = instance.getReqLocationModel(player.getUniqueId());
         if (lottoChestForPlayer != null){
             instance.updateChestLocation(player, LocationType.CHEST_BUY, state);
         } else{

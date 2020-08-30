@@ -15,13 +15,6 @@ public class Configuration extends PluginConfigure {
     @Serializable
     public String language = "en_US";
 
-    @Serializable(name = "balance.base")
-    public double balanceBase = 10000;
-    @Serializable(name = "balance.vault")
-    public VaultType vaultType = VaultType.SYSTEM;
-    @Serializable(name = "balance.player")
-    public String vaultPlayer = "";
-
     @Serializable(name = "tax")
     public Map<String, Number> taxRateMap = new LinkedHashMap<>();
     {
@@ -36,6 +29,8 @@ public class Configuration extends PluginConfigure {
     public double marketFeeBase = 100;
     @Serializable(name = "fee.market.storage")
     public double marketFeeStorage = 10;
+    @Serializable(name = "fee.storage.unit")
+    public double storageFeeUnit = 10;
     @Serializable(name = "fee.signshop.base")
     public double signShopFeeBase = 0;
     @Serializable(name = "fee.direct.base")

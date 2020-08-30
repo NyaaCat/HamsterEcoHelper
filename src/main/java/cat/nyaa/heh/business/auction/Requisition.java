@@ -103,7 +103,8 @@ public class Requisition {
             throw new IllegalArgumentException("not similar item");
         }
 
-        boolean result = TransactionController.getInstance().makeTransaction(item.getOwner(), seller.getUniqueId(), item, sellItem.getAmount());
+        double fee = HamsterEcoHelper.plugin.config.requisitionFeeBase;
+        boolean result = TransactionController.getInstance().makeTransaction(item.getOwner(), seller.getUniqueId(), item, sellItem.getAmount(), fee);
         if (result){
             broadcast(new Message("").append(I18n.format("requisition.sell", seller.getName(), item.getAmount() - item.getSoldAmount()), sellItem));
         }

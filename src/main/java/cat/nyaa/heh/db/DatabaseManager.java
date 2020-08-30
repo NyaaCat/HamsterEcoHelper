@@ -253,4 +253,8 @@ public class DatabaseManager {
     public List<StorageDbModel> getStorage(UUID owner) {
         return storageTable.select(WhereClause.EQ("owner", owner));
     }
+
+    public void addStorageItem(StorageDbModel model) {
+        storageTable.insert(model);
+    }
 }

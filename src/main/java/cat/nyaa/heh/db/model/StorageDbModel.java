@@ -1,5 +1,6 @@
 package cat.nyaa.heh.db.model;
 
+import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
@@ -34,13 +35,17 @@ public class StorageDbModel {
         this.time = System.currentTimeMillis();
     }
 
-    public StorageDbModel(UUID owner, ItemStack item){
+    public StorageDbModel(long uid, UUID owner, ItemStack item, double fee){
         this.uid = -1;
         this.owner = owner;
         this.nbt = ItemStackUtils.itemToBase64(item);
         this.amount = item.getAmount();
-        this.storageFee = 0;
+        this.storageFee = fee;
         this.time = System.currentTimeMillis();
+    }
+
+    public StorageDbModel(StorageItem storageItem) {
+        this(storageItem.getUid(), storageItem.getOwner(), storageItem.getItemStack(), storageItem.getFee());
     }
 
     public long getTime() {

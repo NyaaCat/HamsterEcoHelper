@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component;
 
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
@@ -36,8 +37,11 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
     }
 
     protected void makeTransaction(InventoryClickEvent event, UUID buyer, ShopItem shopItem) {
-        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
+        double fee = getFee();
+        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee);
     }
+
+    protected abstract double getFee();
 
     protected void addOnCursor(InventoryClickEvent event, ShopItem shopItem, int amount) {
         ItemStack itemStack = shopItem.getItemStack();
@@ -56,7 +60,6 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
 
     @Override
     public void onRightClick(InventoryClickEvent event) {
-        //todo
         ShopItem shopItem = getShopItem(event);
         if (shopItem == null){
             return;
@@ -65,7 +68,8 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         if (buyer.equals(shopItem.getOwner())){
             addOnCursor(event, shopItem, 1);
         }else {
-            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1);
+            double fee = getFee();
+            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee);
         }
         loadData();
         refreshUi();
@@ -73,7 +77,6 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
 
     @Override
     public void onShiftLeftClick(InventoryClickEvent event) {
-        //todo
         ShopItem shopItem = getShopItem(event);
         if (shopItem == null){
             return;
@@ -87,7 +90,8 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             giveTo(event.getWhoClicked().getInventory(), itemStack);
             DatabaseManager.getInstance().updateShopItem(shopItem);
         }else {
-            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount());
+            double fee = getFee();
+            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount(), fee);
         }
         loadData();
         refreshUi();

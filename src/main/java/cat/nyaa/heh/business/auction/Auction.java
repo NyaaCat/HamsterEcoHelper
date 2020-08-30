@@ -4,6 +4,7 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.transaction.TransactionController;
+import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
@@ -202,7 +203,8 @@ public class Auction {
         ItemStack itemStack = getItem();
         stop();
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(offerer);
-        TransactionController.getInstance().makeTransaction(offerer, this.item.getOwner(), this.item, this.item.getAmount());
+        double fee = HamsterEcoHelper.plugin.config.auctionFeeBase;
+        TransactionController.getInstance().makeTransaction(offerer, this.item.getOwner(), this.item, this.item.getAmount(), fee);
         broadcast(new Message("").append(I18n.format("auction.success", offlinePlayer.getName(), highestOffer), itemStack));
     }
 
@@ -216,6 +218,7 @@ public class Auction {
             targetInventory = offlinePlayer.getPlayer().getInventory();
         }else {
             //todo store item in temp inventory
+            StorageConnection.getInstance().newStorageItem(offlinePlayer.getUniqueId(), itemStack, 0);
         }
         if(targetInventory != null){
             giveTo(targetInventory, itemStack);

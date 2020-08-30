@@ -1,5 +1,6 @@
 package cat.nyaa.heh.business.market;
 
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.signshop.BaseShop;
 import cat.nyaa.heh.db.MarketConnection;
@@ -61,7 +62,8 @@ public class Market extends BaseShop {
     }
 
     public void buy(Player buyer, ShopItem item, int amount){
-        TransactionController.getInstance().makeTransaction(buyer.getUniqueId(), item.getOwner(), item, amount);
+        double fee = HamsterEcoHelper.plugin.config.marketFeeBase;
+        TransactionController.getInstance().makeTransaction(buyer.getUniqueId(), item.getOwner(), item, amount, fee);
         refreshGUI();
     }
 
