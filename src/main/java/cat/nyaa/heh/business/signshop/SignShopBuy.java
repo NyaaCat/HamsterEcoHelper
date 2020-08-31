@@ -9,6 +9,7 @@ import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
 import cat.nyaa.heh.ui.SignShopGUI;
+import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
@@ -43,7 +44,7 @@ public class SignShopBuy extends BaseSignShop{
 
     @Override
     public SignShopGUI newGUI() {
-        SignShopGUI signShopGUI = new SignShopGUI(this);
+        SignShopGUI signShopGUI = UiManager.getInstance().newSignShopGUI(this);
         signShopGUI.refreshGUI();
         return signShopGUI;
     }
@@ -53,14 +54,15 @@ public class SignShopBuy extends BaseSignShop{
         //todo configure sign shop storage space.
         double fee = HamsterEcoHelper.plugin.config.signShopFeeBase;
         LocationDbModel reqLocationModel = LocationConnection.getInstance().getReqLocationModel(owner);
-        Block block = reqLocationModel.getBlock();
-        if(!(block.getState() instanceof Chest)){
+        if(reqLocationModel == null || !(reqLocationModel.getBlock().getState() instanceof Chest)){
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(owner);
             String name = SystemAccountUtils.isSystemAccount(owner) ? SystemAccountUtils.getSystemName() : offlinePlayer.getName();
             new Message(I18n.format("shop.sign.buy.no_chest")).send(offlinePlayer);
             new Message(I18n.format("shop.sign.sell.no_chest", name)).send(offlinePlayer);
             return;
         }
+        Block block = (Block) reqLocationModel.getBlock().getState();
+
         Inventory blockInventory = ((Chest) block.getState()).getBlockInventory();
         TransactionController.getInstance().makeTransaction(owner, buyer.getUniqueId(), item, amount, fee, blockInventory, buyer.getInventory());
         updateUi();

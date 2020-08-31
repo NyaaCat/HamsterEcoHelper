@@ -13,23 +13,21 @@ import java.util.stream.Collectors;
 public abstract class BasePagedComponent<E extends ModelableItem> extends BaseComponent<E> implements IPagedUiAccess {
     public BasePagedComponent(Inventory inventory) {
         super(0, 0, 5, 9);
-        int initialCapacity = rows() * columns();
         this.uiInventory = inventory;
     }
 
     @Override
     public void setPage(int page) {
         currentPage = page;
-        updateAsynchronously();
     }
 
     @Override
     public void preUpdate() {
-        int pageSize = getPageSize();
-        ItemStack itemStack = new ItemStack(Material.AIR);
-        for (int i = 0; i < pageSize; i++) {
-            setItemAt(i, itemStack);
-        }
+//        int pageSize = getPageSize();
+//        ItemStack itemStack = new ItemStack(Material.AIR);
+//        for (int i = 0; i < pageSize; i++) {
+//            setItemAt(i, itemStack);
+//        }
     }
 
     protected int currentPage = 0;

@@ -70,4 +70,8 @@ public class LocationConnection {
     public LocationDbModel getReqLocationModel(UUID player) {
         return DatabaseManager.getInstance().getLocationModel(player, LocationType.CHEST_BUY);
     }
+
+    public long getNextUid() {
+        return uidManager.getNextUid();
+    }
 }

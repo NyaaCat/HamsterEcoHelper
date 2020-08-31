@@ -28,7 +28,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
 
         UUID buyer = event.getWhoClicked().getUniqueId();
         if (buyer.equals(shopItem.getOwner())){
-            addOnCursor(event, shopItem, shopItem.getAmount() - shopItem.getSoldAmount());
+            addOnCursor(event, shopItem, 1);
         }else{
             makeTransaction(event, buyer, shopItem);
         }
@@ -105,7 +105,8 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
                 return;
             }
         }
-        ItemStack clone = event.getCurrentItem().clone();
+        ShopItem shopItem = getShopItem(event);
+        ItemStack clone = shopItem.getItemStack().clone();
         clone.setAmount(clone.getMaxStackSize());
         ItemStack cursor = event.getCursor();
         if (cursor == null || cursor.getType().equals(Material.AIR)){

@@ -1,7 +1,6 @@
 package cat.nyaa.heh.ui;
 
 import cat.nyaa.heh.business.item.ModelableItem;
-import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.ui.component.BaseComponent;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
@@ -22,14 +21,22 @@ public abstract class BaseUi<E extends ModelableItem> implements InventoryHolder
     protected ButtonComponent buttonComponent;
 
     public BaseUi() {
-        uiInventory = Bukkit.createInventory(this, 54, getTitle());
-        pagedComponent = getPageComponent();
-        buttonComponent = new ButtonComponent(5, 0, pagedComponent);
-        initButtons();
+        uiInventory = Bukkit.createInventory(this, 54);
+        createComponents();
         this.uiuid = UUID.randomUUID();
     }
 
-    protected abstract BasePagedComponent<E> getPageComponent();
+    public void createComponents(){
+        pagedComponent = newPagedComponent();
+        buttonComponent = new ButtonComponent(5, 0, pagedComponent);
+        initButtons();
+    }
+
+    protected BasePagedComponent<E> getPagedComponent(){
+        return pagedComponent == null ? newPagedComponent() : pagedComponent;
+    }
+
+    protected abstract BasePagedComponent<E> newPagedComponent();
 
     private void initButtons() {
         ButtonRegister instance = ButtonRegister.getInstance();
@@ -99,7 +106,7 @@ public abstract class BaseUi<E extends ModelableItem> implements InventoryHolder
             int size = event.getView().getTopInventory().getSize();
             boolean related = event.getRawSlots().stream().mapToInt(Integer::intValue)
                     .anyMatch(integer -> integer < size);
-            event.setCancelled(invalid && related);
+//            event.setCancelled(invalid && related);
             if (!invalid){
                 //todo check this
 //                onContentInteract(event);

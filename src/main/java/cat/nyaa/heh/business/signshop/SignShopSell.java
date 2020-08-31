@@ -9,6 +9,7 @@ import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
 import cat.nyaa.heh.ui.SignShopGUI;
+import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
@@ -42,17 +43,7 @@ public class SignShopSell extends BaseSignShop{
 
     @Override
     public void doBusiness(Player related, ShopItem item, int amount) {
-        //todo configure sign shop storage space.
         double fee = HamsterEcoHelper.plugin.config.signShopFeeBase;
-        LocationDbModel reqLocationModel = LocationConnection.getInstance().getReqLocationModel(owner);
-        Block block = reqLocationModel.getBlock();
-        if(!(block.getState() instanceof Chest)){
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(owner);
-            String name = SystemAccountUtils.isSystemAccount(owner) ? SystemAccountUtils.getSystemName() : offlinePlayer.getName();
-            new Message(I18n.format("shop.sign.buy.no_chest")).send(offlinePlayer);
-            new Message(I18n.format("shop.sign.sell.no_chest", name)).send(offlinePlayer);
-        }
-
         TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, item, amount, fee);
         updateUi();
     }
@@ -64,6 +55,8 @@ public class SignShopSell extends BaseSignShop{
 
     @Override
     public SignShopGUI newGUI() {
-        return new SignShopGUI(this);
+        SignShopGUI signShopGUI = UiManager.getInstance().newSignShopGUI(this);
+        signShopGUI.refreshGUI();
+        return signShopGUI;
     }
 }

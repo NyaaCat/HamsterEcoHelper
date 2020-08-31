@@ -33,6 +33,7 @@ public interface RefreshableUi<T> {
                     this.loadData();
                     return null;
                 })
+                .delay(1)
                 .sync(this::postUpdate)
                 .execute();
     }

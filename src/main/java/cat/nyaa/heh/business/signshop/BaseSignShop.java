@@ -46,7 +46,7 @@ public abstract class BaseSignShop extends BaseShop{
         if (!(state instanceof Sign)){
             throw new IllegalStateException(String.format("block at world:%s, x:%f, y:%f, z:%f is not a sign.", worldName, model.getX(), model.getY(), model.getZ()));
         }
-        this.sign = (Sign) state;
+        setSign(((Sign) state));
         try{
             SignShopData signShopData = DataModel.getGson().fromJson(model.getData(), SignShopData.class);
             setData(signShopData);

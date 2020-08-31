@@ -17,7 +17,6 @@ public abstract class BaseComponent<T extends ModelableItem> extends MatrixCompo
 
     public BaseComponent(int startRow, int startCol, int rows, int columns) {
         super(startRow, startCol, rows, columns);
-        this.loadData();
     }
 
     @Override

@@ -17,29 +17,31 @@ public class SignShopGUI extends BaseUi<ShopItem>{
         super();
         this.signShop = signShop;
         this.owner = signShop.getOwner();
+        createComponents();
+        refreshGUI();
     }
 
     @Override
-    protected BasePagedComponent<ShopItem> getPageComponent() {
+    protected BasePagedComponent<ShopItem> newPagedComponent() {
         return new SignShopComponent(uiInventory, signShop);
     }
 
     @Override
     protected String getTitle() {
-        return I18n.format("ui.title.sign_shop", pagedComponent.getCurrentPage()+1, pagedComponent.getSize()/ pagedComponent.getPageSize()+2);
+        return I18n.format("ui.title.sign_shop");
     }
 
     @Override
     public void refreshGUI() {
-        pagedComponent.loadData();
-        pagedComponent.refreshUi();
+        getPagedComponent().loadData();
+        getPagedComponent().refreshUi();
         buttonComponent.refreshUi();
     }
 
     @Override
     public void refreshGUI(List<ShopItem> items) {
-        pagedComponent.loadData(items);
-        pagedComponent.refreshUi();
+        getPagedComponent().loadData(items);
+        getPagedComponent().refreshUi();
         buttonComponent.refreshUi();
     }
 

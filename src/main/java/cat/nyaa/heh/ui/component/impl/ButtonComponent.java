@@ -64,11 +64,6 @@ public class ButtonComponent extends BaseComponent<ModelableItem> implements But
     }
 
     @Override
-    public void postUpdate() {
-        refreshUi();
-    }
-
-    @Override
     public GUIButton getButtonAt(int index) {
         return buttonMap.get(index);
     }

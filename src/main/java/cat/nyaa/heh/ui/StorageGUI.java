@@ -15,29 +15,30 @@ public class StorageGUI extends BaseUi<StorageItem> {
     public StorageGUI(UUID owner) {
         super();
         this.owner = owner;
+        pagedComponent = newPagedComponent();
     }
 
     @Override
-    protected BasePagedComponent<StorageItem> getPageComponent() {
+    protected BasePagedComponent<StorageItem> newPagedComponent() {
         return new StorageComponent(owner, uiInventory);
     }
 
     @Override
     protected String getTitle() {
-        return I18n.format("ui.title.storage", pagedComponent.getCurrentPage()+1, pagedComponent.getSize()/ pagedComponent.getPageSize()+2);
+        return I18n.format("ui.title.storage");
     }
 
     @Override
     public void refreshGUI() {
-        pagedComponent.loadData();
-        pagedComponent.refreshUi();
+        getPagedComponent().loadData();
+        getPagedComponent().refreshUi();
         buttonComponent.refreshUi();
     }
 
     @Override
     public void refreshGUI(List<StorageItem> items) {
-        pagedComponent.loadData(items);
-        pagedComponent.refreshUi();
+        getPagedComponent().loadData(items);
+        getPagedComponent().refreshUi();
         buttonComponent.refreshUi();
     }
 }

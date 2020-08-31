@@ -14,8 +14,6 @@ import java.util.UUID;
 
 public class SignShopConnection {
     private static SignShopConnection INSTANCE;
-    private static final String TABLE_NAME_SIGN_SHOP = "location";
-    private UidUtils signUidManager = UidUtils.create(TABLE_NAME_SIGN_SHOP);
 
     private SignShopConnection() {
     }
@@ -43,6 +41,11 @@ public class SignShopConnection {
         return DatabaseManager.getInstance().getBuyShopItems(owner);
     }
 
+
+    public List<BaseSignShop> getShops() {
+        return DatabaseManager.getInstance().getShops();
+    }
+
     public Map<UUID, List<SignShopBuy>> getBuyShops() {
         return DatabaseManager.getInstance().getBuyShops();
     }
@@ -52,7 +55,7 @@ public class SignShopConnection {
     }
 
     public void addSignShop(BaseSignShop signShopSell) {
-        signShopSell.setUid(signUidManager.getNextUid());
+        signShopSell.setUid(LocationConnection.getInstance().getNextUid());
         DatabaseManager.getInstance().insertLocation(signShopSell.toDbModel());
     }
 

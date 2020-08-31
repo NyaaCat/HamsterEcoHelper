@@ -159,6 +159,20 @@ public class DatabaseManager {
                 .collect(Collectors.toList());
     }
 
+
+
+    public List<BaseSignShop> getShops() {
+        List<BaseSignShop> result = new ArrayList<>();
+        locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY)).stream()
+                .forEach(signShopDbModel -> {
+                    result.add(new SignShopBuy(signShopDbModel));
+                });
+        locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_SELL)).stream()
+                .forEach(signShopDbModel -> {
+                    result.add(new SignShopSell(signShopDbModel));
+                });
+        return result;
+    }
     public Map<UUID, List<SignShopBuy>> getBuyShops() {
         Map<UUID, List<SignShopBuy>> result = new HashMap<>();
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY)).stream()

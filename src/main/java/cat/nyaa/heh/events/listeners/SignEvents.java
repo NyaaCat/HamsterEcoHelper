@@ -4,9 +4,12 @@ import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.business.signshop.SignShopBuy;
 import cat.nyaa.heh.business.signshop.SignShopManager;
+import cat.nyaa.heh.business.signshop.SignShopSell;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
+import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -15,6 +18,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.UUID;
 
 public class SignEvents implements Listener {
     @EventHandler
@@ -28,6 +34,16 @@ public class SignEvents implements Listener {
             return;
         }
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(clickedBlock.getLocation());
+        if (shopAt instanceof SignShopBuy){
+            UUID owner = shopAt.getOwner();
+            String name = SystemAccountUtils.isSystemAccount(owner) ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(owner).getName();
+            new Message(I18n.format("shop.buy.info.owner", name)).send(event.getPlayer());
+            shopAt.getItems().stream().forEach(shopItem -> {
+                ItemStack model = shopItem.getModel();
+                new Message("").append(I18n.format("shop.buy.info.item"), model).send(event.getPlayer());
+            });
+            return;
+        }
         SignShopGUI gui = shopAt.newGUI();
         gui.open(event.getPlayer());
     }

@@ -47,7 +47,7 @@ public class ButtonNextPage extends GUIButton {
         }
 
         iQueryUiAccess.setPage(nextPage);
-        iQueryUiAccess.loadData();
+        iQueryUiAccess.updateAsynchronously();
     }
 
     @Override

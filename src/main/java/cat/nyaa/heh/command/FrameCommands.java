@@ -2,8 +2,6 @@ package cat.nyaa.heh.command;
 
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.signshop.ItemFrameShop;
-import cat.nyaa.heh.db.LocationConnection;
-import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
@@ -13,8 +11,8 @@ import cat.nyaa.nyaacore.utils.RayTraceUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -47,8 +45,13 @@ public class FrameCommands extends CommandReceiver {
             return;
         }
         ItemFrame f = (ItemFrame) targetEntity;
+        ItemStack item = f.getItem();
+        if (f.isFixed() || !item.getType().isAir()){
+            new Message(I18n.format("command.frame.set.invalid_frame")).send(sender);
+            return;
+        }
         ItemFrameShop itemFrameShop = new ItemFrameShop(player, f);
-        ItemFrameShop.addFrame(itemFrameShop);
+        ItemFrameShop.newFrameShop(itemFrameShop);
         new Message(I18n.format("command.frame.set.success")).send(sender);
     }
 

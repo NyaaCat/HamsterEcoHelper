@@ -14,28 +14,26 @@ public class MarketGUI extends BaseUi<ShopItem> {
 
     @Override
     public void refreshGUI(){
-        BasePagedComponent<ShopItem> pageComponent = this.getPageComponent();
-        pageComponent.loadData();
-        pageComponent.refreshUi();
+        getPagedComponent().loadData();
+        getPagedComponent().refreshUi();
         buttonComponent.refreshUi();
     }
 
     @Override
     public void refreshGUI(List<ShopItem> list){
-        BasePagedComponent<ShopItem> pageComponent = this.getPageComponent();
-        pageComponent.loadData(list);
-        pageComponent.refreshUi();
+        getPagedComponent().loadData(list);
+        getPagedComponent().refreshUi();
         buttonComponent.refreshUi();
     }
 
     @Override
-    protected BasePagedComponent<ShopItem> getPageComponent() {
+    protected BasePagedComponent<ShopItem> newPagedComponent() {
         return new MarketComponent(uiInventory);
     }
 
     @Override
     protected String getTitle() {
-        return I18n.format("ui.title.market", pagedComponent.getCurrentPage()+1, pagedComponent.getSize()/pagedComponent.getPageSize()+2);
+        return I18n.format("ui.title.market");
     }
 
 }
