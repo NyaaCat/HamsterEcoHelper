@@ -271,4 +271,12 @@ public class DatabaseManager {
     public void addStorageItem(StorageDbModel model) {
         storageTable.insert(model);
     }
+
+    public void updateStorageItem(StorageDbModel storageDbModel) {
+        storageTable.update(storageDbModel, WhereClause.EQ("uid", storageDbModel.getUid()));
+    }
+
+    public void removeStorageItem(StorageDbModel storageDbModel) {
+        storageTable.delete(WhereClause.EQ("uid", storageDbModel.getUid()));
+    }
 }

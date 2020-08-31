@@ -45,4 +45,12 @@ public class StorageConnection {
     public void addStorageItem(StorageItem storageItem) {
         DatabaseManager.getInstance().addStorageItem(new StorageDbModel(storageItem));
     }
+
+    public void updateStorageItem(StorageItem storageItem) {
+        DatabaseManager.getInstance().updateStorageItem(new StorageDbModel(storageItem));
+    }
+
+    public void removeStorageItem(StorageItem storageItem) {
+        DatabaseManager.getInstance().removeStorageItem(new StorageDbModel(storageItem));
+    }
 }

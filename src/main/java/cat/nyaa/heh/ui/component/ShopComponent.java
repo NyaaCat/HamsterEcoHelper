@@ -1,6 +1,5 @@
 package cat.nyaa.heh.ui.component;
 
-import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
@@ -21,7 +20,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
 
     @Override
     public void onLeftClick(InventoryClickEvent event) {
-        ShopItem shopItem = getShopItem(event);
+        ShopItem shopItem = getContent(event);
         if (shopItem == null){
             return;
         }
@@ -51,8 +50,10 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             shopItem.setAmount(shopItem.getAmount() - amount);
             event.getView().setCursor(itemStack);
         }else if (cursor.isSimilar(itemStack) && cursor.getAmount() < cursor.getMaxStackSize()){
-            shopItem.setAmount(shopItem.getAmount() - amount);
+            int amount1 = itemStack.getAmount();
             itemStack.setAmount(Math.min(cursor.getAmount() + amount, cursor.getMaxStackSize()));
+            int amount2 = itemStack.getAmount();
+            shopItem.setAmount(shopItem.getAmount() - (amount1 - amount2));
             event.getView().setCursor(itemStack);
         }
         ShopItemManager.getInstance().updateShopItem(shopItem);
@@ -60,7 +61,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
 
     @Override
     public void onRightClick(InventoryClickEvent event) {
-        ShopItem shopItem = getShopItem(event);
+        ShopItem shopItem = getContent(event);
         if (shopItem == null){
             return;
         }
@@ -77,7 +78,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
 
     @Override
     public void onShiftLeftClick(InventoryClickEvent event) {
-        ShopItem shopItem = getShopItem(event);
+        ShopItem shopItem = getContent(event);
         if (shopItem == null){
             return;
         }
@@ -105,7 +106,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
                 return;
             }
         }
-        ShopItem shopItem = getShopItem(event);
+        ShopItem shopItem = getContent(event);
         ItemStack clone = shopItem.getItemStack().clone();
         clone.setAmount(clone.getMaxStackSize());
         ItemStack cursor = event.getCursor();

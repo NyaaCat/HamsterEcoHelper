@@ -32,7 +32,7 @@ public abstract class BasePagedComponent<E extends ModelableItem> extends BaseCo
 
     protected int currentPage = 0;
 
-    protected E getShopItem(InventoryClickEvent event) {
+    protected E getContent(InventoryClickEvent event) {
         int i = indexOf(event.getSlot());
         if (i == -1){
             return null;
