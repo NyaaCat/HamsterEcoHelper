@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component.impl;
 
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.ui.component.ShopComponent;
@@ -19,6 +20,11 @@ public class SignShopComponent extends ShopComponent {
     @Override
     public void onLeftClick(InventoryClickEvent event) {
         super.onLeftClick(event);
+    }
+
+    @Override
+    protected double getFee() {
+        return HamsterEcoHelper.plugin.config.signShopFeeBase;
     }
 
     @Override

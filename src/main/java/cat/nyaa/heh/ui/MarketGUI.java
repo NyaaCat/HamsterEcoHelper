@@ -17,6 +17,7 @@ public class MarketGUI extends BaseUi<ShopItem> {
         BasePagedComponent<ShopItem> pageComponent = this.getPageComponent();
         pageComponent.loadData();
         pageComponent.refreshUi();
+        buttonComponent.refreshUi();
     }
 
     @Override
@@ -24,6 +25,7 @@ public class MarketGUI extends BaseUi<ShopItem> {
         BasePagedComponent<ShopItem> pageComponent = this.getPageComponent();
         pageComponent.loadData(list);
         pageComponent.refreshUi();
+        buttonComponent.refreshUi();
     }
 
     @Override

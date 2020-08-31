@@ -35,6 +35,10 @@ public class UiManager {
         return addGUI(new SignShopGUI(signShop));
     }
 
+    public StorageGUI newStorageGUI(UUID owner){
+        return addGUI(new StorageGUI(owner));
+    }
+
     private <T extends BaseUi> T addGUI(T marketGUI) {
         uiByInventory.put(marketGUI.getInventory(), marketGUI);
         uiByUuid.put(marketGUI.getUid(), marketGUI);

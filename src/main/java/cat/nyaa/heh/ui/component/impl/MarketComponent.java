@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component.impl;
 
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.market.Market;
 import cat.nyaa.heh.ui.component.ShopComponent;
@@ -12,6 +13,11 @@ import java.util.UUID;
 public class MarketComponent extends ShopComponent {
     public MarketComponent(Inventory inventory) {
         super(inventory);
+    }
+
+    @Override
+    protected double getFee() {
+        return HamsterEcoHelper.plugin.config.marketFeeBase;
     }
 
     private List<ShopItem> loadItems() {

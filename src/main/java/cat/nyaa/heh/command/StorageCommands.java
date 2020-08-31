@@ -2,6 +2,7 @@ package cat.nyaa.heh.command;
 
 import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.ui.StorageGUI;
+import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
@@ -42,7 +43,7 @@ public class StorageCommands extends CommandReceiver {
         }else{
             owner = player.getUniqueId();
         }
-        StorageGUI g = new StorageGUI(owner);
+        StorageGUI g = UiManager.getInstance().newStorageGUI(owner);
         g.open(player);
     }
 
