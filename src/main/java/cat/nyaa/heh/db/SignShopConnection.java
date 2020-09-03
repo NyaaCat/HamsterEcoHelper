@@ -6,7 +6,7 @@ import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.business.signshop.ItemFrameShop;
 import cat.nyaa.heh.business.signshop.SignShopBuy;
 import cat.nyaa.heh.business.signshop.SignShopSell;
-import cat.nyaa.heh.utils.UidUtils;
+import org.bukkit.inventory.Inventory;
 
 import java.util.List;
 import java.util.Map;
@@ -76,5 +76,9 @@ public class SignShopConnection {
 
     public ItemFrameShop getShopFrame(UUID uniqueId) {
         return new ItemFrameShop(DatabaseManager.getInstance().getShopFrame(uniqueId));
+    }
+
+    public Inventory getLottoItems(UUID owner) {
+        return DatabaseManager.getInstance().getLottoItems(owner);
     }
 }

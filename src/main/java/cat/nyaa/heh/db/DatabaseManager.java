@@ -1,12 +1,10 @@
 package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.HamsterEcoHelper;
-import cat.nyaa.heh.business.signshop.BaseSignShop;
+import cat.nyaa.heh.business.signshop.*;
 import cat.nyaa.heh.db.model.*;
 import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.item.ShopItem;
-import cat.nyaa.heh.business.signshop.SignShopBuy;
-import cat.nyaa.heh.business.signshop.SignShopSell;
 import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.business.transaction.Transaction;
 import cat.nyaa.nyaacore.orm.DatabaseUtils;
@@ -15,7 +13,10 @@ import cat.nyaa.nyaacore.orm.backends.IConnectedDatabase;
 import cat.nyaa.nyaacore.orm.backends.ITypedTable;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -171,6 +172,10 @@ public class DatabaseManager {
                 .forEach(signShopDbModel -> {
                     result.add(new SignShopSell(signShopDbModel));
                 });
+        locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_LOTTO)).stream()
+                .forEach(signShopDbModel -> {
+                    result.add(new SignShopLotto(signShopDbModel, ));
+                });
         return result;
     }
     public Map<UUID, List<SignShopBuy>> getBuyShops() {
@@ -278,5 +283,17 @@ public class DatabaseManager {
 
     public void removeStorageItem(StorageDbModel storageDbModel) {
         storageTable.delete(WhereClause.EQ("uid", storageDbModel.getUid()));
+    }
+
+    public Inventory getLottoItems(UUID owner) {
+        Chest chest = locationTable.select(WhereClause.EQ("type", LocationType.CHEST_LOTTO).whereEq("owner", owner)).stream()
+                .map(LocationDbModel::getBlock)
+                .filter(block -> block.getState() instanceof Chest)
+                .map(block -> ((Chest) block.getState()))
+                .findFirst().orElse(null);
+        if (chest == null){
+            throw new NoLottoChestException();
+        }
+        return chest.getInventory();
     }
 }

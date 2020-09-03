@@ -1,10 +1,7 @@
 package cat.nyaa.heh.events.listeners;
 
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.business.signshop.BaseSignShop;
-import cat.nyaa.heh.business.signshop.SignShopBuy;
-import cat.nyaa.heh.business.signshop.SignShopManager;
-import cat.nyaa.heh.business.signshop.SignShopSell;
+import cat.nyaa.heh.business.signshop.*;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -34,6 +31,10 @@ public class SignEvents implements Listener {
             return;
         }
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(clickedBlock.getLocation());
+        if(shopAt instanceof SignShopLotto){
+            SignShopLotto shopAt1 = (SignShopLotto) shopAt;
+            shopAt1.doBusiness(event.getPlayer(), null, 1);
+        }
         if (shopAt instanceof SignShopBuy){
             UUID owner = shopAt.getOwner();
             String name = SystemAccountUtils.isSystemAccount(owner) ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(owner).getName();
