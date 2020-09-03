@@ -33,7 +33,17 @@ public class SignEvents implements Listener {
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(clickedBlock.getLocation());
         if(shopAt instanceof SignShopLotto){
             SignShopLotto shopAt1 = (SignShopLotto) shopAt;
-            shopAt1.doBusiness(event.getPlayer(), null, 1);
+            String name = SystemAccountUtils.isSystemAccount(shopAt.getOwner()) ? SystemAccountUtils.getSystemName()
+                    : Bukkit.getOfflinePlayer(shopAt.getOwner()).getName();
+            try{
+                shopAt1.doBusiness(event.getPlayer(), null, 1);
+                new Message(I18n.format("shop.sign.lotto.success", name, shopAt1.getPrice())).send(event.getPlayer());
+            }catch (NoLottoChestException e){
+                new Message(I18n.format("shop.sign.lotto.no_chest", name)).send(event.getPlayer());
+            }catch (InvalidItemException e){
+                new Message(I18n.format("shop.sign.lotto.invalid_item", name)).send(event.getPlayer());
+            }
+            return;
         }
         if (shopAt instanceof SignShopBuy){
             UUID owner = shopAt.getOwner();

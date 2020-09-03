@@ -1,9 +1,13 @@
 package cat.nyaa.heh.business.signshop;
 
+import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.transaction.Transaction;
+import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.db.SignShopConnection;
+import cat.nyaa.heh.db.model.DataModel;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
 import cat.nyaa.heh.ui.SignShopGUI;
@@ -26,14 +30,48 @@ public class SignShopLotto extends BaseSignShop{
         this.price = price;
     }
 
-    public SignShopLotto(LocationDbModel model, double price) {
-        super(model);
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
         this.price = price;
+    }
+
+    public SignShopLotto(LocationDbModel model) {
+        super(model);
+        LottoData lottoData = DataModel.getGson().fromJson(model.getData(), LottoData.class);
+        this.price = lottoData.lottoPrice;
+    }
+
+    public LocationDbModel toDbModel(){
+        LocationDbModel locationDbModel = new LocationDbModel(this);
+        return locationDbModel;
+    }
+
+    @Override
+    public SignShopData getData() {
+        LottoData lottoData = new LottoData();
+        lottoData.lores = new ArrayList<>(this.lores);
+        lottoData.lottoPrice = price;
+        return lottoData;
+    }
+
+    @Override
+    public List<String> getLores() {
+        List<String> lores = super.getLores();
+        lores.set(1, getTitle());
+        lores.set(3, buildPriceLore());
+        return lores;
+    }
+
+    private String buildPriceLore() {
+        return I18n.format("ui.lotto.price", price);
     }
 
     @Override
     public String getTitle() {
-        return "";
+        return I18n.format("ui.lotto.title");
     }
 
     @Override
@@ -63,8 +101,10 @@ public class SignShopLotto extends BaseSignShop{
         }
         ItemStack clone = item1.clone();
         lottoItems.setItem(integer, new ItemStack(Material.AIR));
-
-        ShopItemManager.newShopItem(owner, ShopItemType.LOTTO, clone, );
+        int transacAmount = clone.getAmount();
+        ShopItem shopItem = ShopItemManager.newShopItem(owner, ShopItemType.LOTTO, clone, price / (double) transacAmount);
+        ShopItemManager.insertShopItem(shopItem);
+        TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, shopItem, transacAmount, 0);
     }
 
     @Override

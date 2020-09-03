@@ -1,7 +1,13 @@
 package cat.nyaa.heh.business.signshop;
 
-import cat.nyaa.heh.db.model.DataModel;
+public class LottoData extends SignShopData {
+    public double lottoPrice;
 
-public class LottoData extends DataModel {
-    public double price;
+    public double getLottoPrice() {
+        return lottoPrice;
+    }
+
+    public void setLottoPrice(double lottoPrice) {
+        this.lottoPrice = lottoPrice;
+    }
 }

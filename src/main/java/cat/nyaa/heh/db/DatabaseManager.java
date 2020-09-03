@@ -174,7 +174,7 @@ public class DatabaseManager {
                 });
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_LOTTO)).stream()
                 .forEach(signShopDbModel -> {
-                    result.add(new SignShopLotto(signShopDbModel, ));
+                    result.add(new SignShopLotto(signShopDbModel));
                 });
         return result;
     }
