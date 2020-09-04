@@ -4,6 +4,7 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.nyaacore.configuration.FileConfigure;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,12 +44,26 @@ public class SystemAccountUtils {
         return account.uuid;
     }
 
+    public static boolean deposit(double amount) {
+        Economy eco = EcoUtils.getInstance().getEco();
+        OfflinePlayer system = getFakePlayer();
+        EconomyResponse economyResponse = eco.depositPlayer(system, amount);
+        return economyResponse.transactionSuccess();
+    }
+
+    public static boolean withdraw(double amount) {
+        Economy eco = EcoUtils.getInstance().getEco();
+        OfflinePlayer system = getFakePlayer();
+        EconomyResponse economyResponse = eco.withdrawPlayer(system, amount);
+        return economyResponse.transactionSuccess();
+    }
+
     public static boolean deposit(OfflinePlayer offlinePlayer, double amount) {
         OfflinePlayer system = getFakePlayer();
         return makeTransaction(offlinePlayer, system, amount);
     }
 
-    public static boolean take(OfflinePlayer offlinePlayer, double amount) {
+    public static boolean withdraw(OfflinePlayer offlinePlayer, double amount) {
         OfflinePlayer system = getFakePlayer();
         return makeTransaction(system, offlinePlayer, amount);
     }

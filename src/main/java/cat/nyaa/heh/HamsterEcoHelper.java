@@ -1,8 +1,11 @@
 package cat.nyaa.heh;
 
+import cat.nyaa.heh.api.HamsterEcoHelperAPI;
 import cat.nyaa.heh.business.auction.Auction;
+import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.signshop.ItemFrameShop;
 import cat.nyaa.heh.business.signshop.SignShopManager;
+import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.command.*;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.MarketConnection;
@@ -14,11 +17,13 @@ import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.utils.EcoUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class HamsterEcoHelper extends JavaPlugin {
+public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI {
     public static HamsterEcoHelper plugin;
     public Configuration config;
     I18n i18n;
@@ -83,6 +88,61 @@ public class HamsterEcoHelper extends JavaPlugin {
 
     public void setAuction(Auction auction) {
         this.auction = auction;
+    }
+
+    @Override
+    public boolean withdrawPlayer(OfflinePlayer player, double amount, ShopItemType type, String taxReason) {
+        return TransactionController.getInstance().withdrawWithTax(player, amount, type, taxReason);
+    }
+
+    @Override
+    public double getSystemBalance() {
+        return SystemAccountUtils.getSystemBalance();
+    }
+
+    @Override
+    public boolean depositToSystem(OfflinePlayer from, String reason, double amount) {
+        boolean success = SystemAccountUtils.withdraw(from, amount);
+        if (success){
+            TransactionController.getInstance().newTax(from.getUniqueId(), amount, 0, System.currentTimeMillis(), reason);
+        }
+        return success;
+    }
+
+
+
+    @Override
+    public boolean chargeFee(OfflinePlayer from, String reason, double amount) {
+        boolean success = SystemAccountUtils.withdraw(from, amount);
+        if (success){
+            Tax tax = TransactionController.getInstance().newTax(from.getUniqueId(), 0, amount, System.currentTimeMillis(), reason);
+            TransactionController.getInstance().retrieveTax(tax);
+        }
+        return success;
+    }
+
+    @Override
+    public boolean withdrawFromSystem(String reason, double amount) {
+        boolean success = SystemAccountUtils.deposit(amount);
+        if (success){
+            Tax tax = TransactionController.getInstance().newTax(SystemAccountUtils.getSystemUuid(), 0, -amount, System.currentTimeMillis(), reason);
+            TransactionController.getInstance().retrieveTax(tax);
+        }
+        return success;
+    }
+
+    @Override
+    public boolean withdrawFromSystem(OfflinePlayer from, String reason, double amount) {
+        boolean success = SystemAccountUtils.withdraw(amount);
+        if (success){
+            Tax tax = TransactionController.getInstance().newTax(SystemAccountUtils.getSystemUuid(), 0, -amount, System.currentTimeMillis(), reason);
+            TransactionController.getInstance().retrieveTax(tax);
+        }
+        return success;
+    }
+
+    public HamsterEcoHelperAPI getImpl(){
+        return this;
     }
 }
 

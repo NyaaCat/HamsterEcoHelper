@@ -1,6 +1,7 @@
 package cat.nyaa.heh.utils;
 
 import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -39,7 +40,9 @@ public class EcoUtils {
         eco.withdrawPlayer(payer, tax);
         EconomyResponse economyResponse = eco.withdrawPlayer(payer, fee);
         if (economyResponse.type.equals(EconomyResponse.ResponseType.SUCCESS)){
-            TransactionController.getInstance().retrieveTax(payer, tax, fee, reason);
+            TransactionController instance = TransactionController.getInstance();
+            Tax tax1 = instance.newTax(payer.getUniqueId(), tax, fee, System.currentTimeMillis(), reason);
+            instance.retrieveTax(tax1);
         }else throw new RuntimeException("error withdrawing player: "+economyResponse.errorMessage);
     }
 }

@@ -2,6 +2,7 @@ package cat.nyaa.heh.business.transaction;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.StorageConnection;
@@ -9,6 +10,7 @@ import cat.nyaa.heh.events.PreTransactionEvent;
 import cat.nyaa.heh.events.TransactionEvent;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.utils.EcoUtils;
+import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.heh.utils.UidUtils;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
@@ -66,7 +68,6 @@ public class TransactionController {
             return false;
         }
         BigDecimal toTake = itemPrice.add(tax);
-        long nextTransactionUid = transactionUidManager.getCurrentUid();
         double payerBalBefore = eco.getBalance(pPayer);
         double sellerBalBefore = eco.getBalance(pSeller);
         int soldAmountBefore = item.getSoldAmount();
@@ -95,9 +96,10 @@ public class TransactionController {
             transactionRecorderTask = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    long taxUid = taxUidManager.getNextUid();
-                    addTaxRecord(taxUid, pBuyer, tax.doubleValue(), 0, time, reason);
-                    addTransactionRecord(nextTransactionUid, item, amount, itemPrice, pBuyer, pSeller, taxUid, time);
+                    Tax tax1 = newTax(pBuyer.getUniqueId(), tax.doubleValue(), 0, time, reason);
+                    retrieveTax(tax1);
+                    Transaction transaction = newTransactionRecord(item, amount, itemPrice, pBuyer, pSeller, tax1.getUid(), time);
+                    addTransactionRecord(transaction);
                 }
             };
             transactionRecorderTask.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 0);
@@ -137,16 +139,17 @@ public class TransactionController {
         }
     }
 
-    private void addTransactionRecord(long nextTransactionUid, ShopItem item, int amount, BigDecimal itemPrice, OfflinePlayer pBuyer, OfflinePlayer pSeller, long taxUid, long time) {
-        Transaction transaction = new Transaction(nextTransactionUid+1, item.getUid(), amount, itemPrice.doubleValue(), pBuyer.getUniqueId(), pSeller.getUniqueId(), taxUid, time);
-        DatabaseManager.getInstance().insertTransaction(transaction);
-        TransactionController.transactionUidManager.getNextUid();
+    private Transaction newTransactionRecord(ShopItem item, int amount, BigDecimal itemPrice, OfflinePlayer pBuyer, OfflinePlayer pSeller, long taxUid, long time) {
+        long uid = transactionUidManager.getNextUid();
+        return new Transaction(uid, item.getUid(), amount, itemPrice.doubleValue(), pBuyer.getUniqueId(), pSeller.getUniqueId(), taxUid, time);
     }
 
-    private void addTaxRecord(long taxUid, OfflinePlayer taxPayer, double tax, double fee, long time, String reason) {
-        Tax taxRecord = new Tax(taxUid, taxPayer.getUniqueId(), tax, fee, time, reason);
-        DatabaseManager.getInstance().insertTax(taxRecord);
-        TransactionController.transactionUidManager.getNextUid();
+    private void addTransactionRecord(Transaction transaction) {
+        DatabaseManager.getInstance().insertTransaction(transaction);
+    }
+
+    private void addTaxRecord(Tax tax) {
+        DatabaseManager.getInstance().insertTax(tax);
     }
 
     private void giveItemTo(OfflinePlayer pBuyer, ShopItem item, int amount) {
@@ -184,8 +187,21 @@ public class TransactionController {
         return false;
     }
 
-    public void retrieveTax(OfflinePlayer payer, double tax, double fee, String reason) {
-        long taxUid = taxUidManager.getNextUid();
-        addTaxRecord(taxUid, payer, tax, fee, System.currentTimeMillis(), reason);
+    public void retrieveTax(Tax tax) {
+        addTaxRecord(tax);
+    }
+
+    public Tax newTax(UUID from, double tax, double fee, long time, String reason){
+        return new Tax(taxUidManager.getNextUid(), from, tax, fee, time, reason);
+    }
+
+    public boolean withdrawWithTax(OfflinePlayer player, double amount, ShopItemType type, String taxReason) {
+        BigDecimal tax = Tax.calcTax(type, BigDecimal.valueOf(amount));
+        Tax tax1 = newTax(player.getUniqueId(), tax.doubleValue(), 0, System.currentTimeMillis(), taxReason);
+        boolean withdraw = SystemAccountUtils.withdraw(player, tax.doubleValue());
+        if (withdraw){
+            retrieveTax(tax1);
+        }
+        return withdraw;
     }
 }
