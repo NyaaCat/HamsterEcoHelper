@@ -3,6 +3,7 @@ package cat.nyaa.heh.business.auction;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.BasicItemMatcher;
@@ -104,7 +105,7 @@ public class Requisition {
         }
 
         double fee = HamsterEcoHelper.plugin.config.requisitionFeeBase;
-        boolean result = TransactionController.getInstance().makeTransaction(item.getOwner(), seller.getUniqueId(), item, sellItem.getAmount(), fee);
+        boolean result = TransactionController.getInstance().makeTransaction(item.getOwner(), seller.getUniqueId(), item, sellItem.getAmount(), fee, TaxReason.REASON_REQ);
         if (result){
             broadcast(new Message("").append(I18n.format("requisition.sell", seller.getName(), item.getAmount() - item.getSoldAmount()), sellItem));
         }

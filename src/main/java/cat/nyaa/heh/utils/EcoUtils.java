@@ -35,11 +35,11 @@ public class EcoUtils {
         return eco;
     }
 
-    public void withdrawTax(OfflinePlayer payer, double tax, double fee){
+    public void withdrawTax(OfflinePlayer payer, double tax, double fee, String reason){
         eco.withdrawPlayer(payer, tax);
         EconomyResponse economyResponse = eco.withdrawPlayer(payer, fee);
         if (economyResponse.type.equals(EconomyResponse.ResponseType.SUCCESS)){
-            TransactionController.getInstance().retrieveTax(payer, tax, fee);
+            TransactionController.getInstance().retrieveTax(payer, tax, fee, reason);
         }else throw new RuntimeException("error withdrawing player: "+economyResponse.errorMessage);
     }
 }

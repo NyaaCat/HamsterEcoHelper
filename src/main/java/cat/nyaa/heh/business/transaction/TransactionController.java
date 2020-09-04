@@ -44,16 +44,16 @@ public class TransactionController {
         return INSTANCE;
     }
 
-    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee) {
-        return makeTransaction(buyer, buyer, seller, item, amount, fee, null, null);
+    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee, String reason) {
+        return makeTransaction(buyer, buyer, seller, item, amount, fee, null, null, reason);
     }
 
-    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv) {
-        return makeTransaction(buyer, buyer, seller, item, amount, fee, receiveInv, returnInv);
+    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv, String reason) {
+        return makeTransaction(buyer, buyer, seller, item, amount, fee, receiveInv, returnInv, reason);
     }
 
 
-    public boolean makeTransaction(UUID buyer, UUID payer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv){
+    public boolean makeTransaction(UUID buyer, UUID payer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv, String reason){
         OfflinePlayer pBuyer = Bukkit.getOfflinePlayer(buyer);
         OfflinePlayer pPayer = Bukkit.getOfflinePlayer(payer);
         OfflinePlayer pSeller = Bukkit.getOfflinePlayer(seller);
@@ -96,7 +96,7 @@ public class TransactionController {
                 @Override
                 public void run() {
                     long taxUid = taxUidManager.getNextUid();
-                    addTaxRecord(taxUid, pBuyer, tax.doubleValue(), 0, time);
+                    addTaxRecord(taxUid, pBuyer, tax.doubleValue(), 0, time, reason);
                     addTransactionRecord(nextTransactionUid, item, amount, itemPrice, pBuyer, pSeller, taxUid, time);
                 }
             };
@@ -143,8 +143,8 @@ public class TransactionController {
         TransactionController.transactionUidManager.getNextUid();
     }
 
-    private void addTaxRecord(long taxUid, OfflinePlayer taxPayer, double tax, double fee, long time) {
-        Tax taxRecord = new Tax(taxUid, taxPayer.getUniqueId(), tax, fee, time);
+    private void addTaxRecord(long taxUid, OfflinePlayer taxPayer, double tax, double fee, long time, String reason) {
+        Tax taxRecord = new Tax(taxUid, taxPayer.getUniqueId(), tax, fee, time, reason);
         DatabaseManager.getInstance().insertTax(taxRecord);
         TransactionController.transactionUidManager.getNextUid();
     }
@@ -187,8 +187,8 @@ public class TransactionController {
         return false;
     }
 
-    public void retrieveTax(OfflinePlayer payer, double tax, double fee) {
+    public void retrieveTax(OfflinePlayer payer, double tax, double fee, String reason) {
         long taxUid = taxUidManager.getNextUid();
-        addTaxRecord(taxUid, payer, tax, fee, System.currentTimeMillis());
+        addTaxRecord(taxUid, payer, tax, fee, System.currentTimeMillis(), reason);
     }
 }

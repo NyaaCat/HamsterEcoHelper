@@ -3,6 +3,7 @@ package cat.nyaa.heh.business.auction;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -204,7 +205,7 @@ public class Auction {
         stop();
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(offerer);
         double fee = HamsterEcoHelper.plugin.config.auctionFeeBase;
-        TransactionController.getInstance().makeTransaction(offerer, this.item.getOwner(), this.item, this.item.getAmount(), fee);
+        TransactionController.getInstance().makeTransaction(offerer, this.item.getOwner(), this.item, this.item.getAmount(), fee, TaxReason.REASON_AUC);
         broadcast(new Message("").append(I18n.format("auction.success", offlinePlayer.getName(), highestOffer), itemStack));
     }
 

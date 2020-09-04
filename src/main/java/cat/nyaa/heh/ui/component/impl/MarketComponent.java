@@ -3,6 +3,7 @@ package cat.nyaa.heh.ui.component.impl;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.market.Market;
+import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.ui.component.ShopComponent;
 import org.bukkit.inventory.Inventory;
 
@@ -13,6 +14,11 @@ import java.util.UUID;
 public class MarketComponent extends ShopComponent {
     public MarketComponent(Inventory inventory) {
         super(inventory);
+    }
+
+    @Override
+    protected String getReason() {
+        return TaxReason.REASON_MARKET;
     }
 
     @Override

@@ -3,6 +3,7 @@ package cat.nyaa.heh.business.signshop;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.db.LocationConnection;
 import cat.nyaa.heh.db.SignShopConnection;
@@ -64,7 +65,7 @@ public class SignShopBuy extends BaseSignShop{
         Block block = (Block) reqLocationModel.getBlock().getState();
 
         Inventory blockInventory = ((Chest) block.getState()).getBlockInventory();
-        TransactionController.getInstance().makeTransaction(owner, buyer.getUniqueId(), item, amount, fee, blockInventory, buyer.getInventory());
+        TransactionController.getInstance().makeTransaction(owner, buyer.getUniqueId(), item, amount, fee, blockInventory, buyer.getInventory(), TaxReason.REASON_SIGN_SHOP);
         updateUi();
     }
 

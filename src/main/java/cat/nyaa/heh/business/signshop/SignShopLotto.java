@@ -4,6 +4,7 @@ import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.Transaction;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.db.SignShopConnection;
@@ -104,7 +105,7 @@ public class SignShopLotto extends BaseSignShop{
         int transacAmount = clone.getAmount();
         ShopItem shopItem = ShopItemManager.newShopItem(owner, ShopItemType.LOTTO, clone, price / (double) transacAmount);
         ShopItemManager.insertShopItem(shopItem);
-        TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, shopItem, transacAmount, 0);
+        TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, shopItem, transacAmount, 0, TaxReason.REASON_LOTTO);
     }
 
     @Override

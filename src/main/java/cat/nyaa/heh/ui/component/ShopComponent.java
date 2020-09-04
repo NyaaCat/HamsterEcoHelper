@@ -37,8 +37,10 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
 
     protected void makeTransaction(InventoryClickEvent event, UUID buyer, ShopItem shopItem) {
         double fee = getFee();
-        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee);
+        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee, getReason());
     }
+
+    protected abstract String getReason();
 
     protected abstract double getFee();
 
@@ -70,7 +72,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             addOnCursor(event, shopItem, 1);
         }else {
             double fee = getFee();
-            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee);
+            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee, getReason());
         }
         loadData();
         refreshUi();
@@ -92,7 +94,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             DatabaseManager.getInstance().updateShopItem(shopItem);
         }else {
             double fee = getFee();
-            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount(), fee);
+            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount(), fee, getReason());
         }
         loadData();
         refreshUi();

@@ -22,11 +22,13 @@ public class Tax {
     double fee;
     @Column(name = "time")
     long time;
+    @Column(name = "reason")
+    String reason;
 
     public Tax() {
     }
 
-    public Tax(long uid, UUID from, double tax, double fee, long time) {
+    public Tax(long uid, UUID from, double tax, double fee, long time, String reason) {
         this.uid = uid;
         this.payer = from;
         this.tax = tax;

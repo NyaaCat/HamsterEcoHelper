@@ -1,6 +1,7 @@
 package cat.nyaa.heh.business.direct;
 
 import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.db.DirectInvoiceConnection;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.transaction.TransactionController;
@@ -32,7 +33,7 @@ public class DirectInvoice {
         UUID customer = getCustomer(shopItem.getUid());
         double fee = HamsterEcoHelper.plugin.config.directFeeBase;
         int amount = shopItem.getAmount() - shopItem.getSoldAmount();
-        return TransactionController.getInstance().makeTransaction(customer, payer.getUniqueId(), shopItem.getOwner(), shopItem, amount, fee, null, null);
+        return TransactionController.getInstance().makeTransaction(customer, payer.getUniqueId(), shopItem.getOwner(), shopItem, amount, fee, null, null, TaxReason.REASON_DIRECT);
     }
 
     public List<String> getDirectInvoiceIds(){
