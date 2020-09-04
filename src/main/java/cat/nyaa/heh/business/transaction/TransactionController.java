@@ -107,11 +107,11 @@ public class TransactionController {
                     double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
                     StorageItem storageItem = StorageConnection.getInstance().newStorageItem(buyer, itemStack, storageFeeUnit * itemStack.getAmount());
                     StorageConnection.getInstance().addStorageItem(storageItem);
+                    new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
                 }
             }else {
-                giveItemTo(pBuyer,pPayer, item, amount);
+                giveItemTo(pBuyer, item, amount);
             }
-
             TransactionEvent transactionEvent = new TransactionEvent(item, amount, toTake.doubleValue(), buyer, seller);
             Bukkit.getPluginManager().callEvent(transactionEvent);
             return true;
@@ -149,17 +149,14 @@ public class TransactionController {
         TransactionController.transactionUidManager.getNextUid();
     }
 
-    private void giveItemTo(OfflinePlayer pBuyer, OfflinePlayer pPayer, ShopItem item, int amount) {
+    private void giveItemTo(OfflinePlayer pBuyer, ShopItem item, int amount) {
         ItemStack itemStack = item.getItemStack();
         itemStack.setAmount(amount);
         if (!pBuyer.isOnline()) {
-            if (pPayer.getUniqueId().equals(pBuyer.getUniqueId())){
-                throw new IllegalStateException("buyer is not online");
-            }
-            giveItemTo(pPayer, pPayer, item, amount);
             double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
             StorageItem storageItem = StorageConnection.getInstance().newStorageItem(pBuyer.getUniqueId(), itemStack, storageFeeUnit * itemStack.getAmount());
             StorageConnection.getInstance().addStorageItem(storageItem);
+            new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
         }else {
             Player player = pBuyer.getPlayer();
             PlayerInventory inventory = player.getInventory();
