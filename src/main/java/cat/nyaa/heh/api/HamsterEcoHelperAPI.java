@@ -13,9 +13,11 @@ public interface HamsterEcoHelperAPI {
      * @param player player to withdraw
      * @param amount amount of money
      * @param type item type, use in tax calculating
+     * @param taxReason reason for taxing, see {@link cat.nyaa.heh.business.transaction.TaxReason}
+     *
      * @return Response for this transaction
      */
-    EconomyResponse withdrawPlayer(OfflinePlayer player, double amount, ShopItemType type);
+    EconomyResponse withdrawPlayer(OfflinePlayer player, double amount, ShopItemType type, String taxReason);
 
     /**
      * return the amount of balance in system account.
