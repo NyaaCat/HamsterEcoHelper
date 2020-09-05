@@ -14,6 +14,7 @@ import cat.nyaa.heh.db.model.LocationType;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.Utils;
+import cat.nyaa.nyaacore.Message;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -72,7 +73,7 @@ public class SignShopLotto extends BaseSignShop{
 
     @Override
     public String getTitle() {
-        return I18n.format("ui.lotto.title");
+        return I18n.format("ui.title.lotto");
     }
 
     @Override
@@ -106,6 +107,7 @@ public class SignShopLotto extends BaseSignShop{
         ShopItem shopItem = ShopItemManager.newShopItem(owner, ShopItemType.LOTTO, clone, price / (double) transacAmount);
         ShopItemManager.insertShopItem(shopItem);
         TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, shopItem, transacAmount, 0, TaxReason.REASON_LOTTO);
+        new Message("").append(I18n.format("shop.sign.lotto.item"), shopItem.getItemStack()).send(related);
     }
 
     @Override

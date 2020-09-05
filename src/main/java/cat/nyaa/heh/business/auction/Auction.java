@@ -107,14 +107,11 @@ public class Auction {
         if (hasOffer) {
             current = highestOffer;
         }
-        if (item.isOwnedBySystem()) {
-            broadcast(new Message("").append(I18n.format("auction.info.system", current, stepPrice), itemStack));
-        } else {
-            broadcast(new Message("").append(I18n.format("auction.info.player", current, stepPrice), itemStack));
-        }
+        String name = SystemAccountUtils.isSystemAccount(item.getOwner()) ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(item.getOwner()).getName();
+        broadcast(new Message("").append(I18n.format("auction.info.player", name, stepPrice), itemStack));
         if (hasOffer) {
-            String name = Bukkit.getOfflinePlayer(offerer).getName();
-            broadcast(new Message("").append(I18n.format("auction.info.offer", name, highestOffer, step + 1)));
+            String offerName = Bukkit.getOfflinePlayer(offerer).getName();
+            broadcast(new Message("").append(I18n.format("auction.info.offer", offerName, highestOffer, step + 1)));
         } else {
             broadcast(new Message("").append(I18n.format("auction.info.no_offer")));
         }

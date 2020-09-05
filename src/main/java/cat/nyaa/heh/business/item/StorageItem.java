@@ -51,7 +51,7 @@ public class StorageItem implements ModelableItem<StorageItem>{
         HashMap<String, String> placeHolderMap = new HashMap<>();
         placeHolderMap.put("tax", String.format("%.2f", Tax.calcTax(ShopItemType.STORAGE, BigDecimal.valueOf(getFee())).doubleValue()));
         placeHolderMap.put("fee", String.format("%.2f", getFee()));
-        return newSubstitutor(placeHolderMap, I18n.format("shop_item.lore.price"));
+        return newSubstitutor(placeHolderMap, I18n.format("storage.lore.price"));
     }
 
     private String newSubstitutor(Map<String, String> placeHolderMap, String format) {

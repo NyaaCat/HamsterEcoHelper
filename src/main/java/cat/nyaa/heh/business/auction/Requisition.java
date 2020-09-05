@@ -80,7 +80,7 @@ public class Requisition {
         if (item.isOwnedBySystem()){
             name = SystemAccountUtils.getSystemName();
         }
-        broadcast(new Message("").append(I18n.format("requisition.start.player", name, item.getAmount(), item.getUnitPrice(), duration/20), getItem()));
+        broadcast(new Message("").append(I18n.format("requisition.start.player", name, item.getAmount() - item.getSoldAmount(), item.getUnitPrice(), duration/20), getItem()));
     }
 
     private ItemStack getItem() {
@@ -145,7 +145,7 @@ public class Requisition {
                 if (item.isOwnedBySystem()){
                     name = SystemAccountUtils.getSystemName();
                 }
-                broadcast(new Message("").append(I18n.format("requisition.info.player", name, remain, (duration - state*(duration/4))/20), getItem()));
+                broadcast(new Message("").append(I18n.format("requisition.info.player", name, remain, item.getUnitPrice(), (duration - state*(duration/4))/20), getItem()));
 
                 requisitionTask = new RequisitionTask(requisition);
                 requisitionTask.runTaskLater(HamsterEcoHelper.plugin, duration/4);

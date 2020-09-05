@@ -184,7 +184,7 @@ public class ShopItem implements ModelableItem<ShopItem>{
     }
 
     private String buildOwnerLore() {
-        String owner = isOwnedBySystem() ? I18n.format("system.name") : Bukkit.getOfflinePlayer(getOwner()).getName();
+        String owner = isOwnedBySystem() ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(getOwner()).getName();
         HashMap<String, String> placeHolderMap = new HashMap<>();
         placeHolderMap.put("{name}", owner);
         return newSubstitutor(placeHolderMap, I18n.format("shop_item.lore.owner"));

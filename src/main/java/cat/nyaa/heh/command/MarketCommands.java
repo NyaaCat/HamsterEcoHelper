@@ -57,7 +57,7 @@ public class MarketCommands extends CommandReceiver implements ShortcutCommand{
             return;
         }
         eco.withdrawPlayer(player, marketFeeBase);
-        new Message("").append(I18n.format("market.offer.withdraw", marketFeeBase), itemInMainHand).send(sender);
+        new Message("").append(I18n.format("market.offer.withdraw", marketFeeBase)).send(sender);
 
         Market.getInstance().offer(player, itemInMainHand, unitPrice);
         new Message("").append(I18n.format("market.offer.success", unitPrice), itemInMainHand).send(sender);

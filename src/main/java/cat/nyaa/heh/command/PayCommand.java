@@ -101,7 +101,11 @@ public class PayCommand extends CommandReceiver implements ShortcutCommand{
             new Message("").append(I18n.format("command.pay.uid_mismatch", cancelTask.uid, uid)).send(sender);
             return;
         }
-        DirectInvoice.getInstance().payInvoice(player, item);
+        if (DirectInvoice.getInstance().payInvoice(player, item)){
+            new Message("").append(I18n.format("command.pay.success", uid)).send(sender);
+        }else {
+            new Message("").append(I18n.format("command.pay.failed", uid)).send(sender);
+        }
     }
 
     public List<String> payCompleter(CommandSender sender, Arguments arguments) {

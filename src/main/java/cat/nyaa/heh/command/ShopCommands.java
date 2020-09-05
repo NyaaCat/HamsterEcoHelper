@@ -53,7 +53,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         Player player = asPlayer(sender);
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (itemInMainHand.getType().isAir()){
-            new Message(I18n.format("command.shop.no_item")).send(sender);
+            new Message(I18n.format("command.shop.sell.no_item")).send(sender);
             return;
         }
         double unitPrice = arguments.nextDouble();
@@ -77,7 +77,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         double unitPrice = arguments.nextDouble();
         ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.SIGN_SHOP_BUY, itemInMainHand, unitPrice);
         ShopItemManager.insertShopItem(shopItem);
-        new Message("").append(I18n.format("command.shop.buy.success", unitPrice), shopItem.getItemStack())
+        new Message("").append(I18n.format("command.shop.buy.success", shopItem.getAmount(), unitPrice), shopItem.getItemStack())
                 .send(sender);
         UiManager.getInstance().getSignShopUis(player.getUniqueId()).stream()
                 .forEach(SignShopGUI::refreshGUI);

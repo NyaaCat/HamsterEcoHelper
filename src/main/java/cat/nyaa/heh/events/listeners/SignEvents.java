@@ -37,7 +37,7 @@ public class SignEvents implements Listener {
                     : Bukkit.getOfflinePlayer(shopAt.getOwner()).getName();
             try{
                 shopAt1.doBusiness(event.getPlayer(), null, 1);
-                new Message(I18n.format("shop.sign.lotto.success", name, shopAt1.getPrice())).send(event.getPlayer());
+                new Message("").append(I18n.format("shop.sign.lotto.success", name, shopAt1.getPrice())).send(event.getPlayer());
             }catch (NoLottoChestException e){
                 new Message(I18n.format("shop.sign.lotto.no_chest", name)).send(event.getPlayer());
             }catch (InvalidItemException e){
@@ -70,6 +70,8 @@ public class SignEvents implements Listener {
             BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(sign.getLocation());
             if (event.getPlayer().getUniqueId().equals(shopAt.getOwner())){
                 new Message(I18n.format("shop.sign.break")).send(event.getPlayer());
+                SignShopManager.getInstance().removeShopAt(shopAt);
+                event.setCancelled(false);
             }
         }
     }

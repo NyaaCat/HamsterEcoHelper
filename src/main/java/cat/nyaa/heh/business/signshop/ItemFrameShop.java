@@ -271,7 +271,7 @@ public class ItemFrameShop {
                 item.setAmount(content.getAmount() - content.getSoldAmount());
             }
             if (buyTask == null) {
-                new Message(I18n.format("shop.frame.info")).append(item).send(ev.getPlayer());
+                new Message(I18n.format("shop.frame.info.info", content.getUnitPrice())).append(item).send(ev.getPlayer());
                 UUID playerUuid = player.getUniqueId();
                 itemFrameShop.newBuyTask(playerUuid);
                 return;
