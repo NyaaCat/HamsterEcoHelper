@@ -5,6 +5,7 @@ import cat.nyaa.heh.business.auction.Auction;
 import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.signshop.ItemFrameShop;
 import cat.nyaa.heh.business.signshop.SignShopManager;
+import cat.nyaa.heh.business.signshop.SignShopSell;
 import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.command.*;
 import cat.nyaa.heh.db.DatabaseManager;
@@ -13,6 +14,7 @@ import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.events.listeners.SignEvents;
 import cat.nyaa.heh.events.listeners.UiEvents;
 import cat.nyaa.heh.business.transaction.TransactionController;
+import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.utils.EcoUtils;
@@ -20,6 +22,8 @@ import cat.nyaa.heh.utils.SystemAccountUtils;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -101,6 +105,15 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
     }
 
     @Override
+    public boolean depositToSystem(String reason, double amount) {
+        boolean success = SystemAccountUtils.withdraw(amount);
+        if (success){
+            TransactionController.getInstance().newTax(SystemAccountUtils.getSystemUuid(), amount, 0, System.currentTimeMillis(), reason);
+        }
+        return success;
+    }
+
+    @Override
     public boolean depositToSystem(OfflinePlayer from, String reason, double amount) {
         boolean success = SystemAccountUtils.withdraw(from, amount);
         if (success){
@@ -139,6 +152,15 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
             TransactionController.getInstance().retrieveTax(tax);
         }
         return success;
+    }
+
+    @Override
+    public Inventory openShopfor(Player opener, OfflinePlayer shopOwner) {
+        SignShopSell signShopSell = new SignShopSell(shopOwner.getUniqueId());
+        SignShopGUI signShopGUI = UiManager.getInstance().newSignShopGUI(signShopSell);
+        Inventory inventory = signShopGUI.getInventory();
+        signShopGUI.open(opener);
+        return inventory;
     }
 
     public HamsterEcoHelperAPI getImpl(){
