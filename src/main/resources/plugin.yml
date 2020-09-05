@@ -1,72 +1,122 @@
 name: HamsterEcoHelper
-main: cat.nyaa.HamsterEcoHelper.HamsterEcoHelper
-description: "Provides a offer/buy system and global market."
+main: cat.nyaa.heh.HamsterEcoHelper
+description: "Economy helper plugin for hamsters."
 version: ${version}
 depend: [Vault,NyaaCore,LangUtils]
 softdepend: [Essentials,LockettePro]
-authors: [cyilin, RecursiveG]
+authors: [cyilin, RecursiveG, ReinWD]
 website: "https://github.com/NyaaCat/HamsterEcoHelper"
 api-version: 1.13
 commands:
   hamsterecohelper:
     description: The command for HamsterEcoHelper
-    aliases: heh
+    aliases: [heh, h]
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hauc:
+    description: The hauc command for HamsterEcoHelper
+    aliases: []
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hreq:
+    description: The hreq command for HamsterEcoHelper
+    aliases: []
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hbal:
+    description: The hbal command for HamsterEcoHelper
+    aliases: []
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hbid:
+    description: The hbid command for HamsterEcoHelper
+    aliases: []
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hc:
+    description: The hc command for HamsterEcoHelper
+    aliases: [hcancel]
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hchest:
+    description: The hchest command for HamsterEcoHelper
+    aliases: []
     permission: heh.command
     permission-message: "You do not have the required permission: <permission>"
     usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
   hm:
-  hsellto:
+    description: The hm command for HamsterEcoHelper
+    aliases: []
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
   hpay:
-  hauc:
-  hbid:
-  hreq:
+    description: The hpay command for HamsterEcoHelper
+    aliases: []
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
   hsell:
+    description: The hsell command for HamsterEcoHelper
+    aliases: []
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hsellto:
+    description: The hsellto command for HamsterEcoHelper
+    aliases: []
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hshop:
+    description: The hshop command for HamsterEcoHelper
+    aliases: []
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
 permissions:
-  heh.*:
-    description: Base permission node for HamsterEcoHelper
-    default: false
-    children:
-      heh.user: true
-      heh.admin: true
-  heh.user:
-    description: Base permission node for players
+  heh.command:
     default: true
-    children:
-      heh.offer: true
-      heh.offer.default: true
-      heh.view: true
-      heh.sell: true
-      heh.buy: true
-      heh.bid: true
-      heh.retrieve: true
-      heh.command: true
-      heh.mute: true
-      heh.userauc: true
-      heh.userreq: true
-      heh.signshop.sell: true
-      heh.signshop.buy: true
-      heh.signshop.lotto: true
-      heh.signshop.search: true
-      heh.ads: true
-      heh.transaction.sellto: true
-      heh.transaction.pay: true
-      heh.transaction.cancel: true
-      heh.transaction.buyside: true
-      heh.transaction.sellside: true
-      heh.transaction.drawee: true
-      heh.kit.user: true
-  heh.admin:
-    description: Permission node for operators
+    description: base permission for heh plugin
+  heh.business.market:
     default: op
-    children:
-      heh.user: true
-      heh.removesignshop: true
-      heh.addauction: true
-      heh.addrequisition: true
-      heh.debug: true
-      heh.giveitem: true
-      heh.balance.pay: true
-      heh.balance.take: true
-      heh.balance.view: true
-      heh.quest.admin: true
-      heh.kit.admin: true
+    description: market permission
+  heh.business.signshop:
+    default: op
+    description: signshop permission
+  heh.business.auction:
+    default: op
+    description: auction permission
+  heh.business.requisition:
+    default: op
+    description: requisition permission
+  heh.business.bid:
+    default: op
+    description: bid permission
+  heh.business.sell:
+    default: op
+    description: sell permission
+  heh.business.sellto:
+    default: op
+    description: sellto permission
+  heh.business.pay:
+    default: op
+    description: pay permission
+  heh.business.cancel:
+    default: op
+    description: cancel permission
+  heh.business.frame:
+    default: op
+    description: item frame shop permission
+  heh.admin.balance:
+    default: op
+    description: balance admin permission
+  heh.admin.remove:
+    default: op
+    description: remove

@@ -1,462 +1,139 @@
-log:
-  warn:
-    bad_subcommand: 无效的子命令处理器：%s
-    lang_not_found: 未找到语言 %s。
+auction:
+  start: "%s 发起了拍卖 {itemName} &r* {amount} 起步价 %.2f 步进价 %.2f\n请在 180 秒内使用 /heh bid 竞价"
+  bid:
+    message: "%s 给出了更高的价格 %.2f"
   info:
-    using_language: 使用语言 %s
-    installing_db: 正在安装数据库...
-    auc_not_enough_player: 发起拍卖失败：没有足够的玩家，玩家人数：%d 人（需要 %d 人）
-    req_not_enough_player: 发起征购失败：没有足够的玩家，玩家人数：%d 人（需要 %d 人）
-    auc_scheduled: 已设置在 %d 刻后发起拍卖的计划任务
-    req_scheduled: 已设置在 %d 刻后发起征购的计划任务
-    auc_start: '拍卖开始：{item: "%s", amount: %d, hideName: %s, start: %.2f, step: %.2f,
-      id: "%s"}'
-    player_auc_start: '拍卖开始：{player: "%s", item: "%s", amount: %d, hideName:
-      %s, start: %.2f, step: %.2f, id: "%s"}'
-    auc_bid: '玩家出价：{id: "%s", player: "%s", price: %.2f} '
-    auc_finish: '拍卖结束：{id: "%s", price: %.2f, player: "%s", reason: "%s"}'
-    req_start: '征购开始：{item: "%s", amount: %d, price: %.2f, timeout: %d, id: "%s"}'
-    player_req_start: '征购开始：{player: "%s", item: "%s", amount: %d, price:
-      %.2f, timeout: %d, id: "%s"}'
-    req_sell: '玩家响应征购：{id: "%s", amount: %d, remain: %d, player: "%s"}'
-    req_finish: '征购结束：{id: "%s", total_sold: %d, reason: "%s"}'
-    market_offer: '市场上架：{id: %d, item: "%s", amount: %d, unit_price: %.2f, player:
-      "%s"}'
-    market_bought: '市场出售：{id: %d, item: "%s", amount: %d, price: %.2f, player: "%s",
-      from: "%s"}'
-    placement_fee: '市场上架费：{itemCount: "%d", fail: "%d"}'
-    placement_fee_fail: '市场上架费：{id: "%d", player: "%s", reason:"%s"}'
-    current_balance: 当前余额：%.2f
-    signshop_create: '创建商店木牌：{player: "%s", mode: "%s", world: "%s", x: "%d", y: "%d",
-      z:"%d"}'
-    signshop_create_lotto: '创建抽奖木牌：{player: "%s", price: %s, world: "%s", x: "%d",
-      y: "%d", z:"%d"}'
-    signshop_remove: '移除木牌商店：{player: "%s", mode: "%s", world: "%s", x: "%d", y: "%d",
-      z:"%d"}'
-    signshop_bought: '[SignShop] 购买事件：{item: "%s", amount: %d, price: %.2f, player:
-      "%s", from: "%s"}'
-    signshop_sell: '[SignShop] 出售事件：{item: "%s", amount: %d, price: %.2f, player:
-      "%s", to: "%s"}'
-    signshop_lotto: '抽奖事件：{item: "%s", amount: %d, price: %.2f, player: "%s", from:
-      "%s"}'
-    ads_add: '新增广告：{id: %d, amount: %d, text: "%s", player: "%s"}'
-    ads_remove: '移除广告：{id: %d, text: "%s", player: "%s"}'
-    system_balance: '系统余额：{type: %s, amount: %s, current_balance: %s, plugin: %s}'
-    withdraw_fail: '付款失败：{buyer: "%s", seller: "%s", drawee: "%s", item: "%s", price:
-      %.2f, tax: %.2f, message: "%s"}'
-    invoice_drafted: '账单起草：{id: %d, item: "%s", amount: %d, price: %.2f, tax: %.2f,
-      buyer:"%s", seller:"%s"}'
-    invoice_paid: '账单支付：{id: %d, drawee:"%s"}'
-    invoice_cancelled: '账单取消：{id: %d}'
-  error:
-    missing_sqlite_driver: 未找到 SQLite 驱动程序，插件已禁用。
-    enable_fail: 插件启用失败
-    transaction_fail: '交易失败：{buyer: "%s", seller: "%s", drawee: "%s", item: "%s",
-      price: %.2f, tax: %.2f}'
-    transaction_fail_dump: 物品JSON："%s"
-    transaction_fail_rollback_tax: '回滚 TransactionApiEvent: {tax: %.2f}'
-    transaction_fail_rollback_money: '回滚现金交易：{player: "%s", price: %.2f, status: "%s",
-      message: "%s"}'
-admin:
+    player: "当前正在进行来自 %s &r的拍卖 {itemName} &r* {amount} 步进价 %.2f"
+    offer: "%s &r节操 %.2f 第%d次"
+    no_offer: "当前无人出价"
+  success: "物品 {itemName} &r* {amount} 由 %s &r拍下 成交价 %.2f"
+  failed: "流拍 {itemName} &r* {amount}"
+requisition:
+  start:
+    player: "%s &r发起了征购 {itemName} &r* %d 单价 %.2f 持续 %d 秒 请使用/hsell <数量> 出售物品"
+  sell: "%s &r售出了 {itemName} * {amount} 当前还需要 %d 个"
   info:
-    save_done: 强制保存成功。
-    load_done: 强制加载成功。
-  error:
-    req_id_oor: 征购ID超出范围：%d～%d
-    auc_id_oor: 拍卖ID超出范围：%d～%d
-    run_req_fail: 启动征购失败，可能有其它征购正在进行中。
-    run_auc_fail: 启动拍卖失败，可能有其它拍卖正在进行中。
-user:
-  info:
-    not_player: 只有玩家可执行此操作
-    not_item_hand: 手中没有物品
-    no_current_auction: 没有正在进行的拍卖
-    no_current_requisition: 没有正在进行的征购
-    balance: '&a现金：&f%.2f'
-    back: '&f返回'
-    next_page: '&f下一页'
-    command_complete: 命令已执行！
-    has_temporary_storage: 你的临时物品栏中有物品，使用 /heh retrieve 进行取回
-    mute: 你将不会再收到广播信息，可使用 /heh unmute 来解除静音
-    unmute: 解除静音成功。
-    cooldown: 请等待 %d 秒
-    player_not_found: 未找到玩家 %s
-  error:
-    bad_command: 无效的命令：%s
-    not_int: 不是有效的整数
-    not_double: 不是有效的数字
-    command_exception: 内部错误，无法执行此命令。
-    bad_enum: 不是枚举 %s 中的有效项，可用的值为：%s
-    unknown_item: 未知物品：%s
-    shulker_box_contains_book: 不能出售含有书的潜影盒
-    not_sign: 请将视线指向一个木牌再进行操作
-    no_self: 目标不能是自己
-  warn:
-    no_enough_money: 你没有足够的现金
-    not_high_enough: 无效的价格，至少应为 %.2f$
-    legacy_name: '%s 在 Minecraft 1.13 有一个新名字：%s'
-  auc:
-    new_auction_0: '新拍卖： '
-    new_auction_1: ，起步价：%.2f$，步进价：%.2f$，请在 %d 秒内用 /heh bid [价格] 参与出价
-    player_auction_0: '玩家 %s 发起了拍卖： '
-    player_auction_1: ，起步价：%.2f$，步进价：%.2f$，请在 %d 秒内用 /heh bid [价格] 参与出价
-    new_auction_unknown: 拍卖：未知物品，起步价：%.2f$，步进价：%.2f$，请在 %d 秒内用 /heh bid [价格] 参与出价
-    mystery_item_placeholder: 未知物品
-    new_price_0: '玩家 %s 给出了更高的价格 '
-    new_price_1: ' ：%.2f$'
-    new_price_success: 出价成功！
-    first: '%.2f$ 第一次'
-    second: '%.2f$ 第二次'
-    third: '%.2f$ 第三次'
-    halted: 拍卖中止
-    success_0: '拍卖结束！物品： '
-    success_1: ' 被玩家 %s 拍下'
-    fail: '拍卖结束，无人竞得物品： '
-    item_given_INVENTORY: 物品已放入你的背包
-    item_given_ENDER_CHEST: 物品已放入你的末影箱
-    item_given_TEMPORARY_STORAGE: 物品已放入临时道具栏，使用 /heh retrieve 取回
-    reserve_price_error: 保留价必须高于起步价
-    step_price_error: 步进价必须大于0
-  req:
-    new_req_0: '新征购： '
-    new_req_1: ×%d 个，单价 %.2f，剩余时间 %.2f 秒，请手持对应物品输入 /heh sell [数量] 参与征购
-    player_req_0: '玩家 %s 发起了征购： '
-    player_req_1: ×%d 个，单价 %.2f，剩余时间 %.2f 秒，请手持对应物品输入 /heh sell [数量] 参与征购
-    hint_req_0: '当前正在征购： '
-    hint_req_1: ，还需要 %d 个，单价 %.2f，剩余时间 %.2f 秒，请手持对应物品输入 /heh sell [数量] 参与征购
-    finish: 征购结束。
-    halted: 征购中止。
-    success: 出售成功，$%.2f 已添加到你的账户。
-    fail: 你不能出售这个物品。
-    not_enough: 手中的物品数量不足。
-    sell_amount_limit: 你最多可以出售 %d 个物品。
-    not_match: 手中的物品与征购物品不符。
-    sold_out: 征购数量已满，征购完成。
-    sold_amount_0: '玩家 %s 售出了 %d 个 '
-    sold_amount_1: ！还需要 %d 个。
-    sell_to_self: 你不能向自己出售物品
-  market:
-    title: '&2[市场]'
-    unit_price: '&a单价：&f%s'
-    unit_price_with_tax: '&a单价：&f%s &a＋&f%s &a（&a税率 &f%d%%）'
-    offered: '&a由 &f%s &a提供'
-    my_items: '&a我的物品（%d/%d）'
-    broadcast: 新物品：{itemName}×{amount} 已上架！使用 /heh view 来查看。
-    someone_bought: '%s 向你购买了 {itemName} 并支付给你 $%.2f。'
-    buy_success: 你购买了 {itemName} 并支付给 %s $%.2f.
-    buy_fail: 购买 {itemName}（出售者：%s，价格：$%.2f）失败，服务器内部错误。
-    not_enough_slot: 已无足够的店铺空位
-  retrieve:
-    need_confirm: 物品将掉落于你的当前位置，请在确保安全后，输入 /heh retrieve confirm 确认操作
-    no_item: 你没有可以取回的物品。
-  death_penalty:
-    message: 你失去了 %.2f 作为死亡惩罚
-  balance:
-    current_balance: 当前余额：%.2f
-    pay: 成功将 %.2f 发送给玩家 %s
-    pay_notice: '%.2f 已添加到你的账户'
-    take: 成功将 %.2f 从玩家 %s 的账户转出
-    take_notice: '%.2f 已从你的账户转出'
-    take_fail: 玩家 %s 没有足够的现金
-  signshop:
-    not_sign: 请将视线指向木牌再进行操作
-    chest_must_locked: 你必须是箱子的所有者
-    break:
-      no_permission: 你不能破坏这个木牌
-      success: 木牌已移除
-    sign:
-      line_1: '&3&l[SHOP]'
-      line_2_sell: '&9&lSELL'
-      line_2_buy: '&a&lBUY'
-      line_2_lotto: '&a&lLOTTO'
-    not_enough_slot: 没有足够的槽位
-    sign_invalid: 木牌格式无效
-    create_success: 木牌设置成功
-    create_fail: 你的木牌数量已达到上限
-    edit: 点击取回
-    empty: 此商店是空的
-    invalid_location: 无效的位置
-    storage:
-      set_success: 设置商店存储箱成功
-      set: 请使用 &b/heh shop storage set&r 设置商店存储箱位置
-      select_chest: 请右键点击要设置的箱子
-      info: '箱子位置：世界 %s, x: %d, y: %d, z: %d'
-    lotto:
-      confirm: 再次右键点击木牌将确认抽奖操作。
-      success: 你支付了 %s 给 %s 并获得了 {itemName}×{amount}
-      fail: 将 %s 支付给 %s 失败，服务器内部错误。
-      notice: '%s 从你的店里购买了 {itemName}×{amount} 并支付了 %s'
-      notice_with_tax: '%s 从你的店里购买了 {itemName}×{amount} 并支付了 %s（含税 %s）'
-      set_success: 设置奖池箱成功
-      set_storage: 请使用 &b/heh shop lotto set&r 设置奖池箱
-      select_chest: 请右键点击要设置的箱子
-      info: '箱子位置：世界 %s, x: %d, y: %d, z: %d'
+    player: "当前 %s &r正在进行征购 {itemName} 剩余 %d 个 单价 %.2f 剩余时间 %d 秒"
+  stop: "征购结束"
+shop_item:
+  lore:
+    owner: "由 {name} 提供"
+    price: "单价 {unitPrice} + {tax} 税入"
+shop:
+  frame:
+    err_not_shop_item: "物品 {itemName} &r不是有效的物品"
+    info:
+      empty: "展示框中没有物品"
+      out_of_stock: "物品库存不足"
+      info: "正在出售 {itemName} &r* {amount} 单价 %.2f 10秒内再次右键单击购买"
+    frame_protected: "该展示框已被保护"
+  title:
+    buy: "收购"
+    sell: "出售"
+  sign:
+    break: "牌子商店被拆除"
     buy:
-      title: 向 %s 购买
-      success: 你购买了 {itemName}×{amount} 并支付给 %s $%.2f
-      notice: '%s 从你的商店购买了 {itemName}×{amount} 并支付给你 %.2f'
-      add: 成功添加物品至商店
+      no_chest: "有玩家向您出售了物品 但是您并未设置库存箱\n请使用 /hchest 设置库存箱位置"
     sell:
-      title: 出售给 %s
-      unit_price: '{itemName}×{amount} 单价：&f%s'
-      unit_price_with_tax: '{itemName}×{amount} 单价：%s（含税：%s）'
-      success: 你将 {itemName}×{amount} 出售给了 %s 并获得 %.2f
-      notice: '%s 向你出售了 {itemName}×{amount} 并获得 %.2f'
-      invalid: 你无法将该物品出售给这个商店
-      not_enough_money: 店主现金不足，无法支付货款
-      not_enough_space: 该商店已无足够的空位存储收购品
-      add: 成功添加物品至收购
-    search:
-      result: 找到 {itemName}×{amount} 在 %s 的店铺出售，单价：%.2f
-      no_recent_result: 没有最近的搜索结果
-      no_result: 未找到结果
-      sign_of: 找到 %s 的商店木牌，位于 X:%d Y:%d Z:%d
-      page: 第 %d 页 / 共 %d 页
-      page_out_of_bound: 页码超出范围
-    print_shop_info: 商店所有者：%s，商店模式：%s
-    remove:
-      no_sign: 该玩家没有开设任何木牌商店
-      success: '位于 (%s, X: %d,Y: %d, Z: %d) 的木牌商店已移除'
-  ads:
-    add:
-      price: 单价：%d，总价：%d
-      preview: 广告预览：
-      confirm: 使用 &b/heh ads add `%s` %d confirm&r 来确认购买
-      success: 添加广告成功
-      invalid_amount: 展示次数必须在 %d～%d 之间
-      full: 广告列表已满
-      fail: 你无法再创建更多广告
-    list:
-      line_0: 有效广告列表：
-      line_1: '- [广告ID] [广告内容] (已展示次数/总展示次数)'
-      line_2: '[%d] [&r%s&r] (%d/%d)'
-    revoke:
-      no_permission: 你没有权限删除这条广告
-      success: 删除广告成功
-    mute: 你将不会再收到广告，使用 /heh ads unmute 取消静音
-    unmute: 取消静音成功。
-    message: '[%s 的广告] &r%s&r'
-    message_too_long: 广告内容最长为 %d 个字符
-    no_adid: 找不到指定的 AdsID
-  transaction:
-    drafted_seller: '账单 [%d] 已起草。你计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
-
-      可使用 {cancelCommand} 取消该账单。'
-    drafted_buyer: '账单 [%d] 已起草。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount}。
-
-      可使用 {payCommand} 支付该账单，{cancelCommand} 取消该账单。'
-    max_open_sellside_limit: 达到最大卖方开放账单 %d 限制。
-    not_found: 未找到账单
-    no_active_buy: 你没有活跃的买方账单。
-    no_active: 你没有活跃的账单。
-    multiple_active_buy: 你有多个活跃的买方账单。
-    multiple_active: 你有多个活跃的账单。
-    pay_fail: 支付账单 [%d] {itemName} *{amount} 从 %s 价格 %.2f（税 %.2f）失败。服务器内部错误。
-    paid: 账单 [%d] 已支付。{seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由
-      {drawee} 支付。
-    paid_seller: 账单 [%d] 已支付。你以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由
-      {drawee} 支付。
-    paid_buyer: 账单 [%d] 已支付。{seller} 以总价 %.2f（税 %.2f）向你出售了 {itemName} *{amount}，由
-      {drawee} 支付。
-    cancelled_seller: 账单 [%d] 已取消。你计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。
-    cancelled_buyer: 账单 [%d] 已取消。{seller} 计划以总价 %.2f（税 %.2f）向你出售 {itemName} *{amount}
-      。
-    no_permission: 你没有访问该账单的权限。
-    was_cancelled: 账单 [%d] 已经在 {updatedTime} 取消。{seller} 计划以总价 %.2f（税 %.2f）向 {buyer}
-      出售 {itemName} *{amount}。
-    was_completed: 账单 [%d] 已经在 {updatedTime} 完成。{seller} 以总价 %.2f（税 %.2f）向 {buyer}
-      出售了 {itemName} *{amount}，由 {drawee} 支付。
-    no_open_buy: 没有未完成的买方账单。
-    no_open_sell: 没有未完成的卖方账单。
-    open_buy: 未完成的买方账单：
-    open_sell: 未完成的卖方账单：
-    no_closed: 没有完成的账单。
-    closed_buy: 完成的买方账单：第 %d/%d 页
-    closed_sell: 完成的卖方账单：第 %d/%d 页
-    closed_drawee: 完成的支付账单：第 %d/%d 页
-    open_invoice: '账单 [%d] 于 {createdTime} 起草。
-
-      {seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。'
-    cancelled_invoice: '账单 [%d] 于 {createdTime} 起草并在 {updatedTime} 取消。
-
-      {seller} 计划以总价 %.2f（税 %.2f）向 {buyer} 出售 {itemName} *{amount}。'
-    completed_invoice: '账单 [%d] 于 {createdTime} 起草并在 {updatedTime} 完成。
-
-      {seller} 以总价 %.2f（税 %.2f）向 {buyer} 出售了 {itemName} *{amount}，由 {drawee} 支付。'
-    command_hover_text: 点击输入命令
-    pay_command: /heh transaction pay %d
-    cancel_command: /heh transaction cancel %d
-    pay_others: 您正在为其他人支付订单，请在订单号后输入卖家 ID 以确认。
-    wrong_seller: 卖家 ID 不正确。
-manual:
-  no_description: 无描述
-  no_usage: 无用法说明
+      no_chest: "玩家 %s &r未设置库存箱"
+  lotto:
+    success: "抽取了 %s &r的乐透，支付了%.2f 节操"
+    no_chest: "玩家 %s 未设置乐透箱"
+    invalid_item: "抽取失败"
+  buy:
+    info:
+      owner: "玩家 %s &r收购的物品"
+      item: "{itemName} &r* {amount}"
+transaction:
+  withdraw: "你向 %s &r购买了 {itemName} &r* {amount} 共支付了 %.2f 节操"
+  deposit: "%s &r向你购买了 {itemName} &r* {amount} 你获得了%.2f 节操"
+  error:
+    exception: "交易发生错误"
+item:
+  give:
+    temp_storage: "物品已放入临时存储空间 请及时使用/hstorage 取出"
+    inventory: "物品已放入物品栏中"
+    ender_chest: "物品已放入末影箱"
+command:
   auction:
-    description: 拍卖相关指令
-    usage: 用法：/heh auction help
-    auc:
-      description: 发起拍卖。
-      usage: 用法：/heh auction auc [起拍价|int] [步进价|int] [保留价|int]
-    addauc:
-      description: 将手中的物品添加至系统拍卖列表。
-      usage: 用法：/heh auction addauc [起拍价|int] [步进价|int] [随机权重|double] [是否隐藏名称|bool]
-        [等待刻数|int]
-    bid:
-      description: 向正在进行的拍卖出价。
-      usage: 用法：/heh auction bid [出价值|int]
-    haltauc:
-      description: 中止正在进行的拍卖。
-      usage: 用法：/heh auction haltauc
-    runauc:
-      description: 启动系统拍卖。
-      usage: 用法：/heh auction runauc
-  requisition:
-    description: 征购相关指令
-    usage: 用法：/heh requisition help
-    addreq:
-      description: 将手中的物品添加至系统征购列表。
-      usage: 用法：/heh requisition addreq [最低单价|int] [最高单价|int] [最小数量|int] [最大数量|int]
-        [随机权重|double] [超时刻数|int] [是否精确匹配|bool] [最小伤害值|int] [最大伤害值|int] [是否匹配附魔|string:EXACT:CONTAINS:ARBITRARY]
-        [是否匹配Lore|string:EXACT:EXACT_TEXT:CONTAINS:ARBITRARY] [是否匹配名称|string:EXACT:EXACT_TEXT:ARBITRARY]
-    req:
-      description: 发起征购。
-      usage: 用法：/heh requisition req [物品名称] [单价|int] [征购数量|int] <是否开启严格模式|boolean>
-    runreq:
-      description: 启动系统征购。
-      usage: 用法：/heh requisition runreq
-    sell:
-      description: 将手中的物品出售给正在进行的征购。
-      usage: 用法：/heh requisition sell [出售数量|int]
-    haltreq:
-      description: 中止正在进行的征购。
-      usage: 用法：/heh requisition haltreq
-  market:
-    description: 市场相关指令
-    usage: 用法：/heh market help
-    offer:
-      description: 将物品上架至市场
-      usage: 用法：/heh market offer [单价|double]
-    view:
-      description: 查看市场
-      usage: 用法：/heh market view
+    no_item: "主手没有物品"
   balance:
+    view: "当前系统余额 %.2f 节操"
     pay:
-      description: 从系统余额向玩家付款
-      usage: 用法：/heh balance pay amount [金额] [玩家名称] 或 /heh pay percent [百分比] [玩家名称]
-        [最小值|optional] [最大值|optional]
-    take:
-      description: 从玩家账户转出现金至系统账户
-      usage: 用法：/heh balance take [玩家名称] [金额]
-    view:
-      description: 显示当前系统余额
-      usage: 用法：/heh balance view
-  shop:
-    description: 木牌商店相关指令
-    storage:
-      description: 显示或设置存储箱信息
-      info:
-        description: 显示存储箱信息
-        usage: 用法：/heh shop storage info
-      set:
-        description: 设置存储箱位置
-        usage: 用法：/heh shop storage set
-    buy:
-      description: 设置木牌商店收购项目
-      usage: 用法：/heh shop buy [单价|double]
-    sell:
-      description: 上架待售商品到木牌商店
-      usage: 用法：/heh shop sell [单价|double]
+      success: "成功向 %s 付款 %.2f"
+      failed: "向 %s 付款 %.2f 失败"
+  bid:
+    no_auction: "当前没有正在进行的拍卖"
+    invalid_price: "竞价失败 至少需要 %.2f 节操"
+    insufficient_found: "现金不足"
+  cancel:
+    invalid_invoice: "订单 %d 属于 %s 你不能取消它"
+    not_invoice: "无效订单 %d"
+    canceled_invoice: "订单 %d 已被取消"
+    success: "成功取消订单 %d"
+  chest:
+    error:
+      not_chest: "请看向想要设置的箱子"
     lotto:
-      description: 显示或设置抽奖奖池箱信息
-      info:
-        description: 显示抽奖奖池箱信息
-        usage: 用法：/heh shop lotto info
-      set:
-        description: 设置抽奖奖池箱位置
-        usage: 用法：/heh shop lotto set
-    remove:
-      description: 移除指定玩家的所有木牌商店
-      usage: 用法：/heh shop remove [玩家ID] [removeBlock]
-  search:
-    description: 在市场中搜索物品
-    usage: "用法：/heh search 关键字 [i|item:物品ID或名称] [p|player:玩家名称] [r|range:搜索半径] [a|advanced:ench|lore|enchonly|loreonly]\
-      \ \n搜索结果使用 /heh searchpage <页码> 进行翻页"
-  ads:
-    description: 广告相关指令
-    add:
-      description: 新增广告
-      usage: 用法：/heh ads add [广告文字] [展示数量]
-    revoke:
-      description: 移除广告
-      usage: 用法：/heh ads revoke [广告ID]
-    list:
-      description: 列出已有广告
-      usage: 用法：/heh ads list
-    mute:
-      description: 暂停接收广告（静音）
-      usage: 用法：/heh ads mute
-    unmute:
-      description: 取消广告静音
-      usage: 用法：/heh ads unmute
+      success: "成功创建乐透箱"
+  frame:
+    set:
+      not_frame: "请看向想要设置的展示框"
+      invalid_frame: "只能使用空的展示框"
+      success: "成功设置展示框商店"
+  pay:
+    invalid_invoice: "订单 %d 无效"
+    customer_offline: "订单客户 %s &r不在线"
+    confirm_msg: "将要支付 %s &r向 %s &r发起的直送订单 价格 %d 如确认无误请再次输入指令完成支付"
+    uid_mismatch: "两次输入的订单号不一致(%d, %d)"
+    success: "订单 %d 已支付"
+    failed: "订单 %d 支付失败"
+  requisition:
+    no_item: "主手没有物品"
+  sell:
+    no_requisition: "当前没有正在进行的征购"
+    invalid_item: "物品无效"
+    insufficient_amount: "当前物品数量不足"
+    invalid_amount: "数量无效"
+    oversold: "出售数量超过上限 无法出售"
+  sellto:
+    no_item: "主手没有物品"
+    incoming_invoice: "接收到新的天喵直送订单: {itemName} &r* {amount} 来自 %s &r总价 %.2f 订单号 %d"
+    invoice_created: "成功发送订单至 %s &r总价 %.2f 订单号%d"
+  shop:
+    sell:
+      no_item: "主手没有物品"
+      success: "成功上架物品 {itemName} &r* {amount} 单价 %.2f"
+    buy:
+      success: "成功创建收购项 {itemName} &r* %d 单价 %.2f"
+  sign:
+    create:
+      not_sign: "请看向想要创建商店的牌子"
+      bad_type: "没有商店类型 %s"
+      success: "成功创建商店"
+  remove:
+    not_owner: "该商店不属于您 您不可以移除"
+    not_sign_shop: "目标不是牌子商店"
+    success: "移除成功"
+market:
+  offer:
+    no_item: "主手没有物品"
+    invalid_number: "物品价格 %.2f 无效"
+    insufficient_balance: "你没有足够的上架费用 %.2f"
+    withdraw: "支付了 %.2f 的上架费用"
+    success: "成功上架 {itemName} &r* {amount} "
+ui:
+  lotto:
+    price: "抽取单价 %.2f"
+  title:
+   lotto: "[LOTTO]"
+   market: "天喵商城"
+   sign_shop: "[SHOP]"
+   storage: "临时仓储"
+storage:
   retrieve:
-    description: 从临时道具栏中取回物品。
-    usage: 用法：/heh retrieve [confirm]
-  save:
-    description: 强制保存配置。
-    usage: 用法：/heh save
-  force-load:
-    description: 强制重新加载配置，并丢弃未保存的配置信息。
-    usage: 用法：/heh force-load
-  version:
-    description: 显示版本和授权信息
-    usage: 用法：/heh version
-  transaction:
-    description: 点对点交易
-    sellto:
-      description: 向玩家出售物品
-      usage: 用法： /heh transaction sellto [player] [totalPrice]
-    pay:
-      description: 支付账单
-      usage: 用法： /heh transaction pay [id] [seller]
-    cancel:
-      description: 取消账单
-      usage: 用法： /heh transaction cancel [id]
-    sellside:
-      description: 列出所有卖方订单
-      usage: 用法： /heh transaction sellside
-    buyside:
-      description: 列出所有买方订单
-      usage: 用法： /heh transaction buyside
-    drawee:
-      description: 列出所有支付订单
-      usage: 用法： /heh transaction drawee [page]
-  license: 'Hamster Economy Helper version %s for Spigot 1.11.2
-
-    Brings auction, requisition and world shop to Minecraft.
-
-    Copyright (C) 2017  %s
-
-
-    This program is free software; you can redistribute it and/or modify
-
-    it under the terms of the GNU General Public License as published by
-
-    the Free Software Foundation; either version 3 of the License, or
-
-    (at your option) any later version.
-
-
-    This program is distributed in the hope that it will be useful,
-
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-
-    GNU General Public License for more details.
-
-
-    You should have received a copy of the GNU General Public License
-
-    along with this program; if not, write to the Free Software Foundation,
-
-    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA'
+    insufficient_founds: "你没有足够的节操"
+  lore:
+    price: "取回费用 {fee} + {tax} 税入"
+system:
+  name: "服务姬"
