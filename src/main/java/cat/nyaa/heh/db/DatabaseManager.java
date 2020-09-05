@@ -16,7 +16,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,6 +35,7 @@ public class DatabaseManager {
     ITypedTable<InvoiceDbModel> invoiceTable;
     ITypedTable<LocationDbModel> locationTable;
     ITypedTable<StorageDbModel> storageTable;
+    ITypedTable<AccountDbModel> accountTable;
 
     private DatabaseManager(){
         databaseConfig = new DatabaseConfig();
@@ -61,6 +61,7 @@ public class DatabaseManager {
         invoiceTable = db.getTable(InvoiceDbModel.class);
         locationTable = db.getTable(LocationDbModel.class);
         storageTable = db.getTable(StorageDbModel.class);
+        accountTable = db.getTable(AccountDbModel.class);
     }
 
     public static DatabaseManager getInstance(){
@@ -295,5 +296,25 @@ public class DatabaseManager {
             throw new NoLottoChestException();
         }
         return chest.getInventory();
+    }
+
+    public long getSystemUid(UUID uuid){
+        return accountTable.selectUniqueUnchecked(WhereClause.EQ("uuid", uuid)).getUid();
+    }
+
+    public double getSystemBal(long uid){
+        return accountTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid)).getBalance();
+    }
+
+    public void updateAccount(AccountDbModel model){
+        accountTable.update(model, WhereClause.EQ("uid", model.getUid()));
+    }
+
+    public void addAccount(AccountDbModel dbModel) {
+        accountTable.insert(dbModel);
+    }
+
+    public AccountDbModel getAccount(long uid) {
+        return accountTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
     }
 }

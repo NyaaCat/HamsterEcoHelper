@@ -189,6 +189,7 @@ public class TransactionController {
 
     public void retrieveTax(Tax tax) {
         addTaxRecord(tax);
+        SystemAccountUtils.depositSystem(tax.getTax() + tax.getFee());
     }
 
     public Tax newTax(UUID from, double tax, double fee, long time, String reason){

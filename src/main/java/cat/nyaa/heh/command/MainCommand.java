@@ -38,6 +38,7 @@ public class MainCommand extends CommandReceiver {
           sellCommand = new SellCommand(plugin, i18n);
           shopCommands = new ShopCommands(plugin, i18n);
           frameCommands = new FrameCommands(plugin, i18n);
+          sellToCommand = new SellToCommand(plugin, i18n);
           if (HamsterEcoHelper.plugin.config.commandShortcutEnabled){
               CommandReceiver[] receivers = new CommandReceiver[]{
                       auctionCommand,
@@ -50,6 +51,7 @@ public class MainCommand extends CommandReceiver {
                       payCommand,
                       requisitionCommand,
                       sellCommand,
+                      sellToCommand,
                       shopCommands,
                       frameCommands
               };
@@ -86,10 +88,17 @@ public class MainCommand extends CommandReceiver {
     RequisitionCommand requisitionCommand;
     @SubCommand(value = "sell")
     SellCommand sellCommand;
+    @SubCommand(value = "sellto")
+    SellToCommand sellToCommand;
     @SubCommand(value = "shop")
     ShopCommands shopCommands;
     @SubCommand(value = "frame")
     FrameCommands frameCommands;
+
+    @SubCommand(value = "reload")
+    public void onReload(CommandSender sender, Arguments arguments){
+        HamsterEcoHelper.plugin.onReload();
+    }
 
     public List<String> sampleCompleter(CommandSender sender, Arguments arguments) {
         List<String> completeStr = new ArrayList<>();

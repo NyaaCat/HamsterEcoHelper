@@ -30,7 +30,7 @@ public class RequisitionCommand extends CommandReceiver implements ShortcutComma
     public RequisitionCommand(Plugin plugin, ILocalizer _i18n) {
         super(plugin, _i18n);
     }
-    private static final String PERMISSION_REQ = "heh.business.req";
+    private static final String PERMISSION_REQ = "heh.business.requisition";
     private static final String PERMISSION_ADMIN = "heh.admin.run";
 
     @SubCommand(isDefaultCommand = true, permission = PERMISSION_REQ, tabCompleter = "reqCompleter")
