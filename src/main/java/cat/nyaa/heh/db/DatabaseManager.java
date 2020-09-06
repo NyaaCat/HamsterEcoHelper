@@ -83,7 +83,7 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getPlayerItems(ShopItemType type, UUID owner){
-        List<ShopItem> collect = shopItemTable.select(WhereClause.EQ("type", type).whereEq("owner", owner.toString())).stream()
+        List<ShopItem> collect = shopItemTable.select(WhereClause.EQ("type", type).whereEq("available", true).whereEq("owner", owner.toString())).stream()
                 .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
                 .collect(Collectors.toList());
         return collect;
@@ -128,8 +128,8 @@ public class DatabaseManager {
     public List<ShopItem> getMarketItems(UUID owner) {
         List<ShopItem> collect = shopItemTable.select(
                 WhereClause.EQ("type", ShopItemType.MARKET)
-                        .whereEq("owner", owner.toString())
                         .whereEq("available", true)
+                        .whereEq("owner", owner.toString())
         ).stream()
                 .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
                 .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
@@ -146,19 +146,23 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getSellShopItems(UUID owner) {
-        return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_SELL).whereEq("owner", owner)).stream()
-                .filter(ShopItemDbModel::isAvailable)
-                .filter(shopItemDbModel -> shopItemDbModel.getAmount()>shopItemDbModel.getSold())
-                .map(ShopItem::new)
-                .collect(Collectors.toList());
+        return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_SELL)
+                    .whereEq("available", true)
+                    .whereEq("owner", owner)).stream()
+                        .filter(ShopItemDbModel::isAvailable)
+                        .filter(shopItemDbModel -> shopItemDbModel.getAmount()>shopItemDbModel.getSold())
+                        .map(ShopItem::new)
+                        .collect(Collectors.toList());
     }
 
     public List<ShopItem> getBuyShopItems(UUID owner) {
-        return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_BUY).whereEq("owner", owner)).stream()
-                .filter(ShopItemDbModel::isAvailable)
-                .filter(shopItemDbModel -> shopItemDbModel.getAmount()>shopItemDbModel.getSold())
-                .map(ShopItem::new)
-                .collect(Collectors.toList());
+        return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_BUY)
+                    .whereEq("owner", owner)
+                    .whereEq("available", true)).stream()
+                        .filter(ShopItemDbModel::isAvailable)
+                        .filter(shopItemDbModel -> shopItemDbModel.getAmount()>shopItemDbModel.getSold())
+                        .map(ShopItem::new)
+                        .collect(Collectors.toList());
     }
 
 
@@ -319,7 +323,7 @@ public class DatabaseManager {
     }
 
     public int getShopItemCount() {
-        String sql = "select count() count, amount a, sold s from items where a > s";
+        String sql = "select count() count, amount a, sold s, available ava from items where a > s and ava = true";
         try {
             Statement statement = db.getConnection().createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -331,7 +335,7 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getShopItems(int current, int batchSize) {
-        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid from items where amount > sold ORDER BY uid limit ? offset ?;";
+        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid from items where available = true and amount > sold ORDER BY uid limit ? offset ?;";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setInt(0, current);
@@ -351,7 +355,7 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getShopItems(String keywords) {
-        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid, item_meta from items where amount > sold and item_meta like ? ORDER BY uid;";
+        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid, item_meta from items where amount > sold and available = true and item_meta like ? ORDER BY uid;";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, String.format("%%%s%%",keywords));
