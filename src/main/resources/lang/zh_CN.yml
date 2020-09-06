@@ -55,7 +55,7 @@ item:
     inventory: "物品已放入物品栏中"
     ender_chest: "物品已放入末影箱"
 command:
-  auction:
+                      auction:
     no_item: "主手没有物品"
   balance:
     view: "当前系统余额 %.2f 节操"
@@ -115,6 +115,14 @@ command:
     not_owner: "该商店不属于您 您不可以移除"
     not_sign_shop: "目标不是牌子商店"
     success: "移除成功"
+  search:
+    result: "由 %s &r提供 单价 %.2f"
+    complete: "搜索完成"
+    info:
+      cooldown: "搜索冷却中 当前剩余 %d 秒"
+    no_recent_result: "未找到查询记录"
+    page_out_of_bound: "页面超出范围"
+    page: "第 %d / %d 页"
 market:
   offer:
     no_item: "主手没有物品"
@@ -137,3 +145,8 @@ storage:
     price: "取回费用 {fee} + {tax} 税入"
 system:
   name: "服务姬"
+
+command.search.info.cooldown", (cooldown.get(searcher) - System.currentTimeMillis()) / 1000);
+command.search.no_recent_result");
+command.search.page_out_of_bound");
+command.search.page", page + 1, (int) Math.ceil(result.size() / 9.0d));

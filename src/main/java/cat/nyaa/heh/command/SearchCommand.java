@@ -52,7 +52,7 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
         Player player = sender instanceof Player ? (Player) sender : null;
         UUID searcher = player == null ? new UUID(2333, 2333) : player.getUniqueId();
         if (!sender.hasPermission("heh.admin") && (System.currentTimeMillis() < cooldown.getOrDefault(searcher, 0L))) {
-            msg(sender, "user.info.cooldown", (cooldown.get(searcher) - System.currentTimeMillis()) / 1000);
+            msg(sender, "command.search.info.cooldown", (cooldown.get(searcher) - System.currentTimeMillis()) / 1000);
             return;
         }
         String keyword = arguments.nextString();
@@ -92,18 +92,18 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
     private void sendPageInfo(CommandSender sender, List<ShopItem> result, int page) {
         int start = page * 9;
         if (result == null) {
-            msg(sender, "user.signshop.search.no_recent_result");
+            msg(sender, "command.search.no_recent_result");
             return;
         }
 
         if (start > result.size()) {
-            msg(sender, "user.signshop.search.page_out_of_bound");
+            msg(sender, "command.search.page_out_of_bound");
             return;
         }
-        msg(sender, "user.signshop.search.page", page + 1, (int) Math.ceil(result.size() / 9.0d));
+        msg(sender, "command.search.page", page + 1, (int) Math.ceil(result.size() / 9.0d));
         result.stream().skip(start).limit(9).forEach(item ->
                 new Message("")
-                        .append(I18n.format("user.signshop.search.result",
+                        .append(I18n.format("command.search.result",
                                 Bukkit.getOfflinePlayer(item.getOwner())
                                         .getName(),
                                 item.getUnitPrice()
