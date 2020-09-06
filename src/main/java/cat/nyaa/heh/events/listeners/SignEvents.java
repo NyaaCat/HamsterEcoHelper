@@ -8,6 +8,7 @@ import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +18,9 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class SignEvents implements Listener {
@@ -59,21 +63,41 @@ public class SignEvents implements Listener {
         gui.open(event.getPlayer());
     }
 
+    private static List<BlockFace> blockFaces = Arrays.asList(
+            BlockFace.NORTH,
+            BlockFace.SOUTH,
+            BlockFace.WEST,
+            BlockFace.EAST,
+            BlockFace.UP
+    );
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
+        Block block = event.getBlock();
         if (!(event.getBlock().getState() instanceof Sign)){
+            boolean hasSign = blockFaces.stream()
+                    .map(block::getRelative)
+                    .filter(block1 -> block1.getState() instanceof Sign)
+                    .anyMatch(this::isShopSign);
+            if (hasSign){
+                event.setCancelled(true);
+            }
             return;
         }
-        Sign sign = (Sign) event.getBlock().getState();
-        if (SignShopManager.getInstance().isSignShop(sign)){
+        if (isShopSign(block)){
             event.setCancelled(true);
-            BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(sign.getLocation());
+            BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(block.getLocation());
             if (event.getPlayer().getUniqueId().equals(shopAt.getOwner())){
                 new Message(I18n.format("shop.sign.break")).send(event.getPlayer());
                 SignShopManager.getInstance().removeShopAt(shopAt);
                 event.setCancelled(false);
             }
         }
+    }
+
+    private boolean isShopSign(Block block1) {
+        Sign sign = (Sign) block1.getState();
+        return SignShopManager.getInstance().isSignShop(sign);
     }
 
     @EventHandler
