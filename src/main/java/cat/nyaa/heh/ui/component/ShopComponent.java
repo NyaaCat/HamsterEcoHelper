@@ -1,15 +1,21 @@
 package cat.nyaa.heh.ui.component;
 
+import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.transaction.TransactionController;
+import cat.nyaa.heh.db.StorageConnection;
+import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.UUID;
 
@@ -52,7 +58,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             shopItem.setAmount(shopItem.getAmount() - amount);
             event.getView().setCursor(itemStack);
         }else if (cursor.isSimilar(itemStack) && cursor.getAmount() < cursor.getMaxStackSize()){
-            giveTo(event.getWhoClicked().getInventory(), itemStack);
+            giveToPlayer(event.getWhoClicked(), itemStack);
             shopItem.setAmount(shopItem.getAmount() - amount);
             event.getView().setCursor(itemStack);
         }
@@ -88,7 +94,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             int amount = shopItem.getAmount() - shopItem.getSoldAmount();
             itemStack.setAmount(amount);
             shopItem.setAmount(shopItem.getAmount() - amount);
-            giveTo(event.getWhoClicked().getInventory(), itemStack);
+            giveToPlayer(event.getWhoClicked(), itemStack);
             DatabaseManager.getInstance().updateShopItem(shopItem);
         }else {
             double fee = getFee();
@@ -96,6 +102,19 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         }
         loadData();
         refreshUi();
+    }
+
+    private void giveToPlayer(HumanEntity player, ItemStack itemStack) {
+        if (!giveTo(player.getInventory(), itemStack)){
+            if (!giveTo(player.getEnderChest(), itemStack)) {
+                StorageItem storageItem = StorageConnection.getInstance().newStorageItem(player.getUniqueId(), itemStack, 0);
+                StorageConnection.getInstance().addStorageItem(storageItem);
+                new Message(I18n.format("item.give.temp_storage")).send(player);
+                return;
+            }
+            new Message(I18n.format("item.give.endet_chest")).send(player);
+            return;
+        }
     }
 
     @Override
