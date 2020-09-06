@@ -6,13 +6,10 @@ import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
-import cat.nyaa.nyaacore.utils.ItemTagUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.*;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.lang.ref.WeakReference;
@@ -37,6 +34,7 @@ public class ShopItem implements ModelableItem<ShopItem>{
     private double unitPrice;
     private boolean available = true;
     private long time;
+    private String itemMeta = null;
 
     public ShopItem(ShopItemDbModel shopItemDbModel) {
         this.uid = shopItemDbModel.getUid();
@@ -52,6 +50,7 @@ public class ShopItem implements ModelableItem<ShopItem>{
         this.shopItemType = shopItemDbModel.getType();
         this.time = shopItemDbModel.getTime();
         this.available = shopItemDbModel.isAvailable();
+        this.itemMeta = shopItemDbModel.getItemMeta();
     }
 
     public ShopItem(UUID from, ShopItemType type, ItemStack itemStack, double unitPrice){
@@ -63,6 +62,8 @@ public class ShopItem implements ModelableItem<ShopItem>{
         this.shopItemType = type;
         this.time = System.currentTimeMillis();
         this.available = true;
+        String owner = isOwnedBySystem() ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(getOwner()).getName();
+        this.itemMeta = itemStack.getItemMeta() + "owner:" + owner;
     }
 
     public ShopItemType getShopItemType() {
@@ -212,5 +213,9 @@ public class ShopItem implements ModelableItem<ShopItem>{
 
     public boolean isOwnedBySystem() {
         return SystemAccountUtils.isSystemAccount(owner);
+    }
+
+    public String getMeta() {
+        return itemMeta;
     }
 }
