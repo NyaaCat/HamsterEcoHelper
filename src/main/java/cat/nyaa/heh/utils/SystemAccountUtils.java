@@ -27,6 +27,7 @@ public class SystemAccountUtils {
             long nextUid = uidManager.getNextUid();
             account.uid = nextUid;
             DatabaseManager.getInstance().addAccount(account.toDbModel());
+            account.save();
         }
     }
 
@@ -35,8 +36,18 @@ public class SystemAccountUtils {
     }
 
     public static double getSystemBalance(){
-        OfflinePlayer fakeAccount = getFakePlayer();
-        return EcoUtils.getInstance().getEco().getBalance(fakeAccount);
+        if(account.isPlayer){
+            Economy eco = EcoUtils.getInstance().getEco();
+            double value = eco.getBalance(Bukkit.getOfflinePlayer(account.getUUID()));
+            return value;
+        }
+        try{
+            AccountDbModel account = DatabaseManager.getInstance().getAccount(SystemAccountUtils.account.uid);
+            double balance = account.getBalance();
+            return balance;
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     private static OfflinePlayer getFakePlayer() {
