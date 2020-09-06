@@ -50,8 +50,8 @@ public class DirectInvoice {
         return DirectInvoiceConnection.getInstance().getCustomer(uid);
     }
 
-    public void newInvoice(OfflinePlayer player, ShopItem shopItem) {
-        DirectInvoiceConnection.getInstance().newInvoice(player, shopItem);
+    public void newInvoice(OfflinePlayer player, ShopItem shopItem, UUID uuid) {
+        DirectInvoiceConnection.getInstance().newInvoice(player, shopItem, uuid);
     }
 
     public void cancelInvoice(ShopItem item) {

@@ -40,8 +40,8 @@ public class DirectInvoiceConnection {
         return DatabaseManager.getInstance().getInvoicePayer(uid);
     }
 
-    public void newInvoice(OfflinePlayer player, ShopItem shopItem) {
-        InvoiceDbModel invoiceDbModel = new InvoiceDbModel(player, shopItem);
+    public void newInvoice(OfflinePlayer player, ShopItem shopItem, UUID customer) {
+        InvoiceDbModel invoiceDbModel = new InvoiceDbModel(player, shopItem, customer);
         DatabaseManager.getInstance().insertInvoice(invoiceDbModel);
     }
 

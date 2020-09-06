@@ -56,7 +56,7 @@ public class SellToCommand extends CommandReceiver implements ShortcutCommand{
         double unitPrice = price / amount;
         ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.DIRECT, itemInMainHand, unitPrice);
         ShopItemManager.insertShopItem(shopItem);
-        DirectInvoice.getInstance().newInvoice(sellToPlayer, shopItem);
+        DirectInvoice.getInstance().newInvoice(player, shopItem, sellToPlayer.getUniqueId());
         player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         double realPrice = shopItem.getUnitPrice() * amount;
         new Message("").append(I18n.format("command.sellto.incoming_invoice", player.getName(), realPrice, shopItem.getUid()), shopItem.getItemStack())
