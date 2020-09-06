@@ -59,8 +59,4 @@ public class Configuration extends PluginConfigure {
 
     @Serializable(name = "search.cooldown_tick")
     public int searchCooldownTick = 200;
-    @Serializable(name = "search.ench.cooldown_tick")
-    public int searchEnchCooldownTick = 200;
-    @Serializable(name = "search.lore.cooldown_tick")
-    public int searchLoreCooldownTick = 200;
 }

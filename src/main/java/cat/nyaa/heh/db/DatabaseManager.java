@@ -349,4 +349,23 @@ public class DatabaseManager {
             throw new RuntimeException();
         }
     }
+
+    public List<ShopItem> getShopItems(String keywords) {
+        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid from items where amount > sold ORDER BY uid limit ? offset ?;";
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(0, keywords);
+            List<ShopItem> results = new ArrayList<>();
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    ShopItemDbModel obj = shopItemTable.getJavaTypeModifier().getObjectFromResultSet(rs);
+                    results.add(new ShopItem(obj));
+                }
+            }
+            return results;
+        } catch (SQLException | ReflectiveOperationException throwables) {
+            Bukkit.getLogger().log(Level.SEVERE, "error loading shop item count", throwables);
+            throw new RuntimeException();
+        }
+    }
 }

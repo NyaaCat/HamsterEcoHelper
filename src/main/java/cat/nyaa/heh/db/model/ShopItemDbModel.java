@@ -28,7 +28,7 @@ public class ShopItemDbModel {
     boolean available;
     @Column(name = "time")
     long time;
-    @Column(name = "meta")
+    @Column(name = "item_meta")
     String itemMeta;
 
     public ShopItemDbModel() {

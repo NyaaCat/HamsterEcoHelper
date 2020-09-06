@@ -66,4 +66,8 @@ public class ShopItemManager {
     public List<ShopItem> getShopItems(int current, int batchSize) {
         return DatabaseManager.getInstance().getShopItems(current, batchSize);
     }
+
+    public List<ShopItem> searchShopItems(String keywords) {
+        return DatabaseManager.getInstance().getShopItems(keywords);
+    }
 }
