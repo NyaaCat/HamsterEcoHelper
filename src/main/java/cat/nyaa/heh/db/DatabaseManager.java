@@ -17,8 +17,10 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.Inventory;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -115,7 +117,6 @@ public class DatabaseManager {
     public List<ShopItem> getMarketItems() {
         List<ShopItem> collect = shopItemTable.select(
                     WhereClause.EQ("type", ShopItemType.MARKET)
-//                            .where("amount", ">", "sold")
                             .whereEq("available", true)
                 ).stream()
                 .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
@@ -128,7 +129,6 @@ public class DatabaseManager {
         List<ShopItem> collect = shopItemTable.select(
                 WhereClause.EQ("type", ShopItemType.MARKET)
                         .whereEq("owner", owner.toString())
-//                        .where("amount", ">", "sold")
                         .whereEq("available", true)
         ).stream()
                 .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
@@ -316,5 +316,37 @@ public class DatabaseManager {
 
     public AccountDbModel getAccount(long uid) {
         return accountTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
+    }
+
+    public int getShopItemCount() {
+        String sql = "select count() count, amount a, sold s from items where a > s";
+        try {
+            Statement statement = db.getConnection().createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            return resultSet.getInt("count");
+        } catch (SQLException throwables) {
+            Bukkit.getLogger().log(Level.SEVERE, "error loading shop item count", throwables);
+            throw new RuntimeException();
+        }
+    }
+
+    public List<ShopItem> getShopItems(int current, int batchSize) {
+        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid from items where amount > sold ORDER BY uid limit ? offset ?;";
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setInt(0, current);
+            statement.setInt(1, batchSize);
+            List<ShopItem> results = new ArrayList<>();
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    ShopItemDbModel obj = shopItemTable.getJavaTypeModifier().getObjectFromResultSet(rs);
+                    results.add(new ShopItem(obj));
+                }
+            }
+            return results;
+        } catch (SQLException | ReflectiveOperationException throwables) {
+            Bukkit.getLogger().log(Level.SEVERE, "error loading shop item count", throwables);
+            throw new RuntimeException();
+        }
     }
 }

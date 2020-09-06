@@ -5,6 +5,7 @@ import cat.nyaa.heh.db.MarketConnection;
 import cat.nyaa.heh.utils.UidUtils;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
@@ -56,5 +57,13 @@ public class ShopItemManager {
 
     public static void insertShopItem(ShopItem item){
         MarketConnection.getInstance().addItem(item);
+    }
+
+    public int getShopItemCount() {
+        return DatabaseManager.getInstance().getShopItemCount();
+    }
+
+    public List<ShopItem> getShopItems(int current, int batchSize) {
+        return DatabaseManager.getInstance().getShopItems(current, batchSize);
     }
 }

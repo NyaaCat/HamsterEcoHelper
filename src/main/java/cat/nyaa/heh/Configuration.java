@@ -56,4 +56,11 @@ public class Configuration extends PluginConfigure {
 
     @Serializable(name = "command.shortcut.enabled")
     public boolean commandShortcutEnabled = true;
+
+    @Serializable(name = "search.cooldown_tick")
+    public int searchCooldownTick = 200;
+    @Serializable(name = "search.ench.cooldown_tick")
+    public int searchEnchCooldownTick = 200;
+    @Serializable(name = "search.lore.cooldown_tick")
+    public int searchLoreCooldownTick = 200;
 }
