@@ -5,6 +5,7 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
+import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
@@ -20,6 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
@@ -47,6 +49,8 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
                     .expireAfterWrite(10, TimeUnit.MINUTES)
                     .build();
 
+    private List<ShopItemType> searchableType = Arrays.asList(ShopItemType.MARKET, ShopItemType.SIGN_SHOP_SELL, ShopItemType.SIGN_SHOP_BUY);
+
     @SubCommand(isDefaultCommand = true, permission = PERMISSION_SEARCH)
     public void onSearch(CommandSender sender, Arguments arguments){
         Player player = sender instanceof Player ? (Player) sender : null;
@@ -68,7 +72,9 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
             @Override
             public void run() {
                 List<ShopItem> result = ShopItemManager.getInstance().searchShopItems(keyword);
-                result.sort(Comparator.comparingDouble(ShopItem::getUnitPrice));
+                result = result.stream()
+                        .filter(shopItem -> searchableType.contains(shopItem.getShopItemType()))
+                        .sorted(Comparator.comparingDouble(ShopItem::getUnitPrice)).collect(Collectors.toList());
                 onSearchComplete(player, result);
             }
         }.runTaskAsynchronously(HamsterEcoHelper.plugin);
@@ -106,6 +112,7 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
                         .append(I18n.format("command.search.result",
                                 Bukkit.getOfflinePlayer(item.getOwner())
                                         .getName(),
+                                item.getShopItemType().getDescription(),
                                 item.getUnitPrice()
                         ), item.getItemStack())
                         .send(sender));

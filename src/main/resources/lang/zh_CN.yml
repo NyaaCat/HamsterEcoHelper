@@ -54,8 +54,18 @@ item:
     temp_storage: "物品已放入临时存储空间 请及时使用/hstorage 取出"
     inventory: "物品已放入物品栏中"
     ender_chest: "物品已放入末影箱"
+  type:
+    description:
+      MARKET: "天喵商城"
+      SIGN_SHOP_SELL: "出售商店"
+      SIGN_SHOP_BUY: "收购商店"
+      AUCTION: "拍卖"
+      REQUISITION: "征购"
+      DIRECT: "直送"
+      STORAGE: "临时仓储"
+      LOTTO: "乐透"
 command:
-                      auction:
+  auction:
     no_item: "主手没有物品"
   balance:
     view: "当前系统余额 %.2f 节操"
@@ -145,8 +155,3 @@ storage:
     price: "取回费用 {fee} + {tax} 税入"
 system:
   name: "服务姬"
-
-command.search.info.cooldown", (cooldown.get(searcher) - System.currentTimeMillis()) / 1000);
-command.search.no_recent_result");
-command.search.page_out_of_bound");
-command.search.page", page + 1, (int) Math.ceil(result.size() / 9.0d));
