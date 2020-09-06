@@ -63,7 +63,7 @@ public class ShopItem implements ModelableItem<ShopItem>{
         this.time = System.currentTimeMillis();
         this.available = true;
         String owner = isOwnedBySystem() ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(getOwner()).getName();
-        this.itemMeta = itemStack.getItemMeta() + "owner:" + owner;
+        this.itemMeta = itemStack.toString() + "owner:" + owner;
     }
 
     public ShopItemType getShopItemType() {
@@ -187,7 +187,7 @@ public class ShopItem implements ModelableItem<ShopItem>{
     private String buildOwnerLore() {
         String owner = isOwnedBySystem() ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(getOwner()).getName();
         HashMap<String, String> placeHolderMap = new HashMap<>();
-        placeHolderMap.put("{name}", owner);
+        placeHolderMap.put("name", owner);
         return newSubstitutor(placeHolderMap, I18n.format("shop_item.lore.owner"));
     }
 
