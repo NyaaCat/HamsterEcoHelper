@@ -89,6 +89,10 @@ public class ItemFrameShop {
                 .forEach(entity -> addFrame(SignShopConnection.getInstance().getShopFrame(entity.getUniqueId())));
     }
 
+    public static void removeFrameShop(long uid) {
+
+    }
+
 
     private void setBaseShop(ItemFrameShopData data) {
         switch (data.backendType){
@@ -271,7 +275,7 @@ public class ItemFrameShop {
                 item.setAmount(content.getAmount() - content.getSoldAmount());
             }
             if (buyTask == null) {
-                new Message(I18n.format("shop.frame.info.info", content.getUnitPrice())).append(item).send(ev.getPlayer());
+                new Message("").append(I18n.format("shop.frame.info.info", content.getUnitPrice()), item).send(ev.getPlayer());
                 UUID playerUuid = player.getUniqueId();
                 itemFrameShop.newBuyTask(playerUuid);
                 return;
@@ -349,7 +353,9 @@ public class ItemFrameShop {
         new ArrayList<>(ifs.buyTaskMap.keySet()).forEach(uuid -> {
             BuyTask remove = ifs.buyTaskMap.remove(uuid);
             if (remove != null){
-                remove.cancel();
+                try {
+                    remove.cancel();
+                }catch (Exception e){}
             }
         });
 
@@ -460,5 +466,9 @@ public class ItemFrameShop {
         displayingItem = item;
         model.setAmount(item.getAmount() - item.getSoldAmount());
         frame.setItem(model);
+    }
+
+    public static ItemFrameShop getFrom(ItemFrame f) {
+        return frameMap.get(f.getUniqueId());
     }
 }

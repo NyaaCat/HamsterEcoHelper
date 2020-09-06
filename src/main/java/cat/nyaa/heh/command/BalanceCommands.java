@@ -95,9 +95,9 @@ public class BalanceCommands extends CommandReceiver implements ShortcutCommand 
                 break;
         }
         if (SystemAccountUtils.withdraw(offlinePlayer, amount)) {
-            new Message(I18n.format("command.balance.pay.success", offlinePlayer.getName(), amount)).send(sender);
+            new Message(I18n.format("command.balance.take.success", offlinePlayer.getName(), amount)).send(sender);
         }else {
-            new Message(I18n.format("command.balance.pay.failed", offlinePlayer.getName(), amount)).send(sender);
+            new Message(I18n.format("command.balance.take.failed", offlinePlayer.getName(), amount)).send(sender);
         }
     }
 

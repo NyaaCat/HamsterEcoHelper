@@ -74,4 +74,12 @@ public class LocationConnection {
     public long getNextUid() {
         return uidManager.getNextUid();
     }
+
+    public void removeLocationModel(LocationDbModel dbModel) {
+        DatabaseManager.getInstance().removeLocationModel(dbModel);
+    }
+
+    public LocationDbModel getModelAt(Location location) {
+        return DatabaseManager.getInstance().getLocationModelAt(location);
+    }
 }

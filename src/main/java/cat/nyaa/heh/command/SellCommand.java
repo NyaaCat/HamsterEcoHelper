@@ -48,7 +48,7 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
         }
         String input = arguments.top();
         int amountToSell = 0;
-        if (input.equals("all")){
+        if ("all".equals(input)){
             arguments.next();
             amountToSell = itemInMainHand.getAmount();
         }else {

@@ -92,6 +92,12 @@ commands:
     permission: heh.command
     permission-message: "You do not have the required permission: <permission>"
     usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hstorage:
+    description: The storage command for HamsterEcoHelper
+    aliases: [ ]
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
 
 permissions:
   heh.command:

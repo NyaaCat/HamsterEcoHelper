@@ -19,9 +19,10 @@ public class InvoiceDbModel {
     public InvoiceDbModel() {
     }
 
-    public InvoiceDbModel(OfflinePlayer player, ShopItem shopItem) {
+    public InvoiceDbModel(OfflinePlayer player, ShopItem shopItem, UUID customer) {
         this.uid = shopItem.getUid();
         this.payer = player.getUniqueId();
+        this.customer = customer;
     }
 
     public long getUid() {

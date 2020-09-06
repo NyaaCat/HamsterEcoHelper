@@ -57,6 +57,25 @@ public class FrameCommands extends CommandReceiver implements ShortcutCommand{
 
     @SubCommand(value = "remove", permission = PERMISSION_FRAME)
     public void onRemove(CommandSender sender, Arguments arguments){
+        Player player = asPlayer(sender);
+        Entity targetEntity = RayTraceUtils.getTargetEntity(player, 10);
+        if (!(targetEntity instanceof ItemFrame)){
+            new Message(I18n.format("command.frame.remove.not_frame")).send(sender);
+            return;
+        }
+        ItemFrame f = (ItemFrame) targetEntity;
+        ItemFrameShop frameShop = ItemFrameShop.getFrom(f);
+        if (frameShop == null){
+            new Message(I18n.format("command.frame.remove.not_frame")).send(sender);
+            return;
+        }
+        if (frameShop.getOwner().equals(player.getUniqueId()) || player.isOp()){
+            long uid = frameShop.getUid();
+            ItemFrameShop.removeFrameShop(uid);
+            new Message(I18n.format("command.frame.remove.success")).send(sender);
+            return;
+        }
+        new Message(I18n.format("command.frame.remove.not_permitted")).send(sender);
 
     }
 

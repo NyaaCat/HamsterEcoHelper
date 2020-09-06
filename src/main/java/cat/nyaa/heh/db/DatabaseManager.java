@@ -12,6 +12,7 @@ import cat.nyaa.nyaacore.orm.WhereClause;
 import cat.nyaa.nyaacore.orm.backends.IConnectedDatabase;
 import cat.nyaa.nyaacore.orm.backends.ITypedTable;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
@@ -169,18 +170,32 @@ public class DatabaseManager {
 
     public List<BaseSignShop> getShops() {
         List<BaseSignShop> result = new ArrayList<>();
+        List<LocationDbModel> toRemove = new ArrayList<>();
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY)).stream()
                 .forEach(signShopDbModel -> {
-                    result.add(new SignShopBuy(signShopDbModel));
+                    try{
+                        result.add(new SignShopBuy(signShopDbModel));
+                    }catch (IllegalStateException e){
+                        toRemove.add(signShopDbModel);
+                    }
                 });
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_SELL)).stream()
                 .forEach(signShopDbModel -> {
-                    result.add(new SignShopSell(signShopDbModel));
+                    try{
+                        result.add(new SignShopSell(signShopDbModel));
+                    }catch (IllegalStateException e){
+                        toRemove.add(signShopDbModel);
+                    }
                 });
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_LOTTO)).stream()
                 .forEach(signShopDbModel -> {
-                    result.add(new SignShopLotto(signShopDbModel));
+                    try{
+                        result.add(new SignShopLotto(signShopDbModel));
+                    }catch (IllegalStateException e){
+                        toRemove.add(signShopDbModel);
+                    }
                 });
+        toRemove.forEach(locationDbModel -> locationTable.delete(WhereClause.EQ("uid", locationDbModel.getUid())));
         return result;
     }
     public Map<UUID, List<SignShopBuy>> getBuyShops() {
@@ -371,5 +386,17 @@ public class DatabaseManager {
             Bukkit.getLogger().log(Level.SEVERE, "error loading shop item count", throwables);
             throw new RuntimeException();
         }
+    }
+
+    public void removeLocationModel(LocationDbModel dbModel) {
+        locationTable.delete(WhereClause.EQ("uid",dbModel.getUid()));
+    }
+
+    public LocationDbModel getLocationModelAt(Location location) {
+        return locationTable.selectUniqueUnchecked(WhereClause.EQ("world", location.getWorld().getName())
+                .whereEq("x", location.getX())
+                .whereEq("y", location.getY())
+                .whereEq("z", location.getZ())
+        );
     }
 }

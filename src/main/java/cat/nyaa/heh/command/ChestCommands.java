@@ -9,6 +9,7 @@ import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.command.CommandSender;
@@ -75,7 +76,31 @@ public class ChestCommands extends CommandReceiver implements ShortcutCommand{
             LocationDbModel chestModel = LocationConnection.getInstance().newLocationModel(LocationType.CHEST_BUY, player.getUniqueId(), state.getLocation());
             LocationConnection.getInstance().insertLocationModel(chestModel);
         }
-        new Message(I18n.format("command.chest.lotto.success")).send(sender);
+        new Message(I18n.format("command.chest.req.success")).send(sender);
+    }
+
+    @SubCommand(value = "remove", permission = PERMISSION_CHEST_REQ)
+    public void onRemove(CommandSender sender, Arguments arguments){
+        Player player = asPlayer(sender);
+        Block targetBlock = player.getTargetBlockExact(10);
+        if (targetBlock != null && !(targetBlock.getState() instanceof Chest)) {
+            new Message(I18n.format("command.chest.error.not_chest")).send(sender);
+            return;
+        }
+        Chest state = (Chest) targetBlock.getState();
+        Location location = state.getLocation();
+        LocationConnection instance = LocationConnection.getInstance();
+        LocationDbModel dbModel = instance.getModelAt(location);
+        if (dbModel == null){
+            new Message(I18n.format("command.chest.remove.not_chest")).send(sender);
+            return;
+        }
+        if (dbModel.getOwner().equals(player.getUniqueId()) || player.isOp()){
+            instance.removeLocationModel(dbModel);
+            new Message(I18n.format("command.chest.remove.success")).send(sender);
+            return;
+        }
+        new Message(I18n.format("command.chest.remove.not_permitted")).send(sender);
     }
 
 

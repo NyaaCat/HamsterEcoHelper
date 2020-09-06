@@ -91,6 +91,9 @@ command:
       not_frame: "请看向想要设置的展示框"
       invalid_frame: "只能使用空的展示框"
       success: "成功设置展示框商店"
+    remove:
+      not_frame: "目标不是有效的展示框"
+
   pay:
     invalid_invoice: "订单 %d 无效"
     customer_offline: "订单客户 %s &r不在线"

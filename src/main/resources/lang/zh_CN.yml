@@ -72,6 +72,9 @@ command:
     pay:
       success: "成功向 %s 付款 %.2f"
       failed: "向 %s 付款 %.2f 失败"
+    take:
+      success: "成功扣除 %s %.2f"
+      failed: "扣除 %s %.2f 失败"
   bid:
     no_auction: "当前没有正在进行的拍卖"
     invalid_price: "竞价失败 至少需要 %.2f 节操"
@@ -84,6 +87,12 @@ command:
   chest:
     error:
       not_chest: "请看向想要设置的箱子"
+    remove:
+      not_chest: "目标未被注册为箱子"
+      success: "移除成功"
+      not_permitted: "目标不是自己的箱子，不能被移除"
+    req:
+      success: "成功创建收购箱"
     lotto:
       success: "成功创建乐透箱"
   frame:
@@ -148,6 +157,12 @@ ui:
    market: "天喵商城"
    sign_shop: "[SHOP]"
    storage: "临时仓储"
+  message:
+    open_market: "点击打开天喵商城"
+    auc_bid: "点击参与竞价"
+    req_sell: "点击参与出售"
+    next_page: "下一页"
+    previous_page: "上一页"
 storage:
   retrieve:
     insufficient_founds: "你没有足够的节操"
