@@ -6,6 +6,7 @@ import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.model.AccountDbModel;
 import cat.nyaa.nyaacore.configuration.FileConfigure;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -54,6 +55,11 @@ public class SystemAccountUtils {
     }
 
     public static boolean depositSystem(double amount) {
+        if(account.isPlayer){
+            Economy eco = EcoUtils.getInstance().getEco();
+            EconomyResponse economyResponse = eco.depositPlayer(Bukkit.getOfflinePlayer(account.getUUID()), amount);
+            return economyResponse.transactionSuccess();
+        }
         try{
             AccountDbModel account = DatabaseManager.getInstance().getAccount(SystemAccountUtils.account.uid);
             double balance = account.getBalance();
@@ -66,6 +72,11 @@ public class SystemAccountUtils {
     }
 
     public static boolean withdrawSystem(double amount) {
+        if(account.isPlayer){
+            Economy eco = EcoUtils.getInstance().getEco();
+            EconomyResponse economyResponse = eco.withdrawPlayer(Bukkit.getOfflinePlayer(account.getUUID()), amount);
+            return economyResponse.transactionSuccess();
+        }
         try{
             AccountDbModel account = DatabaseManager.getInstance().getAccount(SystemAccountUtils.account.uid);
             double balance = account.getBalance();
