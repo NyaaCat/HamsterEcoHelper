@@ -39,6 +39,7 @@ public class MainCommand extends CommandReceiver {
           shopCommands = new ShopCommands(plugin, i18n);
           frameCommands = new FrameCommands(plugin, i18n);
           sellToCommand = new SellToCommand(plugin, i18n);
+          searchCommand = new SearchCommand(plugin, i18n);
           if (HamsterEcoHelper.plugin.config.commandShortcutEnabled){
               CommandReceiver[] receivers = new CommandReceiver[]{
                       auctionCommand,
@@ -53,7 +54,8 @@ public class MainCommand extends CommandReceiver {
                       sellCommand,
                       sellToCommand,
                       shopCommands,
-                      frameCommands
+                      frameCommands,
+                      searchCommand
               };
               registerShortcuts(receivers);
           }
@@ -94,6 +96,8 @@ public class MainCommand extends CommandReceiver {
     ShopCommands shopCommands;
     @SubCommand(value = "frame")
     FrameCommands frameCommands;
+    @SubCommand(value = "search")
+    SearchCommand searchCommand;
 
     @SubCommand(value = "reload")
     public void onReload(CommandSender sender, Arguments arguments){

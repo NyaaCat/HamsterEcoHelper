@@ -351,10 +351,10 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getShopItems(String keywords) {
-        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid from items where amount > sold ORDER BY uid limit ? offset ?;";
+        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid, item_meta from items where amount > sold and item_meta like ? ORDER BY uid;";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
-            statement.setString(0, keywords);
+            statement.setString(1, String.format("%%%s%%",keywords));
             List<ShopItem> results = new ArrayList<>();
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {

@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class SearchCommand extends CommandReceiver {
+public class SearchCommand extends CommandReceiver implements ShortcutCommand{
 
     /**
      * @param plugin for logging purpose only
@@ -119,5 +119,10 @@ public class SearchCommand extends CommandReceiver {
                 break;
         }
         return filtered(arguments, completeStr);
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hsearch";
     }
 }

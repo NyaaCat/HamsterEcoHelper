@@ -80,6 +80,19 @@ commands:
     permission: heh.command
     permission-message: "You do not have the required permission: <permission>"
     usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hsearch:
+    description: The search command for HamsterEcoHelper
+    aliases: [ ]
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+  hframe:
+    description: The frame command for HamsterEcoHelper
+    aliases: [ ]
+    permission: heh.command
+    permission-message: "You do not have the required permission: <permission>"
+    usage: "/<command> [SubCommand] [Arguments...] or /<command> help"
+
 permissions:
   heh.command:
     default: true

@@ -20,7 +20,7 @@ import java.util.List;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
-public class FrameCommands extends CommandReceiver {
+public class FrameCommands extends CommandReceiver implements ShortcutCommand{
 
     /**
      * @param plugin for logging purpose only
@@ -67,5 +67,10 @@ public class FrameCommands extends CommandReceiver {
                 break;
         }
         return filtered(arguments, completeStr);
+    }
+
+    @Override
+    public String getShortcutName() {
+        return "hFrame";
     }
 }
