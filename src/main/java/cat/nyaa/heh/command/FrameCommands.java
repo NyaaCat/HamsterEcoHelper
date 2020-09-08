@@ -45,6 +45,13 @@ public class FrameCommands extends CommandReceiver implements ShortcutCommand{
             return;
         }
         ItemFrame f = (ItemFrame) targetEntity;
+
+        ItemFrameShop from = ItemFrameShop.getFrom(f);
+        if (from != null){
+            new Message(I18n.format("command.frame.set.existed")).send(sender);
+            return;
+        }
+
         ItemStack item = f.getItem();
         if (f.isFixed() || !item.getType().isAir()){
             new Message(I18n.format("command.frame.set.invalid_frame")).send(sender);

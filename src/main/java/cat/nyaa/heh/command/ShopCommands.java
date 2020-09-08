@@ -92,6 +92,13 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
             return;
         }
         Sign sign = ((Sign) targetBlock.getState());
+
+        BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlock.getLocation());
+        if (shopAt!=null){
+            new Message(I18n.format("command.sign.create.existed")).send(sender);
+            return;
+        }
+
         String type = arguments.nextString().toUpperCase();
         List<String> msgs = new ArrayList<>();
         while (arguments.top() != null){
