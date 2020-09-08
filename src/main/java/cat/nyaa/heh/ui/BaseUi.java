@@ -48,22 +48,26 @@ public abstract class BaseUi<E extends ModelableItem> implements InventoryHolder
 
     protected abstract String getTitle();
 
+    private static List<InventoryAction> deniedBackpackAction = Arrays.asList(
+            InventoryAction.MOVE_TO_OTHER_INVENTORY,
+            InventoryAction.UNKNOWN,
+            InventoryAction.NOTHING,
+            InventoryAction.COLLECT_TO_CURSOR
+            );
+
     public void onClickRawSlot(InventoryClickEvent event) {
         int slot = event.getSlot();
-        if (event.getClickedInventory() == null || !event.getClickedInventory().equals(event.getView().getTopInventory())){
+        if (event.getClickedInventory() == null || (!event.getClickedInventory().equals(event.getView().getTopInventory()))){
+            if (deniedBackpackAction.contains(event.getAction())){
+                event.setCancelled(true);
+            }
             return;
         }
         event.setCancelled(true);
         List<? extends BaseComponent> components = Arrays.asList(pagedComponent, buttonComponent);
         BaseComponent comp = components.stream().filter(com -> com.containsRawSlot(slot)).findFirst().orElse(null);
-//        if (comp instanceof ButtonHolder){
-//            GUIButton buttonAt = ((ButtonHolder) comp).getButtonAt(slot);
-//            if(buttonAt != null){
-//                buttonAt.doAction(event, ((ButtonHolder) comp).getControlled());
-//            }
-//        }
+
         if (comp == null) return;
-        event.setCancelled(true);
         switch (event.getClick()) {
             case LEFT:
                 comp.onLeftClick(event);
