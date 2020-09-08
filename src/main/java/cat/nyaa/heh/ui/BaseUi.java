@@ -93,28 +93,20 @@ public abstract class BaseUi<E extends ModelableItem> implements InventoryHolder
     public void onDragRawSlot(InventoryDragEvent event){
         Inventory clickedInventory = event.getInventory();
 
-            event.setCancelled(true);
-            if (event.getRawSlots().size() == 1){
-                if (event.getRawSlots().iterator().next() == 9){
-                    InventoryClickEvent event1 = new InventoryClickEvent(event.getView(), InventoryType.SlotType.CONTAINER, 9, ClickType.LEFT, InventoryAction.PLACE_ALL);
-                    this.onClickRawSlot(event1);
-                    event.setCancelled(event1.isCancelled());
-                    return;
-                }
+        Set<Integer> rawSlots = event.getRawSlots();
+        int size = event.getView().getTopInventory().getSize();
+        if (rawSlots.size() == 1){
+            if (rawSlots.iterator().next() >= size){
+                return;
             }
-
-            Set<Integer> inventorySlots = ((InventoryDragEvent) event).getRawSlots();
-            boolean invalid = inventorySlots.stream()
-                    .mapToInt(Integer::intValue)
-                    .anyMatch(integer -> !isContentClicked(integer));
-            int size = event.getView().getTopInventory().getSize();
-            boolean related = event.getRawSlots().stream().mapToInt(Integer::intValue)
-                    .anyMatch(integer -> integer < size);
-//            event.setCancelled(invalid && related);
-            if (!invalid){
-                //todo check this
-//                onContentInteract(event);
-            }
+        }
+        event.setCancelled(true);
+        boolean related = rawSlots.stream().mapToInt(Integer::intValue)
+                .anyMatch(integer -> integer < size);
+        if (!related){
+            event.setCancelled(false);
+            return;
+        }
     }
 
     protected boolean isContentClicked(int integer){
