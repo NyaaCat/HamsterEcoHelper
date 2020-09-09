@@ -6,9 +6,14 @@ import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.utils.SystemAccountUtils;
+import cat.nyaa.heh.utils.Utils;
 import cat.nyaa.nyaacore.BasicItemMatcher;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -160,5 +165,11 @@ public class Requisition {
         hasRequisition = false;
         currentRequisition = null;
         broadcast(new Message(I18n.format("requisition.stop")));
+    }
+
+    private void broadcastButtons(){
+        String format = I18n.format("ui.message.req_sell");
+        TextComponent button = Utils.newMessageButton(format, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(format)), new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/heh sell 64"));
+        new Message("").append(button).broadcast();
     }
 }

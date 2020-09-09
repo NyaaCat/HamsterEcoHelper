@@ -6,6 +6,7 @@ import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.utils.Utils;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
@@ -13,6 +14,10 @@ import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -116,6 +121,23 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
                                 item.getUnitPrice()
                         ), item.getItemStack())
                         .send(sender));
+        sendButtons(page, result.size()/9 + 1);
+    }
+
+    private void sendButtons(int page, int totalPages) {
+        String prevMsg = I18n.format("ui.message.previous_page");
+        String nextMsg = I18n.format("ui.message.next_page");
+        int prev = page-1;
+        if (prev < 0){
+            prev = totalPages-1;
+        }
+        int next = page+1;
+        if (next >= totalPages){
+            next = 0;
+        }
+        TextComponent prevBtn = Utils.newMessageButton(prevMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(prevMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search page " + prev));
+        TextComponent nextBtn = Utils.newMessageButton(nextMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(nextMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search page " + next));
+        new Message("").append(prevBtn).append(" ").append(nextBtn).broadcast();
     }
 
 

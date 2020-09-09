@@ -11,6 +11,11 @@ import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.db.model.LocationType;
 import cat.nyaa.heh.ui.MarketGUI;
 import cat.nyaa.heh.ui.UiManager;
+import cat.nyaa.heh.utils.Utils;
+import cat.nyaa.nyaacore.Message;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -59,6 +64,9 @@ public class Market extends BaseShop {
     public void offer(Player player, ItemStack itemStack, double unitPrice){
         ShopItem shopItem = new ShopItem(player.getUniqueId(), ShopItemType.MARKET, itemStack, unitPrice);
         MarketConnection.getInstance().addItem(shopItem);
+        new Message("").append(I18n.format("market.offer", unitPrice), itemStack).broadcast();
+        String format = I18n.format("ui.message.open_market");
+        new Message("").append(Utils.newMessageButton(format, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(format)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh market"))).broadcast();
         refreshGUI();
     }
 

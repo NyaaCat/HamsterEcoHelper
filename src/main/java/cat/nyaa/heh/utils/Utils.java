@@ -52,7 +52,7 @@ public class Utils {
         return collection.stream().skip(rnd).findFirst().orElse(null);
     }
 
-    public TextComponent newMessageButton(String buttonText, HoverEvent hoverEvent, ClickEvent clickEvent){
+    public static TextComponent newMessageButton(String buttonText, HoverEvent hoverEvent, ClickEvent clickEvent){
         TextComponent button = new TextComponent(buttonText);
         button.setHoverEvent(hoverEvent);
         button.setClickEvent(clickEvent);
