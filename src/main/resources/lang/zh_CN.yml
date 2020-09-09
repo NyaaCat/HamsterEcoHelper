@@ -93,6 +93,7 @@ command:
       not_permitted: "目标不是自己的箱子，不能被移除"
     req:
       success: "成功创建收购箱"
+      not_owner: "该箱子不属于你"
     lotto:
       success: "成功创建乐透箱"
   frame:
@@ -100,6 +101,7 @@ command:
       not_frame: "请看向想要设置的展示框"
       invalid_frame: "只能使用空的展示框"
       success: "成功设置展示框商店"
+      existed: "目标已经是一个展示框商店了"
   pay:
     invalid_invoice: "订单 %d 无效"
     customer_offline: "订单客户 %s &r不在线"
@@ -130,6 +132,7 @@ command:
       not_sign: "请看向想要创建商店的牌子"
       bad_type: "没有商店类型 %s"
       success: "成功创建商店"
+      existed: "目标已经是一个牌子商店了"
   remove:
     not_owner: "该商店不属于您 您不可以移除"
     not_sign_shop: "目标不是牌子商店"
