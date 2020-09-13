@@ -1,0 +1,18 @@
+name: HehUpdater
+main: cat.nyaa.heh.updater.UpdaterMain
+description: "Economy helper plugin for hamsters."
+version: ${version}
+depend: [Vault,NyaaCore,LangUtils]
+softdepend: [Essentials,LockettePro]
+authors: [cyilin, RecursiveG, ReinWD]
+website: "https://github.com/NyaaCat/HamsterEcoHelper"
+api-version: 1.13
+commands:
+  hupdater:
+    description: updater for heh 7.x -> 8.0
+    permission: heh.update
+
+permissions:
+  heh.update:
+    description: asda
+    default: op
