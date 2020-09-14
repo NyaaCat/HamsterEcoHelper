@@ -1,4 +1,4 @@
-package database;
+package heh7_2.database;
 
 import cat.nyaa.nyaacore.orm.WhereClause;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
@@ -11,7 +11,7 @@ import java.util.Base64;
 public class DatabaseUpdater {
     public static int updateDatabase(Database db, int currentVersion) {
         if (currentVersion == 0) {
-            System.out.println("Updating database, this may take some time");
+            System.out.println("Updating heh7_2.database, this may take some time");
             //updateVersion0To1(db);
             currentVersion = 1;
         }
@@ -40,7 +40,7 @@ public class DatabaseUpdater {
      */
     /*public static void updateVersion0To1(Database db) {
         int total, counter = 0;
-        try (Query<ItemLog> transaction = db.database.queryTransactional(ItemLog.class)) {
+        try (Query<ItemLog> transaction = db.heh7_2.database.queryTransactional(ItemLog.class)) {
             total = transaction.count();
             for (ItemLog record : transaction.select()) {
                 if (((++counter) % 100) == 0)
@@ -56,7 +56,7 @@ public class DatabaseUpdater {
             transaction.commit();
         }
 
-        try (Query<MarketItem> transaction = db.database.queryTransactional(MarketItem.class)) {
+        try (Query<MarketItem> transaction = db.heh7_2.database.queryTransactional(MarketItem.class)) {
             counter = 0;
             total = transaction.count();
             for (MarketItem record : transaction.select()) {

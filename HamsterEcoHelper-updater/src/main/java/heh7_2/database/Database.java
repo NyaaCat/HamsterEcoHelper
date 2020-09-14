@@ -1,4 +1,4 @@
-package database;
+package heh7_2.database;
 
 import cat.nyaa.nyaacore.orm.WhereClause;
 import cat.nyaa.nyaacore.orm.backends.IConnectedDatabase;

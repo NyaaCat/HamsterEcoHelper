@@ -4,7 +4,7 @@ import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
-import database.*;
+import heh7_2.database.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,6 +43,7 @@ public class UpdaterMain extends JavaPlugin {
             List<LottoStorageLocation> lottoStorageLocations = database.getLottoStorageLocations();
             List<Invoice> invoices = database.getInvoices();
             List<ShopStorageLocation> chestLocations = database.getChestLocations();
+
         }
 
         @Override
