@@ -5,12 +5,16 @@ import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import heh7_2.database.*;
+import heh8_0.db.DatabaseManager;
+import heh8_0.db.model.ShopItemDbModel;
+import heh8_0.db.utils.UidUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 public class UpdaterMain extends JavaPlugin {
@@ -32,6 +36,10 @@ public class UpdaterMain extends JavaPlugin {
             super(plugin, _i18n);
         }
 
+        public void UpdaterCommands(){
+
+        }
+
         @SubCommand(value = "update" , permission = "heh.update")
         public void onUpdate(CommandSender sender, Arguments arguments) throws SQLException, ClassNotFoundException {
             File dataFolder = UpdaterMain.this.getDataFolder().getParentFile();
@@ -43,7 +51,19 @@ public class UpdaterMain extends JavaPlugin {
             List<LottoStorageLocation> lottoStorageLocations = database.getLottoStorageLocations();
             List<Invoice> invoices = database.getInvoices();
             List<ShopStorageLocation> chestLocations = database.getChestLocations();
-
+            DatabaseManager dbManagerV8 = DatabaseManager.getInstance();
+            File dbFileV8 = new File(dataFolder, "./hehV8/HamsterEcoHelper.db");
+            dbFileV8.getParentFile().mkdirs();
+            UidUtils.create("");
+            signShops.forEach(signShop -> Arrays.stream(ShopMode.values()).forEach(shopMode -> {
+                List<ShopItem> items = signShop.getItems(shopMode);
+                if (items.size() > 0){
+                    items.stream().map(item -> {
+                        ShopItemDbModel dbModel = new ShopItemDbModel();
+                        return dbModel;
+                    });
+                }
+            }));
         }
 
         @Override
