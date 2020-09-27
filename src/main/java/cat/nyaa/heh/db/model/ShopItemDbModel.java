@@ -28,8 +28,8 @@ public class ShopItemDbModel {
     boolean available;
     @Column(name = "time")
     long time;
-    @Column(name = "item_meta")
-    String itemMeta;
+    @Column(name = "meta")
+    String meta;
 
     public ShopItemDbModel() {
     }
@@ -54,7 +54,7 @@ public class ShopItemDbModel {
         md.type = item.getShopItemType();
         md.time = item.getTime();
         md.available = item.isAvailable();
-        md.itemMeta = item.getMeta();
+        md.meta = item.getMeta();
         return md;
     }
 
@@ -130,11 +130,11 @@ public class ShopItemDbModel {
         this.time = time;
     }
 
-    public String getItemMeta() {
-        return itemMeta;
+    public String getMeta() {
+        return meta;
     }
 
-    public void setItemMeta(String itemMeta) {
-        this.itemMeta = itemMeta;
+    public void setMeta(String meta) {
+        this.meta = meta;
     }
 }

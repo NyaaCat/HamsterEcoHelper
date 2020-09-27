@@ -24,3 +24,7 @@ dependencies {
     shadow "cat.nyaa:hamsterecohelper:7.2-SNAPSHOT"
 //    shadow "cat.nyaa:hamsterecohelper:8.0-SNAPSHOT"
 }
+
+shadowJar{
+    configurations = [project.configurations.shadow]
+}

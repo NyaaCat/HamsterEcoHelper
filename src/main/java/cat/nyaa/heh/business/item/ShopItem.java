@@ -50,7 +50,7 @@ public class ShopItem implements ModelableItem<ShopItem>{
         this.shopItemType = shopItemDbModel.getType();
         this.time = shopItemDbModel.getTime();
         this.available = shopItemDbModel.isAvailable();
-        this.itemMeta = shopItemDbModel.getItemMeta();
+        this.itemMeta = shopItemDbModel.getMeta();
     }
 
     public ShopItem(UUID from, ShopItemType type, ItemStack itemStack, double unitPrice){
