@@ -36,6 +36,8 @@ public class DirectInvoiceConnection {
         return DatabaseManager.getInstance().getInvoiceCustomer(uid);
     }
 
+    public UUID getFrom(long uid){return DatabaseManager.getInstance().getInvoiceFrom(uid);}
+
     public UUID getPayer(long uid){
         return DatabaseManager.getInstance().getInvoicePayer(uid);
     }

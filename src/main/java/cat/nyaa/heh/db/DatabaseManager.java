@@ -399,4 +399,12 @@ public class DatabaseManager {
                 .whereEq("z", location.getZ())
         );
     }
+
+    public UUID getInvoiceFrom(long uid) {
+        InvoiceDbModel uid1 = invoiceTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
+        if (uid1 == null){
+            return null;
+        }
+        return uid1.getFrom();
+    }
 }

@@ -11,18 +11,39 @@ import java.util.UUID;
 public class InvoiceDbModel {
     @Column(name = "uid", primary = true)
     private long uid;
+    @Column(name = "from")
+    private UUID from;
     @Column(name = "customer")
     private UUID customer;
     @Column(name = "payer", nullable = true)
     private UUID payer;
+    @Column(name = "time")
+    private long time;
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public UUID getFrom() {
+        return from;
+    }
+
+    public void setFrom(UUID from) {
+        this.from = from;
+    }
 
     public InvoiceDbModel() {
     }
 
     public InvoiceDbModel(OfflinePlayer player, ShopItem shopItem, UUID customer) {
         this.uid = shopItem.getUid();
-        this.payer = player.getUniqueId();
+        this.from = player.getUniqueId();
         this.customer = customer;
+        this.time = System.currentTimeMillis();
     }
 
     public long getUid() {
