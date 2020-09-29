@@ -20,6 +20,14 @@ public class UidUtils {
         this.tableName = tableName;
     }
 
+    public UidUtils(){
+    }
+
+    public static UidUtils create() {
+        UidUtils uidUtils = new UidUtils();
+        return uidUtils;
+    }
+
 
     private void updateUid() {
         try {
