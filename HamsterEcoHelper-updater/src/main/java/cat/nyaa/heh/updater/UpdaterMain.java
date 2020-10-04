@@ -15,13 +15,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,62 +61,80 @@ public class UpdaterMain extends JavaPlugin {
             List<ShopStorageLocation> chestLocations = database.getChestLocations();
 
 
-            DatabaseManager dbManagerV8 = DatabaseManager.getInstance();
             File dbFileV8 = new File(dataFolder, "./hehV8/HamsterEcoHelper.db");
-            dbFileV8.getParentFile().mkdirs();
-            UidUtils uidUtils = UidUtils.create();
+            if (dbFileV8.exists()){
+                dbFileV8.delete();
+            }else {
+                dbFileV8.getParentFile().mkdirs();
+            }
 
-            Logger logger = Bukkit.getLogger();
-            logger.log(Level.INFO, "update start");
-            logger.log(Level.INFO, "update sign shop");
-            signShops.forEach(signShop -> Arrays.stream(ShopMode.values()).forEach(shopMode -> {
-                List<ShopItem> items = signShop.getItems(shopMode);
-                if (items.size() > 0){
-                    items.stream().map(item -> {
-                        ShopItemType type = getShopItemType(shopMode);
-                        return createShopItemDbModel(uidUtils, signShop.owner, item.getItemStack(1), item.amount, item.unitPrice, type);
-                    }).forEach(dbManagerV8::addShopItem);
+            UidUtils itemUid = UidUtils.create();
+            UidUtils locationUid = UidUtils.create();
+            DatabaseManager dbManagerV8 = DatabaseManager.getInstance(dbFileV8);
+
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    Logger logger = Bukkit.getLogger();
+                    dbManagerV8.clearAll();
+                    logger.log(Level.INFO, "update start");
+                    logger.log(Level.INFO, "update sign shop");
+                    signShops.parallelStream().forEach(signShop -> Arrays.stream(ShopMode.values()).forEach(shopMode -> {
+                        List<ShopItem> items = signShop.getItems(shopMode);
+                        if (items.size() > 0){
+                            items.stream().filter(Objects::nonNull).map(item -> {
+                                try {
+                                    ShopItemType type = getShopItemType(shopMode);
+                                    return createShopItemDbModel(itemUid, signShop.owner, item.getItemStack(1), item.amount, item.unitPrice, type);
+                                }catch (Exception e){
+                                    return null;
+                                }
+                            }).filter(Objects::nonNull).forEach(dbManagerV8::addShopItem);
+                        }
+                    }));
+                    logger.log(Level.INFO, "update market");
+                    marketItems.parallelStream().forEach(marketItem -> {
+                        ShopItemDbModel shopItemDbModel = createShopItemDbModel(itemUid, marketItem.playerId, marketItem.getItemStack(), marketItem.amount, marketItem.unitPrice, ShopItemType.MARKET);
+                        dbManagerV8.addShopItem(shopItemDbModel);
+                    });
+                    logger.log(Level.INFO, "update sign location");
+                    shopSigns.parallelStream().forEach(sign -> {
+                        LocationType locationType = getLocationType(sign.shopMode);
+                        DataModel data = getData(sign.shopMode, sign.owner, sign.lotto_price);
+                        LocationDbModel locationModel = createLocationModel(locationUid, sign.world, sign.x, sign.y, sign.z, locationType, null, sign.owner, data);
+                        dbManagerV8.insertLocation(locationModel);
+                    });
+                    logger.log(Level.INFO, "update lotto storage");
+                    lottoStorageLocations.parallelStream().forEach(lottoStorageLocation -> {
+                        LocationType locationType = LocationType.CHEST_LOTTO;
+                        LocationDbModel locationModel = createLocationModel(locationUid, lottoStorageLocation.world, lottoStorageLocation.x, lottoStorageLocation.y, lottoStorageLocation.z,
+                                locationType, null, lottoStorageLocation.owner, null);
+                        dbManagerV8.insertLocation(locationModel);
+                    });
+                    logger.log(Level.INFO, "update invoice");
+                    invoices.parallelStream().forEach(invoice -> {
+                        ShopItemDbModel shopItemDbModel = createShopItemDbModel(
+                                itemUid,
+                                invoice.getSellerId(),
+                                invoice.getItemStack(),
+                                (int) invoice.getAmount(),
+                                invoice.getTotalPrice()/invoice.getAmount(),
+                                ShopItemType.DIRECT);
+                        dbManagerV8.addShopItem(shopItemDbModel);
+
+                        InvoiceDbModel model = createInvoiceModel(invoice.getSellerId(), invoice.getBuyerId(), invoice.getDraweeId(), shopItemDbModel, invoice.getCreatedTime());
+                        dbManagerV8.insertInvoice(model);
+                    });
+                    logger.log(Level.INFO, "update chest location");
+                    chestLocations.parallelStream().forEach(chestLocation -> {
+                        LocationDbModel locationModel = createLocationModel(locationUid, chestLocation.world, chestLocation.x, chestLocation.y, chestLocation.z,
+                                LocationType.CHEST_BUY, null, chestLocation.owner, null);
+                        dbManagerV8.insertLocation(locationModel);
+                    });
+                    System.out.println();
                 }
-            }));
-            logger.log(Level.INFO, "update market");
-            marketItems.forEach(marketItem -> {
-                ShopItemDbModel shopItemDbModel = createShopItemDbModel(uidUtils, marketItem.playerId, marketItem.getItemStack(), marketItem.amount, marketItem.unitPrice, ShopItemType.MARKET);
-                dbManagerV8.addShopItem(shopItemDbModel);
-            });
-            logger.log(Level.INFO, "update sign location");
-            shopSigns.forEach(sign -> {
-                LocationType locationType = getLocationType(sign.shopMode);
-                DataModel data = getData(sign.shopMode, sign.owner, sign.lotto_price);
-                LocationDbModel locationModel = createLocationModel(uidUtils, sign.world, sign.x, sign.y, sign.z, locationType, null, sign.owner, data);
-                dbManagerV8.insertLocation(locationModel);
-            });
-            logger.log(Level.INFO, "update lotto storage");
-            lottoStorageLocations.forEach(lottoStorageLocation -> {
-                LocationType locationType = LocationType.CHEST_LOTTO;
-                LocationDbModel locationModel = createLocationModel(uidUtils, lottoStorageLocation.world, lottoStorageLocation.x, lottoStorageLocation.y, lottoStorageLocation.z,
-                        locationType, null, lottoStorageLocation.owner, null);
-                dbManagerV8.insertLocation(locationModel);
-            });
-            logger.log(Level.INFO, "update invoice");
-            invoices.forEach(invoice -> {
-                ShopItemDbModel shopItemDbModel = createShopItemDbModel(
-                        uidUtils,
-                        invoice.getSellerId(),
-                        invoice.getItemStack(),
-                        (int) invoice.getAmount(),
-                        invoice.getTotalPrice()/invoice.getAmount(),
-                        ShopItemType.DIRECT);
-                dbManagerV8.addShopItem(shopItemDbModel);
+            }.runTaskAsynchronously(UpdaterMain.this);
 
-                InvoiceDbModel model = createInvoiceModel(invoice.getSellerId(), invoice.getBuyerId(), invoice.getDraweeId(), shopItemDbModel, invoice.getCreatedTime());
-                dbManagerV8.insertInvoice(model);
-            });
-            logger.log(Level.INFO, "update chest location");
-            chestLocations.forEach(chestLocation -> {
-                LocationDbModel locationModel = createLocationModel(uidUtils, chestLocation.world, chestLocation.x, chestLocation.y, chestLocation.z,
-                        LocationType.CHEST_BUY, null, chestLocation.owner, null);
-                dbManagerV8.insertLocation(locationModel);
-            });
         }
 
         private InvoiceDbModel createInvoiceModel(UUID sellerId, UUID buyerId, UUID payer, ShopItemDbModel item, long time) {
@@ -212,6 +228,9 @@ public class UpdaterMain extends JavaPlugin {
         }
 
         private ShopItemDbModel createShopItemDbModel(UidUtils uidUtils, UUID owner, ItemStack itemStack, int amount, Double unitPrice, ShopItemType type) {
+            if (owner == null){
+                return null;
+            }
             ShopItemDbModel dbModel = new ShopItemDbModel();
             dbModel.setUid(uidUtils.getNextUid());
             dbModel.setOwner(owner);

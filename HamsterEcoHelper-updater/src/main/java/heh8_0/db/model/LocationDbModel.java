@@ -118,6 +118,10 @@ public class LocationDbModel {
     }
 
     public void setData(DataModel data) {
+        if (data == null){
+            this.data = null;
+            return;
+        }
         this.data = data.toJson();
     }
 }

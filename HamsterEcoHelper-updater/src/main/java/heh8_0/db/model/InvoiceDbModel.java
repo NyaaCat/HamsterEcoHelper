@@ -9,7 +9,7 @@ import java.util.UUID;
 public class InvoiceDbModel {
     @Column(name = "uid", primary = true)
     private long uid;
-    @Column(name = "from")
+    @Column(name = "invoice_from")
     private UUID from;
     @Column(name = "customer")
     private UUID customer;

@@ -2,7 +2,7 @@ name: HehUpdater
 main: cat.nyaa.heh.updater.UpdaterMain
 description: "Economy helper plugin for hamsters."
 version: ${version}
-depend: [Vault,NyaaCore,LangUtils]
+depend: [NyaaCore,LangUtils]
 softdepend: [Essentials,LockettePro]
 authors: [cyilin, RecursiveG, ReinWD]
 website: "https://github.com/NyaaCat/HamsterEcoHelper"

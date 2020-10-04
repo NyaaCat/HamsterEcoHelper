@@ -3,6 +3,7 @@ package heh8_0.db;
 import cat.nyaa.nyaacore.orm.WhereClause;
 import cat.nyaa.nyaacore.orm.backends.IConnectedDatabase;
 import cat.nyaa.nyaacore.orm.backends.ITypedTable;
+import cat.nyaa.nyaacore.orm.backends.SQLiteDatabase;
 import heh8_0.db.model.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,9 +12,8 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.Inventory;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.File;
+import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -31,12 +31,20 @@ public class DatabaseManager {
     ITypedTable<StorageDbModel> storageTable;
     ITypedTable<AccountDbModel> accountTable;
 
-    private DatabaseManager(){
+    private DatabaseManager(File dbFile){
         try{
 //            db = DatabaseUtils.connect(HamsterEcoHelper.plugin, databaseConfig.backendConfig);
+            db = new SQLiteDatabase(newJdbcConnection(dbFile));
+
             loadTables();
         }catch (Exception e){
+            Bukkit.getLogger().log(Level.SEVERE, "error loading db", e);
         }
+    }
+
+    public static Connection newJdbcConnection(File file) throws ClassNotFoundException, SQLException, IllegalArgumentException {
+        Class.forName("org.sqlite.JDBC");
+        return DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
     }
 
     private void loadTables() {
@@ -49,11 +57,11 @@ public class DatabaseManager {
         accountTable = db.getTable(AccountDbModel.class);
     }
 
-    public static DatabaseManager getInstance(){
+    public static DatabaseManager getInstance(File dbFile){
         if (INSTANCE == null){
             synchronized (DatabaseManager.class){
                 if (INSTANCE == null){
-                    INSTANCE = new DatabaseManager();
+                    INSTANCE = new DatabaseManager(dbFile);
                 }
             }
         }
@@ -264,5 +272,15 @@ public class DatabaseManager {
                 .whereEq("y", location.getY())
                 .whereEq("z", location.getZ())
         );
+    }
+
+    public void clearAll() {
+        shopItemTable.delete(WhereClause.EMPTY);
+        taxTable.delete(WhereClause.EMPTY);
+        transactionTable.delete(WhereClause.EMPTY);
+        invoiceTable.delete(WhereClause.EMPTY);
+        locationTable.delete(WhereClause.EMPTY);
+        storageTable.delete(WhereClause.EMPTY);
+        accountTable.delete(WhereClause.EMPTY);
     }
 }

@@ -31,7 +31,7 @@ public class UidUtils {
 
     private void updateUid() {
         try {
-            itemUid = DatabaseManager.getInstance().getUidMax(tableName);
+            itemUid = DatabaseManager.getInstance(null).getUidMax(tableName);
         } catch (Exception throwables) {
             Bukkit.getLogger().log(Level.INFO, String.format("failed to get max uid for table %s", tableName));
             itemUid = 0;

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 @Table("signshop")
 public class SignShop {
@@ -62,7 +63,11 @@ public class SignShop {
         if (config.isConfigurationSection(path)) {
             ConfigurationSection section = config.getConfigurationSection(path);
             for (String k : section.getKeys(false)) {
-                list.add(new ShopItem(section.getConfigurationSection(k)));
+                try{
+                    list.add(new ShopItem(section.getConfigurationSection(k)));
+                }catch (Exception e){
+                    Bukkit.getLogger().log(Level.SEVERE, "exception loading item", e);
+                }
             }
         }
         return list;
