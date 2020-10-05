@@ -371,5 +371,7 @@ public class Database implements Cloneable {
     }
 
 
-
+    public void close() throws SQLException {
+        database.close();
+    }
 }

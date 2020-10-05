@@ -42,7 +42,7 @@ public class UidUtils {
         return itemUid;
     }
 
-    public long getNextUid() {
+    public synchronized long getNextUid() {
         return ++itemUid;
     }
 
