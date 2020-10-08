@@ -175,7 +175,7 @@ public class DatabaseManager {
                 .forEach(signShopDbModel -> {
                     try{
                         result.add(new SignShopBuy(signShopDbModel));
-                    }catch (IllegalStateException e){
+                    }catch (Exception e){
                         toRemove.add(signShopDbModel);
                     }
                 });
@@ -183,7 +183,7 @@ public class DatabaseManager {
                 .forEach(signShopDbModel -> {
                     try{
                         result.add(new SignShopSell(signShopDbModel));
-                    }catch (IllegalStateException e){
+                    }catch (Exception e){
                         toRemove.add(signShopDbModel);
                     }
                 });
@@ -191,11 +191,14 @@ public class DatabaseManager {
                 .forEach(signShopDbModel -> {
                     try{
                         result.add(new SignShopLotto(signShopDbModel));
-                    }catch (IllegalStateException e){
+                    }catch (Exception e){
                         toRemove.add(signShopDbModel);
                     }
                 });
-        toRemove.forEach(locationDbModel -> locationTable.delete(WhereClause.EQ("uid", locationDbModel.getUid())));
+        if (toRemove.size()>0){
+            Bukkit.getLogger().log(Level.WARNING, "deleting "+toRemove.size()+" locations due to invalid configuration");
+            toRemove.forEach(locationDbModel -> locationTable.delete(WhereClause.EQ("uid", locationDbModel.getUid())));
+        }
         return result;
     }
     public Map<UUID, List<SignShopBuy>> getBuyShops() {

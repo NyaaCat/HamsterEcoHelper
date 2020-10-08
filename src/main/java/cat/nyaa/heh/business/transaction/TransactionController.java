@@ -65,6 +65,7 @@ public class TransactionController {
                 .multiply(BigDecimal.valueOf(amount));
         BigDecimal tax = Tax.calcTax(item.getShopItemType(), itemPrice);
         if (balance < itemPrice.add(tax).doubleValue()){
+            new Message(I18n.format("transaction.buy.insufficient_founds")).send(pPayer);
             return false;
         }
         BigDecimal toTake = itemPrice.add(tax);
