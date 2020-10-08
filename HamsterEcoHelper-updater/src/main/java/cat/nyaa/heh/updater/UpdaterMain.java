@@ -63,7 +63,12 @@ public class UpdaterMain extends JavaPlugin {
             final Logger logger = Bukkit.getLogger();
             logger.log(Level.INFO, "backing up file...");
             try{
-                File backupFile = new File(dataFolder, "./HamsterEcoHelper/HamsterEcoHelper.db.bak");
+                int i = 1;
+                String bakNameBase = "./HamsterEcoHelper/HamsterEcoHelper.db.bak";
+                File backupFile = new File(dataFolder, bakNameBase);
+                while(backupFile.exists()){
+                    backupFile = new File(dataFolder, bakNameBase + i++);
+                }
                 Files.copy(dbFile.toPath(), backupFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }catch (Exception e){
                 new Message("backup failed").send(sender);
@@ -155,9 +160,19 @@ public class UpdaterMain extends JavaPlugin {
                         logger.log(Level.INFO, "update complete");
                         database.close();
                         dbManagerV8.close();
-                        new Message("copying file").send(sender);
-                        Files.move(dbFileV8.toPath(), dbFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        new Message("update complete").send(sender);
+                        System.gc();
+                        for(int i = 0 ;;i++){
+                            try{
+                                Thread.sleep(5000);
+                                new Message("copying file").send(sender);
+                                Files.move(dbFileV8.toPath(), dbFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                                new Message("update complete").send(sender);
+                                break;
+                            }catch (Exception e){
+                                logger.log(Level.INFO, "copy failed, tried "+i+" times");
+                            }
+                        }
+
                     }catch (Exception e){
                         logger.log(Level.SEVERE, "update failed", e);
                         new Message("update failed").send(sender);
