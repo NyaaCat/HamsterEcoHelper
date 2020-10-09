@@ -311,6 +311,7 @@ public class DatabaseManager {
     public Inventory getLottoItems(UUID owner) throws NoLottoChestException {
         Chest chest = locationTable.select(WhereClause.EQ("type", LocationType.CHEST_LOTTO).whereEq("owner", owner)).stream()
                 .map(LocationDbModel::getBlock)
+                .limit(1)
                 .filter(block -> block.getState() instanceof Chest)
                 .map(block -> ((Chest) block.getState()))
                 .findFirst().orElse(null);
