@@ -26,8 +26,12 @@ public class SystemAccountUtils {
         if (account.uid == -1){
             long nextUid = uidManager.getNextUid();
             account.uid = nextUid;
-            DatabaseManager.getInstance().addAccount(account.toDbModel());
             account.save();
+        }
+
+        AccountDbModel accountDbModel = DatabaseManager.getInstance().getAccount(SystemAccountUtils.account.uid);
+        if (accountDbModel == null){
+            DatabaseManager.getInstance().addAccount(account.toDbModel());
         }
     }
 

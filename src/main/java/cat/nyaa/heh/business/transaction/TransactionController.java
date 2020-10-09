@@ -26,6 +26,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class TransactionController {
     private static final String TRANSACTION_TABLE_NAME = "table_transac";
@@ -97,10 +98,14 @@ public class TransactionController {
             transactionRecorderTask = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    Tax tax1 = newTax(pBuyer.getUniqueId(), tax.doubleValue(), 0, time, reason);
-                    retrieveTax(tax1);
-                    Transaction transaction = newTransactionRecord(item, amount, itemPrice, pBuyer, pSeller, tax1.getUid(), time);
-                    addTransactionRecord(transaction);
+                    try{
+                        Tax tax1 = newTax(pBuyer.getUniqueId(), tax.doubleValue(), 0, time, reason);
+                        retrieveTax(tax1);
+                        Transaction transaction = newTransactionRecord(item, amount, itemPrice, pBuyer, pSeller, tax1.getUid(), time);
+                        addTransactionRecord(transaction);
+                    } catch (Exception e) {
+                        Bukkit.getLogger().log(Level.SEVERE, "error creating tax.",e);
+                    }
                 }
             };
             transactionRecorderTask.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 0);
@@ -126,7 +131,7 @@ public class TransactionController {
             eco.depositPlayer(pPayer, dBuyer);
             eco.withdrawPlayer(pSeller, dSeller);
             Message message = new Message(I18n.format("transaction.error.exception", e.getMessage()));
-            message.send(pBuyer);
+            message.send(pPayer);
             message.send(pSeller);
             int soldAmountAfter = item.getSoldAmount();
             if (sellerBalBefore != soldAmountAfter){
