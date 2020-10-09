@@ -1,10 +1,7 @@
 package cat.nyaa.heh.command;
 
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.business.signshop.BaseSignShop;
-import cat.nyaa.heh.business.signshop.SignShopBuy;
-import cat.nyaa.heh.business.signshop.SignShopManager;
-import cat.nyaa.heh.business.signshop.SignShopSell;
+import cat.nyaa.heh.business.signshop.*;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.item.ShopItemType;
@@ -14,6 +11,7 @@ import cat.nyaa.heh.utils.Utils;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
+import cat.nyaa.nyaacore.cmdreceiver.BadCommandException;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.Material;
@@ -115,6 +113,22 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
                 shop = new SignShopBuy(player.getUniqueId());
                 shop.setLores(msgs);
                 shop.setSign(sign);
+                break;
+            case "LOTTO":
+                if (msgs.size()<=0){
+                    throw new BadCommandException("please input unit price");
+                }
+                String priceStr = msgs.get(0);
+                try{
+                    double price = Double.parseDouble(priceStr);
+                    msgs.remove(0);
+                    shop = new SignShopLotto(player.getUniqueId(), price);
+                    shop.setLores(msgs);
+                    shop.setSign(sign);
+                }catch (NumberFormatException | NullPointerException e){
+                    new Message(I18n.format("command.sign.create.lotto.bad_price", priceStr));
+                    return;
+                }
                 break;
             default:
                 new Message(I18n.format("command.sign.create.bad_type", type)).send(sender);
