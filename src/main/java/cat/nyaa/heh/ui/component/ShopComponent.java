@@ -58,9 +58,12 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             shopItem.setAmount(shopItem.getAmount() - amount);
             event.getView().setCursor(itemStack);
         }else if (cursor.isSimilar(itemStack) && cursor.getAmount() < cursor.getMaxStackSize()){
-            giveToPlayer(event.getWhoClicked(), itemStack);
-            shopItem.setAmount(shopItem.getAmount() - amount);
-            event.getView().setCursor(itemStack);
+            ItemStack clone = cursor.clone();
+            int amountBefore = clone.getAmount();
+            int amountAfter = Math.min(clone.getMaxStackSize(), clone.getAmount() + amount);
+            clone.setAmount(amountAfter);
+            event.getView().setCursor(clone);
+            shopItem.setAmount(shopItem.getAmount() - (amountAfter - amountBefore));
         }
         ShopItemManager.getInstance().updateShopItem(shopItem);
     }
