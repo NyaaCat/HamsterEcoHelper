@@ -134,7 +134,7 @@ public abstract class BaseSignShop extends BaseShop{
                 // don't update empty lines.
                 continue;
             }
-            sign.setLine(i+1, line);
+            sign.setLine(i+2, line);
         }
         sign.update();
     }

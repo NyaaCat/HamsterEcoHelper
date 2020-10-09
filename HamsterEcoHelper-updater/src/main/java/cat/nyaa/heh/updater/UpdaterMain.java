@@ -200,34 +200,27 @@ public class UpdaterMain extends JavaPlugin {
         }
 
         private DataModel getData(ShopMode shopMode, UUID owner, Double lottoPrice) {
-            LocationType type = LocationType.SIGN_SHOP_SELL;
             DataModel model = null;
             String ownerStr = Bukkit.getOfflinePlayer(owner).getName();
             switch (shopMode){
                 case BUY:
                     ArrayList<String> lores = new ArrayList<>();
-                    lores.add("[BUY]");
-                    lores.add(ownerStr);
                     lores.add("");
                     lores.add("");
                     model = new SignShopData(lores);
                     break;
                 case SELL:
                     ArrayList<String> lores1 = new ArrayList<>();
-                    lores1.add("[SELL]");
-                    lores1.add(ownerStr);
                     lores1.add("");
                     lores1.add("");
                     model = new SignShopData(lores1);
                     break;
                 case LOTTO:
                     ArrayList<String> lores2 = new ArrayList<>();
-                    lores2.add("[LOTTO]");
-                    lores2.add(ownerStr);
-                    lores2.add(String.format("%.2f", lottoPrice));
                     lores2.add("");
-                    model = new SignShopData(lores2);
-                    type = (LocationType.SIGN_SHOP_LOTTO);
+                    LottoData model1 = new LottoData();
+                    model1.setLottoPrice(lottoPrice);
+                    model = model1;
                     break;
             }
             return model;
