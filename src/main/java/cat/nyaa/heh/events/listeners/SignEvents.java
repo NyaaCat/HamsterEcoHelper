@@ -111,21 +111,4 @@ public class SignEvents implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event){
-        Block clickedBlock = event.getClickedBlock();
-        if (clickedBlock == null || !(clickedBlock.getState() instanceof Sign)){
-            return;
-        }
-
-        Sign sign = ((Sign) clickedBlock.getState());
-
-        BaseSignShop shop = SignShopManager.getInstance().getShopAt(sign.getLocation());
-        if (!(shop instanceof SignShopBuy)){
-            return;
-        }
-        SignShopGUI signShopGUI = UiManager.getInstance().newSignShopGUI(shop);
-        signShopGUI.refreshGUI();
-        signShopGUI.open(event.getPlayer());
-    }
 }
