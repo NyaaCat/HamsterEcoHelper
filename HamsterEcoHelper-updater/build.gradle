@@ -30,11 +30,13 @@ shadowJar{
     configurations = [project.configurations.shadow]
 }
 
+ext.updaterPluginNameLower = pluginNameLower + "-updater"
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             group      project.group
-            artifactId pluginNameLower
+            artifactId updaterPluginNameLower
             version    "$majorVersion.$minorVersion-SNAPSHOT"
 
             from components.java
