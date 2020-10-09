@@ -50,7 +50,7 @@ public abstract class BaseSignShop extends BaseShop{
     }
 
 
-    protected void loadSign() {
+    public void loadSign() {
         if (this.location == null){
             return;
         }

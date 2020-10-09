@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class SignEvents implements Listener {
+
     @EventHandler
     public void onClickSign(PlayerInteractEvent event){
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))return;
@@ -35,6 +36,13 @@ public class SignEvents implements Listener {
             return;
         }
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(clickedBlock.getLocation());
+        if (!shopAt.isSignExist()){
+            shopAt.loadSign();
+        }
+        if (!shopAt.isSignExist()){
+            new Message(I18n.format("sign.error.invalid_sign")).send(event.getPlayer());
+            return;
+        }
         if(shopAt instanceof SignShopLotto){
             SignShopLotto shopAt1 = (SignShopLotto) shopAt;
             String name = SystemAccountUtils.isSystemAccount(shopAt.getOwner()) ? SystemAccountUtils.getSystemName()

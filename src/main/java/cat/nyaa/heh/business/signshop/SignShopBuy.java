@@ -53,13 +53,7 @@ public class SignShopBuy extends BaseSignShop{
     @Override
     public void doBusiness(Player buyer, ShopItem item, int amount){
         //todo configure sign shop storage space.
-        if (!signExist){
-            loadSign();
-        }
-        if (!signExist){
-            new Message(I18n.format("sign.error.invalid_sign")).send(buyer);
-            return;
-        }
+
         double fee = HamsterEcoHelper.plugin.config.signShopFeeBase;
         LocationDbModel reqLocationModel = LocationConnection.getInstance().getReqLocationModel(owner);
         if(reqLocationModel == null || !(reqLocationModel.getBlock().getState() instanceof Chest)){
