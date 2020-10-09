@@ -60,7 +60,7 @@ public class BidCommand extends CommandReceiver implements ShortcutCommand{
             return;
         }
         if (!EcoUtils.getInstance().getEco().has(player, offer)) {
-            new Message(I18n.format("command.bid.insufficient_found")).send(sender);
+            new Message(I18n.format("command.bid.insufficient_funds")).send(sender);
             return;
         }
         auction.onBid(player.getUniqueId(), offer);

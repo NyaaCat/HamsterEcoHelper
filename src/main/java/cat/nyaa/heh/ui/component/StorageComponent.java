@@ -56,7 +56,7 @@ public class StorageComponent extends BasePagedComponent<StorageItem> {
         double fee = content.getFee();
         Economy eco = EcoUtils.getInstance().getEco();
         if (!eco.has(player, fee)){
-            new Message(I18n.format("storage.retrieve.insufficient_founds")).send(player);
+            new Message(I18n.format("storage.retrieve.insufficient_funds")).send(player);
             return;
         }
         addOnCursor(event, content);

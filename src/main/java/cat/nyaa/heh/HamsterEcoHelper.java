@@ -7,13 +7,13 @@ import cat.nyaa.heh.business.signshop.ItemFrameShop;
 import cat.nyaa.heh.business.signshop.SignShopManager;
 import cat.nyaa.heh.business.signshop.SignShopSell;
 import cat.nyaa.heh.business.transaction.Tax;
-import cat.nyaa.heh.command.*;
+import cat.nyaa.heh.business.transaction.TransactionController;
+import cat.nyaa.heh.command.MainCommand;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.MarketConnection;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.events.listeners.SignEvents;
 import cat.nyaa.heh.events.listeners.UiEvents;
-import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
@@ -26,7 +26,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Level;
 

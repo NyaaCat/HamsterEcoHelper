@@ -78,7 +78,7 @@ command:
   bid:
     no_auction: "当前没有正在进行的拍卖"
     invalid_price: "竞价失败 至少需要 %.2f 节操"
-    insufficient_found: "现金不足"
+    insufficient_funds: "现金不足"
   cancel:
     invalid_invoice: "订单 %d 属于 %s 你不能取消它"
     not_invoice: "无效订单 %d"
@@ -168,7 +168,7 @@ ui:
     previous_page: "上一页"
 storage:
   retrieve:
-    insufficient_founds: "你没有足够的节操"
+    insufficient_funds: "你没有足够的节操"
   lore:
     price: "取回费用 {fee} + {tax} 税入"
 system:
