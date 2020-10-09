@@ -105,6 +105,10 @@ public class SignShopLotto extends BaseSignShop {
                 }
             }
 
+            if (nonNullContents.size() <=0){
+                new Message("").append(I18n.format("shop.sign.lotto.no_item")).send(related);
+                return;
+            }
             Integer integer = Utils.randomSelect(nonNullContents);
             ItemStack item1 = lottoItems.getItem(integer);
             if (item1 == null || item1.getType().isAir()) {
