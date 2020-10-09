@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SignShopLotto extends BaseSignShop{
+public class SignShopLotto extends BaseSignShop {
     double price;
 
     public SignShopLotto(UUID owner, double price) {
@@ -46,7 +46,7 @@ public class SignShopLotto extends BaseSignShop{
         this.price = lottoData.lottoPrice;
     }
 
-    public LocationDbModel toDbModel(){
+    public LocationDbModel toDbModel() {
         LocationDbModel locationDbModel = new LocationDbModel(this);
         return locationDbModel;
     }
@@ -86,35 +86,41 @@ public class SignShopLotto extends BaseSignShop{
     @Override
     public void doBusiness(Player related, ShopItem item, int amount) {
         //todo
-        if (!signExist){
+        if (!signExist) {
             loadSign();
         }
-        if (!signExist){
+        if (!signExist) {
             new Message(I18n.format("sign.error.invalid_sign")).send(related);
             return;
         }
-        Inventory lottoItems = SignShopConnection.getInstance().getLottoItems(owner);
-        List<Integer> nonNullContents = new ArrayList<>();
-        ItemStack[] contents = lottoItems.getContents();
-        for (int i = 0; i < contents.length; i++) {
-            ItemStack content = contents[i];
-            if (content != null && !content.getType().isAir()) {
-                nonNullContents.add(i);
-            }
-        }
+        try {
+            Inventory lottoItems = SignShopConnection.getInstance().getLottoItems(owner);
 
-        Integer integer = Utils.randomSelect(nonNullContents);
-        ItemStack item1 = lottoItems.getItem(integer);
-        if (item1 == null || item1.getType().isAir()){
-            throw new InvalidItemException();
+            List<Integer> nonNullContents = new ArrayList<>();
+            ItemStack[] contents = lottoItems.getContents();
+            for (int i = 0; i < contents.length; i++) {
+                ItemStack content = contents[i];
+                if (content != null && !content.getType().isAir()) {
+                    nonNullContents.add(i);
+                }
+            }
+
+            Integer integer = Utils.randomSelect(nonNullContents);
+            ItemStack item1 = lottoItems.getItem(integer);
+            if (item1 == null || item1.getType().isAir()) {
+                new Message("").append(I18n.format("shop.sign.lotto.no_item")).send(related);
+                return;
+            }
+            ItemStack clone = item1.clone();
+            lottoItems.setItem(integer, new ItemStack(Material.AIR));
+            int transacAmount = clone.getAmount();
+            ShopItem shopItem = ShopItemManager.newShopItem(owner, ShopItemType.LOTTO, clone, price / (double) transacAmount);
+            ShopItemManager.insertShopItem(shopItem);
+            TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, shopItem, transacAmount, 0, TaxReason.REASON_LOTTO);
+            new Message("").append(I18n.format("shop.sign.lotto.item"), shopItem.getItemStack()).send(related);
+        } catch (NoLottoChestException e) {
+            new Message("").append(I18n.format("shop.sign.lotto.no_item")).send(related);
         }
-        ItemStack clone = item1.clone();
-        lottoItems.setItem(integer, new ItemStack(Material.AIR));
-        int transacAmount = clone.getAmount();
-        ShopItem shopItem = ShopItemManager.newShopItem(owner, ShopItemType.LOTTO, clone, price / (double) transacAmount);
-        ShopItemManager.insertShopItem(shopItem);
-        TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, shopItem, transacAmount, 0, TaxReason.REASON_LOTTO);
-        new Message("").append(I18n.format("shop.sign.lotto.item"), shopItem.getItemStack()).send(related);
     }
 
     @Override

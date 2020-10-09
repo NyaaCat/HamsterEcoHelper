@@ -308,7 +308,7 @@ public class DatabaseManager {
         storageTable.delete(WhereClause.EQ("uid", storageDbModel.getUid()));
     }
 
-    public Inventory getLottoItems(UUID owner) {
+    public Inventory getLottoItems(UUID owner) throws NoLottoChestException {
         Chest chest = locationTable.select(WhereClause.EQ("type", LocationType.CHEST_LOTTO).whereEq("owner", owner)).stream()
                 .map(LocationDbModel::getBlock)
                 .filter(block -> block.getState() instanceof Chest)

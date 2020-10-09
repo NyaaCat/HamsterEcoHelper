@@ -2,10 +2,7 @@ package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
-import cat.nyaa.heh.business.signshop.BaseSignShop;
-import cat.nyaa.heh.business.signshop.ItemFrameShop;
-import cat.nyaa.heh.business.signshop.SignShopBuy;
-import cat.nyaa.heh.business.signshop.SignShopSell;
+import cat.nyaa.heh.business.signshop.*;
 import org.bukkit.inventory.Inventory;
 
 import java.util.List;
@@ -78,7 +75,7 @@ public class SignShopConnection {
         return new ItemFrameShop(DatabaseManager.getInstance().getShopFrame(uniqueId));
     }
 
-    public Inventory getLottoItems(UUID owner) {
+    public Inventory getLottoItems(UUID owner) throws NoLottoChestException {
         return DatabaseManager.getInstance().getLottoItems(owner);
     }
 }
