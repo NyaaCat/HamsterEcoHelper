@@ -4,6 +4,7 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.model.AccountDbModel;
+import cat.nyaa.nyaacore.component.ISystemBalance;
 import cat.nyaa.nyaacore.configuration.FileConfigure;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -14,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class SystemAccountUtils {
+public class SystemAccountUtils implements ISystemBalance {
     private static SystemAccount account;
     private static final String TABLE_NAME = "accounts";
     private static UidUtils uidManager = UidUtils.create(TABLE_NAME);
@@ -145,6 +146,39 @@ public class SystemAccountUtils {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public double getBalance() {
+        return getSystemBalance();
+    }
+
+    @Override
+    public void setBalance(double balance, JavaPlugin operator) {
+        if(account.isPlayer){
+            Economy eco = EcoUtils.getInstance().getEco();
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(account.getUUID());
+            double toWithdraw = balance - eco.getBalance(offlinePlayer);
+            eco.withdrawPlayer(offlinePlayer, toWithdraw);
+        }
+        try{
+            AccountDbModel account = DatabaseManager.getInstance().getAccount(SystemAccountUtils.account.uid);
+            account.setBalance(balance);
+            DatabaseManager.getInstance().updateAccount(account);
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
+    public double withdrawAllowDebt(double amount, JavaPlugin operator) {
+        withdrawSystem(amount);
+        return getSystemBalance();
+    }
+
+    @Override
+    public double deposit(double amount, JavaPlugin operator) {
+        depositSystem(amount);
+        return getSystemBalance();
     }
 
     public static class SystemAccount extends FileConfigure{

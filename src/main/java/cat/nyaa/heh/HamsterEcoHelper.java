@@ -19,6 +19,8 @@ import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.button.ButtonRegister;
 import cat.nyaa.heh.utils.EcoUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
+import cat.nyaa.nyaacore.component.ISystemBalance;
+import cat.nyaa.nyaacore.component.NyaaComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -78,6 +80,7 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
         SignShopConnection.getInstance();
         TransactionController.getInstance();
         SystemAccountUtils.init();
+        NyaaComponent.register(ISystemBalance.class, new SystemAccountUtils());
         EcoUtils.getInstance();
         ButtonRegister.getInstance().load();
         SignShopManager ssm = SignShopManager.getInstance();
