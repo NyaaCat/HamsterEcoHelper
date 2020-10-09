@@ -82,12 +82,6 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
         ButtonRegister.getInstance().load();
         SignShopManager ssm = SignShopManager.getInstance();
         ssm.load();
-        new BukkitRunnable(){
-            @Override
-            public void run() {
-                ssm.updateSigns();
-            }
-        }.runTaskAsynchronously(this);
         ItemFrameShop.reloadFrames();
     }
 

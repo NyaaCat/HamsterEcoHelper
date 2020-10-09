@@ -37,16 +37,7 @@ public abstract class BaseSignShop extends BaseShop{
         this.uid = model.getUid();
         this.owner = model.getOwner();
         String worldName = model.getWorld();
-        World world = Bukkit.getWorld(worldName);
-        if (world == null) {
-            throw new NullPointerException("world " + worldName +" don't exist");
-        }
-        Block blockAt = new Location(world, model.getX(), model.getY(), model.getZ()).getBlock();
-        BlockState state = blockAt.getState();
-        if (!(state instanceof Sign)){
-            throw new IllegalStateException(String.format("block at world:%s, x:%f, y:%f, z:%f is not a sign.", worldName, model.getX(), model.getY(), model.getZ()));
-        }
-        setSign(((Sign) state));
+        this.location = new Location(Bukkit.getWorld(worldName), model.getX(), model.getY(), model.getZ());
         try{
             SignShopData signShopData = DataModel.getGson().fromJson(model.getData(), SignShopData.class);
             setData(signShopData);
@@ -55,6 +46,22 @@ public abstract class BaseSignShop extends BaseShop{
             lores = new ArrayList<>();
         }
         loadItems();
+    }
+
+
+    protected void loadSign() {
+        if (this.location == null){
+            return;
+        }
+        World world = this.location.getWorld();
+        if (world == null)return;
+        Block block = this.location.getBlock();
+        BlockState state = block.getState();
+        if (!(state instanceof Sign) ){
+            return;
+        }
+        setSign(((Sign) state));
+        updateSign();
     }
 
     public abstract String getTitle();
@@ -113,6 +120,9 @@ public abstract class BaseSignShop extends BaseShop{
     }
 
     public void updateSign(){
+        if (sign == null){
+            return;
+        }
         sign.setLine(0, getTitle());
 
         int msgSize = lores.size();

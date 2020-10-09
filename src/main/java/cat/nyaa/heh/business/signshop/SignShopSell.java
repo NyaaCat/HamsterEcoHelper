@@ -44,6 +44,13 @@ public class SignShopSell extends BaseSignShop{
 
     @Override
     public void doBusiness(Player related, ShopItem item, int amount) {
+        if (!signExist){
+            loadSign();
+        }
+        if (!signExist){
+            new Message(I18n.format("sign.error.invalid_sign")).send(related);
+            return;
+        }
         double fee = HamsterEcoHelper.plugin.config.signShopFeeBase;
         TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, item, amount, fee, TaxReason.REASON_SIGN_SHOP);
         updateUi();

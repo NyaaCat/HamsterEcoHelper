@@ -86,6 +86,13 @@ public class SignShopLotto extends BaseSignShop{
     @Override
     public void doBusiness(Player related, ShopItem item, int amount) {
         //todo
+        if (!signExist){
+            loadSign();
+        }
+        if (!signExist){
+            new Message(I18n.format("sign.error.invalid_sign")).send(related);
+            return;
+        }
         Inventory lottoItems = SignShopConnection.getInstance().getLottoItems(owner);
         List<Integer> nonNullContents = new ArrayList<>();
         ItemStack[] contents = lottoItems.getContents();
