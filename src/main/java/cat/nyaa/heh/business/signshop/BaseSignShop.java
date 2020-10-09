@@ -7,6 +7,7 @@ import cat.nyaa.heh.db.model.DataModel;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
+import cat.nyaa.heh.utils.SystemAccountUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -123,11 +124,16 @@ public abstract class BaseSignShop extends BaseShop{
         if (sign == null){
             return;
         }
+        String name = SystemAccountUtils.isSystemAccount(owner) ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(owner).getName();
         sign.setLine(0, getTitle());
-
+        sign.setLine(1, name == null ? "null" : name);
         int msgSize = lores.size();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             String line = i >= msgSize ? "" : lores.get(i);
+            if (line == null || line.trim().equals("")){
+                // don't update empty lines.
+                continue;
+            }
             sign.setLine(i+1, line);
         }
         sign.update();
