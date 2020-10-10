@@ -53,7 +53,6 @@ public class ClickUtils {
             }catch (IllegalStateException e){}
 
             ClickTask task = new ClickTask(uuid, startTime, mUserClickInterval);
-            click(uuid, mUserClickInterval);
             task.runLater();
         }
 
