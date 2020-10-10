@@ -93,7 +93,7 @@ public class ItemFrameShop {
       }
 
     public static void removeFrameShop(long uid) {
-
+        LocationConnection.getInstance().removeLocationModel(uid);
     }
 
 

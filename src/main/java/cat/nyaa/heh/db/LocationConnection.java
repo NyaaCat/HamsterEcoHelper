@@ -91,4 +91,8 @@ public class LocationConnection {
                 .map(ItemFrameShop::new)
                 .collect(Collectors.toList());
     }
+
+    public void removeLocationModel(long uid) {
+        DatabaseManager.getInstance().removeLocationModelById(uid);
+    }
 }

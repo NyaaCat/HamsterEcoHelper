@@ -422,4 +422,8 @@ public class DatabaseManager {
         List<LocationDbModel> models = locationTable.select(WhereClause.EQ("type", LocationType.FRAME));
         return models;
     }
+
+    public void removeLocationModelById(long uid) {
+        locationTable.delete(WhereClause.EQ("uid", uid));
+    }
 }
