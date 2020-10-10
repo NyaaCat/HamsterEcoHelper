@@ -66,7 +66,7 @@ public class Market extends BaseShop {
         MarketConnection.getInstance().addItem(shopItem);
         new Message("").append(I18n.format("market.offer", unitPrice), itemStack).broadcast();
         String format = I18n.format("ui.message.open_market");
-        new Message("").append(Utils.newMessageButton(format, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(format)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh market"))).broadcast();
+        new Message("").append(Utils.newMessageButton(format, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(format)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh m"))).broadcast();
         refreshGUI();
     }
 
