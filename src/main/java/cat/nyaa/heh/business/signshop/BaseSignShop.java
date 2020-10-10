@@ -46,7 +46,6 @@ public abstract class BaseSignShop extends BaseShop{
             Bukkit.getLogger().log(Level.WARNING, String.format("error loading data for locationDbModel %d", uid), e);
             lores = new ArrayList<>();
         }
-        loadItems();
     }
 
 
