@@ -21,7 +21,7 @@ public abstract class BaseUi<E extends ModelableItem> implements InventoryHolder
     protected ButtonComponent buttonComponent;
 
     public BaseUi() {
-        uiInventory = Bukkit.createInventory(this, 54);
+        uiInventory = Bukkit.createInventory(this, 54, getTitle());
         createComponents();
         this.uiuid = UUID.randomUUID();
     }

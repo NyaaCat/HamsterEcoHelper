@@ -147,10 +147,12 @@ market:
 ui:
   lotto:
     price: "抽取单价 %.2f"
-  title:
+  sign:
     lotto: "[LOTTO]"
-    market: "天喵商城"
     sign_shop: "[SHOP]"
+  title:
+    market: "天喵商城"
+    sign_shop: "商店"
     storage: "临时仓储"
 storage:
   retrieve:

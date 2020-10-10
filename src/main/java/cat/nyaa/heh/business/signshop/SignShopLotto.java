@@ -73,7 +73,7 @@ public class SignShopLotto extends BaseSignShop {
 
     @Override
     public String getTitle() {
-        return I18n.format("ui.title.lotto");
+        return I18n.format("ui.sign.lotto");
     }
 
     @Override
