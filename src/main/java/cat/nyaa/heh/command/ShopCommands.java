@@ -49,6 +49,10 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
     @SubCommand(value = "sell", permission = PERMISSION_SHOP, tabCompleter = "sellCompleter")
     public void onSell(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
+        Block targetBlockExact = player.getTargetBlockExact(10);
+        if (targetBlockExact == null || !(targetBlockExact.getState() instanceof Sign)){
+
+        }
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (itemInMainHand.getType().isAir()){
             new Message(I18n.format("command.shop.sell.no_item")).send(sender);
