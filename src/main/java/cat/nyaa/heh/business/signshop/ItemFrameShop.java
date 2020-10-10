@@ -88,7 +88,8 @@ public class ItemFrameShop {
                 frameMap.clear();
                 AtomicInteger count = new AtomicInteger(0);
                 Bukkit.getWorlds().parallelStream()
-                        .flatMap(world -> world.getEntities().stream())
+                        .flatMap(world -> Arrays.stream(world.getLoadedChunks().clone()))
+                        .flatMap(chunk -> Arrays.stream(chunk.getEntities()))
                         .filter(entity -> entity instanceof ItemFrame)
                         .filter(entity -> SignShopConnection.isShopFrame(entity.getUniqueId()))
                         .forEach(entity -> {
