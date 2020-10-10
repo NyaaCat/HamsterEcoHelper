@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -196,8 +197,13 @@ public class DatabaseManager {
                     }
                 });
         if (toRemove.size()>0){
-            Bukkit.getLogger().log(Level.WARNING, "deleting "+toRemove.size()+" locations due to invalid configuration");
-            toRemove.forEach(locationDbModel -> locationTable.delete(WhereClause.EQ("uid", locationDbModel.getUid())));
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    Bukkit.getLogger().log(Level.WARNING, "deleting "+toRemove.size()+" locations due to invalid configuration");
+                    toRemove.forEach(locationDbModel -> locationTable.delete(WhereClause.EQ("uid", locationDbModel.getUid())));
+                }
+            }.runTaskAsynchronously(HamsterEcoHelper.plugin);
         }
         return result;
     }

@@ -143,6 +143,7 @@ market:
     insufficient_balance: "你没有足够的上架费用 %.2f"
     withdraw: "支付了 %.2f 的上架费用"
     success: "成功上架 {itemName} &r* {amount} "
+    info: "玩家 %s 向天喵商城上架了 {itemName} &r* {amount}"
 ui:
   lotto:
     price: "抽取单价 %.2f"
