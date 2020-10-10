@@ -19,10 +19,12 @@ public class Configuration extends PluginConfigure {
     public Map<String, Number> taxRateMap = new LinkedHashMap<>();
     {
         taxRateMap.put("market", 10d);
-        taxRateMap.put("signshop", 5d);
+        taxRateMap.put("sign_shop_sell", 5d);
+        taxRateMap.put("sign_shop_buy", 5d);
         taxRateMap.put("direct", 5d);
         taxRateMap.put("auction", 20d);
         taxRateMap.put("requisition", 5d);
+        taxRateMap.put("storage", 0d);
     }
 
     @Serializable(name = "fee.market.base")
