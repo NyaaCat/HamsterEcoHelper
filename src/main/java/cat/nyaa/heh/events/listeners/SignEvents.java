@@ -64,7 +64,7 @@ public class SignEvents implements Listener {
             shopAt.loadItems();
             shopAt.getItems().stream().forEach(shopItem -> {
                 ItemStack model = shopItem.getModel();
-                new Message("").append(I18n.format("shop.buy.info.item"), model).send(event.getPlayer());
+                new Message("").append(I18n.format("shop.buy.info.item", shopItem.getUnitPrice()), model).send(event.getPlayer());
             });
             return;
         }

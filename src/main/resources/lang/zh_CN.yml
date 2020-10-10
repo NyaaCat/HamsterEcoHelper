@@ -44,7 +44,7 @@ shop:
   buy:
     info:
       owner: "玩家 %s &r收购的物品"
-      item: "{itemName} &r* {amount}"
+      item: "物品 {itemName} &r* {amount}, 单价 %.2f"
 transaction:
   withdraw: "你向 %s &r购买了 {itemName} &r* {amount} 共支付了 %.2f 节操"
   deposit: "%s &r向你购买了 {itemName} &r* {amount} 你获得了%.2f 节操"
