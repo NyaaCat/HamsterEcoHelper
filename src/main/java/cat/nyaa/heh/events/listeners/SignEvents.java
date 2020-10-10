@@ -4,6 +4,7 @@ import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.signshop.*;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
+import cat.nyaa.heh.utils.ClickUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
@@ -47,6 +48,16 @@ public class SignEvents implements Listener {
             SignShopLotto shopAt1 = (SignShopLotto) shopAt;
             String name = SystemAccountUtils.isSystemAccount(shopAt.getOwner()) ? SystemAccountUtils.getSystemName()
                     : Bukkit.getOfflinePlayer(shopAt.getOwner()).getName();
+
+            ClickUtils clicker = ClickUtils.get("heh_lotto");
+            UUID uniqueId = event.getPlayer().getUniqueId();
+            boolean firstClick = !clicker.isValidClick(uniqueId);
+            clicker.click(uniqueId, 200);
+            if (firstClick) {
+                new Message(I18n.format("shop.sign.lotto.confirm", name, shopAt1.getPrice())).send(event.getPlayer());
+                return;
+            }
+
             try{
                 shopAt1.doBusiness(event.getPlayer(), null, 1);
                 new Message("").append(I18n.format("shop.sign.lotto.success", name, shopAt1.getPrice())).send(event.getPlayer());
