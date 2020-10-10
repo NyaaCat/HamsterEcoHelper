@@ -87,18 +87,28 @@ public class ItemFrameShop {
             public void run() {
                 frameMap.clear();
                 AtomicInteger count = new AtomicInteger(0);
+                AtomicInteger countChunk = new AtomicInteger(0);
+                AtomicInteger countEntities = new AtomicInteger(0);
                 Bukkit.getWorlds().parallelStream()
-                        .flatMap(world -> Arrays.stream(world.getLoadedChunks().clone()))
-                        .flatMap(chunk -> Arrays.stream(chunk.getEntities()))
-                        .filter(entity -> entity instanceof ItemFrame)
+                        .flatMap(world -> Arrays.stream(world.getLoadedChunks()))
+                        .flatMap(chunk -> {
+                            countChunk.addAndGet(1);
+                            return Arrays.stream(chunk.getEntities());
+                        })
+                        .filter(entity -> {
+                            countEntities.addAndGet(1);
+                            return entity instanceof ItemFrame;
+                        })
                         .filter(entity -> SignShopConnection.isShopFrame(entity.getUniqueId()))
                         .forEach(entity -> {
                             addFrame(SignShopConnection.getInstance().getShopFrame(entity.getUniqueId()));
                             count.addAndGet(1);
                         });
+                Bukkit.getLogger().log(Level.INFO, countChunk.get() + " chunks.");
+                Bukkit.getLogger().log(Level.INFO, count.get() + " entities.");
                 Bukkit.getLogger().log(Level.INFO, "heh loaded " + count.get() + " frame shops.");
             }
-        }.runTaskAsynchronously(HamsterEcoHelper.plugin);
+        }.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 1);
       }
 
     public static void removeFrameShop(long uid) {
