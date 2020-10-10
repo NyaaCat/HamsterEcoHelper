@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import static org.bukkit.event.EventPriority.HIGHEST;
@@ -81,13 +82,23 @@ public class ItemFrameShop {
     }
 
     public static void reloadFrames() {
-        frameMap.clear();
-        Bukkit.getWorlds().stream()
-                .flatMap(world -> world.getEntities().stream())
-                .filter(entity -> entity instanceof ItemFrame)
-                .filter(entity -> SignShopConnection.isShopFrame(entity.getUniqueId()))
-                .forEach(entity -> addFrame(SignShopConnection.getInstance().getShopFrame(entity.getUniqueId())));
-    }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                frameMap.clear();
+                AtomicInteger count = new AtomicInteger(0);
+                Bukkit.getWorlds().parallelStream()
+                        .flatMap(world -> world.getEntities().stream())
+                        .filter(entity -> entity instanceof ItemFrame)
+                        .filter(entity -> SignShopConnection.isShopFrame(entity.getUniqueId()))
+                        .forEach(entity -> {
+                            addFrame(SignShopConnection.getInstance().getShopFrame(entity.getUniqueId()));
+                            count.addAndGet(1);
+                        });
+                Bukkit.getLogger().log(Level.INFO, "heh loaded " + count.get() + " frame shops.");
+            }
+        }.runTaskAsynchronously(HamsterEcoHelper.plugin);
+      }
 
     public static void removeFrameShop(long uid) {
 
