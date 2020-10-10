@@ -61,6 +61,7 @@ public class SignEvents implements Listener {
             UUID owner = shopAt.getOwner();
             String name = SystemAccountUtils.isSystemAccount(owner) ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(owner).getName();
             new Message(I18n.format("shop.buy.info.owner", name)).send(event.getPlayer());
+            shopAt.loadItems();
             shopAt.getItems().stream().forEach(shopItem -> {
                 ItemStack model = shopItem.getModel();
                 new Message("").append(I18n.format("shop.buy.info.item"), model).send(event.getPlayer());
