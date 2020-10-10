@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -85,7 +86,7 @@ public class Market extends BaseShop {
         if (ownerFilter != null){
             stream = stream.filter(shopItem -> shopItem.getOwner().equals(ownerFilter));
         }
-        return stream.collect(Collectors.toList());
+        return stream.sorted(Comparator.comparingLong(ShopItem::getTime).reversed()).collect(Collectors.toList());
     }
 
     public void refreshItem(){
