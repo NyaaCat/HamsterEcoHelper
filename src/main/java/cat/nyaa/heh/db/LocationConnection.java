@@ -1,5 +1,6 @@
 package cat.nyaa.heh.db;
 
+import cat.nyaa.heh.business.signshop.ItemFrameShop;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
 import cat.nyaa.heh.utils.UidUtils;
@@ -9,7 +10,9 @@ import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class LocationConnection {
     private static LocationConnection INSTANCE;
@@ -81,5 +84,11 @@ public class LocationConnection {
 
     public LocationDbModel getModelAt(Location location) {
         return DatabaseManager.getInstance().getLocationModelAt(location);
+    }
+
+    public List<ItemFrameShop> getFrameShops() {
+        return DatabaseManager.getInstance().getFrameShops().stream()
+                .map(ItemFrameShop::new)
+                .collect(Collectors.toList());
     }
 }

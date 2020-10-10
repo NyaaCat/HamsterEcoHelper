@@ -417,4 +417,9 @@ public class DatabaseManager {
         }
         return uid1.getFrom();
     }
+
+    public List<LocationDbModel> getFrameShops() {
+        List<LocationDbModel> models = locationTable.select(WhereClause.EQ("type", LocationType.FRAME));
+        return models;
+    }
 }
