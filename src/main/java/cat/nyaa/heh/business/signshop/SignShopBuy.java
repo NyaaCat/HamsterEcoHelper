@@ -35,7 +35,7 @@ public class SignShopBuy extends BaseSignShop{
 
     @Override
     public void loadItems() {
-        SignShopConnection.getInstance().getBuyShopItems(owner);
+        items = SignShopConnection.getInstance().getBuyShopItems(owner);
     }
 
     @Override
