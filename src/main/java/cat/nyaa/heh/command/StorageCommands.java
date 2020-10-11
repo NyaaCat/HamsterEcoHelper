@@ -58,6 +58,6 @@ public class StorageCommands extends CommandReceiver implements ShortcutCommand{
 
     @Override
     public String getShortcutName() {
-        return "storage";
+        return "hstorage";
     }
 }
