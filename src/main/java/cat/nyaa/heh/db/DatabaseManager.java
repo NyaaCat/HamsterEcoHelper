@@ -348,7 +348,7 @@ public class DatabaseManager {
     }
 
     public int getShopItemCount() {
-        String sql = "select count() count, amount a, sold s, available ava from items where a > s and ava = true";
+        String sql = "select count(*) count, amount a, sold s, available ava from items where a > s and ava = true";
         try {
             Statement statement = db.getConnection().createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -380,7 +380,7 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getShopItems(String keywords) {
-        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid, item_meta from items where amount > sold and available = true and item_meta like ? ORDER BY uid;";
+        String sql = "select amount, available, nbt, owner, price, sold, time, type, uid, meta from items where amount > sold and available = true and meta like ? ORDER BY uid;";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, String.format("%%%s%%",keywords));
@@ -393,7 +393,7 @@ public class DatabaseManager {
             }
             return results;
         } catch (SQLException | ReflectiveOperationException throwables) {
-            Bukkit.getLogger().log(Level.SEVERE, "error loading shop item count", throwables);
+            Bukkit.getLogger().log(Level.SEVERE, "error loading shop items", throwables);
             throw new RuntimeException();
         }
     }
