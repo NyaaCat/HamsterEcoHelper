@@ -65,7 +65,7 @@ public class Market extends BaseShop {
     public void offer(Player player, ItemStack itemStack, double unitPrice){
         ShopItem shopItem = new ShopItem(player.getUniqueId(), ShopItemType.MARKET, itemStack, unitPrice);
         MarketConnection.getInstance().addItem(shopItem);
-        new Message("").append(I18n.format("market.offer.info", unitPrice), itemStack).broadcast();
+        new Message("").append(I18n.format("market.offer.info", player.getName(), unitPrice), itemStack).broadcast();
         String format = I18n.format("ui.message.open_market");
         new Message("").append(Utils.newMessageButton(format, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(format)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh m"))).broadcast();
         refreshGUI();
