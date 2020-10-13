@@ -7,10 +7,12 @@ import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.business.transaction.Transaction;
+import cat.nyaa.heh.utils.Utils;
 import cat.nyaa.nyaacore.orm.DatabaseUtils;
 import cat.nyaa.nyaacore.orm.WhereClause;
 import cat.nyaa.nyaacore.orm.backends.IConnectedDatabase;
 import cat.nyaa.nyaacore.orm.backends.ITypedTable;
+import co.aikar.taskchain.TaskChain;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -25,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class DatabaseManager {
@@ -315,16 +318,39 @@ public class DatabaseManager {
     }
 
     public Inventory getLottoItems(UUID owner) throws NoLottoChestException {
-        Chest chest = locationTable.select(WhereClause.EQ("type", LocationType.CHEST_LOTTO).whereEq("owner", owner)).stream()
-                .map(LocationDbModel::getBlock)
-                .limit(1)
-                .filter(block -> block.getState() instanceof Chest)
-                .map(block -> ((Chest) block.getState()))
-                .findFirst().orElse(null);
-        if (chest == null){
-            throw new NoLottoChestException();
+        Logger logger = HamsterEcoHelper.plugin.getLogger();
+        try {
+            final Object lock = new Object();
+            synchronized (lock){
+                TaskChain<Chest> task = Utils.newChain().sync((input) -> {
+                    logger.log(Level.INFO, "load chest");
+                    Chest chest = locationTable.select(WhereClause.EQ("type", LocationType.CHEST_LOTTO).whereEq("owner", owner)).stream()
+                        .map(LocationDbModel::getBlock)
+                        .limit(1)
+                        .filter(block -> block.getState() instanceof Chest)
+                        .map(block -> ((Chest) block.getState()))
+                        .findFirst().orElse(null);
+                    return chest;
+                });
+                task.sync((input) -> task.setTaskData("chest", input));
+                task.setDoneCallback((input) -> {
+                    logger.log(Level.INFO, "lock notify");
+                    lock.notify();
+                });
+                task.execute();
+                logger.log(Level.INFO, "lock wait");
+                lock.wait();
+                Chest chest = task.getTaskData("chest");
+                if (chest == null){
+                    throw new NoLottoChestException();
+                }
+                logger.log(Level.INFO, "load lotto done");
+                return chest.getInventory();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
         }
-        return chest.getInventory();
     }
 
     public long getSystemUid(UUID uuid){
