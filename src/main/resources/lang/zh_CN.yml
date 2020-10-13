@@ -107,7 +107,7 @@ command:
   pay:
     invalid_invoice: "订单 %d 无效"
     customer_offline: "订单客户 %s &r不在线"
-    confirm_msg: "将要支付 %s &r向 %s &r发起的直送订单 价格 %d 如确认无误请再次输入指令完成支付"
+    confirm_msg: "将要支付 %s &r向 %s &r发起的直送订单 价格 %.2f 如确认无误请再次输入指令完成支付"
     uid_mismatch: "两次输入的订单号不一致(%d, %d)"
     success: "订单 %d 已支付"
     failed: "订单 %d 支付失败"
@@ -154,7 +154,7 @@ market:
     insufficient_balance: "你没有足够的上架费用 %.2f"
     withdraw: "支付了 %.2f 的上架费用"
     success: "成功上架 {itemName} &r* {amount} "
-    info: "玩家 %s 向天喵商城上架了 {itemName} &r* {amount}"
+    info: "玩家 %s 向天喵商城上架了 {itemName} &r* {amount}, 单价 %.2f"
 ui:
   lotto:
     price: "抽取单价 %.2f"

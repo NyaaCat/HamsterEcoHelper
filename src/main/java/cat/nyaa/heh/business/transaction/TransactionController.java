@@ -57,19 +57,131 @@ public class TransactionController {
 
 
     public boolean makeTransaction(UUID buyer, UUID payer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv, String reason){
+       return makeTransaction(new TransactionRequest.TransactionBuilder()
+               .buyer(buyer)
+               .payer(payer)
+               .seller(seller)
+               .item(item)
+               .amount(amount)
+               .fee(fee)
+               .receiveInv(receiveInv)
+               .returnInv(returnInv)
+               .reason(reason)
+               .build());
+    }
+
+    private Transaction newTransactionRecord(ShopItem item, int amount, BigDecimal itemPrice, OfflinePlayer pBuyer, OfflinePlayer pSeller, long taxUid, long time) {
+        long uid = transactionUidManager.getNextUid();
+        return new Transaction(uid, item.getUid(), amount, itemPrice.doubleValue(), pBuyer.getUniqueId(), pSeller.getUniqueId(), taxUid, time);
+    }
+
+    private void addTransactionRecord(Transaction transaction) {
+        DatabaseManager.getInstance().insertTransaction(transaction);
+    }
+
+    private void addTaxRecord(Tax tax) {
+        DatabaseManager.getInstance().insertTax(tax);
+    }
+
+    private void giveItemTo(OfflinePlayer pBuyer, ShopItem item, int amount) {
+        ItemStack itemStack = item.getItemStack();
+        itemStack.setAmount(amount);
+        if (!pBuyer.isOnline()) {
+            double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
+            StorageItem storageItem = StorageConnection.getInstance().newStorageItem(pBuyer.getUniqueId(), itemStack, storageFeeUnit * itemStack.getAmount());
+            StorageConnection.getInstance().addStorageItem(storageItem);
+            new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
+        }else {
+            Player player = pBuyer.getPlayer();
+            PlayerInventory inventory = player.getInventory();
+            Inventory enderChest = player.getEnderChest();
+            if (giveTo(inventory, itemStack)) {
+                new Message(I18n.format("item.give.inventory")).send(pBuyer);
+                return;
+            }else if (giveTo(enderChest, itemStack)) {
+               new Message(I18n.format("item.give.ender_chest")).send(pBuyer);
+            }else {
+                new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
+                double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
+                StorageItem storageItem = StorageConnection.getInstance().newStorageItem(player.getUniqueId(), itemStack, storageFeeUnit * itemStack.getAmount());
+                StorageConnection.getInstance().addStorageItem(storageItem);
+            }
+        }
+    }
+
+    private boolean giveTo(Inventory inventory, ItemStack itemStack) {
+        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
+            if (InventoryUtils.addItem(inventory, itemStack)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void retrieveTax(Tax tax) {
+        addTaxRecord(tax);
+        SystemAccountUtils.depositSystem(tax.getTax() + tax.getFee());
+    }
+
+    public Tax newTax(UUID from, double tax, double fee, long time, String reason){
+        return new Tax(taxUidManager.getNextUid(), from, tax, fee, time, reason);
+    }
+
+    public boolean withdrawWithTax(OfflinePlayer player, double amount, ShopItemType type, String taxReason) {
+        BigDecimal tax = Tax.calcTax(BigDecimal.valueOf(amount), type);
+        Tax tax1 = newTax(player.getUniqueId(), tax.doubleValue(), 0, System.currentTimeMillis(), taxReason);
+        boolean withdraw = SystemAccountUtils.withdraw(player, tax.doubleValue());
+        if (withdraw){
+            retrieveTax(tax1);
+        }
+        return withdraw;
+    }
+
+    public boolean makeTransaction(TransactionRequest transactionRequest) {
+        UUID buyer = transactionRequest.getBuyer();
+        UUID payer = transactionRequest.getPayer();
+        UUID seller = transactionRequest.getSeller();
+        ShopItem item = transactionRequest.getItem();
+        int amount = transactionRequest.getAmount();
+        double fee = transactionRequest.getFee();
+        Inventory receiveInv = transactionRequest.getReceiveInv();
+        Inventory returnInv = transactionRequest.getReturnInv();
+        String reason = transactionRequest.getReason();
+        TaxMode taxMode = transactionRequest.getTaxMode();
+        Double taxRate = transactionRequest.getTaxRate();
+        Double priceOverride = transactionRequest.getPriceOverride();
+
         OfflinePlayer pBuyer = Bukkit.getOfflinePlayer(buyer);
         OfflinePlayer pPayer = Bukkit.getOfflinePlayer(payer);
         OfflinePlayer pSeller = Bukkit.getOfflinePlayer(seller);
         Economy eco = EcoUtils.getInstance().getEco();
         double balance = eco.getBalance(pBuyer);
-        BigDecimal itemPrice = BigDecimal.valueOf(item.getUnitPrice())
-                .multiply(BigDecimal.valueOf(amount));
-        BigDecimal tax = Tax.calcTax(item.getShopItemType(), itemPrice);
+
+        BigDecimal itemPrice = priceOverride == null ?BigDecimal.valueOf(item.getUnitPrice())
+                .multiply(BigDecimal.valueOf(amount))
+                : BigDecimal.valueOf(priceOverride);
+
+        BigDecimal tax = taxRate == null ?
+                Tax.calcTax(itemPrice, item.getShopItemType()) :
+                Tax.calcTax(itemPrice, taxRate);
         if (balance < itemPrice.add(tax).doubleValue()){
             new Message(I18n.format("transaction.buy.insufficient_funds")).send(pPayer);
             return false;
         }
-        BigDecimal toTake = itemPrice.add(tax);
+
+        //taxMode decide which side should pay the tax.
+        BigDecimal toTake = itemPrice;
+        BigDecimal totalPrice = itemPrice;
+        switch (taxMode){
+            case ADDITION: // tax buyer
+                toTake.add(tax);
+                break;
+            case CHARGE: //tax seller
+                totalPrice.subtract(tax);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + taxMode);
+        }
         double payerBalBefore = eco.getBalance(pPayer);
         double sellerBalBefore = eco.getBalance(pSeller);
         int soldAmountBefore = item.getSoldAmount();
@@ -143,72 +255,5 @@ public class TransactionController {
             }
             return false;
         }
-    }
-
-    private Transaction newTransactionRecord(ShopItem item, int amount, BigDecimal itemPrice, OfflinePlayer pBuyer, OfflinePlayer pSeller, long taxUid, long time) {
-        long uid = transactionUidManager.getNextUid();
-        return new Transaction(uid, item.getUid(), amount, itemPrice.doubleValue(), pBuyer.getUniqueId(), pSeller.getUniqueId(), taxUid, time);
-    }
-
-    private void addTransactionRecord(Transaction transaction) {
-        DatabaseManager.getInstance().insertTransaction(transaction);
-    }
-
-    private void addTaxRecord(Tax tax) {
-        DatabaseManager.getInstance().insertTax(tax);
-    }
-
-    private void giveItemTo(OfflinePlayer pBuyer, ShopItem item, int amount) {
-        ItemStack itemStack = item.getItemStack();
-        itemStack.setAmount(amount);
-        if (!pBuyer.isOnline()) {
-            double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
-            StorageItem storageItem = StorageConnection.getInstance().newStorageItem(pBuyer.getUniqueId(), itemStack, storageFeeUnit * itemStack.getAmount());
-            StorageConnection.getInstance().addStorageItem(storageItem);
-            new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
-        }else {
-            Player player = pBuyer.getPlayer();
-            PlayerInventory inventory = player.getInventory();
-            Inventory enderChest = player.getEnderChest();
-            if (giveTo(inventory, itemStack)) {
-                new Message(I18n.format("item.give.inventory")).send(pBuyer);
-                return;
-            }else if (giveTo(enderChest, itemStack)) {
-               new Message(I18n.format("item.give.ender_chest")).send(pBuyer);
-            }else {
-                new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
-                double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
-                StorageItem storageItem = StorageConnection.getInstance().newStorageItem(player.getUniqueId(), itemStack, storageFeeUnit * itemStack.getAmount());
-                StorageConnection.getInstance().addStorageItem(storageItem);
-            }
-        }
-    }
-
-    private boolean giveTo(Inventory inventory, ItemStack itemStack) {
-        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
-            if (InventoryUtils.addItem(inventory, itemStack)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void retrieveTax(Tax tax) {
-        addTaxRecord(tax);
-        SystemAccountUtils.depositSystem(tax.getTax() + tax.getFee());
-    }
-
-    public Tax newTax(UUID from, double tax, double fee, long time, String reason){
-        return new Tax(taxUidManager.getNextUid(), from, tax, fee, time, reason);
-    }
-
-    public boolean withdrawWithTax(OfflinePlayer player, double amount, ShopItemType type, String taxReason) {
-        BigDecimal tax = Tax.calcTax(type, BigDecimal.valueOf(amount));
-        Tax tax1 = newTax(player.getUniqueId(), tax.doubleValue(), 0, System.currentTimeMillis(), taxReason);
-        boolean withdraw = SystemAccountUtils.withdraw(player, tax.doubleValue());
-        if (withdraw){
-            retrieveTax(tax1);
-        }
-        return withdraw;
     }
 }

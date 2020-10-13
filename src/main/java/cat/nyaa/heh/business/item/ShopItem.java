@@ -193,7 +193,7 @@ public class ShopItem implements ModelableItem<ShopItem>{
 
     public String buildPriceLore() {
         HashMap<String, String> placeHolderMap = new HashMap<>();
-        placeHolderMap.put("tax", String.format("%.2f", Tax.calcTax(this.getShopItemType(), BigDecimal.valueOf(getUnitPrice())).doubleValue()));
+        placeHolderMap.put("tax", String.format("%.2f", Tax.calcTax(BigDecimal.valueOf(getUnitPrice()), this.getShopItemType()).doubleValue()));
         placeHolderMap.put("unitPrice", String.format("%.2f", getUnitPrice()));
         placeHolderMap.put("totalPrice", String.format("%.2f", getTotalPrice()));
         return newSubstitutor(placeHolderMap, I18n.format("shop_item.lore.price"));

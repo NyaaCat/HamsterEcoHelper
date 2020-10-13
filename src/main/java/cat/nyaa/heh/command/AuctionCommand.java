@@ -9,6 +9,7 @@ import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
+import cat.nyaa.nyaacore.cmdreceiver.BadCommandException;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import org.bukkit.Material;
@@ -51,8 +52,12 @@ public class AuctionCommand extends CommandReceiver implements ShortcutCommand {
         }
 
         double basePrice = arguments.nextDouble();
-        double stepPrice = arguments.nextDouble();
+        double stepPrice = Math.max(arguments.nextDouble(), 1);
         double reservePrice = basePrice;
+
+        if (basePrice <= 0 || stepPrice < 0 ){
+            throw new BadCommandException(I18n.format("command.auction.bad_input"));
+        }
         if (arguments.top() != null) {
              reservePrice = arguments.nextDouble();
         }

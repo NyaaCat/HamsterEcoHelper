@@ -49,7 +49,7 @@ public class StorageItem implements ModelableItem<StorageItem>{
 
     private String buildFeeLore() {
         HashMap<String, String> placeHolderMap = new HashMap<>();
-        placeHolderMap.put("tax", String.format("%.2f", Tax.calcTax(ShopItemType.STORAGE, BigDecimal.valueOf(getFee())).doubleValue()));
+        placeHolderMap.put("tax", String.format("%.2f", Tax.calcTax(BigDecimal.valueOf(getFee()), ShopItemType.STORAGE).doubleValue()));
         placeHolderMap.put("fee", String.format("%.2f", getFee()));
         return newSubstitutor(placeHolderMap, I18n.format("storage.lore.price"));
     }

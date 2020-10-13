@@ -3,8 +3,11 @@ package cat.nyaa.heh.business.auction;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.item.StorageItem;
+import cat.nyaa.heh.business.transaction.TaxMode;
 import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.TransactionController;
+import cat.nyaa.heh.business.transaction.TransactionRequest;
 import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.heh.utils.Utils;
@@ -204,11 +207,28 @@ public class Auction {
 
     private void onAucSuccess() {
         ItemStack itemStack = getItem();
-        stop();
+        this.stop();
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(offerer);
         double fee = HamsterEcoHelper.plugin.config.auctionFeeBase;
-        TransactionController.getInstance().makeTransaction(offerer, this.item.getOwner(), this.item, this.item.getAmount(), fee, TaxReason.REASON_AUC);
-        broadcast(new Message("").append(I18n.format("auction.success", offlinePlayer.getName(), highestOffer), itemStack));
+        TransactionRequest transactionRequest = buildTransactionReq();
+        if (TransactionController.getInstance().makeTransaction(transactionRequest)) {
+            broadcast(new Message("").append(I18n.format("auction.success", offlinePlayer.getName(), highestOffer), itemStack));
+        }else {
+            onAucFail();
+        }
+    }
+
+    private TransactionRequest buildTransactionReq() {
+        TransactionRequest.TransactionBuilder transactionBuilder = new TransactionRequest.TransactionBuilder();
+        TransactionRequest req = transactionBuilder.item(item)
+                .seller(item.getOwner())
+                .buyer(offerer)
+                .amount(item.getAmount())
+                .reason(TaxReason.REASON_AUC)
+                .taxMode(TaxMode.CHARGE)
+                .priceOverride(highestOffer)
+                .build();
+        return req;
     }
 
     private void onAucFail() {
@@ -219,12 +239,15 @@ public class Auction {
         Inventory targetInventory = null;
         if (offlinePlayer.isOnline()) {
             targetInventory = offlinePlayer.getPlayer().getInventory();
+            new Message(I18n.format("item.give.inventory")).send(offlinePlayer);
+            giveTo(targetInventory, itemStack);
         }else {
             //todo store item in temp inventory
-            StorageConnection.getInstance().newStorageItem(offlinePlayer.getUniqueId(), itemStack, 0);
-        }
-        if(targetInventory != null){
-            giveTo(targetInventory, itemStack);
+            StorageConnection instance = StorageConnection.getInstance();
+            StorageItem storageItem = instance.newStorageItem(offlinePlayer.getUniqueId(), itemStack, 0);
+            instance.addStorageItem(storageItem);
+            new Message(I18n.format("item.give.temp_storage")).send(offlinePlayer);
+            return;
         }
     }
 
