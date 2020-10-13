@@ -92,7 +92,15 @@ public class ItemFrameShop {
             public void run() {
                 frameMap.clear();
                 List<ItemFrameShop> frameShops = LocationConnection.getInstance().getFrameShops();
-                frameShops.forEach(itemFrameShop -> frameMap.put(itemFrameShop.getFrame().getUniqueId(), itemFrameShop));
+                frameShops.forEach(itemFrameShop -> {
+                    ItemFrame frame = itemFrameShop.getFrame();
+                    if (frame == null) {
+                        HamsterEcoHelper.plugin.getLogger().log(Level.WARNING, "removing null frame shop with uid @"+itemFrameShop.getUid());
+                        LocationConnection.getInstance().removeLocationModel(itemFrameShop.uid);
+                        return;
+                    }
+                    frameMap.put(frame.getUniqueId(), itemFrameShop);
+                });
             }
         }.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 1);
       }

@@ -330,15 +330,17 @@ public class DatabaseManager {
                         .filter(block -> block.getState() instanceof Chest)
                         .map(block -> ((Chest) block.getState()))
                         .findFirst().orElse(null);
+                    logger.log(Level.INFO, "loaded chest");
                     return chest;
                 });
-                task.sync((input) -> task.setTaskData("chest", input));
-                task.setErrorHandler((e, taska) -> {
-                    logger.log(Level.SEVERE, "error loading chest", e);
-                });
-                task.setDoneCallback((input) -> {
+                task.sync((input) -> {
+                    task.setTaskData("chest", input);
                     logger.log(Level.INFO, "lock notify");
                     lock.notify();
+                    return null;
+                });
+                task.setErrorHandler((e, taska) -> {
+                    logger.log(Level.SEVERE, "error loading chest", e);
                 });
                 new BukkitRunnable(){
                     @Override
