@@ -57,15 +57,8 @@ public class SignEvents implements Listener {
                 new Message(I18n.format("shop.sign.lotto.confirm", name, shopAt1.getPrice())).send(event.getPlayer());
                 return;
             }
-
-            try{
-                shopAt1.doBusiness(event.getPlayer(), null, 1);
-                new Message("").append(I18n.format("shop.sign.lotto.success", name, shopAt1.getPrice())).send(event.getPlayer());
-            }catch (NoLottoChestException e){
-                new Message(I18n.format("shop.sign.lotto.no_chest", name)).send(event.getPlayer());
-            }catch (InvalidItemException e){
-                new Message(I18n.format("shop.sign.lotto.invalid_item", name)).send(event.getPlayer());
-            }
+            new Message(I18n.format("shop.sign.lotto.started")).send(event.getPlayer());
+            shopAt1.doBusiness(event.getPlayer(), null, 1);
             return;
         }
         if (shopAt instanceof SignShopBuy){

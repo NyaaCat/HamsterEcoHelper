@@ -37,9 +37,13 @@ shop:
     sell:
       no_chest: "玩家 %s &r未设置库存箱"
   lotto:
+    item: "您抽取到了物品 {itemName} &r* {amount}"
     success: "抽取了 %s &r的乐透，支付了%.2f 节操"
+    failed: "交易失败"
+    started: "开始抽取物品"
     no_chest: "玩家 %s 未设置乐透箱"
     invalid_item: "抽取失败"
+    confirm: "玩家 %s 的乐透箱, 单价 %.2f 10秒内再次点击进行抽取"
   buy:
     info:
       owner: "玩家 %s &r收购的物品"

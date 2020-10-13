@@ -1,6 +1,7 @@
 package cat.nyaa.heh.business.transaction;
 
 import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.nyaacore.orm.annotations.Column;
 import cat.nyaa.nyaacore.orm.annotations.Table;
@@ -43,6 +44,10 @@ public class Tax {
 
     public static BigDecimal calcTax(BigDecimal price, double taxRate){
         return price.multiply(BigDecimal.valueOf(taxRate)).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+    }
+
+    public static Double getTaxRate(ShopItem shopItem) {
+        return HamsterEcoHelper.plugin.config.taxRateMap.getOrDefault(shopItem.getShopItemType().name().toLowerCase(), 0d).doubleValue();
     }
 
     public void setUid(long uid) {
