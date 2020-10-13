@@ -333,11 +333,19 @@ public class DatabaseManager {
                     return chest;
                 });
                 task.sync((input) -> task.setTaskData("chest", input));
+                task.setErrorHandler((e, taska) -> {
+                    logger.log(Level.SEVERE, "error loading chest", e);
+                });
                 task.setDoneCallback((input) -> {
                     logger.log(Level.INFO, "lock notify");
                     lock.notify();
                 });
-                task.execute();
+                new BukkitRunnable(){
+                    @Override
+                    public void run() {
+                        task.execute();
+                    }
+                }.runTask(HamsterEcoHelper.plugin);
                 logger.log(Level.INFO, "lock wait");
                 lock.wait();
                 Chest chest = task.getTaskData("chest");
