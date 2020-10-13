@@ -57,7 +57,10 @@ public class ItemFrameShop {
         locationDbModel.setEntityUUID(frame.getUniqueId());
         data = new ItemFrameShopData();
         locationDbModel.setData(data);
-        this.init(locationDbModel);
+        if (!this.init(locationDbModel)) {
+            return;
+        }
+
         setBaseShop(data);
         makeEmpty(frame);
     }
@@ -67,7 +70,9 @@ public class ItemFrameShop {
     }
 
     public ItemFrameShop(LocationDbModel shopFrame) {
-        this.init(shopFrame);
+        if (!this.init(shopFrame)) {
+            return;
+        }
         makeEmpty(frame);
     }
 
@@ -115,16 +120,21 @@ public class ItemFrameShop {
         }
     }
 
-    private void init(LocationDbModel shopFrame) {
+    private boolean init(LocationDbModel shopFrame) {
         Entity entity = shopFrame.getEntity();
         if (entity instanceof ItemFrame){
             frame = ((ItemFrame) entity);
+        }
+        if (entity == null){
+            removeFrameShop(getUid());
+            return false;
         }
         this.uid = shopFrame.getUid();
         this.owner = Bukkit.getOfflinePlayer(shopFrame.getOwner());
         this.data = DataModel.getGson().fromJson(shopFrame.getData(), ItemFrameShopData.class);
         setBaseShop(data);
         refreshItemFrameNow(frame);
+        return true;
     }
 
     private LocationDbModel toModel(){
