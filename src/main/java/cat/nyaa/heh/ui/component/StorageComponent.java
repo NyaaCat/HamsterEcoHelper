@@ -59,6 +59,7 @@ public class StorageComponent extends BasePagedComponent<StorageItem> {
             new Message(I18n.format("storage.retrieve.insufficient_funds")).send(player);
             return;
         }
+        eco.withdrawPlayer(player, fee);
         addOnCursor(event, content);
     }
 
