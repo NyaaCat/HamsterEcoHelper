@@ -143,18 +143,22 @@ public class Requisition {
 
         @Override
         public void run() {
-            requisition.state++;
-            if (requisition.state < 4){
-                int remain = item.getAmount() - item.getSoldAmount();
-                String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
-                if (item.isOwnedBySystem()){
-                    name = SystemAccountUtils.getSystemName();
-                }
-                broadcast(new Message("").append(I18n.format("requisition.info.player", name, remain, item.getUnitPrice(), (duration - state*(duration/4))/20), getItem()));
+            try {
+                requisition.state++;
+                if (requisition.state < 4) {
+                    int remain = item.getAmount() - item.getSoldAmount();
+                    String name = Bukkit.getOfflinePlayer(item.getOwner()).getName();
+                    if (item.isOwnedBySystem()) {
+                        name = SystemAccountUtils.getSystemName();
+                    }
+                    broadcast(new Message("").append(I18n.format("requisition.info.player", name, remain, item.getUnitPrice(), (duration - state * (duration / 4)) / 20), getItem()));
 
-                requisitionTask = new RequisitionTask(requisition);
-                requisitionTask.runTaskLater(HamsterEcoHelper.plugin, duration/4);
-            }else {
+                    requisitionTask = new RequisitionTask(requisition);
+                    requisitionTask.runTaskLater(HamsterEcoHelper.plugin, duration / 4);
+                } else {
+                    requisition.onStop();
+                }
+            }catch (Exception e){
                 requisition.onStop();
             }
        }
