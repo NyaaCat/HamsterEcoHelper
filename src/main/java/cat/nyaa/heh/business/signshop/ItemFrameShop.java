@@ -25,6 +25,7 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -477,6 +478,17 @@ public class ItemFrameShop {
             return;
         }
         ItemStack model = item.getModel().clone();
+        Material type = model.getType();
+        if(type.equals(Material.MAP) || type.equals(Material.FILLED_MAP)){
+            ItemMeta itemMeta = item.getItemStack().getItemMeta();
+            if (itemMeta == null) return;
+            List<String> lore = itemMeta.getLore();
+            if (lore == null){
+                lore = new ArrayList<>();
+            }
+            lore.addAll(item.buildLore());
+            model.setItemMeta(itemMeta);
+        }
         if (model.getAmount() <= 0 || model.getType().isAir()){
             refreshItemFrameNow(frame);
             displayingItem = null;
