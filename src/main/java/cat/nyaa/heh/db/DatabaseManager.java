@@ -323,19 +323,16 @@ public class DatabaseManager {
             final Object lock = new Object();
             synchronized (lock){
                 TaskChain<Chest> task = Utils.newChain().sync((input) -> {
-                    logger.log(Level.INFO, "load chest");
                     Chest chest = locationTable.select(WhereClause.EQ("type", LocationType.CHEST_LOTTO).whereEq("owner", owner)).stream()
                         .map(LocationDbModel::getBlock)
                         .limit(1)
                         .filter(block -> block.getState() instanceof Chest)
                         .map(block -> ((Chest) block.getState()))
                         .findFirst().orElse(null);
-                    logger.log(Level.INFO, "loaded chest");
                     return chest;
                 });
                 task.sync((input) -> {
                     task.setTaskData("chest", input);
-                    logger.log(Level.INFO, "lock notify");
                     synchronized (lock){
                         lock.notify();
                     }
@@ -350,13 +347,11 @@ public class DatabaseManager {
                         task.execute();
                     }
                 }.runTask(HamsterEcoHelper.plugin);
-                logger.log(Level.INFO, "lock wait");
                 lock.wait();
                 Chest chest = task.getTaskData("chest");
                 if (chest == null){
                     throw new NoLottoChestException();
                 }
-                logger.log(Level.INFO, "load lotto done");
                 return chest.getInventory();
             }
         } catch (InterruptedException e) {

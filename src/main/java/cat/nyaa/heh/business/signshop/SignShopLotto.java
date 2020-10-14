@@ -103,7 +103,6 @@ public class SignShopLotto extends BaseSignShop {
         String name = SystemAccountUtils.isSystemAccount(getOwner()) ? SystemAccountUtils.getSystemName()
                 : Bukkit.getOfflinePlayer(getOwner()).getName();
         try {
-            new Message("").append(I18n.format("shop.sign.lotto.success", name, price)).send(related);
             Inventory lottoItems = SignShopConnection.getInstance().getLottoItems(owner);
 
             if(lottoItems == null){
@@ -145,6 +144,7 @@ public class SignShopLotto extends BaseSignShop {
                 @Override
                 public void run() {
                     if (TransactionController.getInstance().makeTransaction(req)) {
+                        new Message("").append(I18n.format("shop.sign.lotto.success", name, price)).send(related);
                         new Message("").append(I18n.format("shop.sign.lotto.item"), shopItem.getItemStack()).send(related);
                     } else {
                         lottoItems.setItem(integer, clone); //may cause chunk load...
