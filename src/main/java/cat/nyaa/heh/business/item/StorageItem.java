@@ -20,6 +20,7 @@ public class StorageItem implements ModelableItem<StorageItem>{
     public StorageItem(StorageDbModel model){
         ItemStack itemStack = ItemStackUtils.itemFromBase64(model.getNbt());
         itemStack.setAmount(model.getAmount());
+        this.uid = model.getUid();
         init(model.getOwner(), itemStack, model.getStorageFee());
     }
 
