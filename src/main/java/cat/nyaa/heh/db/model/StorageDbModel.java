@@ -36,7 +36,7 @@ public class StorageDbModel {
     }
 
     public StorageDbModel(long uid, UUID owner, ItemStack item, double fee){
-        this.uid = -1;
+        this.uid = uid;
         this.owner = owner;
         this.nbt = ItemStackUtils.itemToBase64(item);
         this.amount = item.getAmount();
