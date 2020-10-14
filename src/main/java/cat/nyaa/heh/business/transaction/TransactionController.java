@@ -242,6 +242,7 @@ public class TransactionController {
             double dSeller = sellerBalAfter - sellerBalBefore;
             eco.depositPlayer(pPayer, dBuyer);
             eco.withdrawPlayer(pSeller, dSeller);
+            HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "exception during transaction :", e);
             Message message = new Message(I18n.format("transaction.error.exception", e.getMessage()));
             message.send(pPayer);
             message.send(pSeller);
