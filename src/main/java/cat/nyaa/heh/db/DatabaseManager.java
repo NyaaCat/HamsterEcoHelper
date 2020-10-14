@@ -336,7 +336,9 @@ public class DatabaseManager {
                 task.sync((input) -> {
                     task.setTaskData("chest", input);
                     logger.log(Level.INFO, "lock notify");
-                    lock.notify();
+                    synchronized (lock){
+                        lock.notify();
+                    }
                     return null;
                 });
                 task.setErrorHandler((e, taska) -> {
