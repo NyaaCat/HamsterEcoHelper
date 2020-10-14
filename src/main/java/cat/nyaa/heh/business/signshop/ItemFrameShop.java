@@ -11,10 +11,7 @@ import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
 import cat.nyaa.heh.utils.Utils;
 import cat.nyaa.nyaacore.Message;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Rotation;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -26,6 +23,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapView;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -480,14 +479,18 @@ public class ItemFrameShop {
         ItemStack model = item.getModel().clone();
         Material type = model.getType();
         if(type.equals(Material.MAP) || type.equals(Material.FILLED_MAP)){
+            ItemMeta modelMeta = model.getItemMeta();
             ItemMeta itemMeta = item.getItemStack().getItemMeta();
-            if (itemMeta == null) return;
-            List<String> lore = itemMeta.getLore();
-            if (lore == null){
-                lore = new ArrayList<>();
-            }
-            lore.addAll(item.buildLore());
-            model.setItemMeta(itemMeta);
+            if (!(modelMeta instanceof MapMeta) || !(itemMeta instanceof MapMeta)) return;
+            MapMeta mMeta = (MapMeta) modelMeta;
+            MapMeta iMeta = (MapMeta) itemMeta;
+            MapView v = iMeta.getMapView();
+            Color c = iMeta.getColor();
+            String ln = iMeta.getLocationName();
+            mMeta.setMapView(v);
+            mMeta.setColor(c);
+            mMeta.setLocationName(ln);
+            model.setItemMeta(mMeta);
         }
         if (model.getAmount() <= 0 || model.getType().isAir()){
             refreshItemFrameNow(frame);
