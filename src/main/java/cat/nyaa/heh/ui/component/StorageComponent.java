@@ -67,12 +67,12 @@ public class StorageComponent extends BasePagedComponent<StorageItem> {
 
     @Override
     public void onRightClick(InventoryClickEvent event) {
-        retrieve(event);
+        onLeftClick(event);
     }
 
     @Override
     public void onShiftLeftClick(InventoryClickEvent event) {
-        retrieve(event);
+        onLeftClick(event);
     }
 
     @Override
