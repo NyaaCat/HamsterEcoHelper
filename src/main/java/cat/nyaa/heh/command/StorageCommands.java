@@ -38,12 +38,18 @@ public class StorageCommands extends CommandReceiver implements ShortcutCommand{
         UUID owner;
         Player player = asPlayer(sender);
         if (sender.isOp()){
-            Player player1 = arguments.nextPlayer();
-            owner = player1.getUniqueId();
+            String top = arguments.top();
+            if(top == null){
+                owner = asPlayer(sender).getUniqueId();
+            }else {
+                Player player1 = arguments.nextPlayer();
+                owner = player1.getUniqueId();
+            }
         }else{
             owner = player.getUniqueId();
         }
         StorageGUI g = UiManager.getInstance().newStorageGUI(owner);
+        g.refreshGUI();
         g.open(player);
     }
 
