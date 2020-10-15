@@ -86,7 +86,7 @@ public class Market extends BaseShop {
         if (ownerFilter != null){
             stream = stream.filter(shopItem -> shopItem.getOwner().equals(ownerFilter));
         }
-        return stream.sorted(Comparator.comparingLong(ShopItem::getTime).reversed()).collect(Collectors.toList());
+        return stream.sorted(Comparator.comparingLong(ShopItem::getUid).reversed()).collect(Collectors.toList());
     }
 
     public void refreshItem(){
