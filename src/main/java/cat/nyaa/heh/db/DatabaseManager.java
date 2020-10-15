@@ -461,10 +461,11 @@ public class DatabaseManager {
     }
 
     public int getMarketItemCount(UUID uniqueId) {
-        String sql = "select count(*) count, amount a, sold s, available ava from items where a > s and ava = true and owner = ?";
+        String sql = "select count(*) count, amount a, sold s, available ava from items where type = ? and a > s and ava = true and owner = ?";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
-            statement.setString(1,uniqueId.toString());
+            statement.setString(1,ShopItemType.MARKET.name());
+            statement.setString(2,uniqueId.toString());
             List<ShopItem> results = new ArrayList<>();
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.getInt("count");
