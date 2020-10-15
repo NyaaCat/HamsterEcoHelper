@@ -85,6 +85,11 @@ public class PayCommand extends CommandReceiver implements ShortcutCommand{
         }
         String customerName = Bukkit.getOfflinePlayer(customer).getName();
 
+        if (item.getAmount() <= item.getSoldAmount()){
+            new Message(I18n.format("command.cancel.payed_invoice", uid)).send(sender);
+            return;
+        }
+
         ConfirmTask cancelTask = confirmMap.getOrDefault(uniqueId, null);
 
         if (cancelTask == null){
