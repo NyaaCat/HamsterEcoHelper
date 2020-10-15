@@ -3,6 +3,7 @@ package cat.nyaa.heh.business.auction;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -168,6 +169,8 @@ public class Requisition {
         requisitionTask.cancel();
         hasRequisition = false;
         currentRequisition = null;
+        ShopItemManager.getInstance().invalidateItem(item);
+        item = null;
         broadcast(new Message(I18n.format("requisition.stop")));
     }
 

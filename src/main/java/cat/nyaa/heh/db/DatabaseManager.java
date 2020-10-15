@@ -474,4 +474,9 @@ public class DatabaseManager {
             throw new RuntimeException();
         }
     }
+
+    public void invalidateItem(ShopItem item) {
+        item.setAvailable(false);
+        shopItemTable.update(ShopItemDbModel.fromShopItem(item), WhereClause.EQ("uid", item.getUid()));
+    }
 }

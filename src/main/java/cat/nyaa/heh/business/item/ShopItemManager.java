@@ -70,4 +70,8 @@ public class ShopItemManager {
     public List<ShopItem> searchShopItems(String keywords) {
         return DatabaseManager.getInstance().getShopItems(keywords);
     }
+
+    public void invalidateItem(ShopItem item) {
+        DatabaseManager.getInstance().invalidateItem(item);
+    }
 }
