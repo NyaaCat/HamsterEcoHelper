@@ -41,6 +41,7 @@ public class StorageComponent extends BasePagedComponent<StorageItem> {
     @Override
     public void onLeftClick(InventoryClickEvent event) {
         retrieve(event);
+        loadData();
         refreshUi();
     }
 
