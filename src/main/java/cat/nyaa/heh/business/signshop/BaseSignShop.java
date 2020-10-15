@@ -126,9 +126,10 @@ public abstract class BaseSignShop extends BaseShop{
         String name = SystemAccountUtils.isSystemAccount(owner) ? SystemAccountUtils.getSystemName() : Bukkit.getOfflinePlayer(owner).getName();
         sign.setLine(0, getTitle());
         sign.setLine(1, name == null ? "null" : name);
-        int msgSize = lores.size();
+        List<String> lore = this.getLores();
+        int msgSize = lore.size();
         for (int i = 0; i < 2; i++) {
-            String line = i >= msgSize ? "" : lores.get(i);
+            String line = i >= msgSize ? "" : lore.get(i);
             if (line == null || line.trim().equals("")){
                 // don't update empty lines.
                 continue;
