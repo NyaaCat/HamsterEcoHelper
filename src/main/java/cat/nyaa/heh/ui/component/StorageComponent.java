@@ -99,11 +99,7 @@ public class StorageComponent extends BasePagedComponent<StorageItem> {
         ItemStack itemStack = storageItem.getItemStack().clone();
         ItemStack cursor = event.getCursor();
 
-        if (cursor == null || cursor.getType().isAir()){
-            event.getView().setCursor(itemStack);
-        }else {
-            giveTo(event, storageItem);
-        }
+        giveTo(event, storageItem);
         StorageConnection.getInstance().removeStorageItem(storageItem);
     }
 
