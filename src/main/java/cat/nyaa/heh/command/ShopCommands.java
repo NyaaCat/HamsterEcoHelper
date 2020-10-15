@@ -50,8 +50,14 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
     public void onSell(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
         Block targetBlockExact = player.getTargetBlockExact(10);
-        if (targetBlockExact == null || !(targetBlockExact.getState() instanceof Sign)){
-
+        if (targetBlockExact == null || !(targetBlockExact.getState() instanceof Sign) || !(isShopSign(targetBlockExact))){
+            new Message(I18n.format("command.shop.sell.wrong_target")).send(sender);
+            return;
+        }
+        BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlockExact.getLocation());
+        if (!shopAt.getOwner().equals(player.getUniqueId())){
+            new Message(I18n.format("command.shop.sell.wrong_target")).send(sender);
+            return;
         }
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (itemInMainHand.getType().isAir()){
@@ -66,6 +72,11 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         UiManager.getInstance().getSignShopUis(player.getUniqueId()).stream()
                 .forEach(SignShopGUI::refreshGUI);
+    }
+
+    private boolean isShopSign(Block block1) {
+        Sign sign = (Sign) block1.getState();
+        return SignShopManager.getInstance().isSignShop(sign);
     }
 
     @SubCommand(value = "buy", permission = PERMISSION_SHOP, tabCompleter = "sellCompleter")
