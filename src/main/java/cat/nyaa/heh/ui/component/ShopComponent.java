@@ -7,6 +7,7 @@ import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.db.StorageConnection;
+import cat.nyaa.heh.utils.ClickUtils;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Material;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 import java.util.UUID;
 
@@ -26,12 +26,17 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
 
     @Override
     public void onLeftClick(InventoryClickEvent event) {
+        UUID uniqueId = event.getWhoClicked().getUniqueId();
+        if (checkCD(uniqueId)) {
+            return;
+        }
+        clickChecker.click(uniqueId, 10);
         ShopItem shopItem = getContent(event);
         if (shopItem == null){
             return;
         }
 
-        UUID buyer = event.getWhoClicked().getUniqueId();
+        UUID buyer = uniqueId;
         if (buyer.equals(shopItem.getOwner())){
             addOnCursor(event, shopItem, 1);
         }else{
@@ -39,6 +44,12 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         }
         loadData();
         refreshUi();
+    }
+
+    ClickUtils clickChecker = new ClickUtils();
+
+    private boolean checkCD(UUID clicker) {
+        return clickChecker.isMultiClick(clicker);
     }
 
     protected void makeTransaction(InventoryClickEvent event, UUID buyer, ShopItem shopItem) {

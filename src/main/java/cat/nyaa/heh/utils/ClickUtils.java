@@ -22,7 +22,7 @@ public class ClickUtils {
             .expireAfterAccess(1, TimeUnit.MINUTES)
             .build();
 
-    public boolean isValidClick(UUID uuid){
+    public boolean isMultiClick(UUID uuid){
         ClickTask ifPresent = clickTaskMap.getIfPresent(uuid);
         return ifPresent != null && ifPresent.isValidClick();
     }

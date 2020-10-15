@@ -3,7 +3,6 @@ package cat.nyaa.heh.events.listeners;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.signshop.*;
 import cat.nyaa.heh.ui.SignShopGUI;
-import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.ClickUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
@@ -21,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class SignEvents implements Listener {
@@ -51,7 +49,7 @@ public class SignEvents implements Listener {
 
             ClickUtils clicker = ClickUtils.get("heh_lotto");
             UUID uniqueId = event.getPlayer().getUniqueId();
-            boolean firstClick = !clicker.isValidClick(uniqueId);
+            boolean firstClick = !clicker.isMultiClick(uniqueId);
             clicker.click(uniqueId, 200);
             if (firstClick) {
                 new Message(I18n.format("shop.sign.lotto.confirm", name, shopAt1.getPrice())).send(event.getPlayer());
