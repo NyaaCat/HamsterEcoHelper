@@ -396,8 +396,8 @@ public class DatabaseManager {
         String sql = "select amount, available, nbt, owner, price, sold, time, type, uid from items where available = true and amount > sold ORDER BY uid limit ? offset ?;";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
-            statement.setInt(0, current);
-            statement.setInt(1, batchSize);
+            statement.setInt(1, current);
+            statement.setInt(2, batchSize);
             List<ShopItem> results = new ArrayList<>();
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
@@ -458,5 +458,20 @@ public class DatabaseManager {
 
     public void removeLocationModelById(long uid) {
         locationTable.delete(WhereClause.EQ("uid", uid));
+    }
+
+    public int getMarketItemCount(UUID uniqueId) {
+        String sql = "select count(*) count, amount a, sold s, available ava from items where a > s and ava = true and owner = ?";
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1,uniqueId.toString());
+            List<ShopItem> results = new ArrayList<>();
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.getInt("count");
+            }
+        } catch (SQLException throwables) {
+            Bukkit.getLogger().log(Level.SEVERE, "error loading shop items", throwables);
+            throw new RuntimeException();
+        }
     }
 }

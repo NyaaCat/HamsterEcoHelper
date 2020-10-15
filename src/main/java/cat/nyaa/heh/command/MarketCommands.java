@@ -39,6 +39,13 @@ public class MarketCommands extends CommandReceiver implements ShortcutCommand{
             openMarketGUI(player);
             return;
         }
+        Market market = Market.getInstance();
+        int itemCount = market.getItemCount(player.getUniqueId());
+        double limitSlotMarket = HamsterEcoHelper.plugin.config.limitSlotMarket;
+        if (itemCount >= limitSlotMarket){
+            new Message(I18n.format("market.offer.limited")).send(sender);
+            return;
+        }
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (itemInMainHand.getType().isAir()){
             new Message(I18n.format("market.offer.no_item")).send(sender);
@@ -59,7 +66,7 @@ public class MarketCommands extends CommandReceiver implements ShortcutCommand{
         eco.withdrawPlayer(player, marketFeeBase);
         new Message("").append(I18n.format("market.offer.withdraw", marketFeeBase)).send(sender);
 
-        Market.getInstance().offer(player, itemInMainHand, unitPrice);
+        market.offer(player, itemInMainHand, unitPrice);
         new Message("").append(I18n.format("market.offer.success", unitPrice), itemInMainHand).send(sender);
         player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
     }

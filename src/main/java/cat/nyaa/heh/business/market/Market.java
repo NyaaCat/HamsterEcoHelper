@@ -109,4 +109,7 @@ public class Market extends BaseShop {
         return LocationType.MARKET;
     }
 
+    public int getItemCount(UUID uniqueId) {
+        return MarketConnection.getInstance().getItemCount(uniqueId);
+    }
 }

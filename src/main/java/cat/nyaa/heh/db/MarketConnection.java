@@ -5,6 +5,7 @@ import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 
 import java.util.List;
+import java.util.UUID;
 
 public class MarketConnection {
     private static MarketConnection INSTANCE;
@@ -61,5 +62,9 @@ public class MarketConnection {
     public List<ShopItem> getItems(){
         List<ShopItem> items = DatabaseManager.getInstance().getMarketItems();
         return items;
+    }
+
+    public int getItemCount(UUID uniqueId) {
+        return DatabaseManager.getInstance().getMarketItemCount(uniqueId);
     }
 }
