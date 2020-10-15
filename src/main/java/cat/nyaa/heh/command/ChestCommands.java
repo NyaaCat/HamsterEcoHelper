@@ -157,7 +157,7 @@ public class ChestCommands extends CommandReceiver implements ShortcutCommand{
             try {
                 LockettePro plugin = HamsterEcoHelper.getPlugin(LockettePro.class);
                 locketteProEnabled = plugin.isEnabled();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 locketteProEnabled = false;
             }
         }
