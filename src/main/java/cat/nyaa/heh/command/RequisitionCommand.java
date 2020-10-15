@@ -35,6 +35,10 @@ public class RequisitionCommand extends CommandReceiver implements ShortcutComma
 
     @SubCommand(isDefaultCommand = true, permission = PERMISSION_REQ, tabCompleter = "reqCompleter")
     public void onReq(CommandSender sender, Arguments arguments){
+        if (Requisition.hasRequisition()) {
+            new Message(I18n.format("command.requisition.running")).send(sender);
+            return;
+        }
         Player player = asPlayer(sender);
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (itemInMainHand.getType().isAir()){

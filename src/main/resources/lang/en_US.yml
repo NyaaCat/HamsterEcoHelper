@@ -108,6 +108,7 @@ command:
     success: "订单 %d 已支付"
     failed: "订单 %d 支付失败"
   requisition:
+    running: "当前正在进行征购，无法进行新的征购"
     no_item: "主手没有物品"
   sell:
     no_requisition: "当前没有正在进行的征购"
