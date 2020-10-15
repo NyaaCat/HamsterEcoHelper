@@ -106,11 +106,9 @@ public class StorageComponent extends BasePagedComponent<StorageItem> {
     private void giveTo(InventoryClickEvent event, StorageItem storageItem) {
         Inventory inventory = event.getWhoClicked().getInventory();
         ItemStack itemStack = storageItem.getItemStack();
-        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
-            if (!InventoryUtils.addItem(inventory, itemStack)){
-                HumanEntity whoClicked = event.getWhoClicked();
-                whoClicked.getWorld().dropItemNaturally(whoClicked.getLocation(), itemStack);
-            }
+        if (!InventoryUtils.addItem(inventory, itemStack)){
+            HumanEntity whoClicked = event.getWhoClicked();
+            whoClicked.getWorld().dropItemNaturally(whoClicked.getLocation(), itemStack);
         }
     }
 
