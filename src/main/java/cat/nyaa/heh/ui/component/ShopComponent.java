@@ -30,7 +30,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         if (checkCD(uniqueId)) {
             return;
         }
-        clickChecker.click(uniqueId, 10);
+        clickChecker.click(uniqueId, getClickCD());
         ShopItem shopItem = getContent(event);
         if (shopItem == null){
             return;
@@ -44,6 +44,10 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         }
         loadData();
         refreshUi();
+    }
+
+    private int getClickCD() {
+        return 10;
     }
 
     ClickUtils clickChecker = new ClickUtils();
