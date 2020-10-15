@@ -67,7 +67,7 @@ public class SignShopLotto extends BaseSignShop {
     @Override
     public List<String> getLores() {
         List<String> lores = super.getLores();
-        lores.set(0, buildPriceLore());
+        lores.add(0, buildPriceLore());
         return lores;
     }
 

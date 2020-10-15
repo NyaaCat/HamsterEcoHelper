@@ -43,13 +43,13 @@ public class Configuration extends PluginConfigure {
     public double requisitionFeeBase = 50;
 
     @Serializable(name = "limit.slots.market")
-    public double limitSlotMarket = 5;
+    public int limitSlotMarket = 5;
     @Serializable(name = "limit.slots.signshop")
-    public double limitSlotSignshop = 100;
+    public int limitSlotSignshop = 100;
     @Serializable(name = "limit.signs")
-    public double limitSigns = 3;
+    public int limitSigns = 3;
     @Serializable(name = "limit.frames")
-    public double limitFrames = 12;
+    public int limitFrames = 12;
 
     @Serializable(name = "auction.interval")
     public int auctionStepInterval = 200;
