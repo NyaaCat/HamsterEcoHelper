@@ -1,7 +1,10 @@
 package cat.nyaa.heh.events.listeners;
 
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.business.signshop.*;
+import cat.nyaa.heh.business.signshop.BaseSignShop;
+import cat.nyaa.heh.business.signshop.SignShopBuy;
+import cat.nyaa.heh.business.signshop.SignShopLotto;
+import cat.nyaa.heh.business.signshop.SignShopManager;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.utils.ClickUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -10,6 +13,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -89,6 +95,10 @@ public class SignEvents implements Listener {
             boolean hasSign = blockFaces.stream()
                     .map(block::getRelative)
                     .filter(block1 -> block1.getState() instanceof Sign)
+                    .filter(block1 -> {
+                        Block relative = block1.getRelative(getFacing(block1).getOppositeFace());
+                        return relative.equals(block);
+                    })
                     .anyMatch(this::isShopSign);
             if (hasSign){
                 event.setCancelled(true);
@@ -104,6 +114,26 @@ public class SignEvents implements Listener {
                 event.setCancelled(false);
             }
         }
+    }
+
+    public static BlockFace getFacing(Block block) {
+        BlockData data = block.getBlockData();
+        BlockFace f = null;
+        if (data instanceof Directional && data instanceof Waterlogged && ((Waterlogged) data).isWaterlogged()) {
+            String str = ((Directional) data).toString();
+            if (str.contains("facing=west")) {
+                f = BlockFace.WEST;
+            } else if (str.contains("facing=east")) {
+                f = BlockFace.EAST;
+            } else if (str.contains("facing=south")) {
+                f = BlockFace.SOUTH;
+            } else if (str.contains("facing=north")) {
+                f = BlockFace.NORTH;
+            }
+        } else if (data instanceof Directional) {
+            f = ((Directional) data).getFacing();
+        }
+        return f;
     }
 
     private boolean isShopSign(Block block1) {
