@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
@@ -159,6 +160,28 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         Player player = asPlayer(sender);
         Block targetBlock = player.getTargetBlockExact(10);
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlock.getLocation());
+        String action = arguments.top();
+        if (action != null){
+            if (action.equals("buy")){
+                arguments.next();
+                shopAt.loadItems();
+                List<ShopItem> items = shopAt.getItems();
+                items.sort(Comparator.comparingLong(ShopItem::getUid));
+                if (arguments.remains() == 0){
+                    new Message(I18n.format("command.remove.buy.message")).send(sender);
+                    for (int i = 0; i < items.size(); i++) {
+                        ShopItem shopItem = items.get(i);
+                        new Message("").append(I18n.format("command.remove.buy.item", i), shopItem.getModel()).send(sender);
+                    }
+                    return;
+                }
+                int index = arguments.nextInt();
+                ShopItem shopItem = items.get(index);
+                ShopItemManager.getInstance().invalidateItem(shopItem);
+                new Message("").append(I18n.format("command.remove.buy.success", index), shopItem.getModel()).send(sender);
+            }
+            return;
+        }
         if (shopAt == null){
             new Message(I18n.format("shop.remove.not_sign_shop")).send(sender);
             return;

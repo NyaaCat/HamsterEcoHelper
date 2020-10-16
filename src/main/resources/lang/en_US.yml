@@ -135,6 +135,10 @@ command:
     not_owner: "该商店不属于您 您不可以移除"
     not_sign_shop: "目标不是牌子商店"
     success: "移除成功"
+    buy:
+      message: "可移除的物品列表:"
+      item: "id: %d 物品 {itemName}"
+      success: "成功移除物品 %d: {itemName}"
   search:
     result: "{itemName} &r* {amount} 由 %s &r提供 类型 %s 单价 %.2f"
     complete: "搜索完成"
