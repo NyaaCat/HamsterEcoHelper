@@ -202,7 +202,7 @@ public class TransactionController {
             ItemStack itemStack = item.getItemStack();
             itemStack.setAmount(amount);
             new Message("").append(I18n.format("transaction.withdraw", pSeller.getName(), toTake.doubleValue()), itemStack).send(pPayer);
-            new Message("").append(I18n.format("transaction.deposit", pPayer.getName(), itemPrice.doubleValue()), itemStack).send(pSeller);
+            new Message("").append(I18n.format("transaction.deposit", pPayer.getName(), totalPrice.doubleValue()), itemStack).send(pSeller);
             if(!rspBuyer.type.equals(EconomyResponse.ResponseType.SUCCESS) || !rspSeller.type.equals(EconomyResponse.ResponseType.SUCCESS) ){
                 throw new IllegalStateException("");
             }
