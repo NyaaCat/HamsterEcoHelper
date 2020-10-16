@@ -102,7 +102,7 @@ command:
   pay:
     invalid_invoice: "订单 %d 无效"
     customer_offline: "订单客户 %s &r不在线"
-    confirm_msg: "将要支付 %s &r向 %s &r发起的直送订单 价格 %.2f 如确认无误请再次输入指令完成支付"
+    confirm_msg: "将要支付 %s &r向 %s &r发起的直送订单 价格 %.2f + %.2f 税入 如确认无误请再次输入指令完成支付"
     payed_invoice: "订单 %d 已结单，无法再次支付"
     uid_mismatch: "两次输入的订单号不一致(%d, %d)"
     success: "订单 %d 已支付"

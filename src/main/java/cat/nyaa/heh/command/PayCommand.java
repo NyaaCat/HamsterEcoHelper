@@ -5,6 +5,7 @@ import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.direct.DirectInvoice;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
@@ -96,7 +98,8 @@ public class PayCommand extends CommandReceiver implements ShortcutCommand{
             ConfirmTask runnable = new ConfirmTask(uniqueId, uid);
             confirmMap.put(uniqueId, runnable);
             runnable.runTaskLater(HamsterEcoHelper.plugin, 200);
-            new Message("").append(I18n.format("command.pay.confirm_msg", sellerName, customerName, realPrice), item.getItemStack()).send(sender);
+            BigDecimal tax = Tax.calcTax(BigDecimal.valueOf(realPrice), Tax.getTaxRate(item));
+            new Message("").append(I18n.format("command.pay.confirm_msg", sellerName, customerName, realPrice, tax.doubleValue()), item.getItemStack()).send(sender);
             return;
         }
 
