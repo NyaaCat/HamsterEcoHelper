@@ -164,23 +164,24 @@ public class TransactionController {
         BigDecimal tax = taxRate == null ?
                 Tax.calcTax(itemPrice, item.getShopItemType()) :
                 Tax.calcTax(itemPrice, taxRate);
-        if (balance < itemPrice.add(tax).doubleValue()){
-            new Message(I18n.format("transaction.buy.insufficient_funds")).send(pPayer);
-            return false;
-        }
 
         //taxMode decide which side should pay the tax.
         BigDecimal toTake = itemPrice;
         BigDecimal totalPrice = itemPrice;
         switch (taxMode){
             case ADDITION: // tax buyer
-                toTake.add(tax);
+                toTake = toTake.add(tax);
                 break;
             case CHARGE: //tax seller
-                totalPrice.subtract(tax);
+                totalPrice = totalPrice.subtract(tax);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + taxMode);
+        }
+
+        if (balance < toTake.add(tax).doubleValue()){
+            new Message(I18n.format("transaction.buy.insufficient_funds")).send(pPayer);
+            return false;
         }
         double payerBalBefore = eco.getBalance(pPayer);
         double sellerBalBefore = eco.getBalance(pSeller);
@@ -197,7 +198,7 @@ public class TransactionController {
             long time = System.currentTimeMillis();
 
             EconomyResponse rspBuyer = eco.withdrawPlayer(pPayer, toTake.doubleValue());
-            EconomyResponse rspSeller = eco.depositPlayer(pSeller, itemPrice.doubleValue());
+            EconomyResponse rspSeller = eco.depositPlayer(pSeller, totalPrice.doubleValue());
             ItemStack itemStack = item.getItemStack();
             itemStack.setAmount(amount);
             new Message("").append(I18n.format("transaction.withdraw", pSeller.getName(), toTake.doubleValue()), itemStack).send(pPayer);
