@@ -179,7 +179,7 @@ public class TransactionController {
                 throw new IllegalStateException("Unexpected value: " + taxMode);
         }
 
-        if (balance < toTake.add(tax).doubleValue()){
+        if (balance < toTake.doubleValue()){
             new Message(I18n.format("transaction.buy.insufficient_funds")).send(pPayer);
             return false;
         }
