@@ -1,10 +1,10 @@
 package cat.nyaa.heh.command;
 
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.business.signshop.*;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.signshop.*;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.Utils;
@@ -23,11 +23,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
-import static cat.nyaa.heh.command.CommandUtils.getOnlinePlayers;
 
 public class ShopCommands extends CommandReceiver implements ShortcutCommand{
 
@@ -106,6 +106,11 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
             return;
         }
         Sign sign = ((Sign) targetBlock.getState());
+        String[] lines = sign.getLines();
+        if (Arrays.stream(lines).anyMatch(s -> s!=null && !s.equals(""))){
+            new Message(I18n.format("command.sign.create.not_empty")).send(sender);
+            return;
+        }
 
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlock.getLocation());
         if (shopAt!=null){
