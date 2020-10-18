@@ -160,7 +160,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         new Message(I18n.format("command.sign.create.success")).send(sender);
     }
 
-    @SubCommand(value = "remove", permission = PERMISSION_SHOP)
+    @SubCommand(value = "remove", permission = PERMISSION_SHOP, tabCompleter = "removeCompleter")
     public void onRemove(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
         Block targetBlock = player.getTargetBlockExact(10);
@@ -198,6 +198,17 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         SignShopManager.getInstance().removeShopAt(shopAt);
         new Message(I18n.format("shop.remove.success")).send(sender);
     }
+
+    public List<String> removeCompleter(CommandSender sender, Arguments arguments) {
+        List<String> completeStr = new ArrayList<>();
+        switch (arguments.remains()) {
+            case 1:
+                completeStr.add("buy");
+                break;
+        }
+        return filtered(arguments, completeStr);
+    }
+
 
     public List<String> createCompleter(CommandSender sender, Arguments arguments) {
         List<String> completeStr = new ArrayList<>();
