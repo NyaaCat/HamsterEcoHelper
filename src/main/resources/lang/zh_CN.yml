@@ -120,6 +120,7 @@ command:
   sell:
     no_requisition: "当前没有正在进行的征购"
     invalid_item: "物品无效"
+    invalid_target: "不能出售给自己"
     insufficient_amount: "当前物品数量不足"
     invalid_amount: "数量无效"
     oversold: "出售数量超过上限 无法出售"

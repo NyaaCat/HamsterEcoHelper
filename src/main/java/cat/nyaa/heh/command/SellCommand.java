@@ -120,7 +120,8 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
     private boolean sellToShopSign(Player player, Arguments arguments, Block targetBlockExact) {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlockExact.getLocation());
-        if (shopAt == null || shopAt instanceof SignShopBuy) {
+        if (shopAt == null || shopAt instanceof SignShopBuy || shopAt.getOwner().equals(player.getUniqueId())) {
+            new Message(I18n.format("command.sell.invalid_target")).send(player);
             return false;
         }
         shopAt.loadItems();
