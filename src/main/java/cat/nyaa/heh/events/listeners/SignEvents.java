@@ -1,6 +1,7 @@
 package cat.nyaa.heh.events.listeners;
 
 import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.business.signshop.SignShopBuy;
 import cat.nyaa.heh.business.signshop.SignShopLotto;
@@ -8,6 +9,7 @@ import cat.nyaa.heh.business.signshop.SignShopManager;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.utils.ClickUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
+import cat.nyaa.nyaacore.BasicItemMatcher;
 import cat.nyaa.nyaacore.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -16,6 +18,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -29,6 +32,49 @@ import java.util.List;
 import java.util.UUID;
 
 public class SignEvents implements Listener {
+
+    @EventHandler
+    public void onLeftClickSign(PlayerInteractEvent event) {
+        if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK))return;
+        Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock == null || !(clickedBlock.getState() instanceof Sign)){
+            return;
+        }
+        if (!SignShopManager.getInstance().isSignShop((Sign) clickedBlock.getState())){
+            return;
+        }
+        BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(clickedBlock.getLocation());
+        if (!shopAt.isSignExist()){
+            shopAt.loadSign();
+        }
+        if (!shopAt.isSignExist()){
+            new Message(I18n.format("sign.error.invalid_sign")).send(event.getPlayer());
+            return;
+        }
+        if (!(shopAt instanceof SignShopBuy) || shopAt.getOwner().equals(event.getPlayer().getUniqueId())){
+            return;
+        }
+        //todo cache this
+        Player player = event.getPlayer();
+        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        if(itemInMainHand.getType().isAir()){
+            return;
+        }
+        shopAt.loadItems();
+        List<ShopItem> items = shopAt.getItems();
+        ShopItem shopItem1 = items.stream().filter(shopItem -> isValidItem(shopItem, itemInMainHand)).findFirst().orElse(null);
+        int sellAmount = 1;
+        if (player.isSneaking()){
+            sellAmount = itemInMainHand.getAmount();
+        }
+        shopAt.doBusiness(player, shopItem1, sellAmount);
+    }
+
+    public boolean isValidItem(ShopItem shopItem, ItemStack sellItem) {
+        BasicItemMatcher itemMatcher = new BasicItemMatcher();
+        itemMatcher.itemTemplate = shopItem.getItemStack();
+        return itemMatcher.matches(sellItem);
+    }
 
     @EventHandler
     public void onClickSign(PlayerInteractEvent event){
