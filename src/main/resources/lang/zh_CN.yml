@@ -131,6 +131,7 @@ command:
     sell:
       no_item: "主手没有物品"
       success: "成功上架物品 {itemName} &r* {amount} 单价 %.2f"
+      wrong_target: "请对准商店木牌使用该指令"
     buy:
       success: "成功创建收购项 {itemName} &r* %d 单价 %.2f"
   sign:
