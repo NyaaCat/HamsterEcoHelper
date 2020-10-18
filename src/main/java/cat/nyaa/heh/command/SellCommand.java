@@ -5,6 +5,7 @@ import cat.nyaa.heh.business.auction.Requisition;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
+import cat.nyaa.heh.business.signshop.SignShopBuy;
 import cat.nyaa.heh.business.signshop.SignShopManager;
 import cat.nyaa.heh.business.transaction.*;
 import cat.nyaa.heh.utils.EcoUtils;
@@ -16,6 +17,7 @@ import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
@@ -118,7 +120,7 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
     private boolean sellToShopSign(Player player, Arguments arguments, Block targetBlockExact) {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlockExact.getLocation());
-        if (shopAt == null) {
+        if (shopAt == null || shopAt instanceof SignShopBuy) {
             return false;
         }
         shopAt.loadItems();
@@ -166,6 +168,7 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
         TransactionController.getInstance().makeTransaction(req);
         shopItem1.setSold(0);
         ShopItemManager.getInstance().updateShopItem(shopItem1);
+        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         return true;
     }
 
