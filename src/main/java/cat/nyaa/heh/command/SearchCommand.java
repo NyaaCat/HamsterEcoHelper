@@ -121,10 +121,10 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
                                 item.getUnitPrice()
                         ), item.getItemStack())
                         .send(sender));
-        sendButtons(page, result.size()/9 + 1);
+        sendButtons(sender, page, result.size()/9 + 1);
     }
 
-    private void sendButtons(int page, int totalPages) {
+    private void sendButtons(CommandSender sender, int page, int totalPages) {
         String prevMsg = I18n.format("ui.message.previous_page");
         String nextMsg = I18n.format("ui.message.next_page");
         int prev = page-1;
@@ -137,7 +137,7 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
         }
         TextComponent prevBtn = Utils.newMessageButton(prevMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(prevMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search page " + prev));
         TextComponent nextBtn = Utils.newMessageButton(nextMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(nextMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search page " + next));
-        new Message("").append(prevBtn).append(" ").append(nextBtn).broadcast();
+        new Message("").append(prevBtn).append(" ").append(nextBtn).send(sender);
     }
 
 
