@@ -104,7 +104,7 @@ public class ChestCommands extends CommandReceiver implements ShortcutCommand{
     public void onRemove(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
         Block targetBlock = player.getTargetBlockExact(10);
-        if (targetBlock != null && !(targetBlock.getState() instanceof Chest)) {
+        if (targetBlock == null || !(targetBlock.getState() instanceof Chest)) {
             new Message(I18n.format("command.chest.error.not_chest")).send(sender);
             return;
         }
