@@ -11,7 +11,10 @@ import cat.nyaa.heh.utils.ClickUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.BasicItemMatcher;
 import cat.nyaa.nyaacore.Message;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -30,8 +33,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class SignEvents implements Listener {
+
+    Cache<Location, BaseSignShop> signShopCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build();
 
     @EventHandler
     public void onLeftClickSign(PlayerInteractEvent event) {
@@ -43,15 +51,22 @@ public class SignEvents implements Listener {
         if (!SignShopManager.getInstance().isSignShop((Sign) clickedBlock.getState())){
             return;
         }
-        BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(clickedBlock.getLocation());
+
+        Location location = clickedBlock.getLocation();
+
+        BaseSignShop shopAt = signShopCache.getIfPresent(location);
+        if(shopAt == null){
+            shopAt = SignShopManager.getInstance().getShopAt(location);
+            signShopCache.put(location, shopAt);
+        }
+        if (!(shopAt instanceof SignShopBuy) || shopAt.getOwner().equals(event.getPlayer().getUniqueId())){
+            return;
+        }
         if (!shopAt.isSignExist()){
             shopAt.loadSign();
         }
         if (!shopAt.isSignExist()){
             new Message(I18n.format("sign.error.invalid_sign")).send(event.getPlayer());
-            return;
-        }
-        if (!(shopAt instanceof SignShopBuy) || shopAt.getOwner().equals(event.getPlayer().getUniqueId())){
             return;
         }
         //todo cache this
@@ -92,7 +107,15 @@ public class SignEvents implements Listener {
         if (!SignShopManager.getInstance().isSignShop((Sign) clickedBlock.getState())){
             return;
         }
-        BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(clickedBlock.getLocation());
+        Location location = clickedBlock.getLocation();
+        BaseSignShop shopAt = signShopCache.getIfPresent(location);
+        if(shopAt == null){
+            shopAt = SignShopManager.getInstance().getShopAt(location);
+            signShopCache.put(location, shopAt);
+        }
+        if (!(shopAt instanceof SignShopBuy) || shopAt.getOwner().equals(event.getPlayer().getUniqueId())){
+            return;
+        }
         if (!shopAt.isSignExist()){
             shopAt.loadSign();
         }
