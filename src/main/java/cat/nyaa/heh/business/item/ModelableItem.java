@@ -4,6 +4,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface ModelableItem<T> {
     ItemStack getModel();
@@ -17,6 +18,10 @@ public interface ModelableItem<T> {
             return clone;
         }
         itemMeta = originMeta.clone();
+        List<String> lore = itemMeta.getLore();
+        Collection<? extends String> lore1 = buildLore();
+        lore.addAll(lore1);
+        itemMeta.setLore(lore);
         markSample(itemMeta, this);
 
         clone.setItemMeta(itemMeta);
