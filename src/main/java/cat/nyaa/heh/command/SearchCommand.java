@@ -111,7 +111,8 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
             msg(sender, "command.search.page_out_of_bound");
             return;
         }
-        msg(sender, "command.search.page", page + 1, (int) Math.ceil(result.size() / 9.0d));
+        int pages = (int) Math.ceil(result.size() / 9.0d);
+        msg(sender, "command.search.page", page + 1, pages);
         result.stream().skip(start).limit(9).forEach(item ->
                 new Message("")
                         .append(I18n.format("command.search.result",
@@ -121,7 +122,7 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
                                 item.getUnitPrice()
                         ), item.getItemStack())
                         .send(sender));
-        sendButtons(sender, page, result.size()/9 + 1);
+        sendButtons(sender, page+1, pages);
     }
 
     private void sendButtons(CommandSender sender, int page, int totalPages) {
@@ -129,11 +130,11 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
         String nextMsg = I18n.format("ui.message.next_page");
         int prev = page-1;
         if (prev < 0){
-            prev = totalPages-1;
+            prev = totalPages;
         }
         int next = page+1;
         if (next >= totalPages){
-            next = 0;
+            next = 1;
         }
         TextComponent prevBtn = Utils.newMessageButton(prevMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(prevMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search " + prev));
         TextComponent nextBtn = Utils.newMessageButton(nextMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(nextMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search " + next));
