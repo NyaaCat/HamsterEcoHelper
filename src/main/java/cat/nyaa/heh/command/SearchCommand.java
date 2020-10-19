@@ -135,8 +135,8 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
         if (next >= totalPages){
             next = 0;
         }
-        TextComponent prevBtn = Utils.newMessageButton(prevMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(prevMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search page " + prev));
-        TextComponent nextBtn = Utils.newMessageButton(nextMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(nextMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search page " + next));
+        TextComponent prevBtn = Utils.newMessageButton(prevMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(prevMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search " + prev));
+        TextComponent nextBtn = Utils.newMessageButton(nextMsg, new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(nextMsg)), new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/heh search " + next));
         new Message("").append(prevBtn).append(" ").append(nextBtn).send(sender);
     }
 
