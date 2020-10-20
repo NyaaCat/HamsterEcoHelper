@@ -71,6 +71,7 @@ public class SignEvents implements Listener {
             sellAmount = itemInMainHand.getAmount();
         }
         shopAt.doBusiness(player, shopItem1, sellAmount);
+        itemInMainHand.setAmount(Math.max(0, itemInMainHand.getAmount() - sellAmount));
     }
 
     public boolean isValidItem(ShopItem shopItem, ItemStack sellItem) {

@@ -58,8 +58,8 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
         if (targetBlockExact != null && isShopSign(targetBlockExact)){
             try {
                 if (sellToShopSign(player, arguments, targetBlockExact)) {
-                    return;
                 }
+                return;
             }catch (Exception e){
                 new Message(I18n.format("command.sell.failed")).send(sender);
                 return;
@@ -120,7 +120,7 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
     private boolean sellToShopSign(Player player, Arguments arguments, Block targetBlockExact) {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlockExact.getLocation());
-        if (shopAt == null || shopAt instanceof SignShopBuy || shopAt.getOwner().equals(player.getUniqueId())) {
+        if (shopAt == null || !(shopAt instanceof SignShopBuy) || shopAt.getOwner().equals(player.getUniqueId())) {
             new Message(I18n.format("command.sell.invalid_target")).send(player);
             return false;
         }
@@ -169,7 +169,7 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
         TransactionController.getInstance().makeTransaction(req);
         shopItem1.setSold(0);
         ShopItemManager.getInstance().updateShopItem(shopItem1);
-        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+        itemInMainHand.setAmount(Math.max(0, itemInMainHand.getAmount() - finalAmountToSell));
         return true;
     }
 
