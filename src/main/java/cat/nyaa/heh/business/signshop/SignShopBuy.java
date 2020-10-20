@@ -63,9 +63,9 @@ public class SignShopBuy extends BaseSignShop{
             new Message(I18n.format("shop.sign.sell.no_chest", name)).send(offlinePlayer);
             return;
         }
-        Block block = (Block) reqLocationModel.getBlock().getState();
+        Chest block = (Chest) reqLocationModel.getBlock().getState();
 
-        Inventory blockInventory = ((Chest) block.getState()).getBlockInventory();
+        Inventory blockInventory = block.getBlockInventory();
         TransactionController.getInstance().makeTransaction(owner, buyer.getUniqueId(), item, amount, fee, blockInventory, buyer.getInventory(), TaxReason.REASON_SIGN_SHOP);
         updateUi();
     }
