@@ -21,7 +21,6 @@ import cat.nyaa.nyaacore.Message;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -94,7 +93,7 @@ public class SignShopLotto extends BaseSignShop {
     }
 
     @Override
-    public void doBusiness(Player related, ShopItem item, int amount) {
+    public boolean doBusiness(Player related, ShopItem item, int amount) {
        new BukkitRunnable(){
            @Override
            public void run() {
@@ -105,6 +104,7 @@ public class SignShopLotto extends BaseSignShop {
                }
            }
        }.runTaskAsynchronously(HamsterEcoHelper.plugin);
+       return true;
     }
 
     private static Cache<UUID, Inventory> inventoryCache = CacheBuilder.newBuilder()

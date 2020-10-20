@@ -71,10 +71,11 @@ public class Market extends BaseShop {
         refreshGUI();
     }
 
-    public void buy(Player buyer, ShopItem item, int amount){
+    public boolean buy(Player buyer, ShopItem item, int amount){
         double fee = HamsterEcoHelper.plugin.config.marketFeeBase;
-        TransactionController.getInstance().makeTransaction(buyer.getUniqueId(), item.getOwner(), item, amount, fee, TaxReason.REASON_MARKET);
+        boolean success = TransactionController.getInstance().makeTransaction(buyer.getUniqueId(), item.getOwner(), item, amount, fee, TaxReason.REASON_MARKET);
         refreshGUI();
+        return success;
     }
 
     public List<ShopItem> getMarketItems() {
@@ -100,8 +101,8 @@ public class Market extends BaseShop {
     }
 
     @Override
-    public void doBusiness(Player related, ShopItem item, int amount) {
-        buy(related, item, amount);
+    public boolean doBusiness(Player related, ShopItem item, int amount) {
+        return buy(related, item, amount);
     }
 
     @Override

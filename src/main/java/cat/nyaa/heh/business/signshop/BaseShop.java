@@ -19,8 +19,9 @@ public abstract class BaseShop {
      * @param related
      * @param item
      * @param amount
+     * @return
      */
-    public abstract void doBusiness(Player related, ShopItem item, int amount);
+    public abstract boolean doBusiness(Player related, ShopItem item, int amount);
 
     public abstract LocationType getType();
 

@@ -70,8 +70,10 @@ public class SignEvents implements Listener {
         if (player.isSneaking()){
             sellAmount = itemInMainHand.getAmount();
         }
-        shopAt.doBusiness(player, shopItem1, sellAmount);
-        itemInMainHand.setAmount(Math.max(0, itemInMainHand.getAmount() - sellAmount));
+        boolean success = shopAt.doBusiness(player, shopItem1, sellAmount);
+        if(success){
+            itemInMainHand.setAmount(Math.max(0, itemInMainHand.getAmount() - sellAmount));
+        }
     }
 
     public boolean isValidItem(ShopItem shopItem, ItemStack sellItem) {
