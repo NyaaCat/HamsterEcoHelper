@@ -88,6 +88,8 @@ public class SignEvents implements Listener {
         boolean success = shopAt.doBusiness(player, shopItem1, sellAmount);
         if(success){
             itemInMainHand.setAmount(Math.max(0, itemInMainHand.getAmount() - sellAmount));
+        }else{
+            new Message(I18n.format("shop.sign.sell.error_transaction_fail")).send(player);
         }
     }
 

@@ -36,6 +36,7 @@ shop:
       no_chest: "有玩家向您出售了物品 但是您并未设置库存箱\n请使用 /hchest 设置库存箱位置"
     sell:
       no_chest: "玩家 %s &r未设置库存箱"
+      error_transaction_fail: "交易失败，可能是收购者现金不足"
   lotto:
     item: "您抽取到了物品 {itemName} &r* {amount}"
     success: "抽取了 %s &r的乐透，支付了%.2f 节操"
