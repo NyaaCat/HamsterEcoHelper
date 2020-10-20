@@ -22,7 +22,7 @@ public class UidUtils {
     }
 
 
-    private void updateUid() {
+    private synchronized void updateUid() {
         try {
             itemUid = DatabaseManager.getInstance().getUidMax(tableName);
         } catch (Exception throwables) {
@@ -31,11 +31,11 @@ public class UidUtils {
         }
     }
 
-    public long getCurrentUid(){
+    public synchronized long getCurrentUid(){
         return itemUid;
     }
 
-    public long getNextUid() {
+    public synchronized long getNextUid() {
         return ++itemUid;
     }
 
