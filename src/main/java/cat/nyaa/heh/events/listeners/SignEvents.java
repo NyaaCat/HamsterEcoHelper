@@ -115,7 +115,7 @@ public class SignEvents implements Listener {
             shopAt = SignShopManager.getInstance().getShopAt(location);
             signShopCache.put(location, shopAt);
         }
-        if (!(shopAt instanceof SignShopBuy) || shopAt.getOwner().equals(event.getPlayer().getUniqueId())){
+        if (shopAt.getOwner().equals(event.getPlayer().getUniqueId())){
             return;
         }
         if (!shopAt.isSignExist()){
