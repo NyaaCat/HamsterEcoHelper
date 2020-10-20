@@ -14,14 +14,19 @@ import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.Message;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class SignShopBuy extends BaseSignShop{
     private final LocationType type = LocationType.SIGN_SHOP_BUY;
@@ -51,9 +56,12 @@ public class SignShopBuy extends BaseSignShop{
         return signShopGUI;
     }
 
+    private static Cache<Location, Inventory> inventoryCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build();
+
     @Override
     public void doBusiness(Player buyer, ShopItem item, int amount){
-        //todo configure sign shop storage space.
 
         double fee = HamsterEcoHelper.plugin.config.signShopFeeBase;
         LocationDbModel reqLocationModel = LocationConnection.getInstance().getReqLocationModel(owner);
@@ -64,10 +72,18 @@ public class SignShopBuy extends BaseSignShop{
             new Message(I18n.format("shop.sign.sell.no_chest", name)).send(offlinePlayer);
             return;
         }
-        Chest block = (Chest) reqLocationModel.getBlock().getState();
-
-        Inventory blockInventory = block.getBlockInventory();
-        TransactionController.getInstance().makeTransaction(owner, buyer.getUniqueId(), item, amount, fee, blockInventory, buyer.getInventory(), TaxReason.REASON_SIGN_SHOP);
+        Location location = new Location(Bukkit.getWorld(reqLocationModel.getWorld()), reqLocationModel.getX(), reqLocationModel.getY(), reqLocationModel.getZ());
+        Inventory inventory;
+        try {
+            inventory = inventoryCache.get(location,() -> {
+                Chest block = (Chest) reqLocationModel.getBlock().getState();
+                return block.getBlockInventory();
+            });
+        } catch (ExecutionException e) {
+            HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "error loading inventory: ", e);
+            return;
+        }
+        TransactionController.getInstance().makeTransaction(owner, buyer.getUniqueId(), item, amount, fee, inventory, buyer.getInventory(), TaxReason.REASON_SIGN_SHOP);
         item.setSold(0);
         ShopItemManager.getInstance().updateShopItem(item);
         updateUi();

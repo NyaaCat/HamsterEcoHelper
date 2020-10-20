@@ -18,7 +18,10 @@ import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.heh.utils.Utils;
 import cat.nyaa.nyaacore.Message;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -28,6 +31,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class SignShopLotto extends BaseSignShop {
     double price;
@@ -89,20 +95,28 @@ public class SignShopLotto extends BaseSignShop {
 
     @Override
     public void doBusiness(Player related, ShopItem item, int amount) {
-        //todo
        new BukkitRunnable(){
            @Override
            public void run() {
-               onLotto(related);
+               try {
+                   onLotto(related);
+               } catch (Throwable e) {
+                   HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "error during player " + related.getName() + "'s lotto request: ", e);
+               }
            }
        }.runTaskAsynchronously(HamsterEcoHelper.plugin);
     }
 
-    private void onLotto(Player related) {
+    private static Cache<UUID, Inventory> inventoryCache = CacheBuilder.newBuilder()
+            .concurrencyLevel(10)
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build();
+
+    private void onLotto(Player related) throws ExecutionException {
         String name = SystemAccountUtils.isSystemAccount(getOwner()) ? SystemAccountUtils.getSystemName()
                 : Bukkit.getOfflinePlayer(getOwner()).getName();
         try {
-            Inventory lottoItems = SignShopConnection.getInstance().getLottoItems(owner);
+            Inventory lottoItems = inventoryCache.get(owner, () -> SignShopConnection.getInstance().getLottoItems(owner));
 
             if(lottoItems == null){
                 new Message(I18n.format("sign.error.invalid_sign")).send(related);

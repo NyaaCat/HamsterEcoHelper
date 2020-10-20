@@ -242,7 +242,6 @@ public class Auction {
             new Message(I18n.format("item.give.inventory")).send(offlinePlayer);
             giveTo(targetInventory, itemStack);
         }else {
-            //todo store item in temp inventory
             StorageConnection instance = StorageConnection.getInstance();
             StorageItem storageItem = instance.newStorageItem(offlinePlayer.getUniqueId(), itemStack, 0);
             instance.addStorageItem(storageItem);
