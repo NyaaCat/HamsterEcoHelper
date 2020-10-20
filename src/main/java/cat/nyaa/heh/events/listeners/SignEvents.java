@@ -63,6 +63,9 @@ public class SignEvents implements Listener {
         shopAt.loadItems();
         List<ShopItem> items = shopAt.getItems();
         ShopItem shopItem1 = items.stream().filter(shopItem -> isValidItem(shopItem, itemInMainHand)).findFirst().orElse(null);
+        if (shopItem1 == null){
+            return;
+        }
         int sellAmount = 1;
         if (player.isSneaking()){
             sellAmount = itemInMainHand.getAmount();
