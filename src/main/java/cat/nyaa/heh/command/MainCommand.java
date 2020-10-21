@@ -16,6 +16,8 @@ import java.util.List;
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
 public class MainCommand extends CommandReceiver {
+    private static final String HEH_ADMIN = "heh.admin";
+
     /**
      * @param plugin for logging purpose only
      * @param _i18n
@@ -103,7 +105,7 @@ public class MainCommand extends CommandReceiver {
     @SubCommand(value = "storage")
     StorageCommands storageCommands;
 
-    @SubCommand(value = "reload")
+    @SubCommand(value = "reload", permission = HEH_ADMIN)
     public void onReload(CommandSender sender, Arguments arguments){
         HamsterEcoHelper.plugin.onReload();
     }

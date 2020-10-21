@@ -139,3 +139,6 @@ permissions:
   heh.admin.remove:
     default: op
     description: remove
+  heh.admin.reload:
+    default: op
+    description: reload
