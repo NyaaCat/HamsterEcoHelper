@@ -103,7 +103,6 @@ public class Database implements Cloneable {
         ITypedTable<MarketItem> table = database.getUnverifiedTable(MarketItem.class);
         WhereClause where = new WhereClause("amount", ">", 0);
         List<MarketItem> tmp = table.select(seller == null ? where : where.whereEq("player_id", seller.toString()));
-        Collections.reverse(tmp);
         for (int i = 0; i < tmp.size(); i++) {
             if (i + 1 > offset) {
                 list.add(tmp.get(i));
