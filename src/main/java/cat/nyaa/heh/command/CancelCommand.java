@@ -45,16 +45,16 @@ public class CancelCommand extends CommandReceiver implements ShortcutCommand{
         UUID customer = DirectInvoice.getInstance().getCustomer(uid);
         ShopItem invoice = DirectInvoice.getInstance().getInvoice(uid);
         UUID uniqueId = player.getUniqueId();
+        if(invoice == null || !invoice.getShopItemType().equals(ShopItemType.DIRECT)){
+            new Message(I18n.format("command.cancel.not_invoice", uid)).send(sender);
+            return;
+        }
         if (player.isOp() || !uniqueId.equals(customer) && !uniqueId.equals(invoice.getOwner())){
             //parse customerName
             String customerName = customer == null ? null :
                     SystemAccountUtils.isSystemAccount(customer) ? SystemAccountUtils.getSystemName()
                             : Bukkit.getOfflinePlayer(customer).getName();
             new Message(I18n.format("command.cancel.invalid_invoice", uid, customerName)).send(sender);
-            return;
-        }
-        if (!invoice.getShopItemType().equals(ShopItemType.DIRECT)){
-            new Message(I18n.format("command.cancel.not_invoice", uid)).send(sender);
             return;
         }
         if (!invoice.isAvailable()){
