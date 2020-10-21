@@ -119,8 +119,16 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
 
     private boolean sellToShopSign(Player player, Arguments arguments, Block targetBlockExact) {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        String input = arguments.top();
+        int amountToSell = 0;
+        if ("all".equals(input)){
+            arguments.next();
+            amountToSell = itemInMainHand.getAmount();
+        }else {
+            amountToSell = arguments.nextInt();
+        }
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlockExact.getLocation());
-        if (shopAt == null || !(shopAt instanceof SignShopBuy) || shopAt.getOwner().equals(player.getUniqueId())) {
+        if (!(shopAt instanceof SignShopBuy) || shopAt.getOwner().equals(player.getUniqueId())) {
             new Message(I18n.format("command.sell.invalid_target")).send(player);
             return false;
         }
@@ -135,14 +143,7 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
             new Message(I18n.format("command.sell.invalid_item")).send(player);
             return false;
         }
-        String input = arguments.top();
-        int amountToSell = 0;
-        if ("all".equals(input)){
-            arguments.next();
-            amountToSell = itemInMainHand.getAmount();
-        }else {
-            amountToSell = arguments.nextInt();
-        }
+
         if (itemInMainHand.getAmount() < amountToSell){
             new Message(I18n.format("command.sell.insufficient_amount")).send(player);
             return false;
