@@ -1,6 +1,7 @@
 package cat.nyaa.heh.ui;
 
 import cat.nyaa.heh.business.signshop.BaseSignShop;
+import cat.nyaa.heh.ui.component.ShopComponent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;
@@ -72,5 +73,9 @@ public class UiManager {
                 .map(baseUi -> ((SignShopGUI) baseUi))
                 .filter(signShopGUI -> signShopGUI.getOwner().equals(uniqueId))
                 .collect(Collectors.toList());
+    }
+
+    public void getUiOfType(ShopComponent shopComponent) {
+
     }
 }
