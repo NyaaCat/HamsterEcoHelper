@@ -88,7 +88,7 @@ public class TransactionController {
         itemStack.setAmount(amount);
         if (!pBuyer.isOnline()) {
             double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
-            double fee = storageFeeUnit * itemStack.getAmount();
+            double fee = storageFeeUnit;
             StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, fee);
             new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
         }else {
@@ -103,7 +103,7 @@ public class TransactionController {
             }else {
                 new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
                 double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
-                StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit * itemStack.getAmount());
+                StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit);
             }
         }
     }
@@ -225,7 +225,7 @@ public class TransactionController {
             if (receiveInv != null){
                 if (!giveTo(receiveInv, itemStack)) {
                     double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
-                    StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit * itemStack.getAmount());
+                    StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit);
                     new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
                 }
             }else {
