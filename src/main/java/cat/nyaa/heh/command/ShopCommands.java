@@ -51,10 +51,6 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
     public void onLotto(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-        if (itemInMainHand.getType().isAir()){
-            new Message(I18n.format("command.shop.no_item")).send(player);
-            return;
-        }
         String action = arguments.next();
         switch (action){
             case "view":
@@ -62,10 +58,22 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
                 signShopLotto.newGUI().open(player);
                 break;
             case "offer":
+                if (itemInMainHand.getType().isAir()){
+                    new Message(I18n.format("command.shop.no_item")).send(player);
+                    return;
+                }
+                SignShopLotto signShopLotto1 = new SignShopLotto(player.getUniqueId(), 0);
+                signShopLotto1.loadItems();
+                List<ShopItem> items = signShopLotto1.getItems();
+                int size = items.size();
+                if (size >= 54){
+                    new Message(I18n.format("command.shop.lotto.limited")).send(player);
+                    return;
+                }
                 ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.LOTTO, itemInMainHand, 0);
                 ShopItemManager.insertShopItem(shopItem);
                 player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                new Message(I18n.format("command.shop.lotto")).send(player);
+                new Message(I18n.format("command.shop.lotto.offer")).send(player);
                 break;
         }
     }
@@ -170,7 +178,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
                 break;
             case "LOTTO":
                 if (msgs.size()<=0){
-                    throw new BadCommandException("please input unit price");
+                    throw new BadCommandException("command.sign.create.lotto.bad_price", "");
                 }
                 String priceStr = msgs.get(0);
                 try{
@@ -261,6 +269,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
             case 1:
                 completeStr.add("buy");
                 completeStr.add("sell");
+                completeStr.add("lotto");
                 break;
         }
         return filtered(arguments, completeStr);

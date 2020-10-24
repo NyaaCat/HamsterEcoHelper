@@ -319,6 +319,7 @@ public class DatabaseManager {
     public List<ShopItem> getLottoItems(UUID owner) throws NoLottoChestException {
         List<ShopItem> collect = shopItemTable.select(
                 WhereClause.EQ("type", ShopItemType.LOTTO)
+                        .whereEq("owner", owner)
                         .whereEq("available", true)
         ).stream()
                 .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())

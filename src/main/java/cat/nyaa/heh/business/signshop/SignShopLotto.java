@@ -116,7 +116,7 @@ public class SignShopLotto extends BaseSignShop {
         String name = SystemAccountUtils.isSystemAccount(getOwner()) ? SystemAccountUtils.getSystemName()
                 : Bukkit.getOfflinePlayer(getOwner()).getName();
         try {
-            List<ShopItem> lottoItems = SignShopConnection.getInstance().getLottoItems(owner);
+            List<ShopItem> lottoItems = SignShopConnection.getInstance().getLottoItems(getOwner());
             if(lottoItems == null){
                 new Message(I18n.format("sign.error.invalid_sign")).send(related);
                 return;

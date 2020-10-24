@@ -129,11 +129,18 @@ command:
       wrong_target: "请对准商店木牌使用该指令"
     buy:
       success: "成功创建收购项 {itemName} &r* %d 单价 %.2f"
+    lotto:
+      offer: "物品已上架至乐透商店"
+      limited: "乐透库存已满"
   sign:
     create:
       not_sign: "请看向想要创建商店的牌子"
       bad_type: "没有商店类型 %s"
       success: "成功创建商店"
+      existed: "目标已经是一个牌子商店了"
+      not_empty: "牌子上有内容，请清空后再试"
+      lotto:
+        bad_price: "无效单价 %s"
   remove:
     not_owner: "该商店不属于您 您不可以移除"
     not_sign_shop: "目标不是牌子商店"
