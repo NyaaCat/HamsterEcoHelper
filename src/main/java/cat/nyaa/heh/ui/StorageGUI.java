@@ -15,7 +15,7 @@ public class StorageGUI extends BaseUi<StorageItem> {
     public StorageGUI(UUID owner) {
         super();
         this.owner = owner;
-        pagedComponent = newPagedComponent();
+        createComponents();
     }
 
     @Override

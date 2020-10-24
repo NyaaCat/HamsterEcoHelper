@@ -26,11 +26,11 @@ public class StorageComponent extends BasePagedComponent<StorageItem> {
     public StorageComponent(UUID owner, Inventory inventory) {
         super(inventory);
         this.owner = owner;
-        this.playerStorage = StorageConnection.getInstance().getPlayerStorage(owner);
     }
 
     @Override
     public void loadData() {
+        this.playerStorage = StorageConnection.getInstance().getPlayerStorage(owner);
         playerStorage.loadItems();
         this.items = playerStorage.getItems();
     }
