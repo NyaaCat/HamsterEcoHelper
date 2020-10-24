@@ -1,12 +1,17 @@
 package cat.nyaa.heh.db;
 
+import cat.nyaa.heh.business.item.PlayerStorage;
 import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.heh.db.model.StorageDbModel;
 import cat.nyaa.heh.utils.UidUtils;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class StorageConnection {
@@ -28,7 +33,7 @@ public class StorageConnection {
     }
 
 
-    public List<StorageItem> getStorage(UUID owner) {
+    public List<StorageItem> getStorageItems(UUID owner) {
         List<StorageDbModel> storage = DatabaseManager.getInstance().getStorage(owner);
         List<StorageItem> collect = storage.stream().map(storageDbModel -> new StorageItem(storageDbModel))
                 .collect(Collectors.toList());
@@ -52,5 +57,19 @@ public class StorageConnection {
 
     public void removeStorageItem(StorageItem storageItem) {
         DatabaseManager.getInstance().removeStorageItem(new StorageDbModel(storageItem));
+    }
+
+    Cache<UUID, PlayerStorage> playerStorageCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build();
+
+    public PlayerStorage getPlayerStorage(UUID pBuyer) {
+        PlayerStorage storage = playerStorageCache.getIfPresent(pBuyer);
+        if (storage == null){
+            storage = new PlayerStorage(pBuyer);
+            storage.loadItems();
+            playerStorageCache.put(pBuyer, storage);
+        }
+        return storage;
     }
 }

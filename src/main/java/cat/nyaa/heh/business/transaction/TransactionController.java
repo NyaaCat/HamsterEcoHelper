@@ -88,8 +88,8 @@ public class TransactionController {
         itemStack.setAmount(amount);
         if (!pBuyer.isOnline()) {
             double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
-            StorageItem storageItem = StorageConnection.getInstance().newStorageItem(pBuyer.getUniqueId(), itemStack, storageFeeUnit * itemStack.getAmount());
-            StorageConnection.getInstance().addStorageItem(storageItem);
+            double fee = storageFeeUnit * itemStack.getAmount();
+            StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, fee);
             new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
         }else {
             Player player = pBuyer.getPlayer();
@@ -103,8 +103,7 @@ public class TransactionController {
             }else {
                 new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
                 double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
-                StorageItem storageItem = StorageConnection.getInstance().newStorageItem(player.getUniqueId(), itemStack, storageFeeUnit * itemStack.getAmount());
-                StorageConnection.getInstance().addStorageItem(storageItem);
+                StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit * itemStack.getAmount());
             }
         }
     }
@@ -226,8 +225,7 @@ public class TransactionController {
             if (receiveInv != null){
                 if (!giveTo(receiveInv, itemStack)) {
                     double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
-                    StorageItem storageItem = StorageConnection.getInstance().newStorageItem(buyer, itemStack, storageFeeUnit * itemStack.getAmount());
-                    StorageConnection.getInstance().addStorageItem(storageItem);
+                    StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit * itemStack.getAmount());
                     new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
                 }
             }else {

@@ -1,10 +1,10 @@
-package cat.nyaa.heh.ui.component;
+package cat.nyaa.heh.ui.component.impl;
 
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.business.item.ShopItem;
-import cat.nyaa.heh.business.item.ShopItemManager;
+import cat.nyaa.heh.business.item.PlayerStorage;
 import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.heh.db.StorageConnection;
+import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.utils.EcoUtils;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
@@ -21,16 +21,18 @@ import java.util.UUID;
 
 public class StorageComponent extends BasePagedComponent<StorageItem> {
     private UUID owner;
+    private PlayerStorage playerStorage;
 
     public StorageComponent(UUID owner, Inventory inventory) {
         super(inventory);
         this.owner = owner;
+        this.playerStorage = StorageConnection.getInstance().getPlayerStorage(owner);
     }
 
     @Override
     public void loadData() {
-        List<StorageItem> storage = StorageConnection.getInstance().getStorage(owner);
-        this.items = storage;
+        playerStorage.loadItems();
+        this.items = playerStorage.getItems();
     }
 
     @Override
@@ -62,7 +64,7 @@ public class StorageComponent extends BasePagedComponent<StorageItem> {
             return;
         }
         eco.withdrawPlayer(player, fee);
-        addOnCursor(event, content);
+        addOnCursor(player, content);
     }
 
     @Override
@@ -95,21 +97,8 @@ public class StorageComponent extends BasePagedComponent<StorageItem> {
         }
     }
 
-    protected void addOnCursor(InventoryClickEvent event, StorageItem storageItem) {
-        ItemStack itemStack = storageItem.getItemStack().clone();
-        ItemStack cursor = event.getCursor();
-
-        giveTo(event, storageItem);
-        StorageConnection.getInstance().removeStorageItem(storageItem);
-    }
-
-    private void giveTo(InventoryClickEvent event, StorageItem storageItem) {
-        Inventory inventory = event.getWhoClicked().getInventory();
-        ItemStack itemStack = storageItem.getItemStack();
-        if (!InventoryUtils.addItem(inventory, itemStack)){
-            HumanEntity whoClicked = event.getWhoClicked();
-            whoClicked.getWorld().dropItemNaturally(whoClicked.getLocation(), itemStack);
-        }
+    protected void addOnCursor(Player player, StorageItem storageItem) {
+        playerStorage.retrieveItem(storageItem, player);
     }
 
     @Override

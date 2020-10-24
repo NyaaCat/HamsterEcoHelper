@@ -62,28 +62,8 @@ public class SignShopBuy extends BaseSignShop{
 
     @Override
     public boolean doBusiness(Player buyer, ShopItem item, int amount){
-
         double fee = HamsterEcoHelper.plugin.config.signShopFeeBase;
-        LocationDbModel reqLocationModel = LocationConnection.getInstance().getReqLocationModel(owner);
-        if(reqLocationModel == null || !(reqLocationModel.getBlock().getState() instanceof Chest)){
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(owner);
-            String name = SystemAccountUtils.isSystemAccount(owner) ? SystemAccountUtils.getSystemName() : offlinePlayer.getName();
-            new Message(I18n.format("shop.sign.buy.no_chest")).send(offlinePlayer);
-            new Message(I18n.format("shop.sign.sell.no_chest", name)).send(offlinePlayer);
-            return false;
-        }
-        Location location = new Location(Bukkit.getWorld(reqLocationModel.getWorld()), reqLocationModel.getX(), reqLocationModel.getY(), reqLocationModel.getZ());
-        Inventory inventory;
-        try {
-            inventory = inventoryCache.get(location,() -> {
-                Chest block = (Chest) reqLocationModel.getBlock().getState();
-                return block.getBlockInventory();
-            });
-        } catch (ExecutionException e) {
-            HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "error loading inventory: ", e);
-            return false;
-        }
-        boolean success = TransactionController.getInstance().makeTransaction(owner, buyer.getUniqueId(), item, amount, fee, inventory, buyer.getInventory(), TaxReason.REASON_SIGN_SHOP);
+        boolean success = TransactionController.getInstance().makeTransaction(owner, buyer.getUniqueId(), item, amount, fee, null, buyer.getInventory(), TaxReason.REASON_SIGN_SHOP);
         item.setSold(0);
         ShopItemManager.getInstance().updateShopItem(item);
         updateUi();

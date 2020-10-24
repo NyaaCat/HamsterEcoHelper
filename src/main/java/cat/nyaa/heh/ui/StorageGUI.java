@@ -3,7 +3,7 @@ package cat.nyaa.heh.ui;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
-import cat.nyaa.heh.ui.component.StorageComponent;
+import cat.nyaa.heh.ui.component.impl.StorageComponent;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,5 +40,9 @@ public class StorageGUI extends BaseUi<StorageItem> {
         getPagedComponent().loadData(items);
         getPagedComponent().refreshUi();
         buttonComponent.refreshUi();
+    }
+
+    public UUID getOwner() {
+        return owner;
     }
 }

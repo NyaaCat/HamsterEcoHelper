@@ -85,4 +85,11 @@ public class UiManager {
     public List<LottoGUI> getLottoGUIs() {
         return getLottoGUIs(null);
     }
+
+    public List<StorageGUI> getStorageUis(UUID owner) {
+        return uiByUuid.values().stream().filter(baseUi -> baseUi instanceof StorageGUI)
+                .map(baseUi -> (StorageGUI)baseUi)
+                .filter(lottoGUI -> owner == null || owner.equals(lottoGUI.getOwner()))
+                .collect(Collectors.toList());
+    }
 }

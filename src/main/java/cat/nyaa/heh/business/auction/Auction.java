@@ -252,9 +252,7 @@ public class Auction {
 
     private boolean giveToTempStorage(ItemStack itemStack, OfflinePlayer offlinePlayer) {
         try{
-            StorageConnection instance = StorageConnection.getInstance();
-            StorageItem storageItem = instance.newStorageItem(offlinePlayer.getUniqueId(), itemStack, 0);
-            instance.addStorageItem(storageItem);
+            StorageConnection.getInstance().getPlayerStorage(offlinePlayer.getUniqueId()).addItem(itemStack, 0);
             new Message(I18n.format("item.give.temp_storage")).send(offlinePlayer);
             return true;
         }catch (Exception e){
