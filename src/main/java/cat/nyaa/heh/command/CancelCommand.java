@@ -1,23 +1,31 @@
 package cat.nyaa.heh.command;
 
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.direct.DirectInvoice;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.item.StorageItem;
+import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
+import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
 
@@ -61,9 +69,59 @@ public class CancelCommand extends CommandReceiver implements ShortcutCommand{
             new Message(I18n.format("command.cancel.canceled_invoice", uid)).send(sender);
             return;
         }
+        try{
+            ItemStack itemStack = invoice.getItemStack();
+            itemStack.setAmount(invoice.getAmount() - invoice.getSoldAmount());
+            UUID owner = invoice.getOwner();
+            giveTo(itemStack, owner);
+            DirectInvoice.getInstance().cancelInvoice(invoice);
+            new Message(I18n.format("command.cancel.success", uid)).send(sender);
+        } catch (Exception e) {
+            HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "error canceling invoice", e);
+            new Message(I18n.format("command.cancel.failed", uid)).send(sender);
+        }
 
-        DirectInvoice.getInstance().cancelInvoice(invoice);
-        new Message(I18n.format("command.cancel.success", uid)).send(sender);
+    }
+
+    private void giveTo(ItemStack itemStack, UUID owner) {
+        Inventory targetInventory = null;
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(owner);
+        if (offlinePlayer.isOnline()) {
+            Player player = offlinePlayer.getPlayer();
+            if (player == null){
+                giveToTempStorage(itemStack, offlinePlayer);
+            }
+            targetInventory = player.getInventory();
+            if (giveTo(targetInventory, itemStack)) {
+                new Message(I18n.format("item.give.inventory")).send(offlinePlayer);
+            }else{
+                giveToTempStorage(itemStack, offlinePlayer);
+            }
+        }else {
+            giveToTempStorage(itemStack, offlinePlayer);
+        }
+    }
+
+    private boolean giveToTempStorage(ItemStack itemStack, OfflinePlayer offlinePlayer) {
+        try{
+            StorageConnection instance = StorageConnection.getInstance();
+            StorageItem storageItem = instance.newStorageItem(offlinePlayer.getUniqueId(), itemStack, 0);
+            instance.addStorageItem(storageItem);
+            new Message(I18n.format("item.give.temp_storage")).send(offlinePlayer);
+            return true;
+        }catch (Exception e){
+            HamsterEcoHelper.plugin.getLogger().log(Level.WARNING, "exception during giving item to temp storage", e);
+            return false;
+        }
+    }
+
+    private boolean giveTo(Inventory inventory, ItemStack itemStack) {
+        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
+            if (InventoryUtils.addItem(inventory, itemStack)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<String> cancelCompleter(CommandSender sender, Arguments arguments) {

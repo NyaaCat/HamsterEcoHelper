@@ -109,8 +109,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
     }
 
     private boolean isShopSign(Block block1) {
-        Sign sign = (Sign) block1.getState();
-        return SignShopManager.getInstance().isSignShop(sign);
+        return SignShopManager.getInstance().isSignShop(block1);
     }
 
     @SubCommand(value = "buy", permission = PERMISSION_SHOP, tabCompleter = "sellCompleter")

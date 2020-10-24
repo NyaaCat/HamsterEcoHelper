@@ -3,11 +3,11 @@ package cat.nyaa.heh.business.signshop;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.db.SignShopConnection;
 import org.bukkit.Location;
-import org.bukkit.block.Sign;
+import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignShopManager {
     private static SignShopManager INSTANCE;
@@ -48,7 +48,7 @@ public class SignShopManager {
                 );
     }
 
-    public boolean isSignShop(Sign sign) {
+    public boolean isSignShop(Block sign) {
         return locationMap.get(sign.getLocation()) != null;
     }
 

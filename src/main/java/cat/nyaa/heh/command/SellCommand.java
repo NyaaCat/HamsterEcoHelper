@@ -46,8 +46,7 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
     private static final String PERMISSION_SELL = "heh.business.sell";
 
     private boolean isShopSign(Block block1) {
-        Sign sign = (Sign) block1.getState();
-        return SignShopManager.getInstance().isSignShop(sign);
+        return SignShopManager.getInstance().isSignShop(block1);
     }
 
     @SubCommand(isDefaultCommand = true, permission = PERMISSION_SELL, tabCompleter = "sellCompleter")

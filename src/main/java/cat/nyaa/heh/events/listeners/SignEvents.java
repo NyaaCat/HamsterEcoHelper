@@ -48,7 +48,7 @@ public class SignEvents implements Listener {
         if (clickedBlock == null || !(clickedBlock.getState() instanceof Sign)){
             return;
         }
-        if (!SignShopManager.getInstance().isSignShop((Sign) clickedBlock.getState())){
+        if (!SignShopManager.getInstance().isSignShop(clickedBlock)){
             return;
         }
 
@@ -106,7 +106,7 @@ public class SignEvents implements Listener {
         if (clickedBlock == null || !(clickedBlock.getState() instanceof Sign)){
             return;
         }
-        if (!SignShopManager.getInstance().isSignShop((Sign) clickedBlock.getState())){
+        if (!SignShopManager.getInstance().isSignShop(clickedBlock)){
             return;
         }
         Location location = clickedBlock.getLocation();
@@ -214,8 +214,7 @@ public class SignEvents implements Listener {
     }
 
     private boolean isShopSign(Block block1) {
-        Sign sign = (Sign) block1.getState();
-        return SignShopManager.getInstance().isSignShop(sign);
+        return SignShopManager.getInstance().isSignShop(block1);
     }
 
     @EventHandler
@@ -223,8 +222,7 @@ public class SignEvents implements Listener {
         if (!(event.getBlock().getState() instanceof Sign)){
             return;
         }
-        Sign sign = (Sign) event.getBlock().getState();
-        if (SignShopManager.getInstance().isSignShop(sign)){
+        if (SignShopManager.getInstance().isSignShop(event.getBlock())){
             event.setCancelled(true);
         }
     }
