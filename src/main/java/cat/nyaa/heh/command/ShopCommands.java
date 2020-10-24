@@ -5,6 +5,7 @@ import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.signshop.*;
+import cat.nyaa.heh.ui.LottoGUI;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.Utils;
@@ -73,6 +74,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
                 ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.LOTTO, itemInMainHand, 0);
                 ShopItemManager.insertShopItem(shopItem);
                 player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                UiManager.getInstance().getLottoGUIs(signShopLotto1.getOwner()).forEach(LottoGUI::refreshGUI);
                 new Message(I18n.format("command.shop.lotto.offer")).send(player);
                 break;
         }
@@ -224,6 +226,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
                 int index = arguments.nextInt();
                 ShopItem shopItem = items.get(index);
                 ShopItemManager.getInstance().invalidateItem(shopItem);
+                UiManager.getInstance().getSignShopUis(shopAt.getOwner()).forEach(SignShopGUI::refreshGUI);
                 new Message("").append(I18n.format("command.remove.buy.success", index), shopItem.getModel()).send(sender);
             }
             return;

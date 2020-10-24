@@ -44,4 +44,8 @@ public class LottoGUI extends BaseUi<ShopItem> {
         getPagedComponent().refreshUi();
         buttonComponent.refreshUi();
     }
+
+    public UUID getOwner() {
+        return owner;
+    }
 }

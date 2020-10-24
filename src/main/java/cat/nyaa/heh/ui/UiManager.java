@@ -75,13 +75,14 @@ public class UiManager {
                 .collect(Collectors.toList());
     }
 
-    public void getUiOfType(ShopComponent shopComponent) {
-
+    public List<LottoGUI> getLottoGUIs(UUID owner) {
+        return uiByUuid.values().stream().filter(baseUi -> baseUi instanceof LottoGUI)
+                .map(baseUi -> (LottoGUI)baseUi)
+                .filter(lottoGUI -> owner == null || owner.equals(lottoGUI.getOwner()))
+                .collect(Collectors.toList());
     }
 
     public List<LottoGUI> getLottoGUIs() {
-        return uiByUuid.values().stream().filter(baseUi -> baseUi instanceof LottoGUI)
-                .map(baseUi -> (LottoGUI)baseUi)
-                .collect(Collectors.toList());
+        return getLottoGUIs(null);
     }
 }
