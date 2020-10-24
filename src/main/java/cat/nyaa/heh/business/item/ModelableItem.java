@@ -11,7 +11,7 @@ public interface ModelableItem<T> {
     ItemStack getModel();
 
     default ItemStack buildModel(ItemStack itemStack) {
-        ItemStack clone = new ItemStack(itemStack.getType());
+        ItemStack clone = itemStack.clone();
 
         ItemMeta itemMeta;
         ItemMeta originMeta = itemStack.getItemMeta();

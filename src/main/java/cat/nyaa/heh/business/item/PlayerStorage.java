@@ -110,7 +110,11 @@ public class PlayerStorage {
     private void giveTo(Player player, StorageItem storageItem) {
         ItemStack itemStack = storageItem.getItemStack();
         PlayerInventory inventory = player.getInventory();
-        if (!InventoryUtils.addItem(inventory, itemStack)){
+        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
+            if (!InventoryUtils.addItem(inventory, itemStack)){
+                player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+            }
+        }else {
             player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
         }
     }
