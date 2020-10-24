@@ -42,8 +42,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         }else{
             makeTransaction(event, buyer, shopItem);
         }
-        loadData();
-        refreshUi();
+        onPostTransaction();
     }
 
     private int getClickCD() {
@@ -96,8 +95,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             double fee = getFee();
             TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee, getReason());
         }
-        loadData();
-        refreshUi();
+        onPostTransaction();
     }
 
     @Override
@@ -118,8 +116,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             double fee = getFee();
             TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount(), fee, getReason());
         }
-        loadData();
-        refreshUi();
+        onPostTransaction();
     }
 
     private void giveToPlayer(HumanEntity player, ItemStack itemStack) {
@@ -168,4 +165,6 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
     public void onDrag(InventoryClickEvent event) {
 
     }
+
+    protected abstract void onPostTransaction();
 }

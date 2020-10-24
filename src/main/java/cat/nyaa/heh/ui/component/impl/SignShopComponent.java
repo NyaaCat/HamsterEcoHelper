@@ -4,6 +4,8 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.business.transaction.TaxReason;
+import cat.nyaa.heh.ui.SignShopGUI;
+import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.ShopComponent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -19,8 +21,8 @@ public class SignShopComponent extends ShopComponent {
     }
 
     @Override
-    public void onLeftClick(InventoryClickEvent event) {
-        super.onLeftClick(event);
+    protected void onPostTransaction() {
+        UiManager.getInstance().getSignShopUis(signShop.getOwner()).forEach(SignShopGUI::refreshGUI);
     }
 
     @Override

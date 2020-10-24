@@ -13,6 +13,7 @@ import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.DataModel;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
+import cat.nyaa.heh.ui.LottoGUI;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -153,12 +154,17 @@ public class SignShopLotto extends BaseSignShop {
                 }
             }.runTask(HamsterEcoHelper.plugin);
             item.setSold(item.getAmount());
+            refreshGUI();
             ShopItemManager.getInstance().updateShopItem(item);
         } catch (NoLottoChestException e){
             new Message(I18n.format("shop.sign.lotto.no_chest", name)).send(related);
         }catch (InvalidItemException e){
             new Message(I18n.format("shop.sign.lotto.invalid_item", name)).send(related);
         }
+    }
+
+    private void refreshGUI() {
+        UiManager.getInstance().getLottoGUIs().forEach(LottoGUI::refreshGUI);
     }
 
     @Override

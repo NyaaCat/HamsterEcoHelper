@@ -59,7 +59,7 @@ public class Market extends BaseShop {
     }
 
     private void closeAll(){
-        UiManager.getInstance().getMarketUis().forEach(MarketGUI::refreshGUI);
+        UiManager.getInstance().getMarketUis().forEach(MarketGUI::close);
     }
 
     public void offer(Player player, ItemStack itemStack, double unitPrice){

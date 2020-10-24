@@ -116,7 +116,7 @@ public abstract class BaseSignShop extends BaseShop{
 
     public void updateUi(){
         UiManager.getInstance().getSignShopUis(getOwner()).stream()
-                .forEach(signShopGUI -> signShopGUI.refreshGUI());
+                .forEach(SignShopGUI::refreshGUI);
     }
 
     public void updateSign(){

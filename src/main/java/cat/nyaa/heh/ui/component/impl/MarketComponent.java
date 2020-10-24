@@ -4,6 +4,8 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.market.Market;
 import cat.nyaa.heh.business.transaction.TaxReason;
+import cat.nyaa.heh.ui.MarketGUI;
+import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.ShopComponent;
 import org.bukkit.inventory.Inventory;
 
@@ -24,6 +26,11 @@ public class MarketComponent extends ShopComponent {
     @Override
     protected double getFee() {
         return HamsterEcoHelper.plugin.config.marketFeeBase;
+    }
+
+    @Override
+    protected void onPostTransaction() {
+        UiManager.getInstance().getMarketUis().forEach(MarketGUI::refreshGUI);
     }
 
     private List<ShopItem> loadItems() {

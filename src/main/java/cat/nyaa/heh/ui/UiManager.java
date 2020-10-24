@@ -78,4 +78,10 @@ public class UiManager {
     public void getUiOfType(ShopComponent shopComponent) {
 
     }
+
+    public List<LottoGUI> getLottoGUIs() {
+        return uiByUuid.values().stream().filter(baseUi -> baseUi instanceof LottoGUI)
+                .map(baseUi -> (LottoGUI)baseUi)
+                .collect(Collectors.toList());
+    }
 }
