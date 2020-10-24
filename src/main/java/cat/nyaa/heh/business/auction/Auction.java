@@ -239,14 +239,27 @@ public class Auction {
         Inventory targetInventory = null;
         if (offlinePlayer.isOnline()) {
             targetInventory = offlinePlayer.getPlayer().getInventory();
-            new Message(I18n.format("item.give.inventory")).send(offlinePlayer);
-            giveTo(targetInventory, itemStack);
+            if (giveTo(targetInventory, itemStack)) {
+                new Message(I18n.format("item.give.inventory")).send(offlinePlayer);
+            }else{
+                giveToTempStorage(itemStack, offlinePlayer);
+            }
         }else {
+            giveToTempStorage(itemStack, offlinePlayer);
+            return;
+        }
+    }
+
+    private boolean giveToTempStorage(ItemStack itemStack, OfflinePlayer offlinePlayer) {
+        try{
             StorageConnection instance = StorageConnection.getInstance();
             StorageItem storageItem = instance.newStorageItem(offlinePlayer.getUniqueId(), itemStack, 0);
             instance.addStorageItem(storageItem);
             new Message(I18n.format("item.give.temp_storage")).send(offlinePlayer);
-            return;
+            return true;
+        }catch (Exception e){
+            HamsterEcoHelper.plugin.getLogger().log(Level.WARNING, "exception during giving item to temp storage", e);
+            return false;
         }
     }
 

@@ -166,6 +166,8 @@ ui:
     lotto: "[LOTTO]"
     sign_shop: "[SHOP]"
   title:
+    lotto_storage: "乐透库存"
+    lotto: "乐透"
     market: "天喵商城"
     sign_shop: "商店"
     storage: "临时仓储"

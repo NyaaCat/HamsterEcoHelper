@@ -75,7 +75,7 @@ public class SignShopConnection {
         return new ItemFrameShop(DatabaseManager.getInstance().getShopFrame(uniqueId));
     }
 
-    public Inventory getLottoItems(UUID owner) throws NoLottoChestException {
+    public List<ShopItem> getLottoItems(UUID owner) throws NoLottoChestException {
         return DatabaseManager.getInstance().getLottoItems(owner);
     }
 }

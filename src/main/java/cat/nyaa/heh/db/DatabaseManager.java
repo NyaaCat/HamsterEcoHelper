@@ -18,7 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.PreparedStatement;
@@ -317,47 +316,15 @@ public class DatabaseManager {
         storageTable.delete(WhereClause.EQ("uid", storageDbModel.getUid()));
     }
 
-    public Inventory getLottoItems(UUID owner) throws NoLottoChestException {
-        Logger logger = HamsterEcoHelper.plugin.getLogger();
-        try {
-            final Object lock = new Object();
-            synchronized (lock){
-                TaskChain<Chest> task = Utils.newChain().sync((input) -> {
-                    Chest chest = locationTable.select(WhereClause.EQ("type", LocationType.CHEST_LOTTO).whereEq("owner", owner)).stream()
-                        .map(LocationDbModel::getBlock)
-                        .limit(1)
-                        .filter(block -> block.getState() instanceof Chest)
-                        .map(block -> ((Chest) block.getState()))
-                        .findFirst().orElse(null);
-                    return chest;
-                });
-                task.sync((input) -> {
-                    task.setTaskData("chest", input);
-                    synchronized (lock){
-                        lock.notify();
-                    }
-                    return null;
-                });
-                task.setErrorHandler((e, taska) -> {
-                    logger.log(Level.SEVERE, "error loading chest", e);
-                });
-                new BukkitRunnable(){
-                    @Override
-                    public void run() {
-                        task.execute();
-                    }
-                }.runTask(HamsterEcoHelper.plugin);
-                lock.wait();
-                Chest chest = task.getTaskData("chest");
-                if (chest == null){
-                    throw new NoLottoChestException();
-                }
-                return chest.getInventory();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public List<ShopItem> getLottoItems(UUID owner) throws NoLottoChestException {
+        List<ShopItem> collect = shopItemTable.select(
+                WhereClause.EQ("type", ShopItemType.LOTTO)
+                        .whereEq("available", true)
+        ).stream()
+                .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
+                .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
+                .collect(Collectors.toList());
+        return collect;
     }
 
     public long getSystemUid(UUID uuid){

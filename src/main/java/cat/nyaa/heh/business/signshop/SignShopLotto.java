@@ -112,60 +112,48 @@ public class SignShopLotto extends BaseSignShop {
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build();
 
-    private void onLotto(Player related) throws ExecutionException {
+    private void onLotto(Player related) {
         String name = SystemAccountUtils.isSystemAccount(getOwner()) ? SystemAccountUtils.getSystemName()
                 : Bukkit.getOfflinePlayer(getOwner()).getName();
         try {
-            Inventory lottoItems = inventoryCache.get(owner, () -> SignShopConnection.getInstance().getLottoItems(owner));
-
+            List<ShopItem> lottoItems = SignShopConnection.getInstance().getLottoItems(owner);
             if(lottoItems == null){
                 new Message(I18n.format("sign.error.invalid_sign")).send(related);
                 return;
             }
-            List<Integer> nonNullContents = new ArrayList<>();
-            ItemStack[] contents = lottoItems.getContents();
-            for (int i = 0; i < contents.length; i++) {
-                ItemStack content = contents[i];
-                if (content != null && !content.getType().isAir()) {
-                    nonNullContents.add(i);
-                }
-            }
 
-            if (nonNullContents.size() <=0){
+            if (lottoItems.size() <=0){
                 new Message("").append(I18n.format("shop.sign.lotto.no_item")).send(related);
                 return;
             }
-            Integer integer = Utils.randomSelect(nonNullContents);
-            ItemStack item1 = lottoItems.getItem(integer);
-            if (item1 == null || item1.getType().isAir()) {
+            ShopItem item = Utils.randomSelect(lottoItems);
+            if (item == null || item.getItemStack().getType().isAir()) {
                 new Message("").append(I18n.format("shop.sign.lotto.no_item")).send(related);
                 return;
             }
-            ItemStack clone = item1.clone();
-            int transacAmount = clone.getAmount();
-            ShopItem shopItem = ShopItemManager.newShopItem(owner, ShopItemType.LOTTO, clone, price / (double) transacAmount);
-            ShopItemManager.insertShopItem(shopItem);
+            ItemStack clone = item.getItemStack().clone();
+            clone.setAmount(item.getAmount() - item.getSoldAmount());
             TransactionRequest req = new TransactionRequest.TransactionBuilder()
-                    .seller(shopItem.getOwner())
+                    .seller(item.getOwner())
                     .buyer(related.getUniqueId())
                     .reason(TaxReason.REASON_LOTTO)
-                    .item(shopItem)
+                    .item(item)
                     .priceOverride(price)
-                    .taxRate(Tax.getTaxRate(shopItem))
+                    .taxRate(Tax.getTaxRate(item))
                     .build();
             new BukkitRunnable(){
                 @Override
                 public void run() {
                     if (TransactionController.getInstance().makeTransaction(req)) {
                         new Message("").append(I18n.format("shop.sign.lotto.success", name, price)).send(related);
-                        new Message("").append(I18n.format("shop.sign.lotto.item"), shopItem.getItemStack()).send(related);
+                        new Message("").append(I18n.format("shop.sign.lotto.item"), clone).send(related);
                     } else {
-                        lottoItems.setItem(integer, clone); //may cause chunk load...
-                        new Message("").append(I18n.format("shop.sign.lotto.failed"), shopItem.getItemStack()).send(related);
+                        new Message("").append(I18n.format("shop.sign.lotto.failed"), clone).send(related);
                     }
                 }
             }.runTask(HamsterEcoHelper.plugin);
-            lottoItems.setItem(integer, new ItemStack(Material.AIR));
+            item.setSold(item.getAmount());
+            ShopItemManager.getInstance().updateShopItem(item);
         } catch (NoLottoChestException e){
             new Message(I18n.format("shop.sign.lotto.no_chest", name)).send(related);
         }catch (InvalidItemException e){
@@ -180,6 +168,6 @@ public class SignShopLotto extends BaseSignShop {
 
     @Override
     public void loadItems() {
-        SignShopConnection.getInstance().getLottoItems(owner);
+        this.items = SignShopConnection.getInstance().getLottoItems(owner);
     }
 }

@@ -47,6 +47,29 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         return "shop";
     }
 
+    @SubCommand(value = "lotto", permission = PERMISSION_SHOP, tabCompleter = "lottoCompleter")
+    public void onLotto(CommandSender sender, Arguments arguments){
+        Player player = asPlayer(sender);
+        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        if (itemInMainHand.getType().isAir()){
+            new Message(I18n.format("command.shop.no_item")).send(player);
+            return;
+        }
+        String action = arguments.next();
+        switch (action){
+            case "view":
+                SignShopLotto signShopLotto = new SignShopLotto(player.getUniqueId(), 0);
+                signShopLotto.newGUI().open(player);
+                break;
+            case "offer":
+                ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.LOTTO, itemInMainHand, 0);
+                ShopItemManager.insertShopItem(shopItem);
+                player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                new Message(I18n.format("command.shop.lotto")).send(player);
+                break;
+        }
+    }
+
     @SubCommand(value = "sell", permission = PERMISSION_SHOP, tabCompleter = "sellCompleter")
     public void onSell(CommandSender sender, Arguments arguments){
         Player player = asPlayer(sender);
@@ -208,6 +231,18 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         SignShopManager.getInstance().removeShopAt(shopAt);
         new Message(I18n.format("shop.remove.success")).send(sender);
     }
+
+    public List<String> lottoCompleter(CommandSender sender, Arguments arguments) {
+        List<String> completeStr = new ArrayList<>();
+        switch (arguments.remains()) {
+            case 1:
+                completeStr.add("view");
+                completeStr.add("offer");
+                break;
+        }
+        return filtered(arguments, completeStr);
+    }
+
 
     public List<String> removeCompleter(CommandSender sender, Arguments arguments) {
         List<String> completeStr = new ArrayList<>();
