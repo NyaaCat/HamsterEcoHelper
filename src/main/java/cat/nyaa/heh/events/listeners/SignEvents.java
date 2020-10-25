@@ -38,6 +38,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static cat.nyaa.heh.utils.Utils.isValidItem;
+
 public class SignEvents implements Listener {
 
     Cache<Location, BaseSignShop> signShopCache = CacheBuilder.newBuilder()
@@ -94,110 +96,6 @@ public class SignEvents implements Listener {
         }else{
             new Message(I18n.format("shop.sign.sell.error_transaction_fail")).send(player);
         }
-    }
-
-    public boolean isValidItem(ShopItem shopItem, ItemStack sellItem) {
-        BasicItemMatcher itemMatcher = new BasicItemMatcher();
-        itemMatcher.requireExact = true;
-        ItemStack itemStack = shopItem.getItemStack();
-        itemMatcher.itemTemplate = itemStack;
-        boolean matches = itemMatcher.matches(sellItem);
-        //exact match
-        if (matches){
-            return true;
-        }
-        itemMatcher.requireExact = false;
-        matches = itemMatcher.matches(sellItem);
-        //simple match
-        if (!matches) {
-            return false;
-        }
-        //painful meta match
-        if (itemStack.hasItemMeta()) {
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            ItemMeta itemMeta1 = sellItem.getItemMeta();
-            if (itemMeta instanceof BlockStateMeta) {
-                if (!(itemMeta1 instanceof BlockStateMeta)){
-                    return false;
-                }
-                BlockState blockState = ((BlockStateMeta) itemMeta).getBlockState();
-                BlockState blockState1 = ((BlockStateMeta) itemMeta1).getBlockState();
-                if (blockState instanceof Container){
-                    if (!(blockState1 instanceof Container)) {
-                        matches = false;
-                    } else {
-                        matches = matchContainer(((Container) blockState), ((Container) blockState1));
-                    }
-                }else {
-                    matches = itemMeta.equals(itemMeta1);
-                }
-            }
-            else if (itemMeta instanceof BookMeta){
-                if(!(itemMeta1 instanceof BookMeta)){
-                    return false;
-                }
-                String title = ((BookMeta) itemMeta).getTitle();
-                String title1 = ((BookMeta) itemMeta1).getTitle();
-                if (!Objects.equals(title, title1)){
-                    return false;
-                }
-                String author = ((BookMeta) itemMeta).getAuthor();
-                String author1 = ((BookMeta) itemMeta1).getAuthor();
-                if (!Objects.equals(author, author1)){
-                    return false;
-                }
-                BookMeta.Generation generation = ((BookMeta) itemMeta).getGeneration();
-                BookMeta.Generation generation1 = ((BookMeta) itemMeta).getGeneration();
-                if (!Objects.equals(generation, generation1)){
-                    return false;
-                }
-                int pageCount = ((BookMeta) itemMeta).getPageCount();
-                int pageCount1 = ((BookMeta) itemMeta).getPageCount();
-                if (pageCount != pageCount1){
-                    return false;
-                }
-                List<String> pages = ((BookMeta) itemMeta).getPages();
-                List<String> pages1 = ((BookMeta) itemMeta).getPages();
-                matches = matchPage(pages, pages1);
-            }
-            else {
-                matches = Objects.equals(itemMeta, itemMeta1);
-            }
-        }
-        return matches;
-    }
-
-    private boolean matchPage(List<String> pages, List<String> pages1) {
-        for (int i = 0; i < pages.size(); i++) {
-            String s = pages.get(i);
-            String s1 = pages1.get(i);
-            if (!Objects.equals(s, s1)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean matchContainer(Container container, Container container1) {
-        ItemStack[] contents = container.getInventory().getContents();
-        ItemStack[] contents1 = container1.getInventory().getContents();
-        boolean matches = true;
-        if (contents.length != contents1.length) {
-            return false;
-        }
-        BasicItemMatcher matcher = new BasicItemMatcher();
-        for (int i = 0; i < contents.length; i++) {
-            ItemStack content = contents[i];
-            ItemStack content1 = contents1[i];
-            matcher.itemTemplate = content;
-            if (content == null || content1 == null){
-                matches = content1 == null && content == null;
-            }else {
-                matches = matcher.matches(content1);
-            }
-            if (!matches)break;
-        }
-        return matches;
     }
 
     @EventHandler

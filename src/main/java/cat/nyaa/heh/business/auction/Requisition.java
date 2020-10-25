@@ -27,6 +27,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ListIterator;
 
+import static cat.nyaa.heh.utils.Utils.isValidItem;
+
 public class Requisition {
     private static Requisition currentRequisition;
     private static Permission permission = new Permission("heh.req");
@@ -106,8 +108,8 @@ public class Requisition {
     }
 
     public boolean onSell(Player seller, ItemStack sellItem){
-        if (!isValidItem(sellItem)) {
-            throw new IllegalArgumentException("not similar item");
+        if (!isValidItem(item, sellItem)) {
+            throw new IllegalArgumentException("requisition.invalid_item");
         }
 
         double fee = HamsterEcoHelper.plugin.config.requisitionFeeBase;
@@ -119,12 +121,6 @@ public class Requisition {
             onStop();
         }
         return result;
-    }
-
-    public boolean isValidItem(ItemStack sellItem) {
-        BasicItemMatcher itemMatcher = new BasicItemMatcher();
-        itemMatcher.itemTemplate = getItem();
-        return itemMatcher.matches(sellItem);
     }
 
     public static void broadcast(Message message){

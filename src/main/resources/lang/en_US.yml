@@ -15,6 +15,7 @@ requisition:
   info:
     player: "当前 %s &r正在进行征购 {itemName} 剩余 %d 个 单价 %.2f 剩余时间 %d 秒"
   stop: "征购结束"
+  invalid_item: "物品不匹配"
 shop_item:
   lore:
     owner: "由 {name} 提供"
