@@ -145,14 +145,15 @@ public class SignShopLotto extends BaseSignShop {
                     if (TransactionController.getInstance().makeTransaction(req)) {
                         new Message("").append(I18n.format("shop.sign.lotto.success", name, price)).send(related);
                         new Message("").append(I18n.format("shop.sign.lotto.item"), clone).send(related);
+                        item.setSold(item.getAmount());
+                        refreshGUI();
+                        ShopItemManager.getInstance().updateShopItem(item);
                     } else {
                         new Message("").append(I18n.format("shop.sign.lotto.failed"), clone).send(related);
                     }
                 }
             }.runTask(HamsterEcoHelper.plugin);
-            item.setSold(item.getAmount());
-            refreshGUI();
-            ShopItemManager.getInstance().updateShopItem(item);
+
         } catch (NoLottoChestException e){
             new Message(I18n.format("shop.sign.lotto.no_chest", name)).send(related);
         }catch (InvalidItemException e){
