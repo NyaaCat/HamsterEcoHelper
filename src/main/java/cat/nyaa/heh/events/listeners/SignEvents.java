@@ -190,7 +190,11 @@ public class SignEvents implements Listener {
             ItemStack content = contents[i];
             ItemStack content1 = contents1[i];
             matcher.itemTemplate = content;
-            matches = matcher.matches(content1);
+            if (content == null || content1 == null){
+                matches = content1 == null && content == null;
+            }else {
+                matches = matcher.matches(content1);
+            }
             if (!matches)break;
         }
         return matches;
