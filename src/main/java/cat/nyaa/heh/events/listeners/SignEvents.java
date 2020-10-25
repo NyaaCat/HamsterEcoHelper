@@ -9,13 +9,14 @@ import cat.nyaa.heh.business.signshop.SignShopManager;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.utils.ClickUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
-import cat.nyaa.nyaacore.BasicItemMatcher;
 import cat.nyaa.nyaacore.Message;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Waterlogged;
@@ -26,15 +27,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -114,9 +110,6 @@ public class SignEvents implements Listener {
             shopAt = SignShopManager.getInstance().getShopAt(location);
             signShopCache.put(location, shopAt);
         }
-        if (shopAt.getOwner().equals(event.getPlayer().getUniqueId())){
-            return;
-        }
         if (!shopAt.isSignExist()){
             shopAt.loadSign();
         }
@@ -125,6 +118,9 @@ public class SignEvents implements Listener {
             return;
         }
         if(shopAt instanceof SignShopLotto){
+            if (shopAt.getOwner().equals(event.getPlayer().getUniqueId())){
+                return;
+            }
             SignShopLotto shopAt1 = (SignShopLotto) shopAt;
             String name = SystemAccountUtils.isSystemAccount(shopAt.getOwner()) ? SystemAccountUtils.getSystemName()
                     : Bukkit.getOfflinePlayer(shopAt.getOwner()).getName();

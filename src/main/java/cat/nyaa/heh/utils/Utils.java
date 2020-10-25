@@ -138,56 +138,54 @@ public class Utils {
             return false;
         }
         //painful meta match
-        if (itemStack.hasItemMeta()) {
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            ItemMeta itemMeta1 = sellItem.getItemMeta();
-            if (itemMeta instanceof BlockStateMeta) {
-                if (!(itemMeta1 instanceof BlockStateMeta)){
-                    return false;
-                }
-                BlockState blockState = ((BlockStateMeta) itemMeta).getBlockState();
-                BlockState blockState1 = ((BlockStateMeta) itemMeta1).getBlockState();
-                if (blockState instanceof Container){
-                    if (!(blockState1 instanceof Container)) {
-                        matches = false;
-                    } else {
-                        matches = matchContainer(((Container) blockState), ((Container) blockState1));
-                    }
-                }else {
-                    matches = itemMeta.equals(itemMeta1);
-                }
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        ItemMeta itemMeta1 = sellItem.getItemMeta();
+        if (itemMeta instanceof BlockStateMeta) {
+            if (!(itemMeta1 instanceof BlockStateMeta)){
+                return false;
             }
-            else if (itemMeta instanceof BookMeta){
-                if(!(itemMeta1 instanceof BookMeta)){
-                    return false;
+            BlockState blockState = ((BlockStateMeta) itemMeta).getBlockState();
+            BlockState blockState1 = ((BlockStateMeta) itemMeta1).getBlockState();
+            if (blockState instanceof Container){
+                if (!(blockState1 instanceof Container)) {
+                    matches = false;
+                } else {
+                    matches = matchContainer(((Container) blockState), ((Container) blockState1));
                 }
-                String title = ((BookMeta) itemMeta).getTitle();
-                String title1 = ((BookMeta) itemMeta1).getTitle();
-                if (!Objects.equals(title, title1)){
-                    return false;
-                }
-                String author = ((BookMeta) itemMeta).getAuthor();
-                String author1 = ((BookMeta) itemMeta1).getAuthor();
-                if (!Objects.equals(author, author1)){
-                    return false;
-                }
-                BookMeta.Generation generation = ((BookMeta) itemMeta).getGeneration();
-                BookMeta.Generation generation1 = ((BookMeta) itemMeta).getGeneration();
-                if (!Objects.equals(generation, generation1)){
-                    return false;
-                }
-                int pageCount = ((BookMeta) itemMeta).getPageCount();
-                int pageCount1 = ((BookMeta) itemMeta).getPageCount();
-                if (pageCount != pageCount1){
-                    return false;
-                }
-                List<String> pages = ((BookMeta) itemMeta).getPages();
-                List<String> pages1 = ((BookMeta) itemMeta).getPages();
-                matches = matchPage(pages, pages1);
+            }else {
+                matches = itemMeta.equals(itemMeta1);
             }
-            else {
-                matches = Objects.equals(itemMeta, itemMeta1);
+        }
+        else if (itemMeta instanceof BookMeta){
+            if(!(itemMeta1 instanceof BookMeta)){
+                return false;
             }
+            String title = ((BookMeta) itemMeta).getTitle();
+            String title1 = ((BookMeta) itemMeta1).getTitle();
+            if (!Objects.equals(title, title1)){
+                return false;
+            }
+            String author = ((BookMeta) itemMeta).getAuthor();
+            String author1 = ((BookMeta) itemMeta1).getAuthor();
+            if (!Objects.equals(author, author1)){
+                return false;
+            }
+            BookMeta.Generation generation = ((BookMeta) itemMeta).getGeneration();
+            BookMeta.Generation generation1 = ((BookMeta) itemMeta).getGeneration();
+            if (!Objects.equals(generation, generation1)){
+                return false;
+            }
+            int pageCount = ((BookMeta) itemMeta).getPageCount();
+            int pageCount1 = ((BookMeta) itemMeta).getPageCount();
+            if (pageCount != pageCount1){
+                return false;
+            }
+            List<String> pages = ((BookMeta) itemMeta).getPages();
+            List<String> pages1 = ((BookMeta) itemMeta).getPages();
+            matches = matchPage(pages, pages1);
+        }
+        else {
+            matches = Objects.equals(itemMeta, itemMeta1);
         }
         return matches;
     }

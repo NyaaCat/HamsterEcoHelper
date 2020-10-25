@@ -21,6 +21,7 @@ public class TransactionRequest {
     private Inventory returnInv = null;
     private Double taxRate = null;
     private TaxMode taxMode = TaxMode.ADDITION;
+    private boolean forceStorage;
 
     private TransactionRequest() {
     }
@@ -98,6 +99,14 @@ public class TransactionRequest {
     }
     public void setTaxMode(TaxMode taxMode) {
         this.taxMode = taxMode;
+    }
+
+    public void setForceStorage(boolean forceStorage) {
+        this.forceStorage = forceStorage;
+    }
+
+    public boolean isForceStorage() {
+        return forceStorage;
     }
     //</editor-fold>
 
@@ -179,6 +188,11 @@ public class TransactionRequest {
                 throw new IllegalStateException("no reason detected.");
             }
             return request;
+        }
+
+        public TransactionBuilder forceStorage(boolean b) {
+            request.setForceStorage(b);
+            return this;
         }
     }
 }

@@ -138,6 +138,7 @@ public class SignShopLotto extends BaseSignShop {
                     .item(item)
                     .priceOverride(price)
                     .taxRate(Tax.getTaxRate(item))
+                    .forceStorage(true)
                     .build();
             new BukkitRunnable(){
                 @Override

@@ -165,6 +165,7 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
                 .item(shopItem1)
                 .taxMode(TaxMode.ADDITION)
                 .reason(TaxReason.REASON_SIGN_SHOP)
+                .forceStorage(true)
                 .build();
         TransactionController.getInstance().makeTransaction(req);
         shopItem1.setSold(0);

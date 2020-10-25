@@ -108,7 +108,7 @@ public class Requisition {
     }
 
     public boolean onSell(Player seller, ItemStack sellItem){
-        if (!isValidItem(item, sellItem)) {
+        if (!isValidItem(sellItem)) {
             throw new IllegalArgumentException("requisition.invalid_item");
         }
 
@@ -129,6 +129,10 @@ public class Requisition {
 
     public int remains() {
         return item.getAmount() - item.getSoldAmount();
+    }
+
+    public boolean isValidItem(ItemStack itemInMainHand) {
+        return Utils.isValidItem(item, itemInMainHand);
     }
 
     private class RequisitionTask extends BukkitRunnable {

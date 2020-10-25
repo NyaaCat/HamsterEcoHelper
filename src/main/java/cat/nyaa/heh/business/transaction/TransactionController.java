@@ -3,7 +3,6 @@ package cat.nyaa.heh.business.transaction;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItemType;
-import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.events.PreTransactionEvent;
@@ -149,6 +148,7 @@ public class TransactionController {
         TaxMode taxMode = transactionRequest.getTaxMode();
         Double taxRate = transactionRequest.getTaxRate();
         Double priceOverride = transactionRequest.getPriceOverride();
+        boolean forceStorage = transactionRequest.isForceStorage();
 
         OfflinePlayer pBuyer = Bukkit.getOfflinePlayer(buyer);
         OfflinePlayer pPayer = Bukkit.getOfflinePlayer(payer);
@@ -222,7 +222,10 @@ public class TransactionController {
             };
             transactionRecorderTask.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 0);
 
-            if (receiveInv != null){
+            if (forceStorage){
+                StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, 0);
+                new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
+            }else if (receiveInv != null){
                 if (!giveTo(receiveInv, itemStack)) {
                     double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
                     StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit);
