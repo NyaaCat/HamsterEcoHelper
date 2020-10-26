@@ -121,11 +121,10 @@ public class Utils {
         return LocketteProAPI.isLocked(block);
     }
 
-    public static boolean isValidItem(ShopItem shopItem, ItemStack sellItem) {
+    public static boolean isValidItem(ItemStack shopItem, ItemStack sellItem) {
         BasicItemMatcher itemMatcher = new BasicItemMatcher();
         itemMatcher.requireExact = true;
-        ItemStack itemStack = shopItem.getItemStack();
-        itemMatcher.itemTemplate = itemStack;
+        itemMatcher.itemTemplate = shopItem;
         boolean matches = itemMatcher.matches(sellItem);
         //exact match
         if (matches){
@@ -138,7 +137,7 @@ public class Utils {
             return false;
         }
         //painful meta match
-        ItemMeta itemMeta = itemStack.getItemMeta();
+        ItemMeta itemMeta = shopItem.getItemMeta();
         ItemMeta itemMeta1 = sellItem.getItemMeta();
         if (itemMeta instanceof BlockStateMeta) {
             if (!(itemMeta1 instanceof BlockStateMeta)){

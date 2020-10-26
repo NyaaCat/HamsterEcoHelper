@@ -4,10 +4,8 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.ui.StorageGUI;
 import cat.nyaa.heh.ui.UiManager;
-import cat.nyaa.nyaacore.BasicItemMatcher;
+import cat.nyaa.heh.utils.Utils;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -16,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -28,10 +25,6 @@ public class PlayerStorage {
         this.owner = owner;
     }
 
-    Cache<Long, BasicItemMatcher> itemMatcherCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .build();
-
     public boolean addItem(ItemStack itemStack, double fee){
         try{
             List<ChangeTask> changed = new ArrayList<>();
@@ -42,16 +35,7 @@ public class PlayerStorage {
             //find item with same fee and merge them.
             List<StorageItem> similarItems = storageItems.stream()
                     .filter(storageItem -> Math.abs(storageItem.getFee() - fee) < 0.001)
-                    .filter(storageItem -> {
-                        long uid = storageItem.getUid();
-                        BasicItemMatcher matcher = itemMatcherCache.getIfPresent(uid);
-                        if (matcher == null) {
-                            matcher = new BasicItemMatcher();
-                            matcher.itemTemplate = itemStack;
-                            itemMatcherCache.put(uid, matcher);
-                        }
-                        return matcher.matches(itemStack);
-                    }).collect(Collectors.toList());
+                    .filter(storageItem -> Utils.isValidItem(storageItem.getItemStack(), itemStack)).collect(Collectors.toList());
 
             //settle item until all item put into storage;
             int totalAmount = itemStack.getAmount();
@@ -67,9 +51,10 @@ public class PlayerStorage {
                 ItemStack storedItem = next.getItemStack();
                 int maxDraw = storedItem.getMaxStackSize() - storedItem.getAmount();
                 int actualDraw = Math.min(totalAmount, maxDraw);
-                totalAmount -= actualDraw;
-
-                changed.add(new ChangeTask(next, storedItem.getAmount() + actualDraw));
+                if (actualDraw > 0){
+                    totalAmount -= actualDraw;
+                    changed.add(new ChangeTask(next, storedItem.getAmount() + actualDraw));
+                }
             }
 
             //update database

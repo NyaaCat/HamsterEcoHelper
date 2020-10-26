@@ -126,7 +126,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
                 new Message(I18n.format("item.give.temp_storage")).send(player);
                 return;
             }
-            new Message(I18n.format("item.give.endet_chest")).send(player);
+            new Message(I18n.format("item.give.ender_chest")).send(player);
             return;
         }
     }

@@ -132,7 +132,7 @@ public class Requisition {
     }
 
     public boolean isValidItem(ItemStack itemInMainHand) {
-        return Utils.isValidItem(item, itemInMainHand);
+        return Utils.isValidItem(item.getItemStack(), itemInMainHand);
     }
 
     private class RequisitionTask extends BukkitRunnable {

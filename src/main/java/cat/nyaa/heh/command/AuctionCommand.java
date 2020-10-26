@@ -68,7 +68,7 @@ public class AuctionCommand extends CommandReceiver implements ShortcutCommand {
 
         UUID from = isSystemAuc? SystemAccountUtils.getSystemUuid() : player.getUniqueId();
 
-        ShopItem item = ShopItemManager.newShopItem(from, ShopItemType.AUCTION, itemInMainHand, basePrice);
+        ShopItem item = ShopItemManager.newShopItem(from, ShopItemType.AUCTION, itemInMainHand.clone(), basePrice);
         ShopItemManager.insertShopItem(item);
         player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
         Auction.startAuction(item, basePrice, stepPrice, reservePrice);
