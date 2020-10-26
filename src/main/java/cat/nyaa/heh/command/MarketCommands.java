@@ -52,7 +52,7 @@ public class MarketCommands extends CommandReceiver implements ShortcutCommand{
             return;
         }
         double unitPrice = arguments.nextDouble();
-        if (unitPrice < 0 || !Double.isFinite(unitPrice)){
+        if (unitPrice <= 0 || !Double.isFinite(unitPrice)){
             new Message(I18n.format("market.offer.invalid_number", unitPrice)).send(sender);
             return;
         }

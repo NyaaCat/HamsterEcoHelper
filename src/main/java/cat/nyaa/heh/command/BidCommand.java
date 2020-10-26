@@ -56,7 +56,7 @@ public class BidCommand extends CommandReceiver implements ShortcutCommand{
             }
         }
         if (offer == -1 || offer < auction.getBasePrice()) {
-            new Message(I18n.format("command.bid.invalid_price", offer, minOffer)).send(sender);
+            new Message(I18n.format("command.bid.invalid_price", minOffer)).send(sender);
             return;
         }
         if (!EcoUtils.getInstance().getEco().has(player, offer)) {
