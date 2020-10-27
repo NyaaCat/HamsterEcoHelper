@@ -60,6 +60,16 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
                 signShopLotto.newGUI().open(player);
                 break;
             case "offer":
+                Block targetBlockExact = player.getTargetBlockExact(10);
+                if (targetBlockExact == null || !(targetBlockExact.getState() instanceof Sign) || !(isShopSign(targetBlockExact))){
+                    new Message(I18n.format("command.shop.sell.wrong_target")).send(sender);
+                    return;
+                }
+                BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlockExact.getLocation());
+                if (!shopAt.getOwner().equals(player.getUniqueId()) || !(shopAt instanceof SignShopLotto)){
+                    new Message(I18n.format("command.shop.sell.wrong_target")).send(sender);
+                    return;
+                }
                 if (itemInMainHand.getType().isAir()){
                     new Message(I18n.format("command.shop.no_item")).send(player);
                     return;
