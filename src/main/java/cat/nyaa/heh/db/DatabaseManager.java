@@ -348,6 +348,20 @@ public class DatabaseManager {
         return accountTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
     }
 
+    public int getShopItemCount(UUID owner, ShopItemType shopItemType) {
+        String sql = "select count(*) count, amount a, sold s, available ava from items where a > s and ava = true and owner = ? and type = ?";
+        try {
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            statement.setString(1, owner.toString());
+            statement.setString(2, shopItemType.name());
+            ResultSet resultSet = statement.executeQuery(sql);
+            return resultSet.getInt("count");
+        } catch (SQLException throwables) {
+            Bukkit.getLogger().log(Level.SEVERE, "error loading shop item count", throwables);
+            throw new RuntimeException();
+        }
+    }
+
     public int getShopItemCount() {
         String sql = "select count(*) count, amount a, sold s, available ava from items where a > s and ava = true";
         try {

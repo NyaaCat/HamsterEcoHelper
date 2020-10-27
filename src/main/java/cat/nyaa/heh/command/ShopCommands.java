@@ -1,5 +1,6 @@
 package cat.nyaa.heh.command;
 
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
@@ -98,6 +99,13 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
             new Message(I18n.format("command.shop.sell.no_item")).send(sender);
             return;
         }
+        int shopItemCount = ShopItemManager.getInstance().getShopItemCount(player.getUniqueId(), ShopItemType.SIGN_SHOP_SELL);
+        int limitSlotSignshop = HamsterEcoHelper.plugin.config.limitSlotSignshop;
+        if (shopItemCount >= limitSlotSignshop){
+            new Message("").append(I18n.format("command.shop.sell.limited")).send(sender);
+            return;
+        }
+
         double unitPrice = arguments.nextDouble();
         ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.SIGN_SHOP_SELL, itemInMainHand, unitPrice);
         ShopItemManager.insertShopItem(shopItem);
@@ -133,6 +141,14 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         double unitPrice = arguments.nextDouble();
         ShopItem shopItem = ShopItemManager.newShopItem(player.getUniqueId(), ShopItemType.SIGN_SHOP_BUY, itemInMainHand, unitPrice);
         ShopItemManager.insertShopItem(shopItem);
+
+        int shopItemCount = ShopItemManager.getInstance().getShopItemCount(player.getUniqueId(), ShopItemType.SIGN_SHOP_BUY);
+        int limitSlotSignshop = HamsterEcoHelper.plugin.config.limitSlotSignshop;
+        if (shopItemCount >= limitSlotSignshop){
+            new Message("").append(I18n.format("command.shop.buy.limited")).send(sender);
+            return;
+        }
+
         new Message("").append(I18n.format("command.shop.buy.success", shopItem.getAmount(), unitPrice), shopItem.getItemStack())
                 .send(sender);
         UiManager.getInstance().getSignShopUis(player.getUniqueId()).stream()

@@ -137,8 +137,10 @@ command:
       no_item: "主手没有物品"
       success: "成功上架物品 {itemName} &r* {amount} 单价 %.2f"
       wrong_target: "请对准商店木牌使用该指令"
+      limited: "上架空间不足"
     buy:
       success: "成功创建收购项 {itemName} &r* %d 单价 %.2f"
+      limited: "上架空间不足"
     lotto:
       offer: "物品已上架至乐透商店"
       limited: "乐透库存已满"

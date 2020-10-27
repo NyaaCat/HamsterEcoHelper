@@ -74,4 +74,8 @@ public class ShopItemManager {
     public void invalidateItem(ShopItem item) {
         DatabaseManager.getInstance().invalidateItem(item);
     }
+
+    public int getShopItemCount(UUID owner, ShopItemType shopItemType) {
+        return DatabaseManager.getInstance().getShopItemCount(owner, shopItemType);
+    }
 }
