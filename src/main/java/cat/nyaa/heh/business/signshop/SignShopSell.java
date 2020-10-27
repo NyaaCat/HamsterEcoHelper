@@ -3,8 +3,10 @@ package cat.nyaa.heh.business.signshop;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.transaction.TaxMode;
 import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.TransactionController;
+import cat.nyaa.heh.business.transaction.TransactionRequest;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
@@ -38,7 +40,17 @@ public class SignShopSell extends BaseSignShop{
     @Override
     public boolean doBusiness(Player related, ShopItem item, int amount) {
         double fee = HamsterEcoHelper.plugin.config.signShopFeeBase;
-        TransactionController.getInstance().makeTransaction(related.getUniqueId(), owner, item, amount, fee, TaxReason.REASON_SIGN_SHOP);
+        TransactionRequest req = new TransactionRequest.TransactionBuilder()
+                .reason(TaxReason.REASON_SIGN_SHOP)
+                .seller(owner)
+                .buyer(related.getUniqueId())
+                .item(item)
+                .amount(amount)
+                .fee(fee)
+                .taxMode(TaxMode.ADDITION)
+                .build();
+
+        TransactionController.getInstance().makeTransaction(req);
         updateUi();
         return true;
     }

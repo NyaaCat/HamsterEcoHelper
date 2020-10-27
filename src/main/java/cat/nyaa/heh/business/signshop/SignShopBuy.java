@@ -57,16 +57,13 @@ public class SignShopBuy extends BaseSignShop{
         return signShopGUI;
     }
 
-    private static Cache<Location, Inventory> inventoryCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .build();
-
     @Override
     public boolean doBusiness(Player buyer, ShopItem item, int amount){
         double fee = HamsterEcoHelper.plugin.config.signShopFeeBase;
         TransactionRequest build = new TransactionRequest.TransactionBuilder()
                 .item(item)
-                .buyer(buyer.getUniqueId())
+                .seller(buyer.getUniqueId())
+                .buyer(item.getOwner())
                 .fee(fee)
                 .amount(amount)
                 .reason(TaxReason.REASON_SIGN_SHOP)

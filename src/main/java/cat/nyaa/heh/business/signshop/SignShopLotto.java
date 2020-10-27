@@ -4,10 +4,7 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
-import cat.nyaa.heh.business.transaction.Tax;
-import cat.nyaa.heh.business.transaction.TaxReason;
-import cat.nyaa.heh.business.transaction.TransactionController;
-import cat.nyaa.heh.business.transaction.TransactionRequest;
+import cat.nyaa.heh.business.transaction.*;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.DataModel;
 import cat.nyaa.heh.db.model.LocationDbModel;
@@ -137,8 +134,9 @@ public class SignShopLotto extends BaseSignShop {
                     .reason(TaxReason.REASON_LOTTO)
                     .item(item)
                     .priceOverride(price)
+                    .taxMode(TaxMode.CHARGE)
                     .taxRate(Tax.getTaxRate(item))
-                    .forceStorage(true)
+                    .forceStorage(false)
                     .build();
             new BukkitRunnable(){
                 @Override
