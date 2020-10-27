@@ -57,7 +57,7 @@ public class CancelCommand extends CommandReceiver implements ShortcutCommand{
             new Message(I18n.format("command.cancel.not_invoice", uid)).send(sender);
             return;
         }
-        if (player.isOp() || !uniqueId.equals(customer) && !uniqueId.equals(invoice.getOwner())){
+        if (!player.isOp() && !uniqueId.equals(customer) && !uniqueId.equals(invoice.getOwner())){
             //parse customerName
             String customerName = customer == null ? null :
                     SystemAccountUtils.isSystemAccount(customer) ? SystemAccountUtils.getSystemName()
