@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cat.nyaa.heh.command.CommandUtils.filtered;
-import static cat.nyaa.heh.command.CommandUtils.getOnlinePlayers;
 
 public class BidCommand extends CommandReceiver implements ShortcutCommand{
     /**
@@ -35,6 +34,10 @@ public class BidCommand extends CommandReceiver implements ShortcutCommand{
         Player player = asPlayer(sender);
         if (auction == null){
             new Message(I18n.format("command.bid.no_auction")).send(sender);
+            return;
+        }
+        if(auction.getItem().getOwner().equals(player.getUniqueId())){
+            new Message(I18n.format("command.bid.self_bid")).send(sender);
             return;
         }
         double offer;

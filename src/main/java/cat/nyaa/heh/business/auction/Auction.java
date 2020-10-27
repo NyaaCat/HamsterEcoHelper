@@ -3,7 +3,6 @@ package cat.nyaa.heh.business.auction;
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
-import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.heh.business.transaction.TaxMode;
 import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.TransactionController;
@@ -81,7 +80,7 @@ public class Auction {
         if (item.isOwnedBySystem()) {
             name = SystemAccountUtils.getSystemName();
         }
-        broadcast(new Message("").append(I18n.format("auction.start", name, basePrice, stepPrice), getItem()));
+        broadcast(new Message("").append(I18n.format("auction.start", name, basePrice, stepPrice), getItemStack()));
     }
 
     public void onBid(UUID offerer, double offer) {
@@ -110,7 +109,7 @@ public class Auction {
     }
 
     private void broadcastInfo(int step) {
-        ItemStack itemStack = getItem();
+        ItemStack itemStack = getItemStack();
         double current = basePrice;
         if (hasOffer) {
             current = highestOffer;
@@ -138,7 +137,11 @@ public class Auction {
         }
     }
 
-    private ItemStack getItem() {
+    public ShopItem getItem(){
+        return item;
+    }
+
+    public ItemStack getItemStack() {
         ItemStack itemStack = item.getItemStack();
         int amount = itemStack.getAmount();
         itemStack.setAmount(amount);
@@ -206,7 +209,7 @@ public class Auction {
     }
 
     private void onAucSuccess() {
-        ItemStack itemStack = getItem();
+        ItemStack itemStack = getItemStack();
         this.stop();
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(offerer);
         double fee = HamsterEcoHelper.plugin.config.auctionFeeBase;
@@ -232,7 +235,7 @@ public class Auction {
     }
 
     private void onAucFail() {
-        ItemStack itemStack = getItem();
+        ItemStack itemStack = getItemStack();
         stop();
         broadcast(new Message("").append(I18n.format("auction.failed"), itemStack));
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(item.getOwner());
