@@ -84,19 +84,21 @@ public class Auction {
     }
 
     public void onBid(UUID offerer, double offer) {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(offerer);
+        double minOffer = this.getMinOffer();
         if (!isValidBid(offer)) {
+            new Message(I18n.format("command.bid.invalid_price", minOffer)).send(offlinePlayer);
             return;
         }
         this.highestOffer = offer;
         this.offerer = offerer;
         hasOffer = true;
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(offerer);
         broadcast(new Message("").append(I18n.format("auction.bid.message", offlinePlayer.getName(), offer)));
         auctionTask.onBid();
     }
 
     public boolean isValidBid(double offer) {
-        return this.highestOffer + stepPrice - offer <= 0.00001;
+        return getMinOffer() - offer <= 0.00001;
     }
 
     public void stop() {
@@ -164,6 +166,17 @@ public class Auction {
 
     public double getBasePrice() {
         return basePrice;
+    }
+
+    public double getMinOffer() {
+        double currentMinOffer = this.hasOffer() ? this.getCurrentOffer() : this.getBasePrice();
+        double minOffer;
+        if (this.hasOffer()){
+            minOffer = currentMinOffer + Math.max(this.getStepPrice(), 1);
+        }else {
+            minOffer = this.getBasePrice();
+        }
+        return minOffer;
     }
 
     public static class AuctionTask extends BukkitRunnable {

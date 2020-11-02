@@ -41,13 +41,7 @@ public class BidCommand extends CommandReceiver implements ShortcutCommand{
             return;
         }
         double offer;
-        double currentMinOffer = auction.hasOffer() ? auction.getCurrentOffer() : auction.getBasePrice();
-        double minOffer;
-        if (auction.hasOffer()){
-            minOffer = currentMinOffer + Math.max(auction.getStepPrice(), 1);
-        }else {
-            minOffer = auction.getBasePrice();
-        }
+        double minOffer = auction.getMinOffer();
         String input = arguments.nextString();
         if (input.equals("min")){
             offer = minOffer;
