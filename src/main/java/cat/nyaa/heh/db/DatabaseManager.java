@@ -354,7 +354,7 @@ public class DatabaseManager {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
             statement.setString(1, owner.toString());
             statement.setString(2, shopItemType.name());
-            ResultSet resultSet = statement.executeQuery(sql);
+            ResultSet resultSet = statement.executeQuery();
             return resultSet.getInt("count");
         } catch (SQLException throwables) {
             Bukkit.getLogger().log(Level.SEVERE, "error loading shop item count", throwables);
@@ -365,8 +365,8 @@ public class DatabaseManager {
     public int getShopItemCount() {
         String sql = "select count(*) count, amount a, sold s, available ava from items where a > s and ava = true";
         try {
-            Statement statement = db.getConnection().createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+            PreparedStatement statement = db.getConnection().prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
             return resultSet.getInt("count");
         } catch (SQLException throwables) {
             Bukkit.getLogger().log(Level.SEVERE, "error loading shop item count", throwables);
