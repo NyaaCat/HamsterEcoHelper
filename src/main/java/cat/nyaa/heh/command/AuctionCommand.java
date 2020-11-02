@@ -58,14 +58,17 @@ public class AuctionCommand extends CommandReceiver implements ShortcutCommand {
         if (basePrice <= 0 || stepPrice < 0 ){
             throw new BadCommandException(I18n.format("command.auction.bad_input"));
         }
+        if (Auction.hasAuction()) {
+            new Message(I18n.format("command.auction.exist")).send(sender);
+            return;
+        }
         if (arguments.top() != null) {
-             reservePrice = arguments.nextDouble();
+            reservePrice = arguments.nextDouble();
         }
         boolean isSystemAuc = false;
         if (sender.hasPermission(PERMISSION_ADMIN) && arguments.top() != null){
             isSystemAuc = arguments.nextBoolean();
         }
-
         UUID from = isSystemAuc? SystemAccountUtils.getSystemUuid() : player.getUniqueId();
 
         ShopItem item = ShopItemManager.newShopItem(from, ShopItemType.AUCTION, itemInMainHand.clone(), basePrice);
