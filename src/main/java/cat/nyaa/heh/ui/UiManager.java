@@ -1,7 +1,7 @@
 package cat.nyaa.heh.ui;
 
 import cat.nyaa.heh.business.signshop.BaseSignShop;
-import cat.nyaa.heh.ui.component.ShopComponent;
+import cat.nyaa.heh.business.signshop.SignShopLotto;
 import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;
@@ -91,5 +91,9 @@ public class UiManager {
                 .map(baseUi -> (StorageGUI)baseUi)
                 .filter(lottoGUI -> owner == null || owner.equals(lottoGUI.getOwner()))
                 .collect(Collectors.toList());
+    }
+
+    public LottoGUI newLottoGui(SignShopLotto signShopLotto) {
+        return addGUI(new LottoGUI(signShopLotto));
     }
 }

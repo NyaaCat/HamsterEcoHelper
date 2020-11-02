@@ -5,6 +5,7 @@ import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.DataModel;
 import cat.nyaa.heh.db.model.LocationDbModel;
+import cat.nyaa.heh.ui.BaseUi;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -159,5 +160,5 @@ public abstract class BaseSignShop extends BaseShop{
         this.uid = uid;
     }
 
-    public abstract SignShopGUI newGUI();
+    public abstract BaseUi<ShopItem> newGUI();
 }

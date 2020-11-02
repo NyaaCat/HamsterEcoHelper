@@ -7,27 +7,15 @@ import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.transaction.TaxReason;
 import cat.nyaa.heh.business.transaction.TransactionController;
 import cat.nyaa.heh.business.transaction.TransactionRequest;
-import cat.nyaa.heh.db.LocationConnection;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
+import cat.nyaa.heh.ui.BaseUi;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
-import cat.nyaa.heh.utils.SystemAccountUtils;
-import cat.nyaa.nyaacore.Message;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 public class SignShopBuy extends BaseSignShop{
     private final LocationType type = LocationType.SIGN_SHOP_BUY;
@@ -51,7 +39,7 @@ public class SignShopBuy extends BaseSignShop{
     }
 
     @Override
-    public SignShopGUI newGUI() {
+    public BaseUi<ShopItem> newGUI() {
         SignShopGUI signShopGUI = UiManager.getInstance().newSignShopGUI(this);
         signShopGUI.refreshGUI();
         return signShopGUI;

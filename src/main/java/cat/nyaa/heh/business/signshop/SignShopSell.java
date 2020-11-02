@@ -10,6 +10,7 @@ import cat.nyaa.heh.business.transaction.TransactionRequest;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
+import cat.nyaa.heh.ui.BaseUi;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import org.bukkit.entity.Player;
@@ -61,7 +62,7 @@ public class SignShopSell extends BaseSignShop{
     }
 
     @Override
-    public SignShopGUI newGUI() {
+    public BaseUi<ShopItem> newGUI() {
         SignShopGUI signShopGUI = UiManager.getInstance().newSignShopGUI(this);
         signShopGUI.refreshGUI();
         return signShopGUI;

@@ -9,8 +9,8 @@ import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.model.DataModel;
 import cat.nyaa.heh.db.model.LocationDbModel;
 import cat.nyaa.heh.db.model.LocationType;
+import cat.nyaa.heh.ui.BaseUi;
 import cat.nyaa.heh.ui.LottoGUI;
-import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.heh.utils.Utils;
@@ -81,8 +81,8 @@ public class SignShopLotto extends BaseSignShop {
     }
 
     @Override
-    public SignShopGUI newGUI() {
-        SignShopGUI signShopGUI = UiManager.getInstance().newSignShopGUI(this);
+    public BaseUi<ShopItem> newGUI() {
+        LottoGUI signShopGUI = UiManager.getInstance().newLottoGui(this);
         signShopGUI.refreshGUI();
         return signShopGUI;
     }

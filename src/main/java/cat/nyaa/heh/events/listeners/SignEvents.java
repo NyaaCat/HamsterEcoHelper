@@ -6,6 +6,7 @@ import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.business.signshop.SignShopBuy;
 import cat.nyaa.heh.business.signshop.SignShopLotto;
 import cat.nyaa.heh.business.signshop.SignShopManager;
+import cat.nyaa.heh.ui.BaseUi;
 import cat.nyaa.heh.ui.SignShopGUI;
 import cat.nyaa.heh.utils.ClickUtils;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -148,7 +149,7 @@ public class SignEvents implements Listener {
             });
             return;
         }
-        SignShopGUI gui = shopAt.newGUI();
+        BaseUi<ShopItem> gui = shopAt.newGUI();
         gui.open(event.getPlayer());
     }
 
