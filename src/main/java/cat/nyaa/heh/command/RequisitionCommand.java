@@ -11,6 +11,7 @@ import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -47,6 +48,15 @@ public class RequisitionCommand extends CommandReceiver implements ShortcutComma
         }
         int amount = arguments.nextInt();
         double unitPrice = arguments.nextDouble();
+        String top = arguments.top();
+        if (top != null && !top.equals("")){
+            Material material = Material.valueOf(top);
+            if (!material.isItem()) {
+                new Message(I18n.format("command.requisition.invalid_item", top)).send(sender);
+                return;
+            }
+            itemInMainHand = new ItemStack(material);
+        }
         boolean isSystemAuc = false;
         if (sender.hasPermission(PERMISSION_ADMIN)){
             isSystemAuc = arguments.top() != null && arguments.nextBoolean();
