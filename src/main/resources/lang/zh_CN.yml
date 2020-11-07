@@ -203,3 +203,6 @@ storage:
     price: "取回费用 {fee} + {tax} 税入"
 system:
   name: "服务姬"
+  user:
+    deposit: "你获得了 %.2f 节操"
+    withdraw: "你失去了 %.2f 节操"

@@ -4,6 +4,7 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.model.AccountDbModel;
+import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.component.ISystemBalance;
 import cat.nyaa.nyaacore.configuration.FileConfigure;
 import net.milkbowl.vault.economy.Economy;
@@ -125,6 +126,7 @@ public class SystemAccountUtils implements ISystemBalance {
         double balanceToDeposit = eco.getBalance(toDeposit);
         try{
             eco.depositPlayer(toDeposit, amount);
+            new Message(I18n.format("system.user.deposit", amount)).send(toDeposit);
         } catch (Exception e){
             double balanceToDepositAft = eco.getBalance(toDeposit);
             eco.withdrawPlayer(toDeposit, balanceToDepositAft - balanceToDeposit);
@@ -139,6 +141,7 @@ public class SystemAccountUtils implements ISystemBalance {
         double balanceToWithdraw = eco.getBalance(toWithdraw);
         try{
             eco.withdrawPlayer(toWithdraw, amount);
+            new Message(I18n.format("system.user.withdraw", amount)).send(toWithdraw);
         } catch (Exception e){
             double balanceToWithdrawAft = eco.getBalance(toWithdraw);
             eco.depositPlayer(toWithdraw, balanceToWithdraw - balanceToWithdrawAft);
