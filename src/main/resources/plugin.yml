@@ -142,3 +142,6 @@ permissions:
   heh.admin.reload:
     default: op
     description: reload
+  heh.storage:
+    default: true
+    description: storage
