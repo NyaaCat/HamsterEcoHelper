@@ -107,7 +107,7 @@ public class Auction {
     }
 
     public static void broadcast(Message message) {
-        message.broadcast(new Permission("heh.bid"));
+        message.broadcast(new Permission("heh.business.bid"));
     }
 
     private void broadcastInfo(int step) {
