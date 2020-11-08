@@ -169,7 +169,11 @@ public class SignEvents implements Listener {
                     .map(block::getRelative)
                     .filter(block1 -> block1.getState() instanceof Sign)
                     .filter(block1 -> {
-                        Block relative = block1.getRelative(getFacing(block1).getOppositeFace());
+                        BlockFace facing = getFacing(block1);
+                        if (facing == null){
+                            return false;
+                        }
+                        Block relative = block1.getRelative(facing.getOppositeFace());
                         return relative.equals(block);
                     })
                     .anyMatch(this::isShopSign);
