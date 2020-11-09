@@ -39,10 +39,6 @@ import static cat.nyaa.heh.utils.Utils.isValidItem;
 
 public class SignEvents implements Listener {
 
-    Cache<Location, BaseSignShop> signShopCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(10, TimeUnit.MINUTES)
-            .build();
-
     @EventHandler
     public void onLeftClickSign(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK))return;
@@ -56,11 +52,7 @@ public class SignEvents implements Listener {
 
         Location location = clickedBlock.getLocation();
 
-        BaseSignShop shopAt = signShopCache.getIfPresent(location);
-        if(shopAt == null){
-            shopAt = SignShopManager.getInstance().getShopAt(location);
-            signShopCache.put(location, shopAt);
-        }
+        BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(location);
         if (!(shopAt instanceof SignShopBuy) || shopAt.getOwner().equals(event.getPlayer().getUniqueId())){
             return;
         }
@@ -106,11 +98,8 @@ public class SignEvents implements Listener {
             return;
         }
         Location location = clickedBlock.getLocation();
-        BaseSignShop shopAt = signShopCache.getIfPresent(location);
-        if(shopAt == null){
-            shopAt = SignShopManager.getInstance().getShopAt(location);
-            signShopCache.put(location, shopAt);
-        }
+        BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(location);
+
         if (!shopAt.isSignExist()){
             shopAt.loadSign();
         }
