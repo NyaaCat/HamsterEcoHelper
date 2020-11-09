@@ -249,6 +249,10 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
                     return;
                 }
                 int index = arguments.nextInt();
+                if (index < 0 || index >= items.size()){
+                    new Message(I18n.format("command.remove.buy.invalid_index", index, items.size())).send(sender);
+                    return;
+                }
                 ShopItem shopItem = items.get(index);
                 ShopItemManager.getInstance().invalidateItem(shopItem);
                 UiManager.getInstance().getSignShopUis(shopAt.getOwner()).forEach(SignShopGUI::refreshGUI);

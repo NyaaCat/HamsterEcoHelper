@@ -161,6 +161,7 @@ command:
       message: "可移除的物品列表:"
       item: "id: %d 物品 {itemName}"
       success: "成功移除物品 %d: {itemName}"
+      invalid_index: "无法删除 %d 号物品，列表中只有 %d 个物品"
   search:
     result: "由 %s &r提供 单价 %.2f"
     complete: "搜索完成"
