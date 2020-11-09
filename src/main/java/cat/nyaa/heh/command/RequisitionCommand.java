@@ -50,7 +50,7 @@ public class RequisitionCommand extends CommandReceiver implements ShortcutComma
         double unitPrice = arguments.nextDouble();
         String top = arguments.top();
         if (top != null && !top.equals("")){
-            Material material = Material.valueOf(top);
+            Material material = Material.valueOf(top.toUpperCase());
             if (!material.isItem()) {
                 new Message(I18n.format("command.requisition.invalid_item", top)).send(sender);
                 return;
