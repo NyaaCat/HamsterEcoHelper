@@ -158,6 +158,7 @@ command:
     not_sign_shop: "目标不是牌子商店"
     success: "移除成功"
     buy:
+      not_sign: "请看向想要移除物品的牌子"
       message: "可移除的物品列表:"
       item: "id: %d 物品 {itemName}"
       success: "成功移除物品 %d: {itemName}"

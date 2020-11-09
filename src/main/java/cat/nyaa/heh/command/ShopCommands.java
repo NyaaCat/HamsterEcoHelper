@@ -233,6 +233,10 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         Player player = asPlayer(sender);
         Block targetBlock = player.getTargetBlockExact(10);
         BaseSignShop shopAt = SignShopManager.getInstance().getShopAt(targetBlock.getLocation());
+        if (shopAt == null){
+            new Message(I18n.format("command.remove.buy.not_sign")).send(sender);
+            return;
+        }
         String action = arguments.top();
         if (action != null){
             if (action.equals("buy")){
