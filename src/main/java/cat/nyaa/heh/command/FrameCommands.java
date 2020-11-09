@@ -80,7 +80,6 @@ public class FrameCommands extends CommandReceiver implements ShortcutCommand{
             long uid = frameShop.getUid();
             ItemFrameShop.removeFrameShop(uid);
             new Message(I18n.format("command.frame.remove.success")).send(sender);
-            frameShop.getFrame().setFixed(false);
             return;
         }
         new Message(I18n.format("command.frame.remove.not_permitted")).send(sender);

@@ -462,4 +462,11 @@ public class DatabaseManager {
         item.setAvailable(false);
         shopItemTable.update(ShopItemDbModel.fromShopItem(item), WhereClause.EQ("uid", item.getUid()));
     }
+
+    public LocationDbModel getFrameShop(long uid) {
+        LocationDbModel model = locationTable.selectUniqueUnchecked(
+                WhereClause.EQ("type", LocationType.FRAME)
+                        .whereEq("uid", uid));
+        return model;
+    }
 }

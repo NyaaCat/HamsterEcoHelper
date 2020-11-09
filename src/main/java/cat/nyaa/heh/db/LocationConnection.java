@@ -95,4 +95,8 @@ public class LocationConnection {
     public void removeLocationModel(long uid) {
         DatabaseManager.getInstance().removeLocationModelById(uid);
     }
+
+    public ItemFrameShop getFrameShop(long uid) {
+        return new ItemFrameShop(DatabaseManager.getInstance().getFrameShop(uid));
+    }
 }

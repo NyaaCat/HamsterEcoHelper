@@ -106,7 +106,15 @@ public class ItemFrameShop {
       }
 
     public static void removeFrameShop(long uid) {
-        LocationConnection.getInstance().removeLocationModel(uid);
+        LocationConnection instance = LocationConnection.getInstance();
+        ItemFrameShop frameShop = instance.getFrameShop(uid);
+        ItemFrame frame = frameShop.getFrame();
+        if (frame != null){
+            frame.setFixed(false);
+            frame.setItem(new ItemStack(Material.AIR));
+            frameMap.remove(frame.getUniqueId());
+        }
+        instance.removeLocationModel(uid);
     }
 
 
