@@ -34,6 +34,9 @@ public class UiEvents implements Listener {
     }
 
     private boolean checkAndRemoveSample(ItemStack item) {
+        if (item == null){
+            return false;
+        }
         if (item.getType().isAir()) {
             return false;
         }
