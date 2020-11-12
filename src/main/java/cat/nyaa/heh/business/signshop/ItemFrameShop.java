@@ -25,15 +25,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import static org.bukkit.event.EventPriority.HIGHEST;
 
 public class ItemFrameShop {
+    public static final NamespacedKey keyItemFrame = new NamespacedKey(HamsterEcoHelper.plugin, "frameShopMeta");
     private static int mUserClickInterval = 20;
     private static int mUserClickTimeout = 100;
     private static int mRefreshInterval = 600;
@@ -43,7 +45,7 @@ public class ItemFrameShop {
     private ItemFrame frame;
     private BaseShop baseShop;
 
-    private static Map<UUID, ItemFrameShop> frameMap = new HashMap<>();
+    private static HashMap<UUID, ItemFrameShop> frameMap = new HashMap<>();
     private static FrameListener frameListener = new FrameListener();
     private ItemFrameShopData data;
     private ShopItem displayingItem;
@@ -82,6 +84,10 @@ public class ItemFrameShop {
     }
 
     private static void addFrame(ItemFrameShop itemFrameShop){
+        ItemFrame frame = itemFrameShop.getFrame();
+        if (frame != null){
+            validateFrame(frame, itemFrameShop.getUid());
+        }
         frameMap.put(itemFrameShop.getFrame().getUniqueId(), itemFrameShop);
         refreshItemFrameNow(itemFrameShop.getFrame());
     }
@@ -105,14 +111,13 @@ public class ItemFrameShop {
         }.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 1);
       }
 
-    public static void removeFrameShop(long uid) {
+    public static void removeFrameShop(ItemFrame f, long uid) {
         LocationConnection instance = LocationConnection.getInstance();
-        ItemFrameShop frameShop = instance.getFrameShop(uid);
-        ItemFrame frame = frameShop.getFrame();
-        if (frame != null){
-            frame.setFixed(false);
-            frame.setItem(new ItemStack(Material.AIR));
-            frameMap.remove(frame.getUniqueId());
+        if (f != null){
+            invalidateFrame(f);
+            f.setFixed(false);
+            f.setItem(new ItemStack(Material.AIR));
+            frameMap.remove(f.getUniqueId());
         }
         instance.removeLocationModel(uid);
     }
@@ -142,7 +147,7 @@ public class ItemFrameShop {
             frame = ((ItemFrame) entity);
         }
         if (entity == null){
-            removeFrameShop(getUid());
+            removeFrameShop(null, uid);
             return false;
         }
         this.uid = shopFrame.getUid();
@@ -260,7 +265,7 @@ public class ItemFrameShop {
             Arrays.stream(event.getChunk().getEntities())
                     .filter(entity -> entity instanceof ItemFrame)
                     .map(entity -> ((ItemFrame) entity))
-                    .filter(this::isShopFrame)
+                    .filter(FrameListener::isShopFrame)
                     .map(iframe -> SignShopConnection.getInstance().getShopFrame(iframe.getUniqueId()))
                     .forEach(ItemFrameShop::addFrame);
         }
@@ -335,8 +340,8 @@ public class ItemFrameShop {
             }
         }
 
-        private boolean isShopFrame(ItemFrame f) {
-            return frameMap.containsKey(f.getUniqueId());
+        private static boolean isShopFrame(ItemFrame f) {
+            return frameMap.containsKey(f.getUniqueId()) || checkAndAddFrame(f);
         }
 
         @EventHandler(priority = HIGHEST, ignoreCancelled = true)
@@ -361,6 +366,36 @@ public class ItemFrameShop {
         return buyTaskMap.get(uniqueId);
     }
 
+    private static void validateFrame(ItemFrame itemFrame, long uid){
+        if (itemFrame == null){
+            return;
+        }
+        PersistentDataContainer persistentDataContainer = itemFrame.getPersistentDataContainer();
+        persistentDataContainer.set(keyItemFrame, PersistentDataType.LONG, uid);
+    }
+
+    private static void invalidateFrame(ItemFrame itemFrame){
+        if (itemFrame == null){
+            return;
+        }
+        PersistentDataContainer persistentDataContainer = itemFrame.getPersistentDataContainer();
+        boolean has = persistentDataContainer.has(keyItemFrame, PersistentDataType.LONG);
+        if (has){
+            persistentDataContainer.remove(keyItemFrame);
+        }
+    }
+
+    private static boolean checkAndAddFrame(ItemFrame f) {
+        PersistentDataContainer persistentDataContainer = f.getPersistentDataContainer();
+        boolean has = persistentDataContainer.has(keyItemFrame, PersistentDataType.LONG);
+        if (has){
+            Long uid = persistentDataContainer.get(keyItemFrame, PersistentDataType.LONG);
+            ItemFrameShop frameShop = LocationConnection.getInstance().getFrameShop(uid);
+            frameShop.setFrame(f);
+            addFrame(frameShop);
+        }
+        return has;
+    }
 
     private static void resetRefreshTask(ItemFrame f) {
         frameListener.resetRefreshTask(f);
