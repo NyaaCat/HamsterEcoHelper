@@ -28,12 +28,13 @@ public class UiEvents implements Listener {
             return;
         }
         ItemStack item = event.getCurrentItem();
-        if (checkAndRemoveSample(item)) {
+        if (checkSample(item)) {
             event.setCurrentItem(new ItemStack(Material.AIR));
+            event.setCancelled(true);
         }
     }
 
-    private boolean checkAndRemoveSample(ItemStack item) {
+    private boolean checkSample(ItemStack item) {
         if (item == null){
             return false;
         }
@@ -54,8 +55,9 @@ public class UiEvents implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
         ItemStack itemInMainHand = event.getPlayer().getInventory().getItemInMainHand();
-        if (checkAndRemoveSample(itemInMainHand)) {
+        if (checkSample(itemInMainHand)) {
             event.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+            event.setCancelled(true);
         }
     }
 
