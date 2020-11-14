@@ -543,6 +543,7 @@ public class ItemFrameShop {
         displayingItem = item;
         model.setAmount(item.getAmount() - item.getSoldAmount());
         frame.setItem(model);
+        frame.setFixed(true);
     }
 
     public static ItemFrameShop getFrom(ItemFrame f) {
