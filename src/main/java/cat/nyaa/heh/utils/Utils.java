@@ -1,21 +1,16 @@
 package cat.nyaa.heh.utils;
 
 import cat.nyaa.heh.HamsterEcoHelper;
-import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.nyaacore.BasicItemMatcher;
+import cat.nyaa.nyaacore.utils.HexColorUtils;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
-import me.crafter.mc.lockettepro.LockettePro;
 import me.crafter.mc.lockettepro.LocketteProAPI;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -39,7 +34,7 @@ public class Utils {
     private static TaskChainFactory factory;
 
     public static String colored(String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
+        return HexColorUtils.hexColored(s);
     }
 
     public static TaskChain<?> newChain(){

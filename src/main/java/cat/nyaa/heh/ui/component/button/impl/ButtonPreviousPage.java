@@ -1,9 +1,8 @@
 package cat.nyaa.heh.ui.component.button.impl;
 
 import cat.nyaa.heh.ui.component.BasePagedComponent;
-import cat.nyaa.heh.ui.component.IPagedUiAccess;
 import cat.nyaa.heh.ui.component.button.GUIButton;
-import org.bukkit.ChatColor;
+import cat.nyaa.nyaacore.utils.HexColorUtils;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -54,8 +53,8 @@ public class ButtonPreviousPage extends GUIButton {
     public ItemStack getModel() {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',title));
-        List<String> collect = lore.stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList());
+        itemMeta.setDisplayName(HexColorUtils.hexColored(title));
+        List<String> collect = lore.stream().map(s -> HexColorUtils.hexColored(s)).collect(Collectors.toList());
         itemMeta.setLore(collect);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
