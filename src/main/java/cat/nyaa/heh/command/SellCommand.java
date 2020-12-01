@@ -15,14 +15,10 @@ import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.cmdreceiver.Arguments;
 import cat.nyaa.nyaacore.cmdreceiver.CommandReceiver;
 import cat.nyaa.nyaacore.cmdreceiver.SubCommand;
-import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
@@ -102,12 +98,15 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
         }
         PlayerInventory inventory = player.getInventory();
         ItemStack clone = itemInMainHand.clone();
-        itemInMainHand.setAmount(Math.max(itemInMainHand.getAmount() - amountToSell, 0));
-        inventory.setItemInMainHand(itemInMainHand);
+
         try{
             ItemStack clone1 = clone.clone();
             clone1.setAmount(amountToSell);
-            requisition.onSell(player, clone1);
+            boolean succeeded = requisition.onSell(player, clone1);
+            if (succeeded){
+                itemInMainHand.setAmount(Math.max(itemInMainHand.getAmount() - amountToSell, 0));
+                inventory.setItemInMainHand(itemInMainHand);
+            }
             return true;
         }catch (Exception e){
             Bukkit.getLogger().log(Level.SEVERE, "error selling item: ", e);
