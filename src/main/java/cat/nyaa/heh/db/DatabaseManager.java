@@ -469,4 +469,11 @@ public class DatabaseManager {
                         .whereEq("uid", uid));
         return model;
     }
+
+    public List<String> getAvailableInvoiceIds() {
+        WhereClause clause = WhereClause.EQ("type", ShopItemType.DIRECT)
+                .where("sold", "<", "amount")
+                .whereEq("available", true);
+        return shopItemTable.select(clause).stream().map(shopItemDbModel -> String.valueOf(shopItemDbModel.getUid())).collect(Collectors.toList());
+    }
 }

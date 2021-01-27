@@ -24,8 +24,8 @@ public class DirectInvoiceConnection {
         return INSTANCE;
     }
 
-    public List<ShopItem> getAvailableInvoices(){
-        return DatabaseManager.getInstance().getAvailableInvoices();
+    public List<String> getAvailableInvoices(){
+        return DatabaseManager.getInstance().getAvailableInvoiceIds();
     }
 
     public ShopItem getInvoice(long uid) {

@@ -37,9 +37,7 @@ public class DirectInvoice {
     }
 
     public List<String> getDirectInvoiceIds(){
-        return DirectInvoiceConnection.getInstance().getAvailableInvoices().stream()
-                .map(item -> String.valueOf(item.getUid()))
-                .collect(Collectors.toList());
+        return DirectInvoiceConnection.getInstance().getAvailableInvoices();
     }
 
     public ShopItem getInvoice(long uid) {
