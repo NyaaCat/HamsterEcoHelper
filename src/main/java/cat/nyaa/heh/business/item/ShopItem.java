@@ -2,12 +2,13 @@ package cat.nyaa.heh.business.item;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.business.transaction.Tax;
+import cat.nyaa.heh.db.model.ShopItemDbModel;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.nyaacore.utils.ItemStackUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -217,5 +218,9 @@ public class ShopItem implements ModelableItem<ShopItem>{
 
     public String getMeta() {
         return itemMeta;
+    }
+
+    public boolean isReadyToSell() {
+        return isAvailable() && getAmount() - getSoldAmount() > 0;
     }
 }
