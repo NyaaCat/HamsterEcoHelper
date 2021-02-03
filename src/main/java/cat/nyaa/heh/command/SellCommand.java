@@ -166,10 +166,12 @@ public class SellCommand extends CommandReceiver implements ShortcutCommand{
                 .reason(TaxReason.REASON_SIGN_SHOP)
                 .forceStorage(true)
                 .build();
-        TransactionController.getInstance().makeTransaction(req);
+        boolean succeed = TransactionController.getInstance().makeTransaction(req);
         shopItem1.setSold(0);
         ShopItemManager.getInstance().updateShopItem(shopItem1);
-        itemInMainHand.setAmount(Math.max(0, itemInMainHand.getAmount() - finalAmountToSell));
+        if (succeed){
+            itemInMainHand.setAmount(Math.max(0, itemInMainHand.getAmount() - finalAmountToSell));
+        }
         return true;
     }
 
