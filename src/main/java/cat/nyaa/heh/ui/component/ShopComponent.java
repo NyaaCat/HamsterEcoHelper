@@ -1,5 +1,6 @@
 package cat.nyaa.heh.ui.component;
 
+import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
@@ -19,13 +20,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
-    static UiTaskHandler uiTaskHandler = new UiTaskHandler();
+    static UiTaskHandler uiTaskHandler;
+
+    static {
+        uiTaskHandler = new UiTaskHandler();
+        uiTaskHandler.runTaskTimer(HamsterEcoHelper.plugin, 0, 1);
+    }
 
     public ShopComponent(Inventory inventory) {
         super(inventory);
@@ -58,7 +61,9 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         }
     }
 
-    protected abstract void submitUiTask(UUID uniqueId, BukkitRunnable buyTask);
+    protected void submitUiTask(UUID uniqueId, BukkitRunnable buyTask) {
+        uiTaskHandler.submit(uniqueId, buyTask);
+    }
 
     private int getClickCD() {
         return 10;
@@ -204,6 +209,11 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
                 }
             });
             uiEvts.clear();
+        }
+
+        public void submit(UUID uniqueId, BukkitRunnable buyTask) {
+            final List<BukkitRunnable> bukkitRunnables = uiEvts.computeIfAbsent(uniqueId, (ignored) -> new ArrayList<>());
+            bukkitRunnables.add(buyTask);
         }
     }
 }
