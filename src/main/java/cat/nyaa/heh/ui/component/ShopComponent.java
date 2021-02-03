@@ -1,25 +1,32 @@
 package cat.nyaa.heh.ui.component;
 
 import cat.nyaa.heh.I18n;
-import cat.nyaa.heh.business.item.StorageItem;
-import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.transaction.TransactionController;
+import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.utils.ClickUtils;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
+    static UiTaskHandler uiTaskHandler = new UiTaskHandler();
+
     public ShopComponent(Inventory inventory) {
         super(inventory);
     }
@@ -40,10 +47,18 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         if (buyer.equals(shopItem.getOwner())){
             addOnCursor(event, shopItem, 1);
         }else{
-            makeTransaction(event, buyer, shopItem);
+            BukkitRunnable buyTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    makeTransaction(event, buyer, shopItem);
+                    onPostTransaction();
+                }
+            };
+            submitUiTask(uniqueId, buyTask);
         }
-        onPostTransaction();
     }
+
+    protected abstract void submitUiTask(UUID uniqueId, BukkitRunnable buyTask);
 
     private int getClickCD() {
         return 10;
@@ -166,4 +181,29 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
     }
 
     protected abstract void onPostTransaction();
+
+    static class UiTaskHandler extends BukkitRunnable{
+        Map<UUID, List<BukkitRunnable>> uiEvts = new HashMap<>();
+
+        @Override
+        public void run() {
+            if (uiEvts.isEmpty()){
+                return;
+            }
+            uiEvts.forEach((k,v) -> {
+                if (v.size() > 1) {
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(k);
+                    if (offlinePlayer.isOnline()){
+                        offlinePlayer.getPlayer().sendMessage(I18n.format("ui.message.click_too_fast"));
+                    }
+                    return;
+                }
+                if (v.size() == 1) {
+                    BukkitRunnable bukkitRunnable = v.get(0);
+                    bukkitRunnable.run();
+                }
+            });
+            uiEvts.clear();
+        }
+    }
 }

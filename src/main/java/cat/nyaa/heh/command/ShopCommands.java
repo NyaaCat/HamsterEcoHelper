@@ -237,10 +237,22 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
             new Message(I18n.format("command.remove.buy.not_sign")).send(sender);
             return;
         }
+        if (shopAt == null){
+            new Message(I18n.format("shop.remove.not_sign_shop")).send(sender);
+            return;
+        }
+        if (!sender.hasPermission(PERMISSION_ADMIN) && !shopAt.getOwner().equals(player.getUniqueId())) {
+            new Message(I18n.format("shop.remove.not_owner")).send(sender);
+            return;
+        }
         String action = arguments.top();
         if (action != null){
             if (action.equals("buy")){
                 arguments.next();
+                if (!(shopAt instanceof SignShopBuy)){
+                    new Message(I18n.format("command.remove.buy.not_buy_shop")).send(sender);
+                    return;
+                }
                 shopAt.loadItems();
                 List<ShopItem> items = shopAt.getItems();
                 items.sort(Comparator.comparingLong(ShopItem::getUid));
@@ -262,14 +274,6 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
                 UiManager.getInstance().getSignShopUis(shopAt.getOwner()).forEach(SignShopGUI::refreshGUI);
                 new Message("").append(I18n.format("command.remove.buy.success", index), shopItem.getModel()).send(sender);
             }
-            return;
-        }
-        if (shopAt == null){
-            new Message(I18n.format("shop.remove.not_sign_shop")).send(sender);
-            return;
-        }
-        if (!sender.hasPermission(PERMISSION_ADMIN) && !shopAt.getOwner().equals(player.getUniqueId())) {
-            new Message(I18n.format("shop.remove.not_owner")).send(sender);
             return;
         }
         SignShopManager.getInstance().removeShopAt(shopAt);

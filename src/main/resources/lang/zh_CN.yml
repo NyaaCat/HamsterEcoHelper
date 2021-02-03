@@ -193,6 +193,7 @@ ui:
     sign_shop: "[SHOP]"
     storage: "临时仓储"
   message:
+    click_too_fast: 点击过快，请重试
     open_market: "点击打开天喵商城"
     auc_bid: "点击参与竞价"
     req_sell: "点击参与出售"
