@@ -127,6 +127,7 @@ public class ItemFrameShop {
 
     private static void unloadFrame(ItemFrameShop itemFrameShop) {
         frameMap.remove(itemFrameShop.getFrame().getUniqueId());
+        frameListener.stopRefreshing(itemFrameShop);
     }
 
     private void setBaseShop(ItemFrameShopData data) {
@@ -357,7 +358,6 @@ public class ItemFrameShop {
         resetRefreshTask(frame);
         if (item == null){
             frame.setItem(new ItemStack(Material.AIR));
-            refreshItemFrameNow(frame);
             displayingItem = null;
             return;
         }
@@ -378,7 +378,7 @@ public class ItemFrameShop {
             model.setItemMeta(mMeta);
         }
         if (model.getAmount() <= 0 || model.getType().isAir()){
-            refreshItemFrameNow(frame);
+            frame.setItem(new ItemStack(Material.AIR));
             displayingItem = null;
             return;
         }
@@ -395,6 +395,10 @@ public class ItemFrameShop {
     static class FrameListener implements Listener{
 
         private static Map<UUID, FrameListener.RefreshTask> refreshTaskMap = new HashMap<>();
+
+        public void stopRefreshing(ItemFrameShop itemFrameShop) {
+            refreshTaskMap.remove(itemFrameShop.getFrame().getUniqueId());
+        }
 
         final class RefreshTask extends BukkitRunnable{
             private UUID frameUuid;
