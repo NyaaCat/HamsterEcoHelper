@@ -49,6 +49,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         UUID buyer = uniqueId;
         if (buyer.equals(shopItem.getOwner())){
             addOnCursor(event, shopItem, 1);
+            onPostTransaction();
         }else{
             BukkitRunnable buyTask = new BukkitRunnable() {
                 @Override
@@ -111,11 +112,18 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
         UUID buyer = event.getWhoClicked().getUniqueId();
         if (buyer.equals(shopItem.getOwner())){
             addOnCursor(event, shopItem, 1);
+            onPostTransaction();
         }else {
             double fee = getFee();
-            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee, getReason());
+            BukkitRunnable buyTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee, getReason());
+                    onPostTransaction();
+                }
+            };
+            submitUiTask(buyer, buyTask);
         }
-        onPostTransaction();
     }
 
     @Override
@@ -132,11 +140,18 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             shopItem.setAmount(shopItem.getAmount() - amount);
             giveToPlayer(event.getWhoClicked(), itemStack);
             DatabaseManager.getInstance().updateShopItem(shopItem);
+            onPostTransaction();
         }else {
             double fee = getFee();
-            TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount(), fee, getReason());
+            BukkitRunnable buyTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount(), fee, getReason());
+                    onPostTransaction();
+                }
+            };
+            submitUiTask(buyer, buyTask);
         }
-        onPostTransaction();
     }
 
     private void giveToPlayer(HumanEntity player, ItemStack itemStack) {
