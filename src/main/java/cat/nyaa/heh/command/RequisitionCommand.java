@@ -42,10 +42,6 @@ public class RequisitionCommand extends CommandReceiver implements ShortcutComma
         }
         Player player = asPlayer(sender);
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-        if (itemInMainHand.getType().isAir()){
-            new Message(I18n.format("command.requisition.no_item")).send(sender);
-            return;
-        }
         int amount = arguments.nextInt();
         double unitPrice = arguments.nextDouble();
         String top = arguments.top();
@@ -56,6 +52,10 @@ public class RequisitionCommand extends CommandReceiver implements ShortcutComma
                 return;
             }
             itemInMainHand = new ItemStack(material);
+        }
+        if (itemInMainHand.getType().isAir()){
+            new Message(I18n.format("command.requisition.no_item")).send(sender);
+            return;
         }
         boolean isSystemAuc = false;
         if (sender.hasPermission(PERMISSION_ADMIN)){
