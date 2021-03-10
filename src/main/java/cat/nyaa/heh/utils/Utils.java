@@ -134,6 +134,9 @@ public class Utils {
         //painful meta match
         ItemMeta itemMeta = shopItem.getItemMeta();
         ItemMeta itemMeta1 = sellItem.getItemMeta();
+        if (itemMeta == null && itemMeta1 != null || itemMeta != null & itemMeta1 == null){
+            return false;
+        }
         if (itemMeta instanceof BlockStateMeta) {
             if (!(itemMeta1 instanceof BlockStateMeta)){
                 return false;
@@ -203,6 +206,7 @@ public class Utils {
             return false;
         }
         BasicItemMatcher matcher = new BasicItemMatcher();
+        matcher.requireExact = true;
         for (int i = 0; i < contents.length; i++) {
             ItemStack content = contents[i];
             ItemStack content1 = contents1[i];
@@ -210,6 +214,10 @@ public class Utils {
             if (content == null || content1 == null){
                 matches = content1 == null && content == null;
             }else {
+                if (content.getAmount() != content1.getAmount()){
+                    matches = false;
+                    break;
+                }
                 matches = matcher.matches(content1);
             }
             if (!matches)break;
