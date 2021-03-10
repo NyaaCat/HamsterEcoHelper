@@ -9,6 +9,7 @@ import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
+import cat.nyaa.heh.utils.MessagedThrowable;
 import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.OfflinePlayer;
@@ -78,6 +79,10 @@ public class LottoComponent extends BasePagedComponent<ShopItem> {
             new Message(I18n.format("item.give.temp_storage")).send(offlinePlayer);
             return true;
         }catch (Exception e){
+            if (e instanceof MessagedThrowable){
+                ((MessagedThrowable) e).getCustomMessage().send(offlinePlayer);
+                return false;
+            }
             HamsterEcoHelper.plugin.getLogger().log(Level.WARNING, "exception during giving item to temp storage", e);
             return false;
         }

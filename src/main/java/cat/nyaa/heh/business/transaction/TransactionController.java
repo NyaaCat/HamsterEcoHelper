@@ -9,6 +9,7 @@ import cat.nyaa.heh.events.PreTransactionEvent;
 import cat.nyaa.heh.events.TransactionEvent;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.utils.EcoUtils;
+import cat.nyaa.heh.utils.MessagedThrowable;
 import cat.nyaa.heh.utils.SystemAccountUtils;
 import cat.nyaa.heh.utils.UidUtils;
 import cat.nyaa.nyaacore.Message;
@@ -207,6 +208,19 @@ public class TransactionController {
             }
             item.setSold(soldAmountBefore +amount);
             DatabaseManager.getInstance().updateShopItem(item);
+
+            if (forceStorage){
+                StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, 0);
+                new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
+            }else if (receiveInv != null){
+                if (!giveTo(receiveInv, itemStack)) {
+                    double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
+                    StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit);
+                    new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
+                }
+            }else {
+                giveItemTo(pBuyer, item, amount);
+            }
             transactionRecorderTask = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -221,19 +235,6 @@ public class TransactionController {
                 }
             };
             transactionRecorderTask.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 0);
-
-            if (forceStorage){
-                StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, 0);
-                new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
-            }else if (receiveInv != null){
-                if (!giveTo(receiveInv, itemStack)) {
-                    double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
-                    StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit);
-                    new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
-                }
-            }else {
-                giveItemTo(pBuyer, item, amount);
-            }
             TransactionEvent transactionEvent = new TransactionEvent(item, amount, toTake.doubleValue(), buyer, seller);
             Bukkit.getPluginManager().callEvent(transactionEvent);
             return true;
@@ -244,10 +245,16 @@ public class TransactionController {
             double dSeller = sellerBalAfter - sellerBalBefore;
             eco.depositPlayer(pPayer, dBuyer);
             eco.withdrawPlayer(pSeller, dSeller);
-            HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "exception during transaction :", e);
             Message message = new Message(I18n.format("transaction.error.exception", e.getMessage()));
             message.send(pPayer);
             message.send(pSeller);
+            if (e instanceof MessagedThrowable){
+                Message customMessage = ((MessagedThrowable) e).getCustomMessage();
+                customMessage.send(pPayer);
+                customMessage.send(pSeller);
+            }else {
+                HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "exception during transaction :", e);
+            }
             int soldAmountAfter = item.getSoldAmount();
             if (sellerBalBefore != soldAmountAfter){
                 item.setSold(soldAmountBefore);

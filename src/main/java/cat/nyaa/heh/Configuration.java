@@ -46,6 +46,8 @@ public class Configuration extends PluginConfigure {
     public int limitSlotMarket = 5;
     @Serializable(name = "limit.slots.signshop")
     public int limitSlotSignshop = 100;
+    @Serializable(name = "limit.slots.storage")
+    public int limitSlotStorage = 54;
     @Serializable(name = "limit.signs")
     public int limitSigns = 3;
     @Serializable(name = "limit.frames")

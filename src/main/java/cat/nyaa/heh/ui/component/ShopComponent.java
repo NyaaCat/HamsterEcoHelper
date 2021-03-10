@@ -157,7 +157,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
     private void giveToPlayer(HumanEntity player, ItemStack itemStack) {
         if (!giveTo(player.getInventory(), itemStack)){
             if (!giveTo(player.getEnderChest(), itemStack)) {
-                StorageConnection.getInstance().getPlayerStorage(player.getUniqueId()).addItem(itemStack, 0);
+                StorageConnection.getInstance().getPlayerStorage(player.getUniqueId()).addItem(itemStack, 0, true);
                 new Message(I18n.format("item.give.temp_storage")).send(player);
                 return;
             }

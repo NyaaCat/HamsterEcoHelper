@@ -1,10 +1,12 @@
 package cat.nyaa.heh.business.item;
 
 import cat.nyaa.heh.HamsterEcoHelper;
+import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.ui.StorageGUI;
 import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.utils.Utils;
+import cat.nyaa.nyaacore.Message;
 import cat.nyaa.nyaacore.utils.InventoryUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,10 +28,21 @@ public class PlayerStorage {
     }
 
     public boolean addItem(ItemStack itemStack, double fee){
+        return addItem(itemStack, fee, false);
+    }
+
+    public boolean addItem(ItemStack itemStack, double fee, boolean forced){
         try{
             List<ChangeTask> changed = new ArrayList<>();
             if (storageItems == null){
                 loadItems();
+            }
+
+            int limitSlotStorage = HamsterEcoHelper.plugin.config.limitSlotStorage;
+            if (!forced && limitSlotStorage > 0 && storageItems.size() >= limitSlotStorage){
+                Message message = new Message("");
+                message.append(I18n.format("storage.full"));
+                throw new StorageSpaceException(message);
             }
 
             //find item with same fee and merge them.

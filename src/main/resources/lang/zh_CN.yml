@@ -204,6 +204,7 @@ storage:
     insufficient_funds: "你没有足够的节操"
   lore:
     price: "取回费用 {fee} + {tax} 税入"
+  full: "储存箱已满,交易失败"
 system:
   name: "服务姬"
   user:
