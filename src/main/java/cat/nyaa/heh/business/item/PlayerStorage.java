@@ -32,67 +32,62 @@ public class PlayerStorage {
     }
 
     public boolean addItem(ItemStack itemStack, double fee, boolean forced){
-        try{
-            List<ChangeTask> changed = new ArrayList<>();
-            if (storageItems == null){
-                loadItems();
-            }
+       List<ChangeTask> changed = new ArrayList<>();
+       if (storageItems == null){
+           loadItems();
+       }
 
-            int limitSlotStorage = HamsterEcoHelper.plugin.config.limitSlotStorage;
-            if (!forced && limitSlotStorage > 0 && storageItems.size() >= limitSlotStorage){
-                Message message = new Message("");
-                message.append(I18n.format("storage.full"));
-                throw new StorageSpaceException(message);
-            }
+       int limitSlotStorage = HamsterEcoHelper.plugin.config.limitSlotStorage;
+       if (!forced && limitSlotStorage > 0 && storageItems.size() >= limitSlotStorage){
+           Message message = new Message("");
+           message.append(I18n.format("storage.full"));
+           throw new StorageSpaceException(message);
+       }
 
-            //find item with same fee and merge them.
-            List<StorageItem> similarItems = storageItems.stream()
-                    .filter(storageItem -> Math.abs(storageItem.getFee() - fee) < 0.001)
-                    .filter(storageItem -> Utils.isValidItem(storageItem.getItemStack(), itemStack)).collect(Collectors.toList());
+       //find item with same fee and merge them.
+       List<StorageItem> similarItems = storageItems.stream()
+               .filter(storageItem -> Math.abs(storageItem.getFee() - fee) < 0.001)
+               .filter(storageItem -> Utils.isValidItem(storageItem.getItemStack(), itemStack)).collect(Collectors.toList());
 
-            //settle item until all item put into storage;
-            int totalAmount = itemStack.getAmount();
+       //settle item until all item put into storage;
+       int totalAmount = itemStack.getAmount();
 
-            Iterator<StorageItem> iterator = similarItems.iterator();
-            while (iterator.hasNext()){
-                StorageItem next = iterator.next();
-                if (totalAmount<=0) {
-                    break;
-                }
+       Iterator<StorageItem> iterator = similarItems.iterator();
+       while (iterator.hasNext()){
+           StorageItem next = iterator.next();
+           if (totalAmount<=0) {
+               break;
+           }
 
-                //put item into stored item
-                ItemStack storedItem = next.getItemStack();
-                int maxDraw = storedItem.getMaxStackSize() - storedItem.getAmount();
-                int actualDraw = Math.min(totalAmount, maxDraw);
-                if (actualDraw > 0){
-                    totalAmount -= actualDraw;
-                    changed.add(new ChangeTask(next, storedItem.getAmount() + actualDraw));
-                }
-            }
+           //put item into stored item
+           ItemStack storedItem = next.getItemStack();
+           int maxDraw = storedItem.getMaxStackSize() - storedItem.getAmount();
+           int actualDraw = Math.min(totalAmount, maxDraw);
+           if (actualDraw > 0){
+               totalAmount -= actualDraw;
+               changed.add(new ChangeTask(next, storedItem.getAmount() + actualDraw));
+           }
+       }
 
-            //update database
-            changed.forEach(changeTask -> {
-                ItemStack itemStack1 = changeTask.item.getItemStack();
-                itemStack1.setAmount(changeTask.amount);
-                changeTask.item.setItemStack(itemStack1);
-                StorageConnection.getInstance().updateStorageItem(changeTask.item);
-            });
+       //update database
+       changed.forEach(changeTask -> {
+           ItemStack itemStack1 = changeTask.item.getItemStack();
+           itemStack1.setAmount(changeTask.amount);
+           changeTask.item.setItemStack(itemStack1);
+           StorageConnection.getInstance().updateStorageItem(changeTask.item);
+       });
 
-            //remains
-            if (totalAmount > 0){
-                ItemStack clone = itemStack.clone();
-                clone.setAmount(totalAmount);
-                StorageItem storageItem = StorageConnection.getInstance().newStorageItem(owner, clone, fee);
-                StorageConnection.getInstance().addStorageItem(storageItem);
-            }
+       //remains
+       if (totalAmount > 0){
+           ItemStack clone = itemStack.clone();
+           clone.setAmount(totalAmount);
+           StorageItem storageItem = StorageConnection.getInstance().newStorageItem(owner, clone, fee);
+           StorageConnection.getInstance().addStorageItem(storageItem);
+       }
 
-            this.loadItems();
-            UiManager.getInstance().getStorageUis(owner).forEach(StorageGUI::refreshGUI);
-            return true;
-        } catch (Exception e) {
-            HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "error while adding storage item", e);
-            return false;
-        }
+       this.loadItems();
+       UiManager.getInstance().getStorageUis(owner).forEach(StorageGUI::refreshGUI);
+       return true;
     }
 
     public boolean retrieveItem(StorageItem item, Player player){

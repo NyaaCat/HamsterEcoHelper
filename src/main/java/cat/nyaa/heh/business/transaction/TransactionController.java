@@ -83,27 +83,26 @@ public class TransactionController {
         DatabaseManager.getInstance().insertTax(tax);
     }
 
-    private void giveItemTo(OfflinePlayer pBuyer, ShopItem item, int amount) {
+    private Message giveItemTo(OfflinePlayer pBuyer, ShopItem item, int amount) {
         ItemStack itemStack = item.getItemStack();
         itemStack.setAmount(amount);
         if (!pBuyer.isOnline()) {
             double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
             double fee = storageFeeUnit;
             StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, fee);
-            new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
+            return new Message(I18n.format("item.give.temp_storage"));
         }else {
             Player player = pBuyer.getPlayer();
             PlayerInventory inventory = player.getInventory();
             Inventory enderChest = player.getEnderChest();
             if (giveTo(inventory, itemStack)) {
-                new Message(I18n.format("item.give.inventory")).send(pBuyer);
-                return;
+                return new Message(I18n.format("item.give.inventory"));
             }else if (giveTo(enderChest, itemStack)) {
-               new Message(I18n.format("item.give.ender_chest")).send(pBuyer);
+                return new Message(I18n.format("item.give.ender_chest"));
             }else {
-                new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
                 double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
                 StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit);
+                return new Message(I18n.format("item.give.temp_storage"));
             }
         }
     }
@@ -201,25 +200,24 @@ public class TransactionController {
             EconomyResponse rspSeller = eco.depositPlayer(pSeller, totalPrice.doubleValue());
             ItemStack itemStack = item.getItemStack();
             itemStack.setAmount(amount);
-            new Message("").append(I18n.format("transaction.withdraw", pSeller.getName(), toTake.doubleValue()), itemStack).send(pPayer);
-            new Message("").append(I18n.format("transaction.deposit", pPayer.getName(), totalPrice.doubleValue()), itemStack).send(pSeller);
             if(!rspBuyer.type.equals(EconomyResponse.ResponseType.SUCCESS) || !rspSeller.type.equals(EconomyResponse.ResponseType.SUCCESS) ){
                 throw new IllegalStateException("");
             }
             item.setSold(soldAmountBefore +amount);
             DatabaseManager.getInstance().updateShopItem(item);
 
+            Message itemGiveMsg = null;
             if (forceStorage){
                 StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, 0);
-                new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
+                itemGiveMsg = new Message(I18n.format("item.give.temp_storage"));
             }else if (receiveInv != null){
                 if (!giveTo(receiveInv, itemStack)) {
                     double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
                     StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit);
-                    new Message(I18n.format("item.give.temp_storage")).send(pBuyer);
+                    itemGiveMsg = new Message(I18n.format("item.give.temp_storage"));
                 }
             }else {
-                giveItemTo(pBuyer, item, amount);
+                itemGiveMsg = giveItemTo(pBuyer, item, amount);
             }
             transactionRecorderTask = new BukkitRunnable() {
                 @Override
@@ -237,6 +235,11 @@ public class TransactionController {
             transactionRecorderTask.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 0);
             TransactionEvent transactionEvent = new TransactionEvent(item, amount, toTake.doubleValue(), buyer, seller);
             Bukkit.getPluginManager().callEvent(transactionEvent);
+            new Message("").append(I18n.format("transaction.withdraw", pSeller.getName(), toTake.doubleValue()), itemStack).send(pPayer);
+            new Message("").append(I18n.format("transaction.deposit", pPayer.getName(), totalPrice.doubleValue()), itemStack).send(pSeller);
+            if (itemGiveMsg != null) {
+                itemGiveMsg.send(pBuyer);
+            }
             return true;
         }catch (Exception e){
             double payerBalAfter = eco.getBalance(pPayer);
@@ -245,14 +248,14 @@ public class TransactionController {
             double dSeller = sellerBalAfter - sellerBalBefore;
             eco.depositPlayer(pPayer, dBuyer);
             eco.withdrawPlayer(pSeller, dSeller);
-            Message message = new Message(I18n.format("transaction.error.exception", e.getMessage()));
-            message.send(pPayer);
-            message.send(pSeller);
             if (e instanceof MessagedThrowable){
                 Message customMessage = ((MessagedThrowable) e).getCustomMessage();
                 customMessage.send(pPayer);
                 customMessage.send(pSeller);
             }else {
+                Message message = new Message(I18n.format("transaction.error.exception", e.getMessage()));
+                message.send(pPayer);
+                message.send(pSeller);
                 HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "exception during transaction :", e);
             }
             int soldAmountAfter = item.getSoldAmount();
