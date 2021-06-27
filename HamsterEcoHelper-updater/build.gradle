@@ -5,23 +5,23 @@ plugins {
 }
 
 group 'cat.nyaa'
-version '8.0.x'
+version '8.1.x'
 
 repositories {
     mavenCentral()
     maven { name 'Spigot';      url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { name 'Sonatype';    url 'https://oss.sonatype.org/content/groups/public' }
     maven { name 'NyaaCat';     url 'https://ci.nyaacat.com/maven/' }
-    maven { name 'vault-repo';  url 'http://nexus.hc.to/content/repositories/pub_releases' }
+    maven { name 'vault-repo';  url 'https://nexus.hc.to/content/repositories/pub_releases' }
     maven { name 'EssentialsX'; url 'https://ci.ender.zone/plugin/repository/everything' }
     maven { name 'aikar';     url 'https://repo.aikar.co/content/groups/aikar/' }
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testRuntimeOnly "junit:junit:4.12"
 
-    shadow "org.spigotmc:spigot-api:1.16.2-R0.1-SNAPSHOT"
-    shadow "cat.nyaa:nyaacore:8.0-SNAPSHOT"
+    shadow "org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT"
+    shadow "cat.nyaa:nyaacore:8.1-SNAPSHOT"
     shadow "cat.nyaa:hamsterecohelper:7.2-SNAPSHOT"
 //    shadow "cat.nyaa:hamsterecohelper:8.0-SNAPSHOT"
 }

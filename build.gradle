@@ -1,14 +1,17 @@
-apply plugin: "java-library"
-apply plugin: "maven-publish"
+plugins {
+    id 'java-library'
+    id "maven-publish"
+}
+
 
 // Plugin config
 ext.pluginNameUpper = "HamsterEcoHelper"
 ext.pluginNameLower = ext.pluginNameUpper.toLowerCase()
 ext.majorVersion = 8
-ext.minorVersion = 0
-ext.minecraftVersion = "1.16.2"
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+ext.minorVersion = 1
+ext.minecraftVersion = "1.17"
+sourceCompatibility = 16
+targetCompatibility = 16
 
 // Suppiled by Jenkins
 ext.buildNumber = System.env.BUILD_NUMBER == null ? "x"                : "$System.env.BUILD_NUMBER"
@@ -18,15 +21,15 @@ ext.jdDirectory = System.env.JAVADOCS_DIR == null ? null               : "$Syste
 // Version used for distribution. Different from maven repo
 group = "cat.nyaa"
 archivesBaseName = "${pluginNameUpper}-mc$minecraftVersion"
-version = "$majorVersion.$minorVersion.$buildNumber"
+version = "$majorVersion.$minorVersion.$buildNumber".toString()
 
 // Repositories and dependencies
 repositories {
-    jcenter()
+    mavenCentral()
     maven { name 'Spigot';      url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { name 'Sonatype';    url 'https://oss.sonatype.org/content/groups/public' }
     maven { name 'NyaaCat';     url 'https://ci.nyaacat.com/maven/' }
-    maven { name 'vault-repo';  url 'http://nexus.hc.to/content/repositories/pub_releases' }
+    maven { name 'vault-repo';  url 'https://nexus.hc.to/content/repositories/pub_releases' }
     maven { name 'EssentialsX'; url 'https://ci.ender.zone/plugin/repository/everything' }
     maven { name 'aikar';     url 'https://repo.aikar.co/content/groups/aikar/' }
 }
@@ -40,7 +43,7 @@ dependencies {
         compileOnly project(":LanguageUtils")
         compileOnly project(":LockettePro")
     } else {
-        compileOnly('cat.nyaa:nyaacore:8.0-SNAPSHOT') { transitive = true }
+        compileOnly('cat.nyaa:nyaacore:8.1-SNAPSHOT') { transitive = true }
         compileOnly('com.meowj:LangUtils:2.4-SNAPSHOT') { transitive = false }
         compileOnly('me.crafter.mc:lockettepro:2.10-SNAPSHOT') { transitive = false }
     }
@@ -68,8 +71,8 @@ javadoc {
     // javadoc output folder
     if (project.jdDirectory != null) destinationDir = file("${jdDirectory}/${pluginNameLower}-${version}")
 
-    options {
-        links 'https://docs.oracle.com/en/java/javase/14/docs/api/'
+    (options as StandardJavadocDocletOptions).with {
+        links 'https://docs.oracle.com/en/java/javase/16/docs/api/'
         links 'https://hub.spigotmc.org/javadocs/spigot/'
         links 'https://google.github.io/guava/releases/21.0/api/docs/'
         links 'https://ci.md-5.net/job/BungeeCord/ws/chat/target/apidocs/'
@@ -80,9 +83,7 @@ javadoc {
         addBooleanOption('keywords', true)
         addStringOption('Xdoclint:none', '-quiet')
 
-        if (JavaVersion.current() > JavaVersion.VERSION_1_9) {
-            addBooleanOption('html5', true)
-        }
+        addBooleanOption('html5', true)
 
         windowTitle = "${pluginNameUpper} Javadoc"
         docTitle = "${pluginNameUpper} (mc$minecraftVersion-${project.version})"
