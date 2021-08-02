@@ -111,7 +111,7 @@ public class ItemFrameShop {
                     frameMap.put(frame.getUniqueId(), itemFrameShop);
                 });
             }
-        }.runTaskLaterAsynchronously(HamsterEcoHelper.plugin, 1);
+        }.runTaskLater(HamsterEcoHelper.plugin, 1);
       }
 
     public static void removeFrameShop(ItemFrame f, long uid) {
@@ -235,7 +235,7 @@ public class ItemFrameShop {
             if (remove != null){
                 try {
                     remove.cancel();
-                }catch (Exception e){}
+                }catch (Exception ignored){}
             }
         });
 
@@ -412,7 +412,7 @@ public class ItemFrameShop {
             void update(){
                 try {
                     cancel();
-                }catch (IllegalStateException e){
+                }catch (IllegalStateException ignored){
                 }
 
 
@@ -437,7 +437,7 @@ public class ItemFrameShop {
             public void updateLater() {
                 try {
                     cancel();
-                }catch (IllegalStateException e){
+                }catch (IllegalStateException ignored){
                 }
 
                 RefreshTask task = new RefreshTask(frameUuid);
@@ -570,7 +570,7 @@ public class ItemFrameShop {
         public void resubmit(){
             try{
                 cancel();
-            }catch (IllegalStateException e){}
+            }catch (IllegalStateException ignored){}
 
             BuyTask task = new BuyTask(uuid, startTime);
             buyTaskMap.put(uuid, task);
