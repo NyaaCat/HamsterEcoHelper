@@ -6,6 +6,7 @@ import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
 import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.signshop.SignShopManager;
 import cat.nyaa.heh.utils.Utils;
 import cat.nyaa.nyaacore.ILocalizer;
 import cat.nyaa.nyaacore.Message;
@@ -113,7 +114,8 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
         }
         int pages = (int) Math.ceil(result.size() / 9.0d);
         msg(sender, "command.search.page", page + 1, pages);
-        result.stream().skip(start).limit(9).forEach(item ->
+        result.stream().skip(start).limit(9).forEach(item -> {
+            // SignShopManager.getInstance().
                 new Message("")
                         .append(I18n.format("command.search.result",
                                 Bukkit.getOfflinePlayer(item.getOwner())
@@ -121,7 +123,8 @@ public class SearchCommand extends CommandReceiver implements ShortcutCommand{
                                 item.getShopItemType().getDescription(),
                                 item.getUnitPrice()
                         ), item.getItemStack())
-                        .send(sender));
+                        .send(sender);
+        });
         sendButtons(sender, page+1, pages);
     }
 
