@@ -73,7 +73,7 @@ public class Market extends BaseShop {
 
     public boolean buy(Player buyer, ShopItem item, int amount){
         double fee = HamsterEcoHelper.plugin.config.marketFeeBase;
-        boolean success = TransactionController.getInstance().makeTransaction(buyer.getUniqueId(), item.getOwner(), item, amount, fee, TaxReason.REASON_MARKET);
+        boolean success = TransactionController.getInstance().makeTransaction(buyer.getUniqueId(), item.getOwner(), item, amount, fee, TaxReason.REASON_MARKET,true);
         refreshGUI();
         return success;
     }

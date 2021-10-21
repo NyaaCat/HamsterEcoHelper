@@ -113,7 +113,7 @@ public class Requisition {
         }
 
         double fee = HamsterEcoHelper.plugin.config.requisitionFeeBase;
-        boolean result = TransactionController.getInstance().makeTransaction(item.getOwner(), seller.getUniqueId(), item, sellItem.getAmount(), fee, TaxReason.REASON_REQ);
+        boolean result = TransactionController.getInstance().makeTransaction(item.getOwner(), seller.getUniqueId(), item, sellItem.getAmount(), fee, TaxReason.REASON_REQ,false);
         if (result){
             broadcast(new Message("").append(I18n.format("requisition.sell", seller.getName(), item.getAmount() - item.getSoldAmount()), sellItem));
         }

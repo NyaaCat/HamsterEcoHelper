@@ -53,6 +53,7 @@ shop:
 transaction:
   withdraw: "你向 %s &r购买了 {itemName} &r* {amount} 共支付了 %.2f 节操"
   deposit: "%s &r向你购买了 {itemName} &r* {amount} 你获得了%.2f 节操"
+  illegal: "非法请求，请重试。"
   error:
     exception: "交易发生错误"
 item:

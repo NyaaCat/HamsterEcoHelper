@@ -2,12 +2,12 @@ package cat.nyaa.heh.business.transaction;
 
 import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
+import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.db.DatabaseManager;
 import cat.nyaa.heh.db.StorageConnection;
 import cat.nyaa.heh.events.PreTransactionEvent;
 import cat.nyaa.heh.events.TransactionEvent;
-import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.utils.EcoUtils;
 import cat.nyaa.heh.utils.MessagedThrowable;
 import cat.nyaa.heh.utils.SystemAccountUtils;
@@ -35,10 +35,13 @@ public class TransactionController {
     private static UidUtils taxUidManager = UidUtils.create(TAX_TABLE_NAME);
 
     private static TransactionController INSTANCE;
-    private TransactionController(){}
-    public static TransactionController getInstance(){
-        if (INSTANCE == null){
-            synchronized (TransactionController.class){
+
+    private TransactionController() {
+    }
+
+    public static TransactionController getInstance() {
+        if (INSTANCE == null) {
+            synchronized (TransactionController.class) {
                 if (INSTANCE == null) {
                     INSTANCE = new TransactionController();
                 }
@@ -47,27 +50,28 @@ public class TransactionController {
         return INSTANCE;
     }
 
-    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee, String reason) {
-        return makeTransaction(buyer, buyer, seller, item, amount, fee, null, null, reason);
+    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee, String reason, boolean recheck) {
+        return makeTransaction(buyer, buyer, seller, item, amount, fee, null, null, reason, recheck);
     }
 
-    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv, String reason) {
-        return makeTransaction(buyer, buyer, seller, item, amount, fee, receiveInv, returnInv, reason);
+    public boolean makeTransaction(UUID buyer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv, String reason, boolean recheck) {
+        return makeTransaction(buyer, buyer, seller, item, amount, fee, receiveInv, returnInv, reason, recheck);
     }
 
 
-    public boolean makeTransaction(UUID buyer, UUID payer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv, String reason){
-       return makeTransaction(new TransactionRequest.TransactionBuilder()
-               .buyer(buyer)
-               .payer(payer)
-               .seller(seller)
-               .item(item)
-               .amount(amount)
-               .fee(fee)
-               .receiveInv(receiveInv)
-               .returnInv(returnInv)
-               .reason(reason)
-               .build());
+    public boolean makeTransaction(UUID buyer, UUID payer, UUID seller, ShopItem item, int amount, double fee, Inventory receiveInv, Inventory returnInv, String reason, boolean recheck) {
+        return makeTransaction(new TransactionRequest.TransactionBuilder()
+                .buyer(buyer)
+                .payer(payer)
+                .seller(seller)
+                .item(item)
+                .amount(amount)
+                .fee(fee)
+                .receiveInv(receiveInv)
+                .returnInv(returnInv)
+                .reason(reason)
+                .recheck(recheck)
+                .build());
     }
 
     private Transaction newTransactionRecord(ShopItem item, int amount, BigDecimal itemPrice, OfflinePlayer pBuyer, OfflinePlayer pSeller, long taxUid, long time) {
@@ -91,15 +95,15 @@ public class TransactionController {
             double fee = storageFeeUnit;
             StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, fee);
             return new Message(I18n.format("item.give.temp_storage"));
-        }else {
+        } else {
             Player player = pBuyer.getPlayer();
             PlayerInventory inventory = player.getInventory();
             Inventory enderChest = player.getEnderChest();
             if (giveTo(inventory, itemStack)) {
                 return new Message(I18n.format("item.give.inventory"));
-            }else if (giveTo(enderChest, itemStack)) {
+            } else if (giveTo(enderChest, itemStack)) {
                 return new Message(I18n.format("item.give.ender_chest"));
-            }else {
+            } else {
                 double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
                 StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit);
                 return new Message(I18n.format("item.give.temp_storage"));
@@ -108,8 +112,8 @@ public class TransactionController {
     }
 
     private boolean giveTo(Inventory inventory, ItemStack itemStack) {
-        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
-            if (InventoryUtils.addItem(inventory, itemStack)){
+        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)) {
+            if (InventoryUtils.addItem(inventory, itemStack)) {
                 return true;
             }
         }
@@ -121,7 +125,7 @@ public class TransactionController {
         SystemAccountUtils.depositSystem(tax.getTax() + tax.getFee());
     }
 
-    public Tax newTax(UUID from, double tax, double fee, long time, String reason){
+    public Tax newTax(UUID from, double tax, double fee, long time, String reason) {
         return new Tax(taxUidManager.getNextUid(), from, tax, fee, time, reason);
     }
 
@@ -129,7 +133,7 @@ public class TransactionController {
         BigDecimal tax = Tax.calcTax(BigDecimal.valueOf(amount), type);
         Tax tax1 = newTax(player.getUniqueId(), tax.doubleValue(), 0, System.currentTimeMillis(), taxReason);
         boolean withdraw = SystemAccountUtils.withdraw(player, tax.doubleValue());
-        if (withdraw){
+        if (withdraw) {
             retrieveTax(tax1);
         }
         return withdraw;
@@ -156,7 +160,13 @@ public class TransactionController {
         Economy eco = EcoUtils.getInstance().getEco();
         double balance = eco.getBalance(pBuyer);
 
-        BigDecimal itemPrice = priceOverride == null ?BigDecimal.valueOf(item.getUnitPrice())
+        if(transactionRequest.isRecheck()){
+            ShopItem item_ =  DatabaseManager.getInstance().getItem(item.getUid());
+            if(!item.getItemStack().isSimilar(item_.getItemStack()))return false;
+            new Message(I18n.format("transaction.buy.illegal")).send(pPayer);
+        }
+
+        BigDecimal itemPrice = priceOverride == null ? BigDecimal.valueOf(item.getUnitPrice())
                 .multiply(BigDecimal.valueOf(amount))
                 : BigDecimal.valueOf(priceOverride);
 
@@ -167,7 +177,7 @@ public class TransactionController {
         //taxMode decide which side should pay the tax.
         BigDecimal toTake = itemPrice;
         BigDecimal totalPrice = itemPrice;
-        switch (taxMode){
+        switch (taxMode) {
             case ADDITION: // tax buyer
                 toTake = toTake.add(tax);
                 break;
@@ -178,7 +188,7 @@ public class TransactionController {
                 throw new IllegalStateException("Unexpected value: " + taxMode);
         }
 
-        if (balance < toTake.doubleValue()){
+        if (balance < toTake.doubleValue()) {
             new Message(I18n.format("transaction.buy.insufficient_funds")).send(pPayer);
             return false;
         }
@@ -189,46 +199,46 @@ public class TransactionController {
 
         PreTransactionEvent preTransactionEvent = new PreTransactionEvent(item, amount, toTake.doubleValue(), buyer, seller);
         Bukkit.getPluginManager().callEvent(preTransactionEvent);
-        if (preTransactionEvent.isCanceled()){
+        if (preTransactionEvent.isCanceled()) {
             return false;
         }
 
-        try{
+        try {
             long time = System.currentTimeMillis();
 
             EconomyResponse rspBuyer = eco.withdrawPlayer(pPayer, toTake.doubleValue());
             EconomyResponse rspSeller = eco.depositPlayer(pSeller, totalPrice.doubleValue());
             ItemStack itemStack = item.getItemStack();
             itemStack.setAmount(amount);
-            if(!rspBuyer.type.equals(EconomyResponse.ResponseType.SUCCESS) || !rspSeller.type.equals(EconomyResponse.ResponseType.SUCCESS) ){
+            if (!rspBuyer.type.equals(EconomyResponse.ResponseType.SUCCESS) || !rspSeller.type.equals(EconomyResponse.ResponseType.SUCCESS)) {
                 throw new IllegalStateException("");
             }
-            item.setSold(soldAmountBefore +amount);
+            item.setSold(soldAmountBefore + amount);
             DatabaseManager.getInstance().updateShopItem(item);
 
             Message itemGiveMsg = null;
-            if (forceStorage){
+            if (forceStorage) {
                 StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, 0);
                 itemGiveMsg = new Message(I18n.format("item.give.temp_storage"));
-            }else if (receiveInv != null){
+            } else if (receiveInv != null) {
                 if (!giveTo(receiveInv, itemStack)) {
                     double storageFeeUnit = HamsterEcoHelper.plugin.config.storageFeeUnit;
                     StorageConnection.getInstance().getPlayerStorage(pBuyer.getUniqueId()).addItem(itemStack, storageFeeUnit);
                     itemGiveMsg = new Message(I18n.format("item.give.temp_storage"));
                 }
-            }else {
+            } else {
                 itemGiveMsg = giveItemTo(pBuyer, item, amount);
             }
             transactionRecorderTask = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    try{
+                    try {
                         Tax tax1 = newTax(pBuyer.getUniqueId(), tax.doubleValue(), 0, time, reason);
                         retrieveTax(tax1);
                         Transaction transaction = newTransactionRecord(item, amount, itemPrice, pBuyer, pSeller, tax1.getUid(), time);
                         addTransactionRecord(transaction);
                     } catch (Exception e) {
-                        Bukkit.getLogger().log(Level.SEVERE, "error creating tax.",e);
+                        Bukkit.getLogger().log(Level.SEVERE, "error creating tax.", e);
                     }
                 }
             };
@@ -241,29 +251,29 @@ public class TransactionController {
                 itemGiveMsg.send(pBuyer);
             }
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             double payerBalAfter = eco.getBalance(pPayer);
             double sellerBalAfter = eco.getBalance(pSeller);
             double dBuyer = payerBalAfter - payerBalBefore;
             double dSeller = sellerBalAfter - sellerBalBefore;
             eco.depositPlayer(pPayer, dBuyer);
             eco.withdrawPlayer(pSeller, dSeller);
-            if (e instanceof MessagedThrowable){
+            if (e instanceof MessagedThrowable) {
                 Message customMessage = ((MessagedThrowable) e).getCustomMessage();
                 customMessage.send(pPayer);
                 customMessage.send(pSeller);
-            }else {
+            } else {
                 Message message = new Message(I18n.format("transaction.error.exception", e.getMessage()));
                 message.send(pPayer);
                 message.send(pSeller);
                 HamsterEcoHelper.plugin.getLogger().log(Level.SEVERE, "exception during transaction :", e);
             }
             int soldAmountAfter = item.getSoldAmount();
-            if (sellerBalBefore != soldAmountAfter){
+            if (sellerBalBefore != soldAmountAfter) {
                 item.setSold(soldAmountBefore);
                 DatabaseManager.getInstance().updateShopItem(item);
             }
-            if (transactionRecorderTask != null){
+            if (transactionRecorderTask != null) {
                 transactionRecorderTask.cancel();
             }
             return false;

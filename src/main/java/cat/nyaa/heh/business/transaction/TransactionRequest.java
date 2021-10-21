@@ -22,6 +22,7 @@ public class TransactionRequest {
     private Double taxRate = null;
     private TaxMode taxMode = TaxMode.ADDITION;
     private boolean forceStorage;
+    private boolean recheck = true;
 
     private TransactionRequest() {
     }
@@ -108,6 +109,10 @@ public class TransactionRequest {
     public boolean isForceStorage() {
         return forceStorage;
     }
+
+    public boolean isRecheck() {
+        return recheck;
+    }
     //</editor-fold>
 
 
@@ -174,6 +179,10 @@ public class TransactionRequest {
 
         public TransactionBuilder taxMode(TaxMode taxMode) {
             this.request.taxMode = taxMode;
+            return this;
+        }
+        public TransactionBuilder recheck(boolean recheck){
+            this.request.recheck = recheck;
             return this;
         }
 

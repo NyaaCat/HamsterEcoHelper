@@ -33,7 +33,7 @@ public class DirectInvoice {
         UUID customer = getCustomer(shopItem.getUid());
         double fee = HamsterEcoHelper.plugin.config.directFeeBase;
         int amount = shopItem.getAmount() - shopItem.getSoldAmount();
-        return TransactionController.getInstance().makeTransaction(customer, payer.getUniqueId(), shopItem.getOwner(), shopItem, amount, fee, null, null, TaxReason.REASON_DIRECT);
+        return TransactionController.getInstance().makeTransaction(customer, payer.getUniqueId(), shopItem.getOwner(), shopItem, amount, fee, null, null, TaxReason.REASON_DIRECT,false);
     }
 
     public List<String> getDirectInvoiceIds(){

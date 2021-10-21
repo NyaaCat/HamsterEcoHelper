@@ -78,7 +78,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
 
     protected void makeTransaction(InventoryClickEvent event, UUID buyer, ShopItem shopItem) {
         double fee = getFee();
-        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee, getReason());
+        TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee, getReason(),true);
     }
 
     protected abstract String getReason();
@@ -118,7 +118,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             BukkitRunnable buyTask = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee, getReason());
+                    TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, 1, fee, getReason(),true);
                     onPostTransaction();
                 }
             };
@@ -146,7 +146,7 @@ public abstract class ShopComponent extends BasePagedComponent<ShopItem>{
             BukkitRunnable buyTask = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount(), fee, getReason());
+                    TransactionController.getInstance().makeTransaction(buyer, shopItem.getOwner(), shopItem, shopItem.getAmount() - shopItem.getSoldAmount(), fee, getReason(),true);
                     onPostTransaction();
                 }
             };
