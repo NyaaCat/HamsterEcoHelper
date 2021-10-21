@@ -51,6 +51,15 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
         signEvents = new SignEvents();
         Bukkit.getPluginManager().registerEvents(uiEvents, this);
         Bukkit.getPluginManager().registerEvents(signEvents, this);
+        preLoadItems();
+    }
+
+    private void preLoadItems() {
+        long start = System.currentTimeMillis();
+        this.getLogger().info("preLoadItems start");
+        int size = databaseManager.getAvailableShopItems(null,null).size();
+        long end = System.currentTimeMillis();
+        this.getLogger().info("preLoadItems end,time:" + String.valueOf(end - start) + ",size:" + size);
     }
 
     private void registerCommands() {
@@ -60,7 +69,7 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
 
     @Override
     public void onDisable() {
-        if (auction != null){
+        if (auction != null) {
             auction.abort();
         }
         databaseManager.close();
@@ -107,7 +116,7 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
             Tax tax = TransactionController.getInstance().newTax(SystemAccountUtils.getSystemUuid(), 0, amount, System.currentTimeMillis(), reason);
             TransactionController.getInstance().retrieveTax(tax);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             Bukkit.getLogger().log(Level.WARNING, "error while depositing system", e);
             return false;
         }
@@ -116,25 +125,24 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
     @Override
     public boolean depositToSystem(OfflinePlayer from, String reason, double amount) {
         boolean withdraw = SystemAccountUtils.withdraw(from, amount);
-        if (!withdraw){
+        if (!withdraw) {
             return false;
         }
         try {
             Tax tax = TransactionController.getInstance().newTax(from.getUniqueId(), 0, amount, System.currentTimeMillis(), reason);
             TransactionController.getInstance().retrieveTax(tax);
             return withdraw;
-        }catch (Exception e){
+        } catch (Exception e) {
             Bukkit.getLogger().log(Level.WARNING, "error while depositing system", e);
             return false;
         }
     }
 
 
-
     @Override
     public boolean chargeFee(OfflinePlayer from, String reason, double amount) {
         boolean success = SystemAccountUtils.withdraw(from, amount);
-        if (success){
+        if (success) {
             Tax tax = TransactionController.getInstance().newTax(from.getUniqueId(), 0, amount, System.currentTimeMillis(), reason);
             TransactionController.getInstance().retrieveTax(tax);
         }
@@ -147,7 +155,7 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
             Tax tax = TransactionController.getInstance().newTax(SystemAccountUtils.getSystemUuid(), 0, -amount, System.currentTimeMillis(), reason);
             TransactionController.getInstance().retrieveTax(tax);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             Bukkit.getLogger().log(Level.WARNING, "error while withdrawing system", e);
             return false;
         }
@@ -156,14 +164,14 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
     @Override
     public boolean withdrawFromSystem(OfflinePlayer from, String reason, double amount) {
         boolean deposit = SystemAccountUtils.deposit(from, amount);
-        if (!deposit){
+        if (!deposit) {
             return false;
         }
         try {
             Tax tax = TransactionController.getInstance().newTax(from.getUniqueId(), 0, -amount, System.currentTimeMillis(), reason);
             TransactionController.getInstance().retrieveTax(tax);
             return deposit;
-        }catch (Exception e){
+        } catch (Exception e) {
             Bukkit.getLogger().log(Level.WARNING, "error while withdrawing system", e);
             return false;
         }
@@ -178,7 +186,7 @@ public class HamsterEcoHelper extends JavaPlugin implements HamsterEcoHelperAPI 
         return inventory;
     }
 
-    public HamsterEcoHelperAPI getImpl(){
+    public HamsterEcoHelperAPI getImpl() {
         return this;
     }
 }

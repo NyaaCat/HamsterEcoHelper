@@ -1,32 +1,31 @@
 package cat.nyaa.heh.db;
 
 import cat.nyaa.heh.HamsterEcoHelper;
-import cat.nyaa.heh.business.signshop.*;
-import cat.nyaa.heh.db.model.*;
-import cat.nyaa.heh.business.item.ShopItemType;
 import cat.nyaa.heh.business.item.ShopItem;
+import cat.nyaa.heh.business.item.ShopItemType;
+import cat.nyaa.heh.business.signshop.BaseSignShop;
+import cat.nyaa.heh.business.signshop.SignShopBuy;
+import cat.nyaa.heh.business.signshop.SignShopLotto;
+import cat.nyaa.heh.business.signshop.SignShopSell;
 import cat.nyaa.heh.business.transaction.Tax;
 import cat.nyaa.heh.business.transaction.Transaction;
-import cat.nyaa.heh.utils.Utils;
+import cat.nyaa.heh.db.model.*;
 import cat.nyaa.nyaacore.orm.DatabaseUtils;
 import cat.nyaa.nyaacore.orm.WhereClause;
 import cat.nyaa.nyaacore.orm.backends.IConnectedDatabase;
 import cat.nyaa.nyaacore.orm.backends.ITypedTable;
-import co.aikar.taskchain.TaskChain;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class DatabaseManager {
@@ -43,13 +42,13 @@ public class DatabaseManager {
     ITypedTable<StorageDbModel> storageTable;
     ITypedTable<AccountDbModel> accountTable;
 
-    private DatabaseManager(){
+    private DatabaseManager() {
         databaseConfig = new DatabaseConfig();
         databaseConfig.load();
-        try{
+        try {
             db = DatabaseUtils.connect(HamsterEcoHelper.plugin, databaseConfig.backendConfig);
             loadTables();
-        }catch (Exception e){
+        } catch (Exception e) {
             Bukkit.getLogger().log(Level.SEVERE, "error loading database", e);
             try {
                 db.close();
@@ -70,10 +69,10 @@ public class DatabaseManager {
         accountTable = db.getTable(AccountDbModel.class);
     }
 
-    public static DatabaseManager getInstance(){
-        if (INSTANCE == null){
-            synchronized (DatabaseManager.class){
-                if (INSTANCE == null){
+    public static DatabaseManager getInstance() {
+        if (INSTANCE == null) {
+            synchronized (DatabaseManager.class) {
+                if (INSTANCE == null) {
                     INSTANCE = new DatabaseManager();
                 }
             }
@@ -86,7 +85,7 @@ public class DatabaseManager {
         return ShopItemDbModel.toShopItem(shopItemDbModel);
     }
 
-    public List<ShopItem> getPlayerItems(ShopItemType type, UUID owner){
+    public List<ShopItem> getPlayerItems(ShopItemType type, UUID owner) {
         List<ShopItem> collect = shopItemTable.select(WhereClause.EQ("type", type).whereEq("available", true).whereEq("owner", owner.toString())).stream()
                 .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
                 .collect(Collectors.toList());
@@ -94,7 +93,7 @@ public class DatabaseManager {
     }
 
     public void updateShopItem(ShopItem item) {
-        shopItemTable.update(ShopItemDbModel.fromShopItem(item), WhereClause.EQ("uid",item.getUid()));
+        shopItemTable.update(ShopItemDbModel.fromShopItem(item), WhereClause.EQ("uid", item.getUid()));
     }
 
     public void insertTransaction(Transaction transaction) {
@@ -105,7 +104,7 @@ public class DatabaseManager {
         taxTable.insert(taxRecord);
     }
 
-    public int count(ShopItemType type, UUID owner){
+    public int count(ShopItemType type, UUID owner) {
         return shopItemTable.count(WhereClause.EQ("type", type.name()).whereEq("owner", owner.toString()));
     }
 
@@ -114,31 +113,66 @@ public class DatabaseManager {
         return resultSet.getLong(1);
     }
 
-    public void insertShopItem(ShopItemDbModel shopItemDbModel){
+    public void insertShopItem(ShopItemDbModel shopItemDbModel) {
         shopItemTable.insert(shopItemDbModel);
     }
 
+    public List<ShopItem> getAvailableShopItems(@Nullable ShopItemType shopItemType, @Nullable UUID itemOwner) {
+        String sql = "SELECT * FROM " + shopItemTable.getTableName() + " WHERE available=true AND amount>sold";
+        if (shopItemType != null) sql += " AND type=?";
+        if (itemOwner != null) sql += " AND owner=?";
+        sql += ";";
+        ResultSet resultSet;
+        List<ShopItem> result = new ArrayList<>();
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement(sql);
+            int parameterIndex = 1;
+            if (shopItemType != null)
+                ps.setString(parameterIndex++, shopItemType.name());
+            if (itemOwner != null)
+                ps.setString(parameterIndex, itemOwner.toString());
+
+            resultSet = ps.executeQuery();
+
+            if (resultSet == null) return result;
+            while (resultSet.next()) {
+
+                long uid = resultSet.getLong("uid");
+                UUID owner = UUID.fromString(resultSet.getString("owner"));
+                ShopItemType type = ShopItemType.valueOf(resultSet.getString("type"));
+                String nbt = resultSet.getString("nbt");
+                double price = resultSet.getDouble("price");
+                int amount = resultSet.getInt("amount");
+                int sold = resultSet.getInt("sold");
+                boolean available = resultSet.getBoolean("available");
+                long time = resultSet.getLong("time");
+                String meta = resultSet.getString("meta");
+                result.add(new ShopItem(uid, owner, amount, sold, nbt, price, type, time, available, meta));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+
+
+    }
+
     public List<ShopItem> getMarketItems() {
-        List<ShopItem> collect = shopItemTable.select(
-                    WhereClause.EQ("type", ShopItemType.MARKET)
-                            .whereEq("available", true)
-                ).stream()
-                .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
-                .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
-                .collect(Collectors.toList());
-        return collect;
+        return getAvailableShopItems(ShopItemType.MARKET, null);
     }
 
     public List<ShopItem> getMarketItems(UUID owner) {
-        List<ShopItem> collect = shopItemTable.select(
-                WhereClause.EQ("type", ShopItemType.MARKET)
-                        .whereEq("available", true)
-                        .whereEq("owner", owner.toString())
-        ).stream()
-                .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
-                .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
-                .collect(Collectors.toList());
-        return collect;
+        return getAvailableShopItems(ShopItemType.MARKET, owner);
+//        List<ShopItem> collect = shopItemTable.select(
+//                        WhereClause.EQ("type", ShopItemType.MARKET)
+//                                .whereEq("available", true)
+//                                .whereEq("owner", owner.toString())
+//                ).stream()
+//                .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
+//                .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
+//                .collect(Collectors.toList());
+//        return collect;
     }
 
     public boolean hasBuyShop(UUID owner) {
@@ -150,25 +184,12 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getSellShopItems(UUID owner) {
-        return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_SELL)
-                    .whereEq("available", true)
-                    .whereEq("owner", owner)).stream()
-                        .filter(ShopItemDbModel::isAvailable)
-                        .filter(shopItemDbModel -> shopItemDbModel.getAmount()>shopItemDbModel.getSold())
-                        .map(ShopItem::new)
-                        .collect(Collectors.toList());
+        return getAvailableShopItems(ShopItemType.SIGN_SHOP_SELL, owner);
     }
 
     public List<ShopItem> getBuyShopItems(UUID owner) {
-        return shopItemTable.select(WhereClause.EQ("type", ShopItemType.SIGN_SHOP_BUY)
-                    .whereEq("owner", owner)
-                    .whereEq("available", true)).stream()
-                        .filter(ShopItemDbModel::isAvailable)
-                        .filter(shopItemDbModel -> shopItemDbModel.getAmount()>shopItemDbModel.getSold())
-                        .map(ShopItem::new)
-                        .collect(Collectors.toList());
+        return getAvailableShopItems(ShopItemType.SIGN_SHOP_BUY, owner);
     }
-
 
 
     public List<BaseSignShop> getShops() {
@@ -176,39 +197,40 @@ public class DatabaseManager {
         List<LocationDbModel> toRemove = new ArrayList<>();
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY)).stream()
                 .forEach(signShopDbModel -> {
-                    try{
+                    try {
                         result.add(new SignShopBuy(signShopDbModel));
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         toRemove.add(signShopDbModel);
                     }
                 });
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_SELL)).stream()
                 .forEach(signShopDbModel -> {
-                    try{
+                    try {
                         result.add(new SignShopSell(signShopDbModel));
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         toRemove.add(signShopDbModel);
                     }
                 });
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_LOTTO)).stream()
                 .forEach(signShopDbModel -> {
-                    try{
+                    try {
                         result.add(new SignShopLotto(signShopDbModel));
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         toRemove.add(signShopDbModel);
                     }
                 });
-        if (toRemove.size()>0){
-            new BukkitRunnable(){
+        if (toRemove.size() > 0) {
+            new BukkitRunnable() {
                 @Override
                 public void run() {
-                    Bukkit.getLogger().log(Level.WARNING, "deleting "+toRemove.size()+" locations due to invalid configuration");
+                    Bukkit.getLogger().log(Level.WARNING, "deleting " + toRemove.size() + " locations due to invalid configuration");
                     toRemove.forEach(locationDbModel -> locationTable.delete(WhereClause.EQ("uid", locationDbModel.getUid())));
                 }
             }.runTaskAsynchronously(HamsterEcoHelper.plugin);
         }
         return result;
     }
+
     public Map<UUID, List<SignShopBuy>> getBuyShops() {
         Map<UUID, List<SignShopBuy>> result = new HashMap<>();
         locationTable.select(WhereClause.EQ("type", LocationType.SIGN_SHOP_BUY)).stream()
@@ -216,7 +238,7 @@ public class DatabaseManager {
                     List<SignShopBuy> signShopSells = result.computeIfAbsent(signShopDbModel.getOwner(), uuid -> new ArrayList<>());
                     try {
                         signShopSells.add(new SignShopBuy(signShopDbModel));
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Bukkit.getLogger().log(Level.WARNING, "", e);
                     }
                 });
@@ -230,7 +252,7 @@ public class DatabaseManager {
                     List<SignShopSell> signShopSells = result.computeIfAbsent(signShopDbModel.getOwner(), uuid -> new ArrayList<>());
                     try {
                         signShopSells.add(new SignShopSell(signShopDbModel));
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Bukkit.getLogger().log(Level.WARNING, "", e);
                     }
                 });
@@ -254,10 +276,11 @@ public class DatabaseManager {
     }
 
     public List<ShopItem> getAvailableInvoices() {
-        WhereClause clause = WhereClause.EQ("type", ShopItemType.DIRECT)
-                .where("sold", "<", "amount")
-                .whereEq("available", true);
-        return shopItemTable.select(clause).stream().map(shopItemDbModel -> shopItemDbModel.toShopItem()).collect(Collectors.toList());
+        return getAvailableShopItems(ShopItemType.DIRECT, null);
+//        WhereClause clause = WhereClause.EQ("type", ShopItemType.DIRECT)
+//                .where("sold", "<", "amount")
+//                .whereEq("available", true);
+//        return shopItemTable.select(clause).stream().map(shopItemDbModel -> shopItemDbModel.toShopItem()).collect(Collectors.toList());
     }
 
     public UUID getInvoiceCustomer(long uid) {
@@ -279,7 +302,7 @@ public class DatabaseManager {
         return locationDbModel.getBlock();
     }
 
-    public Entity getEntity(long uid){
+    public Entity getEntity(long uid) {
         LocationDbModel locationDbModel = locationTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
         return locationDbModel.getEntity();
     }
@@ -316,27 +339,19 @@ public class DatabaseManager {
         storageTable.delete(WhereClause.EQ("uid", storageDbModel.getUid()));
     }
 
-    public List<ShopItem> getLottoItems(UUID owner) throws NoLottoChestException {
-        List<ShopItem> collect = shopItemTable.select(
-                WhereClause.EQ("type", ShopItemType.LOTTO)
-                        .whereEq("owner", owner)
-                        .whereEq("available", true)
-        ).stream()
-                .filter(shopItemDbModel -> shopItemDbModel.getAmount() > shopItemDbModel.getSold())
-                .map(shopItemDbModel -> ShopItemDbModel.toShopItem(shopItemDbModel))
-                .collect(Collectors.toList());
-        return collect;
+    public List<ShopItem> getLottoItems(UUID owner) {
+        return getAvailableShopItems(ShopItemType.LOTTO, owner);
     }
 
-    public long getSystemUid(UUID uuid){
+    public long getSystemUid(UUID uuid) {
         return accountTable.selectUniqueUnchecked(WhereClause.EQ("uuid", uuid)).getUid();
     }
 
-    public double getSystemBal(long uid){
+    public double getSystemBal(long uid) {
         return accountTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid)).getBalance();
     }
 
-    public void updateAccount(AccountDbModel model){
+    public void updateAccount(AccountDbModel model) {
         accountTable.update(model, WhereClause.EQ("uid", model.getUid()));
     }
 
@@ -398,7 +413,7 @@ public class DatabaseManager {
         String sql = "select amount, available, nbt, owner, price, sold, time, type, uid, meta from items where amount > sold and available = true and meta like ? ORDER BY uid;";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
-            statement.setString(1, String.format("%%%s%%",keywords));
+            statement.setString(1, String.format("%%%s%%", keywords));
             List<ShopItem> results = new ArrayList<>();
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
@@ -414,7 +429,7 @@ public class DatabaseManager {
     }
 
     public void removeLocationModel(LocationDbModel dbModel) {
-        locationTable.delete(WhereClause.EQ("uid",dbModel.getUid()));
+        locationTable.delete(WhereClause.EQ("uid", dbModel.getUid()));
     }
 
     public LocationDbModel getLocationModelAt(Location location) {
@@ -427,7 +442,7 @@ public class DatabaseManager {
 
     public UUID getInvoiceFrom(long uid) {
         InvoiceDbModel uid1 = invoiceTable.selectUniqueUnchecked(WhereClause.EQ("uid", uid));
-        if (uid1 == null){
+        if (uid1 == null) {
             return null;
         }
         return uid1.getFrom();
@@ -446,8 +461,8 @@ public class DatabaseManager {
         String sql = "select count(*) count, amount a, sold s, available ava from items where type = ? and a > s and ava = true and owner = ?";
         try {
             PreparedStatement statement = db.getConnection().prepareStatement(sql);
-            statement.setString(1,ShopItemType.MARKET.name());
-            statement.setString(2,uniqueId.toString());
+            statement.setString(1, ShopItemType.MARKET.name());
+            statement.setString(2, uniqueId.toString());
             List<ShopItem> results = new ArrayList<>();
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.getInt("count");

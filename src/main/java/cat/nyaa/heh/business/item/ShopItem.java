@@ -67,6 +67,23 @@ public class ShopItem implements ModelableItem<ShopItem>{
         this.itemMeta = itemStack.toString() + "owner:" + owner;
     }
 
+    public ShopItem(long uid, UUID owner, int amount, int sold, String itemStack, double unitPrice, ShopItemType shopItemType, long time, boolean available, String itemMeta) {
+        this.uid = uid;
+        this.owner = owner;
+        this.amount = amount;
+        this.sold = sold;
+        try {
+            this.itemStack = ItemStackUtils.itemFromBase64(itemStack);
+        }catch (Exception e){
+            Bukkit.getLogger().log(Level.SEVERE, String.format("invalid shop item: uid: %d, nbt:%s", uid, itemStack));
+        }
+        this.unitPrice = unitPrice;
+        this.shopItemType = shopItemType;
+        this.time = time;
+        this.available = available;
+        this.itemMeta = itemMeta;
+    }
+
     public ShopItemType getShopItemType() {
         return shopItemType;
     }
