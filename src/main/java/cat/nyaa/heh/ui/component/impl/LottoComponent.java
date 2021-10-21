@@ -4,10 +4,11 @@ import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.heh.I18n;
 import cat.nyaa.heh.business.item.ShopItem;
 import cat.nyaa.heh.business.item.ShopItemManager;
-import cat.nyaa.heh.business.item.StorageItem;
 import cat.nyaa.heh.business.signshop.BaseSignShop;
 import cat.nyaa.heh.db.SignShopConnection;
 import cat.nyaa.heh.db.StorageConnection;
+import cat.nyaa.heh.ui.LottoGUI;
+import cat.nyaa.heh.ui.UiManager;
 import cat.nyaa.heh.ui.component.BasePagedComponent;
 import cat.nyaa.heh.utils.MessagedThrowable;
 import cat.nyaa.nyaacore.Message;
@@ -38,23 +39,25 @@ public class LottoComponent extends BasePagedComponent<ShopItem> {
 
     private void onClick(InventoryClickEvent event) {
         HumanEntity whoClicked = event.getWhoClicked();
-        if (!(whoClicked instanceof Player) || !whoClicked.getUniqueId().equals(signShop.getOwner())){
+        if (!(whoClicked instanceof Player) || !whoClicked.getUniqueId().equals(signShop.getOwner())) {
             return;
         }
         Player player = (Player) whoClicked;
         ShopItem content = getContent(event);
+        if (content == null) return;
         retrieveItem(content, player);
-        signShop.updateUi();
+        UiManager.getInstance().getLottoGUIs(signShop.getOwner()).forEach(LottoGUI::refreshGUI);
+        //        signShop.updateUi();
     }
 
     private void retrieveItem(ShopItem content, Player player) {
         ItemStack itemStack = content.getItemStack();
         itemStack.setAmount(content.getAmount() - content.getSoldAmount());
-        if (giveToPlayer(player, itemStack)){
+        if (giveToPlayer(player, itemStack)) {
             content.setAmount(content.getSoldAmount());
             content.setAvailable(false);
             ShopItemManager.getInstance().updateShopItem(content);
-        }else {
+        } else {
             new Message(I18n.format("item.give.failed")).send(player);
         }
     }
@@ -65,21 +68,21 @@ public class LottoComponent extends BasePagedComponent<ShopItem> {
             if (giveTo(inventory, itemStack)) {
                 new Message(I18n.format("item.give.inventory")).send(player);
                 return true;
-            }else{
+            } else {
                 return giveToTempStorage(itemStack, player);
             }
-        }else {
+        } else {
             return giveToTempStorage(itemStack, player);
         }
     }
 
     private boolean giveToTempStorage(ItemStack itemStack, OfflinePlayer offlinePlayer) {
-        try{
+        try {
             StorageConnection.getInstance().getPlayerStorage(offlinePlayer.getUniqueId()).addItem(itemStack, 0, true);
             new Message(I18n.format("item.give.temp_storage")).send(offlinePlayer);
             return true;
-        }catch (Exception e){
-            if (e instanceof MessagedThrowable){
+        } catch (Exception e) {
+            if (e instanceof MessagedThrowable) {
                 ((MessagedThrowable) e).getCustomMessage().send(offlinePlayer);
                 return false;
             }
@@ -89,8 +92,8 @@ public class LottoComponent extends BasePagedComponent<ShopItem> {
     }
 
     private boolean giveTo(Inventory inventory, ItemStack itemStack) {
-        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)){
-            if (InventoryUtils.addItem(inventory, itemStack)){
+        if (InventoryUtils.hasEnoughSpace(inventory, itemStack)) {
+            if (InventoryUtils.addItem(inventory, itemStack)) {
                 return true;
             }
         }

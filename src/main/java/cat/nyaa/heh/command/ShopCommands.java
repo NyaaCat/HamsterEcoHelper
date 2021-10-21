@@ -54,6 +54,7 @@ public class ShopCommands extends CommandReceiver implements ShortcutCommand{
         Player player = asPlayer(sender);
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         String action = arguments.next();
+        if(action == null)throw new BadCommandException();
         switch (action){
             case "view":
                 SignShopLotto signShopLotto = new SignShopLotto(player.getUniqueId(), 0);
