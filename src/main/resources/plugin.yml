@@ -2,7 +2,7 @@ name: HamsterEcoHelper
 main: cat.nyaa.heh.HamsterEcoHelper
 description: "Economy helper plugin for hamsters."
 version: ${version}
-depend: [Vault,NyaaCore,LangUtils]
+depend: [Vault,NyaaCore]
 softdepend: [Essentials,LockettePro]
 authors: [cyilin, RecursiveG, ReinWD]
 website: "https://github.com/NyaaCat/HamsterEcoHelper"

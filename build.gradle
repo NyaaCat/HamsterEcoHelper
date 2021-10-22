@@ -41,11 +41,9 @@ dependencies {
     // other nyaa plugins
     if (gradle.hasProperty("useLocalDependencies") && gradle.useLocalDependencies) {
         compileOnly project(":NyaaCore")
-        compileOnly project(":LanguageUtils")
         compileOnly project(":LockettePro")
     } else {
         compileOnly('cat.nyaa:nyaacore:8.1-SNAPSHOT') { transitive = true }
-        compileOnly('com.meowj:LangUtils:2.4-SNAPSHOT') { transitive = false }
         compileOnly('me.crafter.mc:lockettepro:2.10-SNAPSHOT') { transitive = false }
     }
 
