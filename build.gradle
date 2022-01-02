@@ -7,11 +7,11 @@ plugins {
 // Plugin config
 ext.pluginNameUpper = "HamsterEcoHelper"
 ext.pluginNameLower = ext.pluginNameUpper.toLowerCase()
-ext.majorVersion = 8
-ext.minorVersion = 1
-ext.minecraftVersion = "1.17"
-sourceCompatibility = 16
-targetCompatibility = 16
+ext.majorVersion = 9
+ext.minorVersion = 0
+ext.minecraftVersion = "1.18"
+sourceCompatibility = 17
+targetCompatibility = 17
 
 // Suppiled by Jenkins
 ext.buildNumber = System.env.BUILD_NUMBER == null ? "x"                : "$System.env.BUILD_NUMBER"
@@ -44,7 +44,7 @@ dependencies {
         compileOnly project(":NyaaCore")
         compileOnly project(":LockettePro")
     } else {
-        compileOnly('cat.nyaa:nyaacore:8.1-SNAPSHOT') { transitive = true }
+        compileOnly('cat.nyaa:nyaacore:9.0-SNAPSHOT') { transitive = true }
         compileOnly('me.crafter.mc:lockettepro:2.10-SNAPSHOT') { transitive = false }
     }
 

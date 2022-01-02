@@ -1,11 +1,7 @@
 package cat.nyaa.heh.utils;
 
-import cat.nyaa.heh.HamsterEcoHelper;
 import cat.nyaa.nyaacore.BasicItemMatcher;
 import cat.nyaa.nyaacore.utils.HexColorUtils;
-import co.aikar.taskchain.BukkitTaskChainFactory;
-import co.aikar.taskchain.TaskChain;
-import co.aikar.taskchain.TaskChainFactory;
 import me.crafter.mc.lockettepro.LocketteProAPI;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -31,17 +27,9 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Utils {
-    private static TaskChainFactory factory;
 
     public static String colored(String s) {
         return HexColorUtils.hexColored(s);
-    }
-
-    public static TaskChain<?> newChain(){
-        if (factory == null) {
-            factory = BukkitTaskChainFactory.create(HamsterEcoHelper.plugin);
-        }
-        return factory.newChain();
     }
 
     public static String replacePlaceHolder(Map<String, String> placeHolderMap, String format) {
@@ -96,7 +84,7 @@ public class Utils {
         BlockData data = block.getBlockData();
         BlockFace f = null;
         if (data instanceof Directional && data instanceof Waterlogged && ((Waterlogged) data).isWaterlogged()) {
-            String str = ((Directional) data).toString();
+            String str = data.toString();
             if (str.contains("facing=west")) {
                 f = BlockFace.WEST;
             } else if (str.contains("facing=east")) {

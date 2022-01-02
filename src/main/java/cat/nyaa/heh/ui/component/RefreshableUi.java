@@ -1,6 +1,7 @@
 package cat.nyaa.heh.ui.component;
 
-import cat.nyaa.heh.utils.Utils;
+import cat.nyaa.heh.HamsterEcoHelper;
+import org.bukkit.Bukkit;
 
 import java.util.List;
 
@@ -27,15 +28,9 @@ public interface RefreshableUi<T> {
      * @see this#postUpdate()
      */
     default void updateAsynchronously(){
-        Utils.newChain()
-                .sync(this::preUpdate)
-                .async(input -> {
-                    this.loadData();
-                    return null;
-                })
-                .delay(1)
-                .sync(this::postUpdate)
-                .execute();
+        postUpdate();
+        Bukkit.getScheduler().runTaskAsynchronously(HamsterEcoHelper.plugin, () -> loadData());
+        Bukkit.getScheduler().runTaskLater(HamsterEcoHelper.plugin, this::postUpdate,1);
     }
 
     default void preUpdate(){}
