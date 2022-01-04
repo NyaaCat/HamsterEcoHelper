@@ -28,9 +28,13 @@ public interface RefreshableUi<T> {
      * @see this#postUpdate()
      */
     default void updateAsynchronously(){
-        postUpdate();
-        Bukkit.getScheduler().runTaskAsynchronously(HamsterEcoHelper.plugin, () -> loadData());
-        Bukkit.getScheduler().runTaskLater(HamsterEcoHelper.plugin, this::postUpdate,1);
+        preUpdate();
+        Bukkit.getScheduler().runTaskAsynchronously(HamsterEcoHelper.plugin, () -> {
+            loadData();
+            // call sync
+            Bukkit.getScheduler().runTaskLater(HamsterEcoHelper.plugin, this::postUpdate,1);
+        });
+
     }
 
     default void preUpdate(){}
